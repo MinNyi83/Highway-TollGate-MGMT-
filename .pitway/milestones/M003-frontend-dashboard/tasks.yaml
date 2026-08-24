@@ -80,7 +80,7 @@ tasks:
     objective: Create dashboard page with stats cards (total vehicles, total
       revenue, active violations) and charts (revenue by plaza, violations by
       type).
-    status: ready
+    status: in_progress
     depends_on:
       - T003
     acceptance_criteria:
@@ -96,7 +96,7 @@ tasks:
       strategy: command
       detail: cd packages/frontend && npx tsc --noEmit
     result: null
-    attempts: 0
+    attempts: 1
     usage: null
   - id: T005
     name: Vehicles list + detail
