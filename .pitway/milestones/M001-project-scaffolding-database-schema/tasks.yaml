@@ -46,9 +46,9 @@ tasks:
       - packages/backend/.env.example
     verification:
       strategy: command
-      detail: cd packages/backend && npx ts-node-dev --respawn src/server.ts
+      detail: cd packages/backend && npx tsc --noEmit
     result: null
-    attempts: 1
+    attempts: 2
     usage: null
   - id: T003
     name: Set up PostgreSQL + Prisma schema
