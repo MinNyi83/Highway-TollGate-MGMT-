@@ -84,7 +84,7 @@ tasks:
     name: Create database seed script
     objective: Write a seed script that populates the database with realistic sample
       data for development.
-    status: ready
+    status: in_progress
     depends_on:
       - T003
     acceptance_criteria:
@@ -100,6 +100,7 @@ tasks:
       strategy: command
       detail: cd packages/backend && npx prisma db seed
     result: null
+    attempts: 1
     usage: null
   - id: T005
     name: Health-check endpoint + Docker Compose
