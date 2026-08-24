@@ -268,7 +268,7 @@ tasks:
   - id: T012
     name: WebSocket gateway (Socket.io)
     objective: Implement Socket.io WebSocket gateway for real-time event broadcasting.
-    status: ready
+    status: in_progress
     depends_on:
       - T001
     acceptance_criteria:
@@ -283,6 +283,7 @@ tasks:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
     result: null
+    attempts: 1
     usage: null
   - id: T013
     name: Verify all endpoints via Swagger UI
