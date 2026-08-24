@@ -30,7 +30,7 @@ tasks:
     name: User and Account management CRUD
     objective: Implement CRUD endpoints for users and accounts with balance top-up
       functionality.
-    status: review
+    status: completed
     depends_on:
       - T001
     acceptance_criteria:
@@ -48,7 +48,9 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
-    result: null
+    result:
+      summary: T002 completed. User and Account management CRUD with balance top-up.
+      evidence: (no output)
     attempts: 1
     usage: null
   - id: T003
