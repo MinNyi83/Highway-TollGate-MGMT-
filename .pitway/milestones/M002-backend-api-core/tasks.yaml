@@ -223,7 +223,7 @@ tasks:
     name: Reporting endpoints
     objective: Implement reporting endpoints for revenue, traffic, and violation
       statistics.
-    status: review
+    status: completed
     depends_on:
       - T006
       - T007
@@ -238,13 +238,15 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
-    result: null
+    result:
+      summary: T010 completed. Reporting endpoints with date range queries.
+      evidence: (no output)
     attempts: 1
     usage: null
   - id: T011
     name: OpenAPI/Swagger documentation
     objective: Set up OpenAPI documentation with Swagger UI for all API endpoints.
-    status: waiting
+    status: ready
     depends_on:
       - T010
     acceptance_criteria:
