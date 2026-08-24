@@ -80,7 +80,7 @@ tasks:
   - id: T004
     name: Toll Plaza and Toll Rate management
     objective: Implement CRUD endpoints for toll plazas and toll rates.
-    status: ready
+    status: in_progress
     depends_on:
       - T001
     acceptance_criteria:
@@ -97,6 +97,7 @@ tasks:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
     result: null
+    attempts: 1
     usage: null
   - id: T005
     name: Toll Event processing with cross-verification
