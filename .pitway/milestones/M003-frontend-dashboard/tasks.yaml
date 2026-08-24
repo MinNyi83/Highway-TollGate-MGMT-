@@ -130,7 +130,7 @@ tasks:
     name: Toll Plazas management
     objective: Create toll plazas page with plaza list, create/edit plaza form, and
       rate management per vehicle class.
-    status: ready
+    status: in_progress
     depends_on:
       - T003
     acceptance_criteria:
@@ -147,7 +147,7 @@ tasks:
       strategy: command
       detail: cd packages/frontend && npx tsc --noEmit
     result: null
-    attempts: 0
+    attempts: 1
     usage: null
   - id: T007
     name: Toll Events feed
