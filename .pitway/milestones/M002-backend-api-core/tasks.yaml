@@ -223,7 +223,7 @@ tasks:
     name: Reporting endpoints
     objective: Implement reporting endpoints for revenue, traffic, and violation
       statistics.
-    status: in_progress
+    status: review
     depends_on:
       - T006
       - T007
