@@ -4,7 +4,7 @@ tasks:
     name: Auth module (JWT register, login, refresh, middleware)
     objective: Implement JWT authentication with register, login, refresh token
       endpoints, and auth middleware for protected routes.
-    status: review
+    status: completed
     depends_on: []
     acceptance_criteria:
       - POST /api/auth/register creates user and returns JWT
@@ -20,14 +20,17 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
-    result: null
+    result:
+      summary: T001 completed. JWT auth module with register, login, refresh endpoints
+        and auth middleware.
+      evidence: (no output)
     attempts: 1
     usage: null
   - id: T002
     name: User and Account management CRUD
     objective: Implement CRUD endpoints for users and accounts with balance top-up
       functionality.
-    status: waiting
+    status: ready
     depends_on:
       - T001
     acceptance_criteria:
@@ -50,7 +53,7 @@ tasks:
   - id: T003
     name: Vehicle management with RFID tag binding
     objective: Implement vehicle CRUD and RFID tag binding/unbinding endpoints.
-    status: waiting
+    status: ready
     depends_on:
       - T001
     acceptance_criteria:
@@ -71,7 +74,7 @@ tasks:
   - id: T004
     name: Toll Plaza and Toll Rate management
     objective: Implement CRUD endpoints for toll plazas and toll rates.
-    status: waiting
+    status: ready
     depends_on:
       - T001
     acceptance_criteria:
@@ -156,7 +159,7 @@ tasks:
     name: Notification system with WebSocket broadcast
     objective: Implement in-app notification storage and WebSocket broadcast for
       real-time updates.
-    status: waiting
+    status: ready
     depends_on:
       - T001
     acceptance_criteria:
@@ -235,7 +238,7 @@ tasks:
   - id: T012
     name: WebSocket gateway (Socket.io)
     objective: Implement Socket.io WebSocket gateway for real-time event broadcasting.
-    status: waiting
+    status: ready
     depends_on:
       - T001
     acceptance_criteria:
