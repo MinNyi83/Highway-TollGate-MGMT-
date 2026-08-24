@@ -80,7 +80,7 @@ tasks:
   - id: T004
     name: Toll Plaza and Toll Rate management
     objective: Implement CRUD endpoints for toll plazas and toll rates.
-    status: in_progress
+    status: review
     depends_on:
       - T001
     acceptance_criteria:
