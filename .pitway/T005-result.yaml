@@ -1,0 +1,2 @@
+summary: "T005 completed. Vehicles list with search and table."
+evidence: "npx tsc --noEmit passes."

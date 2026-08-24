@@ -105,7 +105,7 @@ tasks:
     name: Vehicles list + detail
     objective: Create vehicles page with searchable/filterable table, vehicle detail
       view, create/edit vehicle form, and RFID tag binding UI.
-    status: in_progress
+    status: review
     depends_on:
       - T003
     acceptance_criteria:
