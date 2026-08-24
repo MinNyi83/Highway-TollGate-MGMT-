@@ -1,2 +1,0 @@
-summary: "T001 completed. Vite + React scaffold with Tailwind CSS."
-evidence: "npx tsc --noEmit and npx vite build pass."
