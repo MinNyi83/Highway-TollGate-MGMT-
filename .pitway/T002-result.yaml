@@ -1,2 +1,0 @@
-summary: "T002 completed. Backend Express + TypeScript project set up with strict mode tsconfig, Express app with cors/helmet/json middleware, server entry point, and .env.example."
-evidence: "npx tsc --noEmit passes without errors. Server starts successfully with ts-node-dev."
