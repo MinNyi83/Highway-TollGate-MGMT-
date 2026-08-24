@@ -130,7 +130,7 @@ tasks:
     name: Toll Plazas management
     objective: Create toll plazas page with plaza list, create/edit plaza form, and
       rate management per vehicle class.
-    status: in_progress
+    status: review
     depends_on:
       - T003
     acceptance_criteria:
