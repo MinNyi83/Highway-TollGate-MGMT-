@@ -129,7 +129,7 @@ tasks:
     name: Transaction engine with auto-deduction
     objective: Implement transaction processing with automatic toll deduction on
       event completion.
-    status: in_progress
+    status: review
     depends_on:
       - T002
       - T005
