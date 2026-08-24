@@ -54,7 +54,7 @@ tasks:
     name: App layout + navigation
     objective: Create responsive sidebar layout with navigation links to all
       sections, route definitions for all pages.
-    status: in_progress
+    status: review
     depends_on:
       - T001
     acceptance_criteria:
