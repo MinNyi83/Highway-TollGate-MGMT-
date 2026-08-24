@@ -80,7 +80,7 @@ tasks:
     objective: Create dashboard page with stats cards (total vehicles, total
       revenue, active violations) and charts (revenue by plaza, violations by
       type).
-    status: in_progress
+    status: review
     depends_on:
       - T003
     acceptance_criteria:

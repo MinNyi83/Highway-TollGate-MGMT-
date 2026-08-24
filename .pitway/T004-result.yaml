@@ -1,0 +1,2 @@
+summary: "T004 completed. Dashboard overview with stats cards and chart placeholders."
+evidence: "npx tsc --noEmit passes."
