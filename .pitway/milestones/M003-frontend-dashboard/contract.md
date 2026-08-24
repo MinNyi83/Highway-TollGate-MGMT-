@@ -2,10 +2,12 @@
 schema_version: 1
 id: M003
 title: Frontend Dashboard
-status: draft
+status: in_progress
 requirement: null
-confirmed_at: null
-verification_approved_hash: null
+confirmed_at: 2026-08-24T23:26:24Z
+verification_approved_hash: sha256:7e8f874babcb10a4823e7f5cfddbc3bc1275ade7396e9be3c1e629e62376d7dd
+base_branch: pitway/M002-backend-api-core
+base_revision: f84580483297732e69967027043b886ecb07c569
 acceptance_criteria:
   - id: AC001
     text: Vite + React project compiles and starts on port 5173.
