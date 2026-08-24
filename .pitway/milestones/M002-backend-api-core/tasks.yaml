@@ -104,7 +104,7 @@ tasks:
   - id: T005
     name: Toll Event processing with cross-verification
     objective: Implement toll event creation with RFID/ANPR cross-verification logic.
-    status: review
+    status: completed
     depends_on:
       - T003
       - T004
@@ -120,14 +120,16 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
-    result: null
+    result:
+      summary: T005 completed. Toll Event processing with cross-verification.
+      evidence: (no output)
     attempts: 1
     usage: null
   - id: T006
     name: Transaction engine with auto-deduction
     objective: Implement transaction processing with automatic toll deduction on
       event completion.
-    status: waiting
+    status: ready
     depends_on:
       - T002
       - T005
@@ -148,7 +150,7 @@ tasks:
   - id: T007
     name: Violation management
     objective: Implement violation CRUD with status workflow and escalation.
-    status: waiting
+    status: ready
     depends_on:
       - T005
     acceptance_criteria:
