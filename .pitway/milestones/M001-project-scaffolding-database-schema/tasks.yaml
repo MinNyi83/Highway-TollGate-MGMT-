@@ -58,7 +58,7 @@ tasks:
     name: Set up PostgreSQL + Prisma schema
     objective: Install Prisma, define the complete database schema with all 11
       tables, and generate the Prisma client.
-    status: review
+    status: completed
     depends_on:
       - T001
     acceptance_criteria:
@@ -73,14 +73,18 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/backend && npx prisma validate
-    result: null
+    result:
+      summary: T003 completed. Prisma schema with 11 tables created, validated, and
+        client generated.
+      evidence: Environment variables loaded from .env | Prisma schema loaded from
+        prisma\schema.prisma | The schema at prisma\schema.prisma is valid 🚀
     attempts: 2
     usage: null
   - id: T004
     name: Create database seed script
     objective: Write a seed script that populates the database with realistic sample
       data for development.
-    status: waiting
+    status: ready
     depends_on:
       - T003
     acceptance_criteria:
