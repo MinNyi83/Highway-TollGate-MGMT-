@@ -1,2 +1,0 @@
-summary: "T002 completed. User and Account management CRUD with balance top-up."
-evidence: "npx tsc --noEmit passes. Users and accounts routes and services created."
