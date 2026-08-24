@@ -74,6 +74,7 @@ tasks:
       strategy: command
       detail: cd packages/backend && npx prisma validate
     result: null
+    attempts: 1
     usage: null
   - id: T004
     name: Create database seed script

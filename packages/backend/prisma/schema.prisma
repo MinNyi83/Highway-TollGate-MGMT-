@@ -1,0 +1,273 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  OPERATOR
+  VIEWER
+}
+
+enum AccountStatus {
+  ACTIVE
+  SUSPENDED
+  CLOSED
+}
+
+enum VehicleStatus {
+  ACTIVE
+  INACTIVE
+  STOLEN
+}
+
+enum VehicleClass {
+  MOTORCYCLE
+  SEDAN
+  SUV
+  TRUCK
+  BUS
+}
+
+enum RFIDTagStatus {
+  ACTIVE
+  LOST
+  DAMAGED
+  DEACTIVATED
+}
+
+enum TollPlazaStatus {
+  ACTIVE
+  INACTIVE
+  MAINTENANCE
+}
+
+enum TollEventStatus {
+  ENTRY
+  EXIT
+  COMPLETED
+  FAILED
+}
+
+enum TransactionType {
+  DEBIT
+  TOPUP
+  REFUND
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REVERSED
+}
+
+enum ViolationType {
+  NO_RFID
+  INSUFFICIENT_BALANCE
+  RFID_ANPR_MISMATCH
+  UNREGISTERED_VEHICLE
+}
+
+enum ViolationStatus {
+  PENDING
+  PROCESSING
+  PAID
+  ESCALATED
+  DISMISSED
+}
+
+enum DeviceType {
+  RFID_READER
+  ANPR_CAMERA
+  LIDAR
+  LANE_CONTROLLER
+}
+
+enum DeviceStatusEnum {
+  ONLINE
+  OFFLINE
+  ERROR
+  MAINTENANCE
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  name         String
+  role         UserRole @default(VIEWER)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  accounts     Account[]
+  notifications Notification[]
+
+  @@map("users")
+}
+
+model Account {
+  id        String        @id @default(uuid())
+  userId    String        @map("user_id")
+  balance   Decimal       @default(0) @db.Decimal(10, 2)
+  status    AccountStatus @default(ACTIVE)
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt @map("updated_at")
+
+  user          User          @relation(fields: [userId], references: [id])
+  rfidTags      RFIDTag[]
+  transactions  Transaction[]
+
+  @@map("accounts")
+}
+
+model Vehicle {
+  id           String      @id @default(uuid())
+  plateNumber  String      @unique @map("plate_number")
+  make         String
+  model        String
+  year         Int
+  color        String?
+  vehicleClass VehicleClass @map("vehicle_class")
+  status       VehicleStatus @default(ACTIVE)
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+
+  rfidTags     RFIDTag[]
+  tollEvents   TollEvent[]
+  violations   Violation[]
+
+  @@map("vehicles")
+}
+
+model RFIDTag {
+  id         String         @id @default(uuid())
+  tagUid     String         @unique @map("tag_uid")
+  vehicleId  String         @map("vehicle_id")
+  accountId  String         @map("account_id")
+  status     RFIDTagStatus  @default(ACTIVE)
+  issuedAt   DateTime       @default(now()) @map("issued_at")
+  updatedAt  DateTime       @updatedAt @map("updated_at")
+
+  vehicle    Vehicle        @relation(fields: [vehicleId], references: [id])
+  account    Account        @relation(fields: [accountId], references: [id])
+  tollEvents TollEvent[]
+
+  @@map("rfid_tags")
+}
+
+model TollPlaza {
+  id          String          @id @default(uuid())
+  name        String
+  locationLat Decimal         @map("location_lat") @db.Decimal(10, 7)
+  locationLng Decimal         @map("location_lng") @db.Decimal(10, 7)
+  lanes       Int             @default(4)
+  status      TollPlazaStatus @default(ACTIVE)
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+
+  tollRates   TollRate[]
+  tollEvents  TollEvent[]
+  deviceStatuses DeviceStatus[]
+
+  @@map("toll_plazas")
+}
+
+model TollRate {
+  id          String   @id @default(uuid())
+  plazaId     String   @map("plaza_id")
+  vehicleClass VehicleClass @map("vehicle_class")
+  rateAmount  Decimal  @map("rate_amount") @db.Decimal(10, 2)
+  effectiveFrom DateTime @map("effective_from")
+  effectiveTo   DateTime? @map("effective_to")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  plaza       TollPlaza @relation(fields: [plazaId], references: [id])
+
+  @@map("toll_rates")
+}
+
+model TollEvent {
+  id          String          @id @default(uuid())
+  vehicleId   String          @map("vehicle_id")
+  plazaId     String          @map("plaza_id")
+  rfidTagId   String?         @map("rfid_tag_id")
+  anprPlate   String?         @map("anpr_plate")
+  entryTime   DateTime        @default(now()) @map("entry_time")
+  exitTime    DateTime?       @map("exit_time")
+  status      TollEventStatus @default(ENTRY)
+  createdAt   DateTime        @default(now()) @map("created_at")
+
+  vehicle     Vehicle         @relation(fields: [vehicleId], references: [id])
+  plaza       TollPlaza       @relation(fields: [plazaId], references: [id])
+  rfidTag     RFIDTag?        @relation(fields: [rfidTagId], references: [id])
+  transaction Transaction?
+  violation   Violation?
+
+  @@map("toll_events")
+}
+
+model Transaction {
+  id          String            @id @default(uuid())
+  accountId   String            @map("account_id")
+  eventId     String            @unique @map("event_id")
+  amount      Decimal           @db.Decimal(10, 2)
+  type        TransactionType
+  status      TransactionStatus @default(PENDING)
+  createdAt   DateTime          @default(now()) @map("created_at")
+
+  account     Account           @relation(fields: [accountId], references: [id])
+  event       TollEvent         @relation(fields: [eventId], references: [id])
+
+  @@map("transactions")
+}
+
+model Violation {
+  id            String          @id @default(uuid())
+  vehicleId     String          @map("vehicle_id")
+  eventId       String          @unique @map("event_id")
+  violationType ViolationType   @map("violation_type")
+  status        ViolationStatus @default(PENDING)
+  fineAmount    Decimal         @map("fine_amount") @db.Decimal(10, 2)
+  dueDate       DateTime        @map("due_date")
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+
+  vehicle       Vehicle         @relation(fields: [vehicleId], references: [id])
+  event         TollEvent       @relation(fields: [eventId], references: [id])
+
+  @@map("violations")
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  type      String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("notifications")
+}
+
+model DeviceStatus {
+  id            String     @id @default(uuid())
+  plazaId       String     @map("plaza_id")
+  deviceType    DeviceType @map("device_type")
+  deviceId      String     @map("device_id")
+  status        DeviceStatusEnum @default(ONLINE)
+  lastHeartbeat DateTime?  @map("last_heartbeat")
+  metadata      Json?
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
+
+  plaza         TollPlaza  @relation(fields: [plazaId], references: [id])
+
+  @@map("device_status")
+}
