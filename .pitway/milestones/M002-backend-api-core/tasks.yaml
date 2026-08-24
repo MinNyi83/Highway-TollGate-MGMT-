@@ -153,7 +153,7 @@ tasks:
   - id: T007
     name: Violation management
     objective: Implement violation CRUD with status workflow and escalation.
-    status: review
+    status: completed
     depends_on:
       - T005
     acceptance_criteria:
@@ -168,7 +168,9 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
-    result: null
+    result:
+      summary: T007 completed. Violation management CRUD.
+      evidence: (no output)
     attempts: 1
     usage: null
   - id: T008
@@ -215,7 +217,7 @@ tasks:
     name: Reporting endpoints
     objective: Implement reporting endpoints for revenue, traffic, and violation
       statistics.
-    status: waiting
+    status: ready
     depends_on:
       - T006
       - T007
