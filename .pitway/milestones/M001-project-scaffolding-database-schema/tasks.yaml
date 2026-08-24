@@ -110,7 +110,7 @@ tasks:
     name: Health-check endpoint + Docker Compose
     objective: Implement the health-check API endpoint and create Docker Compose
       configuration for PostgreSQL and Redis.
-    status: review
+    status: completed
     depends_on:
       - T002
     acceptance_criteria:
@@ -125,14 +125,18 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
-    result: null
+    result:
+      summary: T005 completed. Health-check endpoint created at /api/health with
+        status, timestamp, and uptime. Docker Compose configured with PostgreSQL
+        16 and Redis 7.
+      evidence: (no output)
     attempts: 1
     usage: null
   - id: T006
     name: Verify full M001 workflow
     objective: Run through the complete M001 workflow to ensure everything works
       end-to-end.
-    status: waiting
+    status: ready
     depends_on:
       - T002
       - T004
