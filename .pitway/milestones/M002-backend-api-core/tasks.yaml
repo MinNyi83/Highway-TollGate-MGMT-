@@ -153,7 +153,7 @@ tasks:
   - id: T007
     name: Violation management
     objective: Implement violation CRUD with status workflow and escalation.
-    status: ready
+    status: in_progress
     depends_on:
       - T005
     acceptance_criteria:
@@ -169,6 +169,7 @@ tasks:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
     result: null
+    attempts: 1
     usage: null
   - id: T008
     name: Notification system with WebSocket broadcast

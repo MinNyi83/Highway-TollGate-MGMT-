@@ -10,6 +10,7 @@ import vehiclesRoutes from './modules/vehicles/vehicles.routes';
 import tollPlazasRoutes from './modules/toll-plazas/toll-plazas.routes';
 import tollEventsRoutes from './modules/toll-events/toll-events.routes';
 import transactionsRoutes from './modules/transactions/transactions.routes';
+import violationsRoutes from './modules/violations/violations.routes';
 
 dotenv.config();
 
@@ -27,5 +28,6 @@ app.use('/api/vehicles', vehiclesRoutes);
 app.use('/api/toll-plazas', tollPlazasRoutes);
 app.use('/api/toll-events', tollEventsRoutes);
 app.use('/api/transactions', transactionsRoutes);
+app.use('/api/violations', violationsRoutes);
 
 export default app;
