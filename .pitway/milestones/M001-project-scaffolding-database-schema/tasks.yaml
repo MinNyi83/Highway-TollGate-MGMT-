@@ -30,7 +30,7 @@ tasks:
     name: Set up backend Express + TypeScript project
     objective: Configure the backend package with Express.js, TypeScript, and
       essential middleware (cors, helmet, dotenv).
-    status: ready
+    status: in_progress
     depends_on:
       - T001
     acceptance_criteria:
@@ -48,6 +48,7 @@ tasks:
       strategy: command
       detail: cd packages/backend && npx ts-node-dev --respawn src/server.ts
     result: null
+    attempts: 1
     usage: null
   - id: T003
     name: Set up PostgreSQL + Prisma schema
