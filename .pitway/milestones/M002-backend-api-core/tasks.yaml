@@ -56,7 +56,7 @@ tasks:
   - id: T003
     name: Vehicle management with RFID tag binding
     objective: Implement vehicle CRUD and RFID tag binding/unbinding endpoints.
-    status: ready
+    status: in_progress
     depends_on:
       - T001
     acceptance_criteria:
@@ -73,6 +73,7 @@ tasks:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
     result: null
+    attempts: 1
     usage: null
   - id: T004
     name: Toll Plaza and Toll Rate management
