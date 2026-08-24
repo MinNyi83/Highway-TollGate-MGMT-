@@ -13,6 +13,7 @@ import transactionsRoutes from './modules/transactions/transactions.routes';
 import violationsRoutes from './modules/violations/violations.routes';
 import notificationsRoutes from './modules/notifications/notifications.routes';
 import deviceStatusRoutes from './modules/device-status/device-status.routes';
+import reportsRoutes from './modules/reports/reports.routes';
 
 dotenv.config();
 
@@ -33,5 +34,6 @@ app.use('/api/transactions', transactionsRoutes);
 app.use('/api/violations', violationsRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use('/api/device-status', deviceStatusRoutes);
+app.use('/api/reports', reportsRoutes);
 
 export default app;
