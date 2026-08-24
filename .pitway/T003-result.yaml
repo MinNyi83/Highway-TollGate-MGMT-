@@ -1,2 +1,0 @@
-summary: "T003 completed. App layout with sidebar navigation and routes."
-evidence: "npx tsc --noEmit passes."
