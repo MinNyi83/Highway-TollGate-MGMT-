@@ -4,7 +4,7 @@ tasks:
     name: Vite + React scaffold
     objective: Initialize Vite project with React + TypeScript, configure Tailwind
       CSS, install and configure shadcn/ui.
-    status: ready
+    status: in_progress
     depends_on: []
     acceptance_criteria:
       - Vite dev server starts on port 5173
@@ -21,7 +21,7 @@ tasks:
       strategy: command
       detail: cd packages/frontend && npx tsc --noEmit
     result: null
-    attempts: 0
+    attempts: 1
     usage: null
   - id: T002
     name: Auth pages
