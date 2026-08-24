@@ -1,2 +1,0 @@
-summary: "T006 completed. Transaction engine with auto-deduction."
-evidence: "npx tsc --noEmit passes. Transactions routes and service created."
