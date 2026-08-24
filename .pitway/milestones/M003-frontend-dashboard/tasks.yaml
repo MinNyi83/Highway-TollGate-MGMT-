@@ -12,7 +12,8 @@ tasks:
       - Tailwind CSS is configured and working
       - shadcn/ui is installed and configured
     relevant_files:
-      - packages/frontend/src
+      - packages/frontend/src/**/*.tsx
+      - packages/frontend/src/**/*.ts
       - packages/frontend/vite.config.ts
       - packages/frontend/tailwind.config.js
       - packages/frontend/tsconfig.json
