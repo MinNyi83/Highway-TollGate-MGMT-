@@ -14,6 +14,7 @@ import violationsRoutes from './modules/violations/violations.routes';
 import notificationsRoutes from './modules/notifications/notifications.routes';
 import deviceStatusRoutes from './modules/device-status/device-status.routes';
 import reportsRoutes from './modules/reports/reports.routes';
+import { setupSwagger } from './config/swagger';
 
 dotenv.config();
 
@@ -22,6 +23,8 @@ const app = express();
 app.use(cors());
 app.use(helmet());
 app.use(express.json());
+
+setupSwagger(app);
 
 app.use('/api', healthRoutes);
 app.use('/api/auth', authRoutes);

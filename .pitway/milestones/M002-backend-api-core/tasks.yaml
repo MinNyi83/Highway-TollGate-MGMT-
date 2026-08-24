@@ -246,7 +246,7 @@ tasks:
   - id: T011
     name: OpenAPI/Swagger documentation
     objective: Set up OpenAPI documentation with Swagger UI for all API endpoints.
-    status: ready
+    status: in_progress
     depends_on:
       - T010
     acceptance_criteria:
@@ -261,6 +261,7 @@ tasks:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
     result: null
+    attempts: 1
     usage: null
   - id: T012
     name: WebSocket gateway (Socket.io)
