@@ -1,2 +1,0 @@
-summary: "T002 completed. Auth pages with login, auth store, and protected routes."
-evidence: "npx tsc --noEmit passes."
