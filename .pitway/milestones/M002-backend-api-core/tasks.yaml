@@ -177,7 +177,7 @@ tasks:
     name: Notification system with WebSocket broadcast
     objective: Implement in-app notification storage and WebSocket broadcast for
       real-time updates.
-    status: ready
+    status: in_progress
     depends_on:
       - T001
     acceptance_criteria:
@@ -193,6 +193,7 @@ tasks:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
     result: null
+    attempts: 1
     usage: null
   - id: T009
     name: Device status management
