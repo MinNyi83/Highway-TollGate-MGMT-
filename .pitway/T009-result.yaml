@@ -1,0 +1,2 @@
+summary: "T009 completed. Device status management CRUD."
+evidence: "npx tsc --noEmit passes. Device-status routes and service created."

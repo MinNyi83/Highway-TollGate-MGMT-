@@ -200,7 +200,7 @@ tasks:
   - id: T009
     name: Device status management
     objective: Implement device status tracking with heartbeat endpoint.
-    status: in_progress
+    status: review
     depends_on:
       - T004
     acceptance_criteria:
