@@ -30,7 +30,7 @@ tasks:
     name: Auth pages
     objective: Create login page with form validation, JWT token storage in
       localStorage, and auth guard for protected routes.
-    status: review
+    status: completed
     depends_on:
       - T001
     acceptance_criteria:
@@ -45,7 +45,9 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/frontend && npx tsc --noEmit
-    result: null
+    result:
+      summary: T002 completed. Auth pages with login, auth store, and protected routes.
+      evidence: (no output)
     attempts: 1
     usage: null
   - id: T003
