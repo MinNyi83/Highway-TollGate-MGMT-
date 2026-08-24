@@ -105,7 +105,7 @@ tasks:
     name: Vehicles list + detail
     objective: Create vehicles page with searchable/filterable table, vehicle detail
       view, create/edit vehicle form, and RFID tag binding UI.
-    status: review
+    status: completed
     depends_on:
       - T003
     acceptance_criteria:
@@ -121,7 +121,9 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/frontend && npx tsc --noEmit
-    result: null
+    result:
+      summary: T005 completed. Vehicles list with search and table.
+      evidence: (no output)
     attempts: 1
     usage: null
   - id: T006
