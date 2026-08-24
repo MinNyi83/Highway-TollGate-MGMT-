@@ -268,7 +268,7 @@ tasks:
   - id: T012
     name: WebSocket gateway (Socket.io)
     objective: Implement Socket.io WebSocket gateway for real-time event broadcasting.
-    status: in_progress
+    status: review
     depends_on:
       - T001
     acceptance_criteria:

@@ -1,0 +1,2 @@
+summary: "T012 completed. WebSocket gateway with Socket.io."
+evidence: "npx tsc --noEmit passes. WebSocket gateway and server integration created."
