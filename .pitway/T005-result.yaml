@@ -1,0 +1,2 @@
+summary: "T005 completed. Toll Event processing with cross-verification."
+evidence: "npx tsc --noEmit passes. Toll-events routes and service with entry/exit processing created."

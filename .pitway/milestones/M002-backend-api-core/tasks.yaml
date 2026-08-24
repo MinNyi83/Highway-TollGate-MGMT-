@@ -104,7 +104,7 @@ tasks:
   - id: T005
     name: Toll Event processing with cross-verification
     objective: Implement toll event creation with RFID/ANPR cross-verification logic.
-    status: in_progress
+    status: review
     depends_on:
       - T003
       - T004
