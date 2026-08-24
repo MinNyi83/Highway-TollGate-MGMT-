@@ -200,7 +200,7 @@ tasks:
   - id: T009
     name: Device status management
     objective: Implement device status tracking with heartbeat endpoint.
-    status: review
+    status: completed
     depends_on:
       - T004
     acceptance_criteria:
@@ -214,7 +214,9 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
-    result: null
+    result:
+      summary: T009 completed. Device status management CRUD.
+      evidence: (no output)
     attempts: 1
     usage: null
   - id: T010
