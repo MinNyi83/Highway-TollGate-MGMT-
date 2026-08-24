@@ -1,2 +1,0 @@
-summary: "T010 completed. Reporting endpoints with date range queries."
-evidence: "npx tsc --noEmit passes. Reports routes and service created."
