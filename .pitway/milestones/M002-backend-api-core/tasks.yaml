@@ -246,7 +246,7 @@ tasks:
   - id: T011
     name: OpenAPI/Swagger documentation
     objective: Set up OpenAPI documentation with Swagger UI for all API endpoints.
-    status: review
+    status: completed
     depends_on:
       - T010
     acceptance_criteria:
@@ -260,7 +260,9 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
-    result: null
+    result:
+      summary: T011 completed. OpenAPI/Swagger documentation setup.
+      evidence: (no output)
     attempts: 1
     usage: null
   - id: T012
@@ -285,7 +287,7 @@ tasks:
   - id: T013
     name: Verify all endpoints via Swagger UI
     objective: Verify all API endpoints are functional and documented.
-    status: waiting
+    status: ready
     depends_on:
       - T011
     acceptance_criteria:
