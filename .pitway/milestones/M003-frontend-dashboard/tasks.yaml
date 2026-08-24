@@ -30,7 +30,7 @@ tasks:
     name: Auth pages
     objective: Create login page with form validation, JWT token storage in
       localStorage, and auth guard for protected routes.
-    status: in_progress
+    status: review
     depends_on:
       - T001
     acceptance_criteria:
