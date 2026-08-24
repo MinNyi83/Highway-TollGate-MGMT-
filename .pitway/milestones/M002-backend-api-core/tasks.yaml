@@ -129,7 +129,7 @@ tasks:
     name: Transaction engine with auto-deduction
     objective: Implement transaction processing with automatic toll deduction on
       event completion.
-    status: ready
+    status: in_progress
     depends_on:
       - T002
       - T005
@@ -146,6 +146,7 @@ tasks:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
     result: null
+    attempts: 1
     usage: null
   - id: T007
     name: Violation management
