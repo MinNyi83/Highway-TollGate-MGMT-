@@ -5,7 +5,7 @@ tasks:
     objective: Create the root package.json with npm workspaces and minimal
       package.json files for packages/backend, packages/frontend, and
       packages/simulator.
-    status: review
+    status: completed
     depends_on: []
     acceptance_criteria:
       - Root package.json defines workspaces array containing packages/*
@@ -19,14 +19,18 @@ tasks:
     verification:
       strategy: command
       detail: npm ls --workspaces
-    result: null
+    result:
+      summary: "T001 completed successfully. npm workspaces monorepo initialized with
+        3 packages: backend, frontend, simulator."
+      evidence: +-- ts-node-dev@2.0.0 deduped | +-- ts-node@10.9.2 deduped | `--
+        typescript@5.9.3 deduped
     attempts: 1
     usage: null
   - id: T002
     name: Set up backend Express + TypeScript project
     objective: Configure the backend package with Express.js, TypeScript, and
       essential middleware (cors, helmet, dotenv).
-    status: waiting
+    status: ready
     depends_on:
       - T001
     acceptance_criteria:
@@ -49,7 +53,7 @@ tasks:
     name: Set up PostgreSQL + Prisma schema
     objective: Install Prisma, define the complete database schema with all 11
       tables, and generate the Prisma client.
-    status: waiting
+    status: ready
     depends_on:
       - T001
     acceptance_criteria:
