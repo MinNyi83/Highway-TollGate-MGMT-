@@ -56,7 +56,7 @@ tasks:
   - id: T003
     name: Vehicle management with RFID tag binding
     objective: Implement vehicle CRUD and RFID tag binding/unbinding endpoints.
-    status: review
+    status: completed
     depends_on:
       - T001
     acceptance_criteria:
@@ -72,7 +72,9 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
-    result: null
+    result:
+      summary: T003 completed. Vehicle management with RFID tag binding/unbinding.
+      evidence: (no output)
     attempts: 1
     usage: null
   - id: T004
