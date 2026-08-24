@@ -30,7 +30,7 @@ tasks:
     name: User and Account management CRUD
     objective: Implement CRUD endpoints for users and accounts with balance top-up
       functionality.
-    status: in_progress
+    status: review
     depends_on:
       - T001
     acceptance_criteria:
