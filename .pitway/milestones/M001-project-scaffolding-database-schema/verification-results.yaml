@@ -1,2 +1,25 @@
 schema_version: 1
-results: []
+results:
+  - check: CT001
+    status: pass
+    at: 2026-08-24T16:50:53Z
+    evidence: +-- ts-node-dev@2.0.0 deduped | +-- ts-node@10.9.2 deduped | `--
+      typescript@5.9.3 deduped
+    recorded_by: command
+    duration_ms: 8397
+    termination_reason: exited
+  - check: CT002
+    status: pass
+    at: 2026-08-24T16:51:01Z
+    evidence: (no output; exit 0)
+    recorded_by: command
+    duration_ms: 8206
+    termination_reason: exited
+  - check: CT003
+    status: pass
+    at: 2026-08-24T16:51:08Z
+    evidence: Environment variables loaded from .env | Prisma schema loaded from
+      prisma\schema.prisma | The schema at prisma\schema.prisma is valid 🚀
+    recorded_by: command
+    duration_ms: 7123
+    termination_reason: exited

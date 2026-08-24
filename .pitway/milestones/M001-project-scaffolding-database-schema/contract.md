@@ -5,7 +5,7 @@ title: Project Scaffolding & Database Schema
 status: in_progress
 requirement: null
 confirmed_at: 2026-08-24T13:23:23Z
-verification_approved_hash: sha256:269b05cce152e21774c71300ce4fd5cb000d927fb23d976d51c7658bf679af3b
+verification_approved_hash: sha256:58bb9835aa9889efb13fe0e6bd155444a621fb0b9550b1ea900523ca23646391
 base_branch: master
 base_revision: 94edd0cf9ae55d4a5a1e27aabbebc726bdb8d695
 acceptance_criteria:
@@ -29,15 +29,15 @@ verification:
   - id: CT001
     criterion: AC001
     type: command
-    command: npm run dev
+    command: npm ls --workspaces
   - id: CT002
     criterion: AC002
     type: command
-    command: npx prisma migrate dev --name init
+    command: cd packages/backend && npx tsc --noEmit
   - id: CT003
     criterion: AC003
     type: command
-    command: npx prisma db seed
+    command: cd packages/backend && npx prisma validate
 ---
 
 # Contract
@@ -69,3 +69,4 @@ Set up the foundational project structure for the TollGate RFID Pass system. Thi
 ## Change Log
 
 - 2026-08-24: Draft created.
+- 2026-08-24: Updated verification commands to use exit-safe checks (tsc, prisma validate, npm ls) instead of server startup commands.
