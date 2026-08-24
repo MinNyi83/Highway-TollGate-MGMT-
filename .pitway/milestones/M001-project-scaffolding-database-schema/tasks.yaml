@@ -136,7 +136,7 @@ tasks:
     name: Verify full M001 workflow
     objective: Run through the complete M001 workflow to ensure everything works
       end-to-end.
-    status: review
+    status: completed
     depends_on:
       - T002
       - T004
@@ -151,6 +151,9 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
-    result: null
+    result:
+      summary: T006 completed. All M001 tasks verified. TypeScript compiles without
+        errors. Project structure ready for M002.
+      evidence: (no output)
     attempts: 1
     usage: null
