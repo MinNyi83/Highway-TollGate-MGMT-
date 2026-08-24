@@ -5,7 +5,7 @@ tasks:
     objective: Create the root package.json with npm workspaces and minimal
       package.json files for packages/backend, packages/frontend, and
       packages/simulator.
-    status: in_progress
+    status: review
     depends_on: []
     acceptance_criteria:
       - Root package.json defines workspaces array containing packages/*
