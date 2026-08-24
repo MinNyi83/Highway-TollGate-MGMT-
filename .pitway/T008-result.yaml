@@ -1,0 +1,2 @@
+summary: "T008 completed. Notification system with WebSocket broadcast."
+evidence: "npx tsc --noEmit passes. Notifications routes and service created."
