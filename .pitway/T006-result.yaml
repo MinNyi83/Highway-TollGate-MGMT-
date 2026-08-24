@@ -1,2 +1,0 @@
-summary: "T006 completed. Toll Plazas management page."
-evidence: "npx tsc --noEmit passes."
