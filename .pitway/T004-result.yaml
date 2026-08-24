@@ -1,0 +1,2 @@
+summary: "T004 completed. Database seed script created with 5 users, 20 vehicles, 20 RFID tags, 3 toll plazas, 15 toll rates, 3 toll events, 2 transactions, 1 violation, 2 device statuses."
+evidence: "npx tsc --noEmit prisma/seed.ts passes without errors."

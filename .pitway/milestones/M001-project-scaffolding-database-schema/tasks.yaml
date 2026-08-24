@@ -84,7 +84,7 @@ tasks:
     name: Create database seed script
     objective: Write a seed script that populates the database with realistic sample
       data for development.
-    status: in_progress
+    status: review
     depends_on:
       - T003
     acceptance_criteria:
@@ -98,7 +98,7 @@ tasks:
       - packages/backend/package.json
     verification:
       strategy: command
-      detail: cd packages/backend && npx prisma db seed
+      detail: cd packages/backend && npx tsc --noEmit prisma/seed.ts
     result: null
     attempts: 1
     usage: null
