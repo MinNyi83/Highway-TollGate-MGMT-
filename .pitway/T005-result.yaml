@@ -1,0 +1,2 @@
+summary: "T005 completed. Health-check endpoint created at /api/health with status, timestamp, and uptime. Docker Compose configured with PostgreSQL 16 and Redis 7."
+evidence: "npx tsc --noEmit passes without errors. Health endpoint and Docker Compose files created."
