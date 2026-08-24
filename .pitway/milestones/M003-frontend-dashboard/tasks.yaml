@@ -4,7 +4,7 @@ tasks:
     name: Vite + React scaffold
     objective: Initialize Vite project with React + TypeScript, configure Tailwind
       CSS, install and configure shadcn/ui.
-    status: in_progress
+    status: review
     depends_on: []
     acceptance_criteria:
       - Vite dev server starts on port 5173
