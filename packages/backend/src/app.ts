@@ -12,6 +12,7 @@ import tollEventsRoutes from './modules/toll-events/toll-events.routes';
 import transactionsRoutes from './modules/transactions/transactions.routes';
 import violationsRoutes from './modules/violations/violations.routes';
 import notificationsRoutes from './modules/notifications/notifications.routes';
+import deviceStatusRoutes from './modules/device-status/device-status.routes';
 
 dotenv.config();
 
@@ -31,5 +32,6 @@ app.use('/api/toll-events', tollEventsRoutes);
 app.use('/api/transactions', transactionsRoutes);
 app.use('/api/violations', violationsRoutes);
 app.use('/api/notifications', notificationsRoutes);
+app.use('/api/device-status', deviceStatusRoutes);
 
 export default app;
