@@ -1,2 +1,0 @@
-summary: "T004 completed. Toll Plaza and Toll Rate management CRUD."
-evidence: "npx tsc --noEmit passes. Toll-plazas routes and service created."
