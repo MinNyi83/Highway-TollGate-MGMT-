@@ -1,2 +1,0 @@
-summary: "T003 completed. Vehicle management with RFID tag binding/unbinding."
-evidence: "npx tsc --noEmit passes. Vehicles routes and service with CRUD and RFID binding created."
