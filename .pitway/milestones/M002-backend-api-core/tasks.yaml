@@ -246,7 +246,7 @@ tasks:
   - id: T011
     name: OpenAPI/Swagger documentation
     objective: Set up OpenAPI documentation with Swagger UI for all API endpoints.
-    status: in_progress
+    status: review
     depends_on:
       - T010
     acceptance_criteria:
