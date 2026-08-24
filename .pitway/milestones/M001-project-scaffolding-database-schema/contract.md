@@ -2,10 +2,12 @@
 schema_version: 1
 id: M001
 title: Project Scaffolding & Database Schema
-status: draft
+status: in_progress
 requirement: null
-confirmed_at: null
-verification_approved_hash: null
+confirmed_at: 2026-08-24T13:23:23Z
+verification_approved_hash: sha256:269b05cce152e21774c71300ce4fd5cb000d927fb23d976d51c7658bf679af3b
+base_branch: master
+base_revision: 94edd0cf9ae55d4a5a1e27aabbebc726bdb8d695
 acceptance_criteria:
   - id: AC001
     text: npm workspaces monorepo with packages/backend, packages/frontend,
