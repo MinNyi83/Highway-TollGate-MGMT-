@@ -2,7 +2,7 @@
 schema_version: 1
 id: M001
 title: Project Scaffolding & Database Schema
-status: in_progress
+status: completed
 requirement: null
 confirmed_at: 2026-08-24T13:23:23Z
 verification_approved_hash: sha256:58bb9835aa9889efb13fe0e6bd155444a621fb0b9550b1ea900523ca23646391
