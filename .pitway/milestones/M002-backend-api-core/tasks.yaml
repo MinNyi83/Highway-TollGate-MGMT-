@@ -80,7 +80,7 @@ tasks:
   - id: T004
     name: Toll Plaza and Toll Rate management
     objective: Implement CRUD endpoints for toll plazas and toll rates.
-    status: review
+    status: completed
     depends_on:
       - T001
     acceptance_criteria:
@@ -96,13 +96,15 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
-    result: null
+    result:
+      summary: T004 completed. Toll Plaza and Toll Rate management CRUD.
+      evidence: (no output)
     attempts: 1
     usage: null
   - id: T005
     name: Toll Event processing with cross-verification
     objective: Implement toll event creation with RFID/ANPR cross-verification logic.
-    status: waiting
+    status: ready
     depends_on:
       - T003
       - T004
@@ -186,7 +188,7 @@ tasks:
   - id: T009
     name: Device status management
     objective: Implement device status tracking with heartbeat endpoint.
-    status: waiting
+    status: ready
     depends_on:
       - T004
     acceptance_criteria:
