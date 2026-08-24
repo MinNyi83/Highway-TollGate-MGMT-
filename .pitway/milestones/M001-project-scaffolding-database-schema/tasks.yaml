@@ -30,7 +30,7 @@ tasks:
     name: Set up backend Express + TypeScript project
     objective: Configure the backend package with Express.js, TypeScript, and
       essential middleware (cors, helmet, dotenv).
-    status: in_progress
+    status: review
     depends_on:
       - T001
     acceptance_criteria:
