@@ -1,0 +1,275 @@
+schema_version: 1
+tasks:
+  - id: T001
+    name: Auth module (JWT register, login, refresh, middleware)
+    objective: Implement JWT authentication with register, login, refresh token endpoints, and auth middleware for protected routes.
+    status: planned
+    depends_on: []
+    acceptance_criteria:
+      - POST /api/auth/register creates user and returns JWT
+      - POST /api/auth/login validates credentials and returns JWT
+      - POST /api/auth/refresh refreshes expired token
+      - Auth middleware validates JWT on protected routes
+      - Password hashing with bcryptjs
+    relevant_files:
+      - packages/backend/src/modules/auth/auth.routes.ts
+      - packages/backend/src/modules/auth/auth.service.ts
+      - packages/backend/src/middleware/auth.ts
+      - packages/backend/src/utils/jwt.ts
+    verification:
+      strategy: command
+      detail: cd packages/backend && npx tsc --noEmit
+    result: null
+    usage: null
+
+  - id: T002
+    name: User and Account management CRUD
+    objective: Implement CRUD endpoints for users and accounts with balance top-up functionality.
+    status: planned
+    depends_on:
+      - T001
+    acceptance_criteria:
+      - GET /api/users returns list of users
+      - GET /api/users/:id returns single user
+      - PUT /api/users/:id updates user
+      - GET /api/accounts returns list of accounts
+      - GET /api/accounts/:id returns single account with balance
+      - POST /api/accounts/:id/topup adds balance to account
+    relevant_files:
+      - packages/backend/src/modules/users/users.routes.ts
+      - packages/backend/src/modules/users/users.service.ts
+      - packages/backend/src/modules/accounts/accounts.routes.ts
+      - packages/backend/src/modules/accounts/accounts.service.ts
+    verification:
+      strategy: command
+      detail: cd packages/backend && npx tsc --noEmit
+    result: null
+    usage: null
+
+  - id: T003
+    name: Vehicle management with RFID tag binding
+    objective: Implement vehicle CRUD and RFID tag binding/unbinding endpoints.
+    status: planned
+    depends_on:
+      - T001
+    acceptance_criteria:
+      - GET /api/vehicles returns list of vehicles
+      - POST /api/vehicles creates vehicle
+      - GET /api/vehicles/:id returns vehicle with RFID tags
+      - PUT /api/vehicles/:id updates vehicle
+      - POST /api/vehicles/:id/rfid binds RFID tag to vehicle
+      - DELETE /api/vehicles/:id/rfid/:tagId unbinds RFID tag
+    relevant_files:
+      - packages/backend/src/modules/vehicles/vehicles.routes.ts
+      - packages/backend/src/modules/vehicles/vehicles.service.ts
+    verification:
+      strategy: command
+      detail: cd packages/backend && npx tsc --noEmit
+    result: null
+    usage: null
+
+  - id: T004
+    name: Toll Plaza and Toll Rate management
+    objective: Implement CRUD endpoints for toll plazas and toll rates.
+    status: planned
+    depends_on:
+      - T001
+    acceptance_criteria:
+      - "GET /api/toll-plazas returns list of plazas"
+      - "POST /api/toll-plazas creates plaza"
+      - "GET /api/toll-plazas/:id returns plaza with rates"
+      - "PUT /api/toll-plazas/:id updates plaza"
+      - "GET /api/toll-plazas/:id/rates returns rates for plaza"
+      - "POST /api/toll-plazas/:id/rates creates rate for plaza"
+    relevant_files:
+      - packages/backend/src/modules/toll-plazas/toll-plazas.routes.ts
+      - packages/backend/src/modules/toll-plazas/toll-plazas.service.ts
+    verification:
+      strategy: command
+      detail: cd packages/backend && npx tsc --noEmit
+    result: null
+    usage: null
+
+  - id: T005
+    name: Toll Event processing with cross-verification
+    objective: Implement toll event creation with RFID/ANPR cross-verification logic.
+    status: planned
+    depends_on:
+      - T003
+      - T004
+    acceptance_criteria:
+      - "POST /api/toll-events creates entry event"
+      - "PUT /api/toll-events/:id/exit completes exit event"
+      - "Cross-verification matches RFID tag plate against ANPR plate"
+      - "Mismatch triggers violation creation"
+      - "Event status transitions from ENTRY to EXIT to COMPLETED"
+    relevant_files:
+      - packages/backend/src/modules/toll-events/toll-events.routes.ts
+      - packages/backend/src/modules/toll-events/toll-events.service.ts
+    verification:
+      strategy: command
+      detail: cd packages/backend && npx tsc --noEmit
+    result: null
+    usage: null
+
+  - id: T006
+    name: Transaction engine with auto-deduction
+    objective: Implement transaction processing with automatic toll deduction on event completion.
+    status: planned
+    depends_on:
+      - T002
+      - T005
+    acceptance_criteria:
+      - "Transaction created on toll event completion"
+      - "Automatic deduction from linked account"
+      - "Balance check before deduction"
+      - "Insufficient balance triggers violation"
+      - "Transaction status transitions from PENDING to COMPLETED or FAILED"
+    relevant_files:
+      - packages/backend/src/modules/transactions/transactions.routes.ts
+      - packages/backend/src/modules/transactions/transactions.service.ts
+    verification:
+      strategy: command
+      detail: cd packages/backend && npx tsc --noEmit
+    result: null
+    usage: null
+
+  - id: T007
+    name: Violation management
+    objective: Implement violation CRUD with status workflow and escalation.
+    status: planned
+    depends_on:
+      - T005
+    acceptance_criteria:
+      - "GET /api/violations returns list of violations"
+      - "GET /api/violations/:id returns violation details"
+      - "PUT /api/violations/:id/status updates violation status"
+      - "Status workflow from PENDING to PROCESSING to PAID/ESCALATED/DISMISSED"
+      - "Fine amount calculated from toll rate"
+    relevant_files:
+      - packages/backend/src/modules/violations/violations.routes.ts
+      - packages/backend/src/modules/violations/violations.service.ts
+    verification:
+      strategy: command
+      detail: cd packages/backend && npx tsc --noEmit
+    result: null
+    usage: null
+
+  - id: T008
+    name: Notification system with WebSocket broadcast
+    objective: Implement in-app notification storage and WebSocket broadcast for real-time updates.
+    status: planned
+    depends_on:
+      - T001
+    acceptance_criteria:
+      - GET /api/notifications returns user notifications
+      - PUT /api/notifications/:id/read marks notification as read
+      - POST /api/notifications creates and broadcasts notification
+      - WebSocket broadcasts new notifications to connected clients
+    relevant_files:
+      - packages/backend/src/modules/notifications/notifications.routes.ts
+      - packages/backend/src/modules/notifications/notifications.service.ts
+      - packages/backend/src/websocket/gateway.ts
+    verification:
+      strategy: command
+      detail: cd packages/backend && npx tsc --noEmit
+    result: null
+    usage: null
+
+  - id: T009
+    name: Device status management
+    objective: Implement device status tracking with heartbeat endpoint.
+    status: planned
+    depends_on:
+      - T004
+    acceptance_criteria:
+      - GET /api/devices returns list of devices
+      - POST /api/devices/:id/heartbeat updates last heartbeat
+      - GET /api/devices/:id/status returns device status
+      - Devices inactive for >5 minutes marked OFFLINE
+    relevant_files:
+      - packages/backend/src/modules/devices/devices.routes.ts
+      - packages/backend/src/modules/devices/devices.service.ts
+    verification:
+      strategy: command
+      detail: cd packages/backend && npx tsc --noEmit
+    result: null
+    usage: null
+
+  - id: T010
+    name: Reporting endpoints
+    objective: Implement reporting endpoints for revenue, traffic, and violation statistics.
+    status: planned
+    depends_on:
+      - T006
+      - T007
+    acceptance_criteria:
+      - GET /api/reports/revenue returns revenue summary by plaza and date range
+      - GET /api/reports/traffic returns traffic flow by plaza and date range
+      - GET /api/reports/violations returns violation statistics
+      - All reports support date range filtering
+    relevant_files:
+      - packages/backend/src/modules/reports/reports.routes.ts
+      - packages/backend/src/modules/reports/reports.service.ts
+    verification:
+      strategy: command
+      detail: cd packages/backend && npx tsc --noEmit
+    result: null
+    usage: null
+
+  - id: T011
+    name: OpenAPI/Swagger documentation
+    objective: Set up OpenAPI documentation with Swagger UI for all API endpoints.
+    status: planned
+    depends_on:
+      - T010
+    acceptance_criteria:
+      - Swagger UI available at /api-docs
+      - All endpoints documented with request/response schemas
+      - JWT authentication supported in Swagger UI
+      - OpenAPI spec downloadable as JSON
+    relevant_files:
+      - packages/backend/src/config/swagger.ts
+      - packages/backend/src/app.ts
+    verification:
+      strategy: command
+      detail: cd packages/backend && npx tsc --noEmit
+    result: null
+    usage: null
+
+  - id: T012
+    name: WebSocket gateway (Socket.io)
+    objective: Implement Socket.io WebSocket gateway for real-time event broadcasting.
+    status: planned
+    depends_on:
+      - T001
+    acceptance_criteria:
+      - Socket.io server integrated with Express
+      - JWT authentication on WebSocket handshake
+      - Room-based event broadcasting
+      - Connection status tracking
+    relevant_files:
+      - packages/backend/src/websocket/gateway.ts
+      - packages/backend/src/server.ts
+    verification:
+      strategy: command
+      detail: cd packages/backend && npx tsc --noEmit
+    result: null
+    usage: null
+
+  - id: T013
+    name: Verify all endpoints via Swagger UI
+    objective: Verify all API endpoints are functional and documented.
+    status: planned
+    depends_on:
+      - T011
+    acceptance_criteria:
+      - All endpoints return correct responses
+      - Swagger UI shows all endpoints
+      - Authentication flow works end-to-end
+    relevant_files: []
+    verification:
+      strategy: command
+      detail: cd packages/backend && npx tsc --noEmit
+    result: null
+    usage: null
