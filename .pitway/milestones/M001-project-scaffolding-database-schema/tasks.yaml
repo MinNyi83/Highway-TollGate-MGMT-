@@ -5,7 +5,7 @@ tasks:
     objective: Create the root package.json with npm workspaces and minimal
       package.json files for packages/backend, packages/frontend, and
       packages/simulator.
-    status: ready
+    status: in_progress
     depends_on: []
     acceptance_criteria:
       - Root package.json defines workspaces array containing packages/*
@@ -20,6 +20,7 @@ tasks:
       strategy: command
       detail: npm ls --workspaces
     result: null
+    attempts: 1
     usage: null
   - id: T002
     name: Set up backend Express + TypeScript project

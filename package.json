@@ -1,0 +1,19 @@
+{
+  "name": "tollgate-rfid-pass",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Highway Tollgate Management System with RFID and ANPR",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces",
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "lint": "npm run lint --workspaces"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "license": "MIT"
+}
