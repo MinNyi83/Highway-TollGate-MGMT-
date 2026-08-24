@@ -30,7 +30,7 @@ tasks:
     name: User and Account management CRUD
     objective: Implement CRUD endpoints for users and accounts with balance top-up
       functionality.
-    status: ready
+    status: in_progress
     depends_on:
       - T001
     acceptance_criteria:
@@ -49,6 +49,7 @@ tasks:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
     result: null
+    attempts: 1
     usage: null
   - id: T003
     name: Vehicle management with RFID tag binding
