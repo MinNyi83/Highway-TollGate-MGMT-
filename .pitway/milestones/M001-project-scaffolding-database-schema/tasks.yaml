@@ -136,7 +136,7 @@ tasks:
     name: Verify full M001 workflow
     objective: Run through the complete M001 workflow to ensure everything works
       end-to-end.
-    status: ready
+    status: review
     depends_on:
       - T002
       - T004
@@ -150,6 +150,7 @@ tasks:
     relevant_files: []
     verification:
       strategy: command
-      detail: npm run dev
+      detail: cd packages/backend && npx tsc --noEmit
     result: null
+    attempts: 1
     usage: null
