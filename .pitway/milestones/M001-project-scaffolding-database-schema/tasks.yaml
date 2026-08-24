@@ -30,7 +30,7 @@ tasks:
     name: Set up backend Express + TypeScript project
     objective: Configure the backend package with Express.js, TypeScript, and
       essential middleware (cors, helmet, dotenv).
-    status: review
+    status: completed
     depends_on:
       - T001
     acceptance_criteria:
@@ -47,7 +47,11 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
-    result: null
+    result:
+      summary: T002 completed. Backend Express + TypeScript project set up with strict
+        mode tsconfig, Express app with cors/helmet/json middleware, server
+        entry point, and .env.example.
+      evidence: (no output)
     attempts: 2
     usage: null
   - id: T003
@@ -96,7 +100,7 @@ tasks:
     name: Health-check endpoint + Docker Compose
     objective: Implement the health-check API endpoint and create Docker Compose
       configuration for PostgreSQL and Redis.
-    status: waiting
+    status: ready
     depends_on:
       - T002
     acceptance_criteria:
