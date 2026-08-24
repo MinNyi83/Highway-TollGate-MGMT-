@@ -105,7 +105,7 @@ tasks:
     name: Vehicles list + detail
     objective: Create vehicles page with searchable/filterable table, vehicle detail
       view, create/edit vehicle form, and RFID tag binding UI.
-    status: ready
+    status: in_progress
     depends_on:
       - T003
     acceptance_criteria:
@@ -122,7 +122,7 @@ tasks:
       strategy: command
       detail: cd packages/frontend && npx tsc --noEmit
     result: null
-    attempts: 0
+    attempts: 1
     usage: null
   - id: T006
     name: Toll Plazas management
