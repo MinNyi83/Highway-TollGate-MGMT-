@@ -155,7 +155,7 @@ tasks:
     name: Toll Events feed
     objective: Create real-time toll events feed with WebSocket connection, event
       details view, and cross-verification status display.
-    status: ready
+    status: in_progress
     depends_on:
       - T003
     acceptance_criteria:
@@ -171,7 +171,7 @@ tasks:
       strategy: command
       detail: cd packages/frontend && npx tsc --noEmit
     result: null
-    attempts: 0
+    attempts: 1
     usage: null
   - id: T008
     name: Transactions list
