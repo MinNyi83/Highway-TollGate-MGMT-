@@ -1,0 +1,151 @@
+schema_version: 1
+tasks:
+  - id: T001
+    name: CLI scaffold
+    objective: Set up Commander CLI with simulate, status, and config commands.
+    status: ready
+    depends_on: []
+    acceptance_criteria:
+      - CLI responds to --help with available commands
+      - simulate command accepts --plaza, --count, --interval options
+      - status command shows current simulation state
+    relevant_files:
+      - packages/simulator/src/cli.ts
+      - packages/simulator/src/commands
+      - packages/simulator/tsconfig.json
+    verification:
+      strategy: command
+      detail: cd packages/simulator && npx tsc --noEmit
+    result:
+      summary: "Pending"
+      evidence: "Pending"
+    attempts: 0
+    usage: null
+  - id: T002
+    name: Vehicle pool generator
+    objective: Generate random vehicles with plates, RFID tags, and vehicle classes.
+    status: waiting
+    depends_on:
+      - T001
+    acceptance_criteria:
+      - Generates vehicles with valid plate formats
+      - Assigns random vehicle classes
+      - Creates RFID tags for vehicles
+      - Configurable pool size
+    relevant_files:
+      - packages/simulator/src/generators/vehiclePool.ts
+      - packages/simulator/src/types.ts
+    verification:
+      strategy: command
+      detail: cd packages/simulator && npx tsc --noEmit
+    result:
+      summary: "Pending"
+      evidence: "Pending"
+    attempts: 0
+    usage: null
+  - id: T003
+    name: Single passage simulation
+    objective: Simulate one vehicle entering and exiting a toll plaza.
+    status: waiting
+    depends_on:
+      - T002
+    acceptance_criteria:
+      - Creates toll event entry via API
+      - Waits configurable duration for exit
+      - Completes toll event exit via API
+      - Displays passage summary
+    relevant_files:
+      - packages/simulator/src/simulation/passage.ts
+      - packages/simulator/src/api/client.ts
+    verification:
+      strategy: command
+      detail: cd packages/simulator && npx tsc --noEmit
+    result:
+      summary: "Pending"
+      evidence: "Pending"
+    attempts: 0
+    usage: null
+  - id: T004
+    name: Continuous simulation
+    objective: Run simulation in loop with configurable interval between passages.
+    status: waiting
+    depends_on:
+      - T003
+    acceptance_criteria:
+      - Runs continuously until interrupted
+      - Configurable interval between passages
+      - Random plaza selection
+      - Graceful shutdown on SIGINT
+    relevant_files:
+      - packages/simulator/src/simulation/continuous.ts
+    verification:
+      strategy: command
+      detail: cd packages/simulator && npx tsc --noEmit
+    result:
+      summary: "Pending"
+      evidence: "Pending"
+    attempts: 0
+    usage: null
+  - id: T005
+    name: Configurable scenarios
+    objective: Support different simulation scenarios: normal passage, no-RFID vehicle, ANPR mismatch, insufficient balance.
+    status: waiting
+    depends_on:
+      - T003
+    acceptance_criteria:
+      - Normal scenario: RFID + ANPR match, sufficient balance
+      - No-RFID scenario: vehicle without RFID tag
+      - Mismatch scenario: ANPR plate doesn't match vehicle
+      - Insufficient balance: account has insufficient funds
+    relevant_files:
+      - packages/simulator/src/simulation/scenarios.ts
+    verification:
+      strategy: command
+      detail: cd packages/simulator && npx tsc --noEmit
+    result:
+      summary: "Pending"
+      evidence: "Pending"
+    attempts: 0
+    usage: null
+  - id: T006
+    name: Real-time stats
+    objective: Display live statistics during simulation (vehicles processed, violations, revenue).
+    status: waiting
+    depends_on:
+      - T004
+    acceptance_criteria:
+      - Shows vehicles processed count
+      - Shows violations detected count
+      - Shows total revenue collected
+      - Updates in real-time during continuous simulation
+    relevant_files:
+      - packages/simulator/src/simulation/stats.ts
+    verification:
+      strategy: command
+      detail: cd packages/simulator && npx tsc --noEmit
+    result:
+      summary: "Pending"
+      evidence: "Pending"
+    attempts: 0
+    usage: null
+  - id: T007
+    name: API integration
+    objective: Wire simulator to backend API for toll event creation and completion.
+    status: waiting
+    depends_on:
+      - T003
+    acceptance_criteria:
+      - Calls POST /api/toll-events/entry for vehicle entry
+      - Calls PUT /api/toll-events/:id/exit for vehicle exit
+      - Handles API errors gracefully
+      - Configurable API base URL
+    relevant_files:
+      - packages/simulator/src/api/client.ts
+    verification:
+      strategy: command
+      detail: cd packages/simulator && npx tsc --noEmit
+    result:
+      summary: "Pending"
+      evidence: "Pending"
+    attempts: 0
+    usage: null

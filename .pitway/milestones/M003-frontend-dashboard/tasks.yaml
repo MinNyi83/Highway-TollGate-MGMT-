@@ -1,0 +1,262 @@
+schema_version: 1
+tasks:
+  - id: T001
+    name: Vite + React scaffold
+    objective: Initialize Vite project with React + TypeScript, configure Tailwind
+      CSS, install and configure shadcn/ui.
+    status: planned
+    depends_on: []
+    acceptance_criteria:
+      - Vite dev server starts on port 5173
+      - TypeScript compiles without errors
+      - Tailwind CSS is configured and working
+      - shadcn/ui is installed and configured
+    relevant_files:
+      - packages/frontend/src
+      - packages/frontend/vite.config.ts
+      - packages/frontend/tailwind.config.js
+      - packages/frontend/tsconfig.json
+      - packages/frontend/package.json
+    verification:
+      strategy: command
+      detail: cd packages/frontend && npx tsc --noEmit
+    result: null
+    attempts: 0
+    usage: null
+  - id: T002
+    name: Auth pages
+    objective: Create login page with form validation, JWT token storage in
+      localStorage, and auth guard for protected routes.
+    status: planned
+    depends_on:
+      - T001
+    acceptance_criteria:
+      - Login page renders with email/password form
+      - Form validation shows errors for empty fields
+      - Successful login stores JWT token and redirects to dashboard
+      - Protected routes redirect to login when unauthenticated
+    relevant_files:
+      - packages/frontend/src/pages/Login.tsx
+      - packages/frontend/src/stores/authStore.ts
+      - packages/frontend/src/components/ProtectedRoute.tsx
+    verification:
+      strategy: command
+      detail: cd packages/frontend && npx tsc --noEmit
+    result: null
+    attempts: 0
+    usage: null
+  - id: T003
+    name: App layout + navigation
+    objective: Create responsive sidebar layout with navigation links to all
+      sections, route definitions for all pages.
+    status: planned
+    depends_on:
+      - T001
+    acceptance_criteria:
+      - Sidebar shows links to all sections
+      - Sidebar is responsive (collapsible on mobile)
+      - React Router routes are defined for all pages
+      - Active route is highlighted in sidebar
+    relevant_files:
+      - packages/frontend/src/components/Layout.tsx
+      - packages/frontend/src/components/Sidebar.tsx
+      - packages/frontend/src/App.tsx
+      - packages/frontend/src/routes.tsx
+    verification:
+      strategy: command
+      detail: cd packages/frontend && npx tsc --noEmit
+    result: null
+    attempts: 0
+    usage: null
+  - id: T004
+    name: Dashboard overview
+    objective: Create dashboard page with stats cards (total vehicles, total
+      revenue, active violations) and charts (revenue by plaza, violations by
+      type).
+    status: planned
+    depends_on:
+      - T003
+    acceptance_criteria:
+      - Stats cards show key metrics
+      - Revenue chart displays data from reports API
+      - Violations chart displays breakdown by type
+      - Charts are responsive and interactive
+    relevant_files:
+      - packages/frontend/src/pages/Dashboard.tsx
+      - packages/frontend/src/components/charts/RevenueChart.tsx
+      - packages/frontend/src/components/charts/ViolationsChart.tsx
+    verification:
+      strategy: command
+      detail: cd packages/frontend && npx tsc --noEmit
+    result: null
+    attempts: 0
+    usage: null
+  - id: T005
+    name: Vehicles list + detail
+    objective: Create vehicles page with searchable/filterable table, vehicle detail
+      view, create/edit vehicle form, and RFID tag binding UI.
+    status: planned
+    depends_on:
+      - T003
+    acceptance_criteria:
+      - Vehicles table displays all vehicles
+      - Search filters vehicles by plate number
+      - Create vehicle form with validation
+      - RFID tag binding/unbinding UI
+    relevant_files:
+      - packages/frontend/src/pages/Vehicles.tsx
+      - packages/frontend/src/pages/VehicleDetail.tsx
+      - packages/frontend/src/components/VehicleForm.tsx
+      - packages/frontend/src/components/RfidTagBinding.tsx
+    verification:
+      strategy: command
+      detail: cd packages/frontend && npx tsc --noEmit
+    result: null
+    attempts: 0
+    usage: null
+  - id: T006
+    name: Toll Plazas management
+    objective: Create toll plazas page with plaza list, create/edit plaza form, and
+      rate management per vehicle class.
+    status: planned
+    depends_on:
+      - T003
+    acceptance_criteria:
+      - Toll plazas table shows name, location, lanes, status
+      - Create/edit plaza form with validation
+      - Rate management UI for each vehicle class
+      - Effective date range for rates
+    relevant_files:
+      - packages/frontend/src/pages/TollPlazas.tsx
+      - packages/frontend/src/pages/TollPlazaDetail.tsx
+      - packages/frontend/src/components/TollPlazaForm.tsx
+      - packages/frontend/src/components/RateForm.tsx
+    verification:
+      strategy: command
+      detail: cd packages/frontend && npx tsc --noEmit
+    result: null
+    attempts: 0
+    usage: null
+  - id: T007
+    name: Toll Events feed
+    objective: Create real-time toll events feed with WebSocket connection, event
+      details view, and cross-verification status display.
+    status: planned
+    depends_on:
+      - T003
+    acceptance_criteria:
+      - Events list updates in real-time via WebSocket
+      - Each event shows vehicle, plaza, entry/exit times
+      - Cross-verification status displayed
+      - Filter events by plaza, date range, status
+    relevant_files:
+      - packages/frontend/src/pages/TollEvents.tsx
+      - packages/frontend/src/components/EventCard.tsx
+      - packages/frontend/src/hooks/useWebSocket.ts
+    verification:
+      strategy: command
+      detail: cd packages/frontend && npx tsc --noEmit
+    result: null
+    attempts: 0
+    usage: null
+  - id: T008
+    name: Transactions list
+    objective: Create transactions history page with filters for date range, status,
+      and plaza.
+    status: planned
+    depends_on:
+      - T003
+    acceptance_criteria:
+      - Transactions table shows date, vehicle, plaza, amount, status
+      - Filter by date range, status, plaza
+      - Transaction detail view shows full event and account info
+    relevant_files:
+      - packages/frontend/src/pages/Transactions.tsx
+      - packages/frontend/src/components/TransactionDetail.tsx
+    verification:
+      strategy: command
+      detail: cd packages/frontend && npx tsc --noEmit
+    result: null
+    attempts: 0
+    usage: null
+  - id: T009
+    name: Violations management
+    objective: Create violations page with violation list, status update workflow,
+      and fine details.
+    status: planned
+    depends_on:
+      - T003
+    acceptance_criteria:
+      - Violations table shows vehicle, type, fine amount, status, due date
+      - Status update buttons
+      - Violation detail view with full event info
+    relevant_files:
+      - packages/frontend/src/pages/Violations.tsx
+      - packages/frontend/src/components/ViolationDetail.tsx
+    verification:
+      strategy: command
+      detail: cd packages/frontend && npx tsc --noEmit
+    result: null
+    attempts: 0
+    usage: null
+  - id: T010
+    name: Notifications panel
+    objective: Create notifications panel with notification list, mark as read, and
+      real-time badge count.
+    status: planned
+    depends_on:
+      - T003
+    acceptance_criteria:
+      - Notification bell icon with unread count badge
+      - Dropdown panel shows recent notifications
+      - Mark as read functionality
+      - Mark all as read option
+    relevant_files:
+      - packages/frontend/src/components/NotificationPanel.tsx
+      - packages/frontend/src/hooks/useNotifications.ts
+    verification:
+      strategy: command
+      detail: cd packages/frontend && npx tsc --noEmit
+    result: null
+    attempts: 0
+    usage: null
+  - id: T011
+    name: Reports page
+    objective: Create reports page with date range selector, revenue reports,
+      traffic reports, and violation stats using Recharts.
+    status: planned
+    depends_on:
+      - T004
+    acceptance_criteria:
+      - Date range selector for report period
+      - Revenue by plaza chart with Recharts
+      - Traffic volume chart
+      - Violation stats breakdown
+    relevant_files:
+      - packages/frontend/src/pages/Reports.tsx
+      - packages/frontend/src/components/charts/TrafficChart.tsx
+    verification:
+      strategy: command
+      detail: cd packages/frontend && npx tsc --noEmit
+    result: null
+    attempts: 0
+    usage: null
+  - id: T012
+    name: Device status dashboard
+    objective: Create device status page showing device health per plaza with last
+      heartbeat display.
+    status: planned
+    depends_on:
+      - T003
+    acceptance_criteria:
+      - Device status table shows plaza, device type, status, last heartbeat
+      - Color-coded status indicators
+      - Filter by plaza and device type
+    relevant_files:
+      - packages/frontend/src/pages/DeviceStatus.tsx
+    verification:
+      strategy: command
+      detail: cd packages/frontend && npx tsc --noEmit
+    result: null
+    attempts: 0
+    usage: null
