@@ -2,7 +2,7 @@
 schema_version: 1
 id: M002
 title: Backend API Core
-status: in_progress
+status: completed
 requirement: null
 confirmed_at: 2026-08-24T22:07:04Z
 verification_approved_hash: sha256:b297c3fdd8adda565d81b3e9729dbab9f3d775fd094e96a48f1b23721fdd91fe
