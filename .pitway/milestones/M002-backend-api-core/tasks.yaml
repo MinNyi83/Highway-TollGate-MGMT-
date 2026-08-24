@@ -290,7 +290,7 @@ tasks:
   - id: T013
     name: Verify all endpoints via Swagger UI
     objective: Verify all API endpoints are functional and documented.
-    status: ready
+    status: in_progress
     depends_on:
       - T011
     acceptance_criteria:
@@ -302,4 +302,5 @@ tasks:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
     result: null
+    attempts: 1
     usage: null
