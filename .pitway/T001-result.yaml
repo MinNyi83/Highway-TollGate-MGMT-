@@ -1,0 +1,2 @@
+summary: "T001 completed. JWT auth module with register, login, refresh endpoints and auth middleware."
+evidence: "npx tsc --noEmit passes. Auth routes, service, middleware, and JWT utility created."

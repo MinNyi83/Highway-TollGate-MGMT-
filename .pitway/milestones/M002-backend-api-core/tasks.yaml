@@ -4,7 +4,7 @@ tasks:
     name: Auth module (JWT register, login, refresh, middleware)
     objective: Implement JWT authentication with register, login, refresh token
       endpoints, and auth middleware for protected routes.
-    status: in_progress
+    status: review
     depends_on: []
     acceptance_criteria:
       - POST /api/auth/register creates user and returns JWT
