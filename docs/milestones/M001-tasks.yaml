@@ -1,0 +1,128 @@
+schema_version: 1
+tasks:
+  - id: T001
+    name: Initialize npm workspaces monorepo
+    objective: Create the root package.json with npm workspaces and minimal package.json files for packages/backend, packages/frontend, and packages/simulator.
+    status: planned
+    depends_on: []
+    acceptance_criteria:
+      - Root package.json defines workspaces array containing packages/*
+      - Each package has its own package.json with name version scripts
+      - npm install succeeds from root without errors
+    relevant_files:
+      - package.json
+      - packages/backend/package.json
+      - packages/frontend/package.json
+      - packages/simulator/package.json
+    verification:
+      strategy: command
+      detail: npm ls --workspaces
+    result: null
+    usage: null
+
+  - id: T002
+    name: Set up backend Express + TypeScript project
+    objective: Configure the backend package with Express.js, TypeScript, and essential middleware (cors, helmet, dotenv).
+    status: planned
+    depends_on:
+      - T001
+    acceptance_criteria:
+      - tsconfig.json configured for Node.js with strict mode
+      - src/app.ts exports Express app instance
+      - src/server.ts starts server on PORT from env
+      - ts-node-dev runs the backend without errors
+      - cors, helmet, express.json middleware applied
+    relevant_files:
+      - packages/backend/tsconfig.json
+      - packages/backend/src/app.ts
+      - packages/backend/src/server.ts
+      - packages/backend/.env.example
+    verification:
+      strategy: command
+      detail: cd packages/backend && npx ts-node-dev --respawn src/server.ts
+    result: null
+    usage: null
+
+  - id: T003
+    name: Set up PostgreSQL + Prisma schema
+    objective: Install Prisma, define the complete database schema with all 11 tables, and generate the Prisma client.
+    status: planned
+    depends_on:
+      - T001
+    acceptance_criteria:
+      - prisma/schema.prisma defines all 11 tables with proper relations
+      - npx prisma generate succeeds
+      - npx prisma validate succeeds
+      - DATABASE_URL configurable via .env
+    relevant_files:
+      - packages/backend/prisma/schema.prisma
+      - packages/backend/.env.example
+      - packages/backend/package.json
+    verification:
+      strategy: command
+      detail: cd packages/backend && npx prisma validate
+    result: null
+    usage: null
+
+  - id: T004
+    name: Create database seed script
+    objective: Write a seed script that populates the database with realistic sample data for development.
+    status: planned
+    depends_on:
+      - T003
+    acceptance_criteria:
+      - Seed script creates 5 sample users with accounts
+      - Seed script creates 20 sample vehicles with RFID tags
+      - Seed script creates 3 toll plazas with toll rates
+      - Seed script creates sample toll events and transactions
+      - npx prisma db seed runs without errors
+    relevant_files:
+      - packages/backend/prisma/seed.ts
+      - packages/backend/package.json
+    verification:
+      strategy: command
+      detail: cd packages/backend && npx prisma db seed
+    result: null
+    usage: null
+
+  - id: T005
+    name: Health-check endpoint + Docker Compose
+    objective: Implement the health-check API endpoint and create Docker Compose configuration for PostgreSQL and Redis.
+    status: planned
+    depends_on:
+      - T002
+    acceptance_criteria:
+      - GET /api/health returns status ok with timestamp
+      - docker-compose.yml defines postgres and redis services
+      - docker-compose up -d starts both containers
+      - Health endpoint connects to PostgreSQL successfully
+    relevant_files:
+      - packages/backend/src/app.ts
+      - packages/backend/src/routes/health.ts
+      - docker-compose.yml
+    verification:
+      strategy: command
+      detail: docker-compose up -d && curl http://localhost:3000/api/health
+    result: null
+    usage: null
+
+  - id: T006
+    name: Verify full M001 workflow
+    objective: Run through the complete M001 workflow to ensure everything works end-to-end.
+    status: planned
+    depends_on:
+      - T002
+      - T004
+      - T005
+    acceptance_criteria:
+      - npm run dev starts backend server
+      - npx prisma migrate dev --name init creates database tables
+      - npx prisma db seed populates sample data
+      - GET /api/health returns 200 OK
+      - docker-compose up -d starts PostgreSQL and Redis
+    relevant_files: []
+    verification:
+      strategy: command
+      detail: npm run dev
+    result: null
+    usage: null
