@@ -2,10 +2,12 @@
 schema_version: 1
 id: M002
 title: Backend API Core
-status: draft
+status: in_progress
 requirement: null
-confirmed_at: null
-verification_approved_hash: null
+confirmed_at: 2026-08-24T22:07:04Z
+verification_approved_hash: sha256:b297c3fdd8adda565d81b3e9729dbab9f3d775fd094e96a48f1b23721fdd91fe
+base_branch: pitway/M001-project-scaffolding-database-schema
+base_revision: 1e3093080b8da9f53250503d36e664ce4b77ac7a
 acceptance_criteria:
   - id: AC001
     text: JWT auth module with register, login, refresh token, and auth middleware.

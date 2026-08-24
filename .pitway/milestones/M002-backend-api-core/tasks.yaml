@@ -4,7 +4,7 @@ tasks:
     name: Auth module (JWT register, login, refresh, middleware)
     objective: Implement JWT authentication with register, login, refresh token
       endpoints, and auth middleware for protected routes.
-    status: planned
+    status: ready
     depends_on: []
     acceptance_criteria:
       - POST /api/auth/register creates user and returns JWT
@@ -26,7 +26,7 @@ tasks:
     name: User and Account management CRUD
     objective: Implement CRUD endpoints for users and accounts with balance top-up
       functionality.
-    status: planned
+    status: waiting
     depends_on:
       - T001
     acceptance_criteria:
@@ -49,7 +49,7 @@ tasks:
   - id: T003
     name: Vehicle management with RFID tag binding
     objective: Implement vehicle CRUD and RFID tag binding/unbinding endpoints.
-    status: planned
+    status: waiting
     depends_on:
       - T001
     acceptance_criteria:
@@ -70,7 +70,7 @@ tasks:
   - id: T004
     name: Toll Plaza and Toll Rate management
     objective: Implement CRUD endpoints for toll plazas and toll rates.
-    status: planned
+    status: waiting
     depends_on:
       - T001
     acceptance_criteria:
@@ -91,7 +91,7 @@ tasks:
   - id: T005
     name: Toll Event processing with cross-verification
     objective: Implement toll event creation with RFID/ANPR cross-verification logic.
-    status: planned
+    status: waiting
     depends_on:
       - T003
       - T004
@@ -113,7 +113,7 @@ tasks:
     name: Transaction engine with auto-deduction
     objective: Implement transaction processing with automatic toll deduction on
       event completion.
-    status: planned
+    status: waiting
     depends_on:
       - T002
       - T005
@@ -134,7 +134,7 @@ tasks:
   - id: T007
     name: Violation management
     objective: Implement violation CRUD with status workflow and escalation.
-    status: planned
+    status: waiting
     depends_on:
       - T005
     acceptance_criteria:
@@ -155,7 +155,7 @@ tasks:
     name: Notification system with WebSocket broadcast
     objective: Implement in-app notification storage and WebSocket broadcast for
       real-time updates.
-    status: planned
+    status: waiting
     depends_on:
       - T001
     acceptance_criteria:
@@ -175,7 +175,7 @@ tasks:
   - id: T009
     name: Device status management
     objective: Implement device status tracking with heartbeat endpoint.
-    status: planned
+    status: waiting
     depends_on:
       - T004
     acceptance_criteria:
@@ -195,7 +195,7 @@ tasks:
     name: Reporting endpoints
     objective: Implement reporting endpoints for revenue, traffic, and violation
       statistics.
-    status: planned
+    status: waiting
     depends_on:
       - T006
       - T007
@@ -215,7 +215,7 @@ tasks:
   - id: T011
     name: OpenAPI/Swagger documentation
     objective: Set up OpenAPI documentation with Swagger UI for all API endpoints.
-    status: planned
+    status: waiting
     depends_on:
       - T010
     acceptance_criteria:
@@ -234,7 +234,7 @@ tasks:
   - id: T012
     name: WebSocket gateway (Socket.io)
     objective: Implement Socket.io WebSocket gateway for real-time event broadcasting.
-    status: planned
+    status: waiting
     depends_on:
       - T001
     acceptance_criteria:
@@ -253,7 +253,7 @@ tasks:
   - id: T013
     name: Verify all endpoints via Swagger UI
     objective: Verify all API endpoints are functional and documented.
-    status: planned
+    status: waiting
     depends_on:
       - T011
     acceptance_criteria:
