@@ -41,6 +41,15 @@ services:
     depends_on:
       - backend
 
+  customer-portal:
+    build:
+      context: .
+      dockerfile: packages/customer-portal/Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
 volumes:
   pgdata:
   uploads:
