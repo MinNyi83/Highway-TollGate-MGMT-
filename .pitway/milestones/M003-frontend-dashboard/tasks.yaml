@@ -223,7 +223,7 @@ tasks:
     name: Notifications panel
     objective: Create notifications panel with notification list, mark as read, and
       real-time badge count.
-    status: in_progress
+    status: review
     depends_on:
       - T003
     acceptance_criteria:
