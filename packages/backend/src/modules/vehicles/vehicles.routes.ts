@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import { PrismaClient } from '@prisma/client';
 import {
   getVehicles,
   getVehicleById,
@@ -10,6 +11,7 @@ import {
 import { authMiddleware } from '../../middleware/auth';
 import { uploadVehiclePhotos, uploadSingle } from '../../middleware/upload';
 
+const prisma = new PrismaClient();
 const router = Router();
 
 router.get('/', authMiddleware, async (req: Request, res: Response) => {
@@ -95,6 +97,15 @@ router.put('/:id', authMiddleware, (req: Request, res: Response) => {
       res.status(500).json({ error: 'Internal server error' });
     }
   });
+});
+
+router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    await prisma.vehicle.delete({ where: { id: req.params.id } });
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete vehicle' });
+  }
 });
 
 router.post('/:id/rfid', authMiddleware, async (req: Request, res: Response) => {

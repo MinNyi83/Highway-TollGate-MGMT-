@@ -3,6 +3,9 @@ import { PrismaClient, UserRole, AccountStatus, VehicleClass, VehicleStatus, RFI
 const prisma = new PrismaClient();
 
 async function main() {
+  const bcrypt = require('bcryptjs');
+  const passwordHash = await bcrypt.hash('password123', 10);
+
   console.log('Seeding database...');
 
   // Clean existing data
@@ -25,7 +28,7 @@ async function main() {
     prisma.user.create({
       data: {
         email: 'admin@tollgate.com',
-        passwordHash: '$2a$10$hashedpassword1',
+        passwordHash: passwordHash,
         name: 'System Admin',
         role: UserRole.ADMIN,
       },
@@ -33,7 +36,7 @@ async function main() {
     prisma.user.create({
       data: {
         email: 'operator1@tollgate.com',
-        passwordHash: '$2a$10$hashedpassword2',
+        passwordHash: passwordHash,
         name: 'John Operator',
         role: UserRole.OPERATOR,
       },
@@ -41,7 +44,7 @@ async function main() {
     prisma.user.create({
       data: {
         email: 'operator2@tollgate.com',
-        passwordHash: '$2a$10$hashedpassword3',
+        passwordHash: passwordHash,
         name: 'Jane Operator',
         role: UserRole.OPERATOR,
       },
@@ -49,7 +52,7 @@ async function main() {
     prisma.user.create({
       data: {
         email: 'viewer@tollgate.com',
-        passwordHash: '$2a$10$hashedpassword4',
+        passwordHash: passwordHash,
         name: 'Bob Viewer',
         role: UserRole.VIEWER,
       },
@@ -57,7 +60,7 @@ async function main() {
     prisma.user.create({
       data: {
         email: 'manager@tollgate.com',
-        passwordHash: '$2a$10$hashedpassword5',
+        passwordHash: passwordHash,
         name: 'Alice Manager',
         role: UserRole.ADMIN,
       },

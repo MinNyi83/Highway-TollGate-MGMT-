@@ -15,6 +15,7 @@ import violationsRoutes from './modules/violations/violations.routes';
 import notificationsRoutes from './modules/notifications/notifications.routes';
 import deviceStatusRoutes from './modules/device-status/device-status.routes';
 import reportsRoutes from './modules/reports/reports.routes';
+import auditRoutes from './modules/audit/audit.routes';
 import { setupSwagger } from './config/swagger';
 import { logger } from './middleware/logger';
 import { errorHandler } from './middleware/errorHandler';
@@ -43,6 +44,7 @@ app.use('/api/violations', violationsRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use('/api/device-status', deviceStatusRoutes);
 app.use('/api/reports', reportsRoutes);
+app.use('/api/audit-logs', auditRoutes);
 
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use(errorHandler);

@@ -23,6 +23,7 @@ const navItems = [
   { to: '/reports', icon: BarChart3, label: 'Reports', roles: ['ADMIN', 'OPERATOR', 'VIEWER'] },
   { to: '/device-status', icon: Settings, label: 'Device Status', roles: ['ADMIN', 'OPERATOR'] },
   { to: '/simulator', icon: PlayCircle, label: 'Simulator', roles: ['ADMIN'] },
+  { to: '/audit-log', icon: Shield, label: 'Audit Log', roles: ['ADMIN'] },
 ];
 
 export default function Sidebar() {

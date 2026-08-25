@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import api from '../lib/api';
-import { Plus, Search, X, Upload, Image } from 'lucide-react';
+import { Plus, Search, X, Upload, Image, Edit, Trash2 } from 'lucide-react';
 
 interface Vehicle {
   id: string;
@@ -12,6 +12,7 @@ interface Vehicle {
   year: number;
   vehicleClass: string;
   status: string;
+  color?: string;
   vehiclePhoto?: string;
   wheelTaxCard?: string;
   rfidTags: Array<{ id: string; tagUid: string; status: string }>;
@@ -22,6 +23,8 @@ const vehicleClasses = ['MOTORCYCLE', 'SEDAN', 'SUV', 'TRUCK', 'BUS'];
 export default function Vehicles() {
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
+  const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
+  const [showImport, setShowImport] = useState(false);
   const queryClient = useQueryClient();
 
   const { data: vehicles, isLoading } = useQuery<Vehicle[]>({
@@ -45,6 +48,28 @@ export default function Vehicles() {
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, formData }: { id: string; formData: FormData }) => {
+      const response = await api.put(`/vehicles/${id}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['vehicles'] });
+      setEditingVehicle(null);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await api.delete(`/vehicles/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['vehicles'] });
+    },
+  });
+
   const filteredVehicles = vehicles?.filter(
     (v) =>
       v.plateNumber.toLowerCase().includes(search.toLowerCase()) ||
@@ -57,6 +82,12 @@ export default function Vehicles() {
     return `${api.defaults.baseURL}/uploads/${filename}`;
   };
 
+  const handleDelete = (vehicle: Vehicle) => {
+    if (window.confirm(`Delete vehicle ${vehicle.plateNumber}? This cannot be undone.`)) {
+      deleteMutation.mutate(vehicle.id);
+    }
+  };
+
   if (isLoading) {
     return <div className="text-center py-8">Loading...</div>;
   }
@@ -65,16 +96,40 @@ export default function Vehicles() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Vehicles</h1>
-        <button
-          onClick={() => setShowForm(true)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-blue-700"
-        >
-          <Plus size={20} />
-          Add Vehicle
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setShowImport(true)}
+            className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-green-700"
+          >
+            <Upload size={20} />
+            Import CSV
+          </button>
+          <button
+            onClick={() => setShowForm(true)}
+            className="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-blue-700"
+          >
+            <Plus size={20} />
+            Add Vehicle
+          </button>
+        </div>
       </div>
 
-      {showForm && <AddVehicleForm onClose={() => setShowForm(false)} onSubmit={(fd) => createMutation.mutate(fd)} />}
+      {showForm && (
+        <VehicleForm
+          onClose={() => setShowForm(false)}
+          onSubmit={(fd) => createMutation.mutate(fd)}
+        />
+      )}
+
+      {editingVehicle && (
+        <VehicleForm
+          vehicle={editingVehicle}
+          onClose={() => setEditingVehicle(null)}
+          onSubmit={(fd) => updateMutation.mutate({ id: editingVehicle.id, formData: fd })}
+        />
+      )}
+
+      {showImport && <CsvImportModal onClose={() => setShowImport(false)} />}
 
       <div className="bg-white rounded-lg shadow">
         <div className="p-4 border-b">
@@ -93,13 +148,14 @@ export default function Vehicles() {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Photo</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Plate Number</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Plate</th>
               <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Make</th>
               <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Model</th>
               <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Class</th>
               <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Status</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Tax Card</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Tax</th>
               <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">RFID</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y">
@@ -107,10 +163,10 @@ export default function Vehicles() {
               <tr key={vehicle.id} className="hover:bg-gray-50">
                 <td className="px-4 py-3">
                   {vehicle.vehiclePhoto ? (
-                    <img src={getPhotoUrl(vehicle.vehiclePhoto)!} alt="Vehicle" className="w-12 h-12 rounded object-cover" />
+                    <img src={getPhotoUrl(vehicle.vehiclePhoto)!} alt="" className="w-10 h-10 rounded object-cover" />
                   ) : (
-                    <div className="w-12 h-12 rounded bg-gray-100 flex items-center justify-center">
-                      <Image className="text-gray-400" size={20} />
+                    <div className="w-10 h-10 rounded bg-gray-100 flex items-center justify-center">
+                      <Image className="text-gray-400" size={16} />
                     </div>
                   )}
                 </td>
@@ -133,12 +189,30 @@ export default function Vehicles() {
                 </td>
                 <td className="px-4 py-3">
                   {vehicle.wheelTaxCard ? (
-                    <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">Uploaded</span>
+                    <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">Yes</span>
                   ) : (
-                    <span className="text-gray-400 text-xs">None</span>
+                    <span className="text-gray-400 text-xs">No</span>
                   )}
                 </td>
                 <td className="px-4 py-3">{vehicle.rfidTags?.length || 0}</td>
+                <td className="px-4 py-3">
+                  <div className="flex gap-1">
+                    <button
+                      onClick={() => setEditingVehicle(vehicle)}
+                      className="p-1 text-gray-500 hover:text-blue-600 rounded"
+                      title="Edit"
+                    >
+                      <Edit size={16} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(vehicle)}
+                      className="p-1 text-gray-500 hover:text-red-600 rounded"
+                      title="Delete"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -151,17 +225,29 @@ export default function Vehicles() {
   );
 }
 
-function AddVehicleForm({ onClose, onSubmit }: { onClose: () => void; onSubmit: (fd: FormData) => void }) {
-  const [plateNumber, setPlateNumber] = useState('');
-  const [make, setMake] = useState('');
-  const [model, setModel] = useState('');
-  const [year, setYear] = useState(new Date().getFullYear().toString());
-  const [color, setColor] = useState('');
-  const [vehicleClass, setVehicleClass] = useState('SEDAN');
+function VehicleForm({
+  vehicle,
+  onClose,
+  onSubmit,
+}: {
+  vehicle?: Vehicle;
+  onClose: () => void;
+  onSubmit: (fd: FormData) => void;
+}) {
+  const [plateNumber, setPlateNumber] = useState(vehicle?.plateNumber || '');
+  const [make, setMake] = useState(vehicle?.make || '');
+  const [model, setModel] = useState(vehicle?.model || '');
+  const [year, setYear] = useState(vehicle?.year?.toString() || new Date().getFullYear().toString());
+  const [color, setColor] = useState(vehicle?.color || '');
+  const [vehicleClass, setVehicleClass] = useState(vehicle?.vehicleClass || 'SEDAN');
   const [vehiclePhoto, setVehiclePhoto] = useState<File | null>(null);
   const [wheelTaxCard, setWheelTaxCard] = useState<File | null>(null);
-  const [vehiclePreview, setVehiclePreview] = useState<string | null>(null);
-  const [taxPreview, setTaxPreview] = useState<string | null>(null);
+  const [vehiclePreview, setVehiclePreview] = useState<string | null>(
+    vehicle?.vehiclePhoto ? `${api.defaults.baseURL}/uploads/${vehicle.vehiclePhoto}` : null
+  );
+  const [taxPreview, setTaxPreview] = useState<string | null>(
+    vehicle?.wheelTaxCard ? `${api.defaults.baseURL}/uploads/${vehicle.wheelTaxCard}` : null
+  );
 
   const handleFileChange = (file: File | null, type: 'vehicle' | 'tax') => {
     if (type === 'vehicle') {
@@ -203,7 +289,7 @@ function AddVehicleForm({ onClose, onSubmit }: { onClose: () => void; onSubmit: 
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center p-4 border-b">
-          <h2 className="text-lg font-bold">Register New Vehicle</h2>
+          <h2 className="text-lg font-bold">{vehicle ? 'Edit Vehicle' : 'Register New Vehicle'}</h2>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700"><X size={20} /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-4 space-y-4">
@@ -211,7 +297,7 @@ function AddVehicleForm({ onClose, onSubmit }: { onClose: () => void; onSubmit: 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Plate Number *</label>
               <input type="text" required value={plateNumber} onChange={(e) => setPlateNumber(e.target.value.toUpperCase())}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="ABC-1234" />
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Year *</label>
@@ -221,17 +307,17 @@ function AddVehicleForm({ onClose, onSubmit }: { onClose: () => void; onSubmit: 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Make *</label>
               <input type="text" required value={make} onChange={(e) => setMake(e.target.value)}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Toyota" />
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Model *</label>
               <input type="text" required value={model} onChange={(e) => setModel(e.target.value)}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Camry" />
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Color</label>
               <input type="text" value={color} onChange={(e) => setColor(e.target.value)}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Red" />
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Vehicle Class *</label>
@@ -245,14 +331,13 @@ function AddVehicleForm({ onClose, onSubmit }: { onClose: () => void; onSubmit: 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Vehicle Photo</label>
-              <label className="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 cursor-pointer hover:bg-gray-50">
+              <label className="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 cursor-pointer hover:bg-gray-50 min-h-[140px]">
                 {vehiclePreview ? (
-                  <img src={vehiclePreview} alt="Preview" className="w-full h-32 object-cover rounded" />
+                  <img src={vehiclePreview} alt="Preview" className="w-full h-28 object-cover rounded" />
                 ) : (
                   <>
                     <Upload className="text-gray-400 mb-2" size={24} />
                     <span className="text-sm text-gray-500">Click to upload</span>
-                    <span className="text-xs text-gray-400">JPEG, PNG, WEBP (max 10MB)</span>
                   </>
                 )}
                 <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileChange(e.target.files?.[0] || null, 'vehicle')} />
@@ -264,14 +349,13 @@ function AddVehicleForm({ onClose, onSubmit }: { onClose: () => void; onSubmit: 
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Wheel Tax Card</label>
-              <label className="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 cursor-pointer hover:bg-gray-50">
+              <label className="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 cursor-pointer hover:bg-gray-50 min-h-[140px]">
                 {taxPreview ? (
-                  <img src={taxPreview} alt="Preview" className="w-full h-32 object-cover rounded" />
+                  <img src={taxPreview} alt="Preview" className="w-full h-28 object-cover rounded" />
                 ) : (
                   <>
                     <Upload className="text-gray-400 mb-2" size={24} />
                     <span className="text-sm text-gray-500">Click to upload</span>
-                    <span className="text-xs text-gray-400">JPEG, PNG, WEBP (max 10MB)</span>
                   </>
                 )}
                 <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileChange(e.target.files?.[0] || null, 'tax')} />
@@ -284,9 +368,72 @@ function AddVehicleForm({ onClose, onSubmit }: { onClose: () => void; onSubmit: 
 
           <div className="flex justify-end gap-2 pt-4 border-t">
             <button type="button" onClick={onClose} className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50">Cancel</button>
-            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Register Vehicle</button>
+            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+              {vehicle ? 'Save Changes' : 'Register Vehicle'}
+            </button>
           </div>
         </form>
+      </div>
+    </div>
+  );
+}
+
+function CsvImportModal({ onClose }: { onClose: () => void }) {
+  const [file, setFile] = useState<File | null>(null);
+  const [result, setResult] = useState<{ imported: number; errors: string[] } | null>(null);
+  const queryClient = useQueryClient();
+
+  const handleUpload = async () => {
+    if (!file) return;
+    const fd = new FormData();
+    fd.append('file', file);
+    const response = await api.post('/vehicles/import/csv', fd, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    setResult(response.data);
+    queryClient.invalidateQueries({ queryKey: ['vehicles'] });
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-bold">Import Vehicles from CSV</h2>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700"><X size={20} /></button>
+        </div>
+        {!result ? (
+          <>
+            <p className="text-sm text-gray-600 mb-4">
+              CSV format: <code>plateNumber,make,model,year,color,vehicleClass</code>
+            </p>
+            <input
+              type="file"
+              accept=".csv"
+              onChange={(e) => setFile(e.target.files?.[0] || null)}
+              className="w-full mb-4"
+            />
+            <button
+              onClick={handleUpload}
+              disabled={!file}
+              className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
+            >
+              Import
+            </button>
+          </>
+        ) : (
+          <div>
+            <p className="text-green-600 font-medium mb-2">Imported {result.imported} vehicles</p>
+            {result.errors.length > 0 && (
+              <div className="mt-2">
+                <p className="text-red-600 font-medium mb-1">Errors:</p>
+                <ul className="text-sm text-red-600 max-h-40 overflow-y-auto">
+                  {result.errors.map((e, i) => <li key={i}>{e}</li>)}
+                </ul>
+              </div>
+            )}
+            <button onClick={onClose} className="w-full mt-4 bg-gray-600 text-white py-2 rounded-md hover:bg-gray-700">Close</button>
+          </div>
+        )}
       </div>
     </div>
   );
