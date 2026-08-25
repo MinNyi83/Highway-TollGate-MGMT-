@@ -269,7 +269,7 @@ tasks:
     name: Device status dashboard
     objective: Create device status page showing device health per plaza with last
       heartbeat display.
-    status: review
+    status: completed
     depends_on:
       - T003
     acceptance_criteria:
@@ -281,6 +281,8 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/frontend && npx tsc --noEmit
-    result: null
+    result:
+      summary: T012 completed. Device status dashboard.
+      evidence: (no output)
     attempts: 1
     usage: null
