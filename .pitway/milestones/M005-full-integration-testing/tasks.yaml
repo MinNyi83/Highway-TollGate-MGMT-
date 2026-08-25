@@ -4,7 +4,7 @@ tasks:
     name: Integration test setup
     objective: Configure test environment with test database, test helpers, and API
       client.
-    status: planned
+    status: ready
     depends_on: []
     acceptance_criteria:
       - Test database configuration in place
@@ -25,7 +25,7 @@ tasks:
     name: Auth flow tests
     objective: "Test complete authentication flow: register, login, access protected
       routes, refresh token."
-    status: planned
+    status: waiting
     depends_on:
       - T001
     acceptance_criteria:
@@ -45,7 +45,7 @@ tasks:
   - id: T003
     name: Vehicle + RFID flow tests
     objective: Test vehicle creation, RFID binding, and simulation of passage.
-    status: planned
+    status: waiting
     depends_on:
       - T001
     acceptance_criteria:
@@ -65,7 +65,7 @@ tasks:
     name: Toll event + transaction flow tests
     objective: "Test complete toll event flow: entry, exit, auto-deduction, balance
       verification."
-    status: planned
+    status: waiting
     depends_on:
       - T003
     acceptance_criteria:
@@ -87,7 +87,7 @@ tasks:
   - id: T005
     name: Violation flow tests
     objective: Test violation creation from ANPR mismatch and status update workflow.
-    status: planned
+    status: waiting
     depends_on:
       - T001
     acceptance_criteria:
@@ -105,7 +105,7 @@ tasks:
   - id: T006
     name: WebSocket integration test
     objective: Test WebSocket connection, room joining, and event broadcasting.
-    status: planned
+    status: waiting
     depends_on:
       - T001
     acceptance_criteria:
@@ -125,7 +125,7 @@ tasks:
     name: End-to-end manual test script
     objective: Create step-by-step script for manual verification of full flow
       without automation.
-    status: planned
+    status: ready
     depends_on: []
     acceptance_criteria:
       - Step-by-step instructions for full flow
@@ -143,7 +143,7 @@ tasks:
   - id: T008
     name: Seed data verification
     objective: Run seed script and verify all endpoints return data correctly.
-    status: planned
+    status: waiting
     depends_on:
       - T001
     acceptance_criteria:
