@@ -68,7 +68,7 @@ tasks:
   - id: T004
     name: Continuous simulation
     objective: Run simulation in loop with configurable interval between passages.
-    status: review
+    status: completed
     depends_on:
       - T003
     acceptance_criteria:
@@ -81,7 +81,9 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/simulator && npx tsc --noEmit
-    result: null
+    result:
+      summary: T004 completed. Continuous simulation.
+      evidence: (no output)
     attempts: 1
     usage: null
   - id: T005
@@ -108,7 +110,7 @@ tasks:
     name: Real-time stats
     objective: Display live statistics during simulation (vehicles processed,
       violations, revenue).
-    status: waiting
+    status: ready
     depends_on:
       - T004
     acceptance_criteria:
