@@ -264,6 +264,15 @@ model DeviceStatus {
   plazaId       String     @map("plaza_id")
   deviceType    DeviceType @map("device_type")
   deviceId      String     @map("device_id")
+  name          String?
+  ipAddress     String?    @map("ip_address")
+  port          Int?
+  apiUrl        String?    @map("api_url")
+  apiKey        String?    @map("api_key")
+  lane          Int?       @default(1)
+  model         String?
+  manufacturer  String?
+  firmware      String?
   status        DeviceStatusEnum @default(ONLINE)
   lastHeartbeat DateTime?  @map("last_heartbeat")
   metadata      Json?
