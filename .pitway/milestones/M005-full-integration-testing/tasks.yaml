@@ -4,7 +4,7 @@ tasks:
     name: Integration test setup
     objective: Configure test environment with test database, test helpers, and API
       client.
-    status: in_progress
+    status: review
     depends_on: []
     acceptance_criteria:
       - Test database configuration in place
