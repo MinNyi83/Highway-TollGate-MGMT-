@@ -13,6 +13,8 @@ export const apiClient = axios.create({
   },
 });
 
+let authToken: string | null = null;
+
 export async function healthCheck(): Promise<boolean> {
   try {
     await apiClient.get('/api/health');
@@ -24,28 +26,53 @@ export async function healthCheck(): Promise<boolean> {
 
 export async function login(email: string, password: string): Promise<string> {
   const response = await apiClient.post('/api/auth/login', { email, password });
-  return response.data.accessToken;
+  const token = response.data.token || response.data.accessToken;
+  setAuthToken(token);
+  return token;
 }
 
 export function setAuthToken(token: string) {
+  authToken = token;
   apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 }
 
-export async function createTollEvent(data: {
-  vehiclePlateNumber: string;
-  rfidTag?: string;
+export function getAuthToken(): string | null {
+  return authToken;
+}
+
+export async function getVehicles(): Promise<any[]> {
+  const response = await apiClient.get('/api/vehicles');
+  return response.data;
+}
+
+export async function getTollPlazas(): Promise<any[]> {
+  const response = await apiClient.get('/api/toll-plazas');
+  return response.data;
+}
+
+export async function createEntryEvent(data: {
+  vehicleId: string;
   plazaId: string;
-  vehicleClass: string;
-  anprPlateNumber?: string;
+  rfidTagId?: string;
+  anprPlate?: string;
 }) {
   const response = await apiClient.post('/api/toll-events/entry', data);
   return response.data;
 }
 
-export async function completeTollEvent(id: string, data: {
-  plazaId: string;
-  anprPlateNumber?: string;
+export async function completeExitEvent(eventId: string, data: {
+  anprPlate?: string;
 }) {
-  const response = await apiClient.put(`/api/toll-events/${id}/exit`, data);
+  const response = await apiClient.put(`/api/toll-events/${eventId}/exit`, data);
+  return response.data;
+}
+
+export async function getTollEvents(): Promise<any[]> {
+  const response = await apiClient.get('/api/toll-events');
+  return response.data;
+}
+
+export async function getAccounts(): Promise<any[]> {
+  const response = await apiClient.get('/api/accounts');
   return response.data;
 }

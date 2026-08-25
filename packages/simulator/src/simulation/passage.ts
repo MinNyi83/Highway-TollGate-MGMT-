@@ -1,48 +1,92 @@
-import axios from 'axios';
 import chalk from 'chalk';
-import { generateVehicle } from '../generators/vehiclePool';
+import { createEntryEvent, completeExitEvent } from '../api/client';
+import { Vehicle, TollPlaza, generateFakePlate } from '../generators/vehiclePool';
 
-const API_URL = process.env.API_URL || 'http://localhost:3000';
+export interface PassageOptions {
+  entryDelay: number;
+  scenario: 'normal' | 'no-rfid' | 'anpr-mismatch' | 'insufficient-balance';
+}
 
 export interface PassageResult {
-  vehicle: ReturnType<typeof generateVehicle>;
+  vehicle: Vehicle;
+  plaza: TollPlaza;
   entryEvent: any;
   exitEvent: any;
   duration: number;
+  violation: boolean;
+  violationType?: string;
+  tollAmount: number;
 }
 
 export async function simulateSinglePassage(
-  plazaId: string,
-  options: { entryDelay?: number } = {}
+  vehicle: Vehicle,
+  plaza: TollPlaza,
+  options: PassageOptions
 ): Promise<PassageResult> {
-  const vehicle = generateVehicle();
-  const entryDelay = options.entryDelay || 5000;
+  const { entryDelay, scenario } = options;
+  const startTime = Date.now();
 
-  console.log(chalk.blue(`\nSimulating passage for ${vehicle.plateNumber}...`));
+  console.log(chalk.blue(`\n  [${vehicle.plateNumber}] Entering ${plaza.name} (${plaza.mileMarker ?? '?'} Mile)...`));
 
-  const entryResponse = await axios.post(`${API_URL}/api/toll-events/entry`, {
-    vehiclePlateNumber: vehicle.plateNumber,
-    rfidTag: vehicle.rfidTag,
-    plazaId,
-    vehicleClass: vehicle.vehicleClass,
-    anprPlateNumber: vehicle.plateNumber,
-  });
+  const rfidTagId = scenario === 'no-rfid' ? undefined : vehicle.rfidTagId;
+  const anprPlate = scenario === 'anpr-mismatch' ? generateFakePlate() : vehicle.plateNumber;
 
-  console.log(chalk.green(`  Entry recorded: ${entryResponse.data.id}`));
+  const entryPayload: Record<string, unknown> = {
+    vehicleId: vehicle.id,
+    plazaId: plaza.id,
+  };
+  if (rfidTagId) entryPayload.rfidTagId = rfidTagId;
+  if (anprPlate) entryPayload.anprPlate = anprPlate;
+
+  const entryEvent = await createEntryEvent(entryPayload as any);
+  console.log(chalk.green(`  [${vehicle.plateNumber}] Entry recorded: ${entryEvent.id}`));
 
   await new Promise((resolve) => setTimeout(resolve, entryDelay));
 
-  const exitResponse = await axios.put(`${API_URL}/api/toll-events/${entryResponse.data.id}/exit`, {
-    plazaId,
-    anprPlateNumber: vehicle.plateNumber,
-  });
+  const exitPayload: Record<string, unknown> = {};
+  if (scenario === 'anpr-mismatch') {
+    exitPayload.anprPlate = generateFakePlate();
+  } else if (anprPlate) {
+    exitPayload.anprPlate = anprPlate;
+  }
 
-  console.log(chalk.green(`  Exit recorded: ${exitResponse.data.id}`));
+  const exitEvent = await completeExitEvent(entryEvent.id, exitPayload as any);
+  console.log(chalk.green(`  [${vehicle.plateNumber}] Exit recorded`));
+
+  const duration = Date.now() - startTime;
+  const violation = scenario === 'no-rfid' || scenario === 'anpr-mismatch' || scenario === 'insufficient-balance';
+  const violationType = scenario === 'no-rfid' ? 'NO_RFID'
+    : scenario === 'anpr-mismatch' ? 'RFID_ANPR_MISMATCH'
+    : scenario === 'insufficient-balance' ? 'INSUFFICIENT_BALANCE'
+    : undefined;
 
   return {
     vehicle,
-    entryEvent: entryResponse.data,
-    exitEvent: exitResponse.data,
-    duration: entryDelay,
+    plaza,
+    entryEvent,
+    exitEvent,
+    duration,
+    violation,
+    violationType,
+    tollAmount: 0,
   };
+}
+
+export async function simulateRoute(
+  vehicle: Vehicle,
+  plazas: TollPlaza[],
+  options: PassageOptions
+): Promise<PassageResult[]> {
+  const results: PassageResult[] = [];
+
+  for (const plaza of plazas) {
+    try {
+      const result = await simulateSinglePassage(vehicle, plaza, options);
+      results.push(result);
+    } catch (error) {
+      console.error(chalk.red(`  [${vehicle.plateNumber}] Failed at ${plaza.name}:`), error instanceof Error ? error.message : error);
+    }
+  }
+
+  return results;
 }

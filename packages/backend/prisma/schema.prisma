@@ -209,6 +209,7 @@ model TollPlaza {
   name        String
   locationLat Decimal         @map("location_lat") @db.Decimal(10, 7)
   locationLng Decimal         @map("location_lng") @db.Decimal(10, 7)
+  mileMarker  Int?            @map("mile_marker")
   lanes       Int             @default(4)
   status      TollPlazaStatus @default(ACTIVE)
   createdAt   DateTime        @default(now()) @map("created_at")

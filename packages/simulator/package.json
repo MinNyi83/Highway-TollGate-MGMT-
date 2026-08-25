@@ -2,7 +2,7 @@
   "name": "@tollgate/simulator",
   "version": "1.0.0",
   "private": true,
-  "description": "TollGate vehicle passage simulator",
+  "description": "TollGate multi-vehicle, multi-plaza toll simulator",
   "main": "dist/cli.js",
   "bin": {
     "tollgate-simulator": "./dist/cli.js"
@@ -11,6 +11,9 @@
     "dev": "ts-node src/cli.ts",
     "build": "tsc",
     "start": "node dist/cli.js",
+    "simulate": "ts-node src/cli.ts simulate",
+    "routes": "ts-node src/cli.ts routes",
+    "vehicles": "ts-node src/cli.ts vehicles",
     "test": "jest",
     "lint": "eslint src --ext .ts"
   },

@@ -10,6 +10,7 @@ import Violations from './pages/Violations';
 import Account from './pages/Account';
 import Settings from './pages/Settings';
 import MyVehicles from './pages/MyVehicles';
+import FleetDashboard from './pages/FleetDashboard';
 import Layout from './components/Layout';
 
 const queryClient = new QueryClient();
@@ -33,6 +34,7 @@ function App() {
                 <Route path="/violations" element={<Violations />} />
                 <Route path="/account" element={<Account />} />
                 <Route path="/my-vehicles" element={<MyVehicles />} />
+                <Route path="/fleet" element={<FleetDashboard />} />
                 <Route path="/settings" element={<Settings />} />
               </Route>
               <Route path="*" element={<Navigate to="/" replace />} />

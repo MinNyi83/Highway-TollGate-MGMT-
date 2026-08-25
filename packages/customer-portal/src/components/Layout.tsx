@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, History, AlertTriangle, Wallet, LogOut, Car, Menu, X, Settings } from 'lucide-react';
+import { LayoutDashboard, History, AlertTriangle, Wallet, LogOut, Car, Menu, X, Settings, Building2 } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import NotificationBell from './NotificationBell';
 import ToastContainer from './Toast';
@@ -11,6 +11,7 @@ const navItems = [
   { to: '/toll-history', icon: History, label: 'History' },
   { to: '/violations', icon: AlertTriangle, label: 'Violations' },
   { to: '/account', icon: Wallet, label: 'Account' },
+  { to: '/fleet', icon: Building2, label: 'Fleet', enterpriseOnly: true },
   { to: '/settings', icon: Settings, label: 'Settings' },
 ];
 
@@ -18,6 +19,9 @@ export default function Layout() {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const isEnterprise = user?.customerType === 'ENTERPRISE';
+  const filteredNavItems = navItems.filter((item) => !item.enterpriseOnly || isEnterprise);
 
   const handleLogout = () => {
     logout();
@@ -65,7 +69,7 @@ export default function Layout() {
             <p className="text-gray-400 text-sm">Customer Portal</p>
           </div>
           <nav className="flex-1">
-            {navItems.map((item) => (
+            {filteredNavItems.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
@@ -101,7 +105,7 @@ export default function Layout() {
 
       {/* Bottom Tab Bar - Mobile */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-2 py-1 flex justify-around items-center z-50">
-        {navItems.map((item) => (
+        {filteredNavItems.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}

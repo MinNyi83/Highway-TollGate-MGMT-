@@ -1,9 +1,11 @@
-import { Vehicle, generateVehicle } from '../generators/vehiclePool';
+import { generatePlateNumber, Vehicle } from '../generators/vehiclePool';
 
 export interface Scenario {
   name: string;
   description: string;
-  vehicle: Partial<Vehicle>;
+  vehicleClass: Vehicle['vehicleClass'];
+  hasRfid: boolean;
+  anprMismatch: boolean;
   expectedViolation: boolean;
 }
 
@@ -11,25 +13,33 @@ export const SCENARIOS: Record<string, Scenario> = {
   normal: {
     name: 'Normal Passage',
     description: 'RFID + ANPR match, sufficient balance',
-    vehicle: generateVehicle(),
+    vehicleClass: 'SEDAN',
+    hasRfid: true,
+    anprMismatch: false,
     expectedViolation: false,
   },
   noRfid: {
     name: 'No RFID',
     description: 'Vehicle without RFID tag',
-    vehicle: { ...generateVehicle(), rfidTag: '' },
+    vehicleClass: 'SEDAN',
+    hasRfid: false,
+    anprMismatch: false,
     expectedViolation: true,
   },
   mismatch: {
     name: 'ANPR Mismatch',
     description: 'ANPR plate doesn\'t match vehicle',
-    vehicle: generateVehicle(),
+    vehicleClass: 'SEDAN',
+    hasRfid: true,
+    anprMismatch: true,
     expectedViolation: true,
   },
   insufficientBalance: {
     name: 'Insufficient Balance',
     description: 'Account has insufficient funds',
-    vehicle: generateVehicle(),
+    vehicleClass: 'TRUCK',
+    hasRfid: true,
+    anprMismatch: false,
     expectedViolation: true,
   },
 };
