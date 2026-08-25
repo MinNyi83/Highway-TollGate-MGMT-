@@ -13,6 +13,8 @@ interface VehicleDetail {
   color?: string;
   vehicleClass: string;
   status: string;
+  vehiclePhoto?: string;
+  wheelTaxCard?: string;
   rfidTags: { id: string; tagUid: string; status: string; account: { id: string; balance: number } }[];
   tollEvents: {
     id: string;
@@ -80,6 +82,34 @@ export default function VehicleDetailPage() {
           <div><span className="text-gray-500">Total Events:</span> {vehicle.tollEvents?.length || 0}</div>
         </div>
       </div>
+
+      {(vehicle.vehiclePhoto || vehicle.wheelTaxCard) && (
+        <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <h2 className="text-lg font-bold mb-4">Documents</h2>
+          <div className="grid grid-cols-2 gap-6">
+            {vehicle.vehiclePhoto && (
+              <div>
+                <p className="text-sm font-medium text-gray-700 mb-2">Vehicle Photo</p>
+                <img
+                  src={`${api.defaults.baseURL}/uploads/${vehicle.vehiclePhoto}`}
+                  alt="Vehicle"
+                  className="w-full max-w-sm rounded-lg border"
+                />
+              </div>
+            )}
+            {vehicle.wheelTaxCard && (
+              <div>
+                <p className="text-sm font-medium text-gray-700 mb-2">Wheel Tax Card</p>
+                <img
+                  src={`${api.defaults.baseURL}/uploads/${vehicle.wheelTaxCard}`}
+                  alt="Wheel Tax Card"
+                  className="w-full max-w-sm rounded-lg border"
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="flex gap-4 mb-4 border-b">
         {(['events', 'violations', 'rfid'] as const).map((tab) => (

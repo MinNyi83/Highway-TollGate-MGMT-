@@ -126,20 +126,22 @@ model Account {
 }
 
 model Vehicle {
-  id           String      @id @default(uuid())
-  plateNumber  String      @unique @map("plate_number")
-  make         String
-  model        String
-  year         Int
-  color        String?
-  vehicleClass VehicleClass @map("vehicle_class")
-  status       VehicleStatus @default(ACTIVE)
-  createdAt    DateTime    @default(now()) @map("created_at")
-  updatedAt    DateTime    @updatedAt @map("updated_at")
+  id             String      @id @default(uuid())
+  plateNumber    String      @unique @map("plate_number")
+  make           String
+  model          String
+  year           Int
+  color          String?
+  vehicleClass   VehicleClass @map("vehicle_class")
+  status         VehicleStatus @default(ACTIVE)
+  vehiclePhoto   String?     @map("vehicle_photo")
+  wheelTaxCard   String?     @map("wheel_tax_card")
+  createdAt      DateTime    @default(now()) @map("created_at")
+  updatedAt      DateTime    @updatedAt @map("updated_at")
 
-  rfidTags     RFIDTag[]
-  tollEvents   TollEvent[]
-  violations   Violation[]
+  rfidTags       RFIDTag[]
+  tollEvents     TollEvent[]
+  violations     Violation[]
 
   @@map("vehicles")
 }

@@ -8,6 +8,7 @@ import {
   unbindRfidTag,
 } from './vehicles.service';
 import { authMiddleware } from '../../middleware/auth';
+import { uploadVehiclePhotos } from '../../middleware/upload';
 
 const router = Router();
 
@@ -33,37 +34,67 @@ router.get('/:id', authMiddleware, async (req: Request, res: Response) => {
   }
 });
 
-router.post('/', authMiddleware, async (req: Request, res: Response) => {
-  try {
-    const { plateNumber, make, model, year, color, vehicleClass } = req.body;
-
-    if (!plateNumber || !make || !model || !year || !vehicleClass) {
-      res.status(400).json({ error: 'Missing required fields' });
+router.post('/', authMiddleware, (req: Request, res: Response) => {
+  uploadVehiclePhotos(req, res, async (err) => {
+    if (err) {
+      res.status(400).json({ error: err.message });
       return;
     }
 
-    const vehicle = await createVehicle({
-      plateNumber,
-      make,
-      model,
-      year,
-      color,
-      vehicleClass,
-    });
+    try {
+      const { plateNumber, make, model, year, color, vehicleClass } = req.body;
 
-    res.status(201).json(vehicle);
-  } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
-  }
+      if (!plateNumber || !make || !model || !year || !vehicleClass) {
+        res.status(400).json({ error: 'Missing required fields' });
+        return;
+      }
+
+      const files = req.files as { [fieldname: string]: Express.Multer.File[] } | undefined;
+      const vehiclePhoto = files?.vehiclePhoto?.[0]?.filename || undefined;
+      const wheelTaxCard = files?.wheelTaxCard?.[0]?.filename || undefined;
+
+      const vehicle = await createVehicle({
+        plateNumber,
+        make,
+        model,
+        year: parseInt(year, 10),
+        color,
+        vehicleClass,
+        vehiclePhoto,
+        wheelTaxCard,
+      });
+
+      res.status(201).json(vehicle);
+    } catch (error) {
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
 });
 
-router.put('/:id', authMiddleware, async (req: Request, res: Response) => {
-  try {
-    const vehicle = await updateVehicle(req.params.id, req.body);
-    res.json(vehicle);
-  } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
-  }
+router.put('/:id', authMiddleware, (req: Request, res: Response) => {
+  uploadVehiclePhotos(req, res, async (err) => {
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
+
+    try {
+      const files = req.files as { [fieldname: string]: Express.Multer.File[] } | undefined;
+      const updateData: any = { ...req.body };
+
+      if (files?.vehiclePhoto?.[0]) {
+        updateData.vehiclePhoto = files.vehiclePhoto[0].filename;
+      }
+      if (files?.wheelTaxCard?.[0]) {
+        updateData.wheelTaxCard = files.wheelTaxCard[0].filename;
+      }
+
+      const vehicle = await updateVehicle(req.params.id, updateData);
+      res.json(vehicle);
+    } catch (error) {
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
 });
 
 router.post('/:id/rfid', authMiddleware, async (req: Request, res: Response) => {

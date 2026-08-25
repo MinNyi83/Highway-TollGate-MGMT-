@@ -9,6 +9,8 @@ export interface CreateVehicleInput {
   year: number;
   color?: string;
   vehicleClass: VehicleClass;
+  vehiclePhoto?: string;
+  wheelTaxCard?: string;
 }
 
 export interface UpdateVehicleInput {
@@ -18,6 +20,8 @@ export interface UpdateVehicleInput {
   color?: string;
   vehicleClass?: VehicleClass;
   status?: VehicleStatus;
+  vehiclePhoto?: string;
+  wheelTaxCard?: string;
 }
 
 export interface BindRfidInput {

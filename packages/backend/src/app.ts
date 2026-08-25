@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import path from 'path';
 import dotenv from 'dotenv';
 import healthRoutes from './routes/health';
 import authRoutes from './modules/auth/auth.routes';
@@ -43,6 +44,7 @@ app.use('/api/notifications', notificationsRoutes);
 app.use('/api/device-status', deviceStatusRoutes);
 app.use('/api/reports', reportsRoutes);
 
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use(errorHandler);
 
 export default app;
