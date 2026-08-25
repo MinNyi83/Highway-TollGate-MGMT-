@@ -2,10 +2,12 @@
 schema_version: 1
 id: M004
 title: RFID/ANPR Simulator
-status: draft
+status: in_progress
 requirement: null
-confirmed_at: null
-verification_approved_hash: null
+confirmed_at: 2026-08-25T00:26:52Z
+verification_approved_hash: sha256:272c571a2cc422db6c9e760848dfadce40d5a06a2e55cfdc179e2f06dc3c9f5c
+base_branch: pitway/M003-frontend-dashboard
+base_revision: 46eee24e47c9db6034d3d88b52add6985f7a6cd8
 acceptance_criteria:
   - id: AC001
     text: CLI starts with tollgate-simulator command.

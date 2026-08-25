@@ -3,7 +3,7 @@ tasks:
   - id: T001
     name: CLI scaffold
     objective: Set up Commander CLI with simulate, status, and config commands.
-    status: planned
+    status: ready
     depends_on: []
     acceptance_criteria:
       - CLI responds to --help with available commands
@@ -22,7 +22,7 @@ tasks:
   - id: T002
     name: Vehicle pool generator
     objective: Generate random vehicles with plates, RFID tags, and vehicle classes.
-    status: planned
+    status: waiting
     depends_on:
       - T001
     acceptance_criteria:
@@ -42,7 +42,7 @@ tasks:
   - id: T003
     name: Single passage simulation
     objective: Simulate one vehicle entering and exiting a toll plaza.
-    status: planned
+    status: waiting
     depends_on:
       - T002
     acceptance_criteria:
@@ -62,7 +62,7 @@ tasks:
   - id: T004
     name: Continuous simulation
     objective: Run simulation in loop with configurable interval between passages.
-    status: planned
+    status: waiting
     depends_on:
       - T003
     acceptance_criteria:
@@ -82,7 +82,7 @@ tasks:
     name: Configurable scenarios
     objective: "Support different simulation scenarios: normal passage, no-RFID
       vehicle, ANPR mismatch, insufficient balance."
-    status: planned
+    status: waiting
     depends_on:
       - T003
     acceptance_criteria:
@@ -102,7 +102,7 @@ tasks:
     name: Real-time stats
     objective: Display live statistics during simulation (vehicles processed,
       violations, revenue).
-    status: planned
+    status: waiting
     depends_on:
       - T004
     acceptance_criteria:
@@ -121,7 +121,7 @@ tasks:
   - id: T007
     name: API integration
     objective: Wire simulator to backend API for toll event creation and completion.
-    status: planned
+    status: waiting
     depends_on:
       - T003
     acceptance_criteria:
