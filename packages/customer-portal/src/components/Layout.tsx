@@ -7,6 +7,7 @@ import ToastContainer from './Toast';
 
 const navItems = [
   { to: '/', icon: LayoutDashboard, label: 'Home' },
+  { to: '/my-vehicles', icon: Car, label: 'Vehicles' },
   { to: '/toll-history', icon: History, label: 'History' },
   { to: '/violations', icon: AlertTriangle, label: 'Violations' },
   { to: '/account', icon: Wallet, label: 'Account' },
@@ -41,7 +42,6 @@ export default function Layout() {
         </div>
       </header>
 
-      {/* Mobile Menu Dropdown */}
       {menuOpen && (
         <div className="bg-gray-800 text-white md:hidden">
           <div className="p-4">
@@ -56,7 +56,6 @@ export default function Layout() {
       )}
 
       <div className="flex flex-1">
-        {/* Sidebar - Desktop */}
         <aside className="hidden md:flex bg-gray-900 text-white w-64 min-h-screen p-4 flex-col">
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-1">
@@ -95,7 +94,6 @@ export default function Layout() {
           </div>
         </aside>
 
-        {/* Main Content */}
         <main className="flex-1 p-4 md:p-8 overflow-auto pb-24 md:pb-8">
           <Outlet />
         </main>
@@ -109,13 +107,13 @@ export default function Layout() {
             to={item.to}
             end={item.to === '/'}
             className={({ isActive }) =>
-              `flex flex-col items-center gap-1 py-2 px-3 rounded-lg transition-colors ${
+              `flex flex-col items-center gap-1 py-2 px-2 rounded-lg transition-colors ${
                 isActive ? 'text-blue-600' : 'text-gray-400'
               }`
             }
           >
-            <item.icon size={20} />
-            <span className="text-xs font-medium">{item.label}</span>
+            <item.icon size={18} />
+            <span className="text-[10px] font-medium">{item.label}</span>
           </NavLink>
         ))}
       </nav>

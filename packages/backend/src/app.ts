@@ -18,6 +18,7 @@ import reportsRoutes from './modules/reports/reports.routes';
 import auditRoutes from './modules/audit/audit.routes';
 import customerAuthRoutes from './modules/customer/customer.routes';
 import customerDataRoutes from './modules/customer/customer-data.routes';
+import customerVehiclesRoutes from './modules/customer/customer-vehicles.routes';
 import { setupSwagger } from './config/swagger';
 import { logger } from './middleware/logger';
 import { errorHandler } from './middleware/errorHandler';
@@ -49,6 +50,7 @@ app.use('/api/reports', reportsRoutes);
 app.use('/api/audit-logs', auditRoutes);
 app.use('/api/customer', customerAuthRoutes);
 app.use('/api/customer', customerDataRoutes);
+app.use('/api/customer', customerVehiclesRoutes);
 
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use(errorHandler);

@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { Lock, Globe, Moon, Sun, Eye, EyeOff, CheckCircle } from 'lucide-react';
+import { Lock, Globe, Moon, Sun, Eye, EyeOff } from 'lucide-react';
 import api from '../lib/api';
 import { useLanguage } from '../hooks/useLanguage';
+import { useTheme } from '../hooks/useTheme';
 import { showToast } from '../components/Toast';
 
 export default function Settings() {
   const { language, setLanguage } = useLanguage();
+  const { theme, toggleTheme } = useTheme();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -43,6 +45,28 @@ export default function Settings() {
   return (
     <div className="max-w-2xl mx-auto">
       <h1 className="text-xl md:text-2xl font-bold mb-6">Settings</h1>
+
+      {/* Theme */}
+      <div className="bg-white rounded-lg shadow p-4 md:p-6 mb-4">
+        <h2 className="font-bold mb-4 flex items-center gap-2">
+          {theme === 'dark' ? <Moon size={18} /> : <Sun size={18} />}
+          Theme
+        </h2>
+        <button
+          onClick={toggleTheme}
+          className="w-full flex items-center justify-between p-3 rounded-lg border-2 border-gray-200 hover:border-gray-300 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            {theme === 'dark' ? <Moon size={20} /> : <Sun size={20} />}
+            <span className="font-medium">{theme === 'dark' ? 'Dark Mode' : 'Light Mode'}</span>
+          </div>
+          <div className={`w-12 h-6 rounded-full transition-colors ${theme === 'dark' ? 'bg-blue-600' : 'bg-gray-300'}`}>
+            <div className={`w-5 h-5 bg-white rounded-full shadow transition-transform mt-0.5 ${
+              theme === 'dark' ? 'translate-x-6' : 'translate-x-0.5'
+            }`} />
+          </div>
+        </button>
+      </div>
 
       {/* Language */}
       <div className="bg-white rounded-lg shadow p-4 md:p-6 mb-4">
@@ -124,7 +148,6 @@ export default function Settings() {
         </div>
       </div>
 
-      {/* App Info */}
       <div className="bg-white rounded-lg shadow p-4 md:p-6">
         <h2 className="font-bold mb-2">About</h2>
         <p className="text-sm text-gray-500">TollGate Customer Portal v1.0</p>

@@ -9,7 +9,8 @@ import {
   BarChart3, 
   Settings,
   PlayCircle,
-  Shield
+  Shield,
+  HeartPulse
 } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 
@@ -24,6 +25,7 @@ const navItems = [
   { to: '/device-status', icon: Settings, label: 'Device Status', roles: ['ADMIN', 'OPERATOR'] },
   { to: '/simulator', icon: PlayCircle, label: 'Simulator', roles: ['ADMIN'] },
   { to: '/audit-log', icon: Shield, label: 'Audit Log', roles: ['ADMIN'] },
+  { to: '/system-health', icon: HeartPulse, label: 'System Health', roles: ['ADMIN'] },
 ];
 
 export default function Sidebar() {
