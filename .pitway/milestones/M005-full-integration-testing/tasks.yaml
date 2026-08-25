@@ -156,7 +156,7 @@ tasks:
   - id: T008
     name: Seed data verification
     objective: Run seed script and verify all endpoints return data correctly.
-    status: ready
+    status: review
     depends_on:
       - T001
     acceptance_criteria:
@@ -171,5 +171,5 @@ tasks:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
     result: null
-    attempts: 0
+    attempts: 1
     usage: null
