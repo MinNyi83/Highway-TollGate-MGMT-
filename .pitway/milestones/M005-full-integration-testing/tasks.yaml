@@ -136,7 +136,7 @@ tasks:
     name: End-to-end manual test script
     objective: Create step-by-step script for manual verification of full flow
       without automation.
-    status: review
+    status: completed
     depends_on: []
     acceptance_criteria:
       - Step-by-step instructions for full flow
@@ -148,7 +148,9 @@ tasks:
     verification:
       strategy: manual
       detail: Review test script for completeness
-    result: null
+    result:
+      summary: T007 completed. E2E manual test script.
+      evidence: "Manual verification: E2E test script covers all required flows."
     attempts: 1
     usage: null
   - id: T008
