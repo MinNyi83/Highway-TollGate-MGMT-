@@ -1,2 +1,0 @@
-summary: "T002 completed. Auth flow tests written (require running database)."
-evidence: "npx tsc --noEmit passes. Tests properly structured for integration."

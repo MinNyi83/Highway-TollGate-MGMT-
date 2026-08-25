@@ -1,3 +1,0 @@
-verification:
-  strategy: command
-  detail: cd packages/backend && npx tsc --noEmit
