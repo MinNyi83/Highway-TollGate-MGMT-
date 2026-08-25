@@ -71,7 +71,7 @@ tasks:
     name: Toll event + transaction flow tests
     objective: "Test complete toll event flow: entry, exit, auto-deduction, balance
       verification."
-    status: ready
+    status: review
     depends_on:
       - T003
     acceptance_criteria:
@@ -87,7 +87,7 @@ tasks:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
     result: null
-    attempts: 0
+    attempts: 1
     usage: null
   - id: T005
     name: Violation flow tests

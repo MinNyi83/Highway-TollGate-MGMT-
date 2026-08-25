@@ -1,0 +1,2 @@
+summary: "T004 completed. Toll event + transaction flow tests."
+evidence: "npx tsc --noEmit passes."
