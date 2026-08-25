@@ -68,7 +68,7 @@ tasks:
   - id: T004
     name: Continuous simulation
     objective: Run simulation in loop with configurable interval between passages.
-    status: ready
+    status: in_progress
     depends_on:
       - T003
     acceptance_criteria:
@@ -82,7 +82,7 @@ tasks:
       strategy: command
       detail: cd packages/simulator && npx tsc --noEmit
     result: null
-    attempts: 0
+    attempts: 1
     usage: null
   - id: T005
     name: Configurable scenarios
