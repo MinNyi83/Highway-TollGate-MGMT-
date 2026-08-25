@@ -3,7 +3,7 @@ tasks:
   - id: T001
     name: CLI scaffold
     objective: Set up Commander CLI with simulate, status, and config commands.
-    status: ready
+    status: planned
     depends_on: []
     acceptance_criteria:
       - CLI responds to --help with available commands
@@ -16,15 +16,13 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/simulator && npx tsc --noEmit
-    result:
-      summary: "Pending"
-      evidence: "Pending"
+    result: null
     attempts: 0
     usage: null
   - id: T002
     name: Vehicle pool generator
     objective: Generate random vehicles with plates, RFID tags, and vehicle classes.
-    status: waiting
+    status: planned
     depends_on:
       - T001
     acceptance_criteria:
@@ -38,15 +36,13 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/simulator && npx tsc --noEmit
-    result:
-      summary: "Pending"
-      evidence: "Pending"
+    result: null
     attempts: 0
     usage: null
   - id: T003
     name: Single passage simulation
     objective: Simulate one vehicle entering and exiting a toll plaza.
-    status: waiting
+    status: planned
     depends_on:
       - T002
     acceptance_criteria:
@@ -60,15 +56,13 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/simulator && npx tsc --noEmit
-    result:
-      summary: "Pending"
-      evidence: "Pending"
+    result: null
     attempts: 0
     usage: null
   - id: T004
     name: Continuous simulation
     objective: Run simulation in loop with configurable interval between passages.
-    status: waiting
+    status: planned
     depends_on:
       - T003
     acceptance_criteria:
@@ -81,15 +75,14 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/simulator && npx tsc --noEmit
-    result:
-      summary: "Pending"
-      evidence: "Pending"
+    result: null
     attempts: 0
     usage: null
   - id: T005
     name: Configurable scenarios
-    objective: "Support different simulation scenarios: normal passage, no-RFID vehicle, ANPR mismatch, insufficient balance."
-    status: waiting
+    objective: "Support different simulation scenarios: normal passage, no-RFID
+      vehicle, ANPR mismatch, insufficient balance."
+    status: planned
     depends_on:
       - T003
     acceptance_criteria:
@@ -102,15 +95,14 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/simulator && npx tsc --noEmit
-    result:
-      summary: "Pending"
-      evidence: "Pending"
+    result: null
     attempts: 0
     usage: null
   - id: T006
     name: Real-time stats
-    objective: Display live statistics during simulation (vehicles processed, violations, revenue).
-    status: waiting
+    objective: Display live statistics during simulation (vehicles processed,
+      violations, revenue).
+    status: planned
     depends_on:
       - T004
     acceptance_criteria:
@@ -123,15 +115,13 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/simulator && npx tsc --noEmit
-    result:
-      summary: "Pending"
-      evidence: "Pending"
+    result: null
     attempts: 0
     usage: null
   - id: T007
     name: API integration
     objective: Wire simulator to backend API for toll event creation and completion.
-    status: waiting
+    status: planned
     depends_on:
       - T003
     acceptance_criteria:
@@ -144,8 +134,6 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/simulator && npx tsc --noEmit
-    result:
-      summary: "Pending"
-      evidence: "Pending"
+    result: null
     attempts: 0
     usage: null
