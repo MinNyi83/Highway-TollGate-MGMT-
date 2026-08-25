@@ -4,7 +4,7 @@ tasks:
     name: Integration test setup
     objective: Configure test environment with test database, test helpers, and API
       client.
-    status: review
+    status: completed
     depends_on: []
     acceptance_criteria:
       - Test database configuration in place
@@ -18,14 +18,16 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
-    result: null
+    result:
+      summary: T001 completed. Integration test setup.
+      evidence: (no output)
     attempts: 1
     usage: null
   - id: T002
     name: Auth flow tests
     objective: "Test complete authentication flow: register, login, access protected
       routes, refresh token."
-    status: waiting
+    status: ready
     depends_on:
       - T001
     acceptance_criteria:
@@ -45,7 +47,7 @@ tasks:
   - id: T003
     name: Vehicle + RFID flow tests
     objective: Test vehicle creation, RFID binding, and simulation of passage.
-    status: waiting
+    status: ready
     depends_on:
       - T001
     acceptance_criteria:
@@ -87,7 +89,7 @@ tasks:
   - id: T005
     name: Violation flow tests
     objective: Test violation creation from ANPR mismatch and status update workflow.
-    status: waiting
+    status: ready
     depends_on:
       - T001
     acceptance_criteria:
@@ -105,7 +107,7 @@ tasks:
   - id: T006
     name: WebSocket integration test
     objective: Test WebSocket connection, room joining, and event broadcasting.
-    status: waiting
+    status: ready
     depends_on:
       - T001
     acceptance_criteria:
@@ -143,7 +145,7 @@ tasks:
   - id: T008
     name: Seed data verification
     objective: Run seed script and verify all endpoints return data correctly.
-    status: waiting
+    status: ready
     depends_on:
       - T001
     acceptance_criteria:
