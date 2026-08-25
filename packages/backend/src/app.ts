@@ -15,11 +15,15 @@ import notificationsRoutes from './modules/notifications/notifications.routes';
 import deviceStatusRoutes from './modules/device-status/device-status.routes';
 import reportsRoutes from './modules/reports/reports.routes';
 import { setupSwagger } from './config/swagger';
+import { logger } from './middleware/logger';
+import { errorHandler } from './middleware/errorHandler';
+import { authLimiter } from './middleware/rateLimiter';
 
 dotenv.config();
 
 const app = express();
 
+app.use(logger);
 app.use(cors());
 app.use(helmet());
 app.use(express.json());
@@ -27,7 +31,7 @@ app.use(express.json());
 setupSwagger(app);
 
 app.use('/api', healthRoutes);
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/accounts', accountsRoutes);
 app.use('/api/vehicles', vehiclesRoutes);
@@ -38,5 +42,7 @@ app.use('/api/violations', violationsRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use('/api/device-status', deviceStatusRoutes);
 app.use('/api/reports', reportsRoutes);
+
+app.use(errorHandler);
 
 export default app;

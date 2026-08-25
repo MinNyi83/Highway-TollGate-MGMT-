@@ -41,7 +41,7 @@ export async function topUpAccount(id: string, amount: number) {
     throw new Error('Account not found');
   }
 
-  return prisma.account.update({
+  const updatedAccount = await prisma.account.update({
     where: { id },
     data: {
       balance: {
@@ -49,4 +49,16 @@ export async function topUpAccount(id: string, amount: number) {
       },
     },
   });
+
+  await prisma.transaction.create({
+    data: {
+      accountId: id,
+      eventId: `topup-${Date.now()}`,
+      amount,
+      type: 'TOPUP',
+      status: 'COMPLETED',
+    },
+  });
+
+  return updatedAccount;
 }

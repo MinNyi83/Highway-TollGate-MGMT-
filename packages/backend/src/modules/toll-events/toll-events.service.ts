@@ -1,4 +1,5 @@
 import { PrismaClient, TollEventStatus } from '@prisma/client';
+import { createTransaction } from '../transactions/transactions.service';
 
 const prisma = new PrismaClient();
 
@@ -78,6 +79,12 @@ export async function completeExitEvent(input: CompleteExitEventInput) {
       plaza: true,
     },
   });
+
+  try {
+    await createTransaction(event.id);
+  } catch (error) {
+    console.error(`Failed to create transaction for event ${event.id}:`, error);
+  }
 
   return updatedEvent;
 }

@@ -1,17 +1,14 @@
 import { Router, Request, Response } from 'express';
 import { register, login, refreshToken } from './auth.service';
 import { authMiddleware } from '../../middleware/auth';
+import { validate } from '../../middleware/validate';
+import { registerSchema, loginSchema } from '../../validation/schemas';
 
 const router = Router();
 
-router.post('/register', async (req: Request, res: Response) => {
+router.post('/register', validate(registerSchema), async (req: Request, res: Response) => {
   try {
     const { email, password, name } = req.body;
-
-    if (!email || !password || !name) {
-      res.status(400).json({ error: 'Email, password, and name are required' });
-      return;
-    }
 
     const result = await register({ email, password, name });
     res.status(201).json(result);
@@ -24,14 +21,9 @@ router.post('/register', async (req: Request, res: Response) => {
   }
 });
 
-router.post('/login', async (req: Request, res: Response) => {
+router.post('/login', validate(loginSchema), async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-
-    if (!email || !password) {
-      res.status(400).json({ error: 'Email and password are required' });
-      return;
-    }
 
     const result = await login({ email, password });
     res.json(result);
