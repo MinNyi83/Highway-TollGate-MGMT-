@@ -1,2 +1,0 @@
-summary: "T006 completed. WebSocket integration test."
-evidence: "npx tsc --noEmit passes."
