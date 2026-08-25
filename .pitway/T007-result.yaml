@@ -1,2 +1,0 @@
-summary: "T007 completed. Toll Events feed with real-time WebSocket."
-evidence: "npx tsc --noEmit passes."
