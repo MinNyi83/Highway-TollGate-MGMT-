@@ -223,7 +223,7 @@ tasks:
     name: Notifications panel
     objective: Create notifications panel with notification list, mark as read, and
       real-time badge count.
-    status: review
+    status: completed
     depends_on:
       - T003
     acceptance_criteria:
@@ -237,7 +237,9 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/frontend && npx tsc --noEmit
-    result: null
+    result:
+      summary: T010 completed. Notifications panel with mark as read.
+      evidence: (no output)
     attempts: 1
     usage: null
   - id: T011
