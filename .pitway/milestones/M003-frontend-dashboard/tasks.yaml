@@ -246,7 +246,7 @@ tasks:
     name: Reports page
     objective: Create reports page with date range selector, revenue reports,
       traffic reports, and violation stats using Recharts.
-    status: ready
+    status: in_progress
     depends_on:
       - T004
     acceptance_criteria:
@@ -261,7 +261,7 @@ tasks:
       strategy: command
       detail: cd packages/frontend && npx tsc --noEmit
     result: null
-    attempts: 0
+    attempts: 1
     usage: null
   - id: T012
     name: Device status dashboard
