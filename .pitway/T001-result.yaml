@@ -1,2 +1,0 @@
-summary: "T001 completed. Integration test setup."
-evidence: "npx tsc --noEmit passes."
