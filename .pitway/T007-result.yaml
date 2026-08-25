@@ -1,0 +1,2 @@
+summary: "T007 completed. API integration client."
+evidence: "npx tsc --noEmit passes."

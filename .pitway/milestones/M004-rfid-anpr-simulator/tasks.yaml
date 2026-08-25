@@ -133,7 +133,7 @@ tasks:
   - id: T007
     name: API integration
     objective: Wire simulator to backend API for toll event creation and completion.
-    status: in_progress
+    status: review
     depends_on:
       - T003
     acceptance_criteria:
