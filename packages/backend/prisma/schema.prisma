@@ -214,16 +214,17 @@ model TollEvent {
 }
 
 model Transaction {
-  id          String            @id @default(uuid())
-  accountId   String            @map("account_id")
-  eventId     String            @unique @map("event_id")
-  amount      Decimal           @db.Decimal(10, 2)
-  type        TransactionType
-  status      TransactionStatus @default(PENDING)
-  createdAt   DateTime          @default(now()) @map("created_at")
+  id            String            @id @default(uuid())
+  accountId     String            @map("account_id")
+  eventId       String?           @unique @map("event_id")
+  amount        Decimal           @db.Decimal(10, 2)
+  type          TransactionType
+  status        TransactionStatus @default(PENDING)
+  paymentMethod String?           @map("payment_method")
+  createdAt     DateTime          @default(now()) @map("created_at")
 
-  account     Account           @relation(fields: [accountId], references: [id])
-  event       TollEvent         @relation(fields: [eventId], references: [id])
+  account       Account           @relation(fields: [accountId], references: [id])
+  event         TollEvent?        @relation(fields: [eventId], references: [id])
 
   @@map("transactions")
 }

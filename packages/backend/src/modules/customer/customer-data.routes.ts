@@ -132,7 +132,7 @@ router.get('/violations', authMiddleware, async (req: Request, res: Response) =>
 
 router.post('/topup', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const { amount } = req.body;
+    const { amount, paymentMethod } = req.body;
     if (!amount || amount <= 0) {
       res.status(400).json({ error: 'Invalid amount' });
       return;
@@ -152,7 +152,40 @@ router.post('/topup', authMiddleware, async (req: Request, res: Response) => {
       data: { balance: { increment: amount } },
     });
 
+    await prisma.transaction.create({
+      data: {
+        accountId: account.id,
+        amount,
+        type: 'TOPUP',
+        status: 'COMPLETED',
+        paymentMethod: paymentMethod || 'manual',
+      },
+    });
+
     res.json({ balance: updated.balance, message: `Added $${amount} to account` });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.get('/topup-history', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const account = await prisma.account.findFirst({
+      where: { userId: req.user!.userId },
+    });
+
+    if (!account) {
+      res.status(404).json({ error: 'Account not found' });
+      return;
+    }
+
+    const topups = await prisma.transaction.findMany({
+      where: { accountId: account.id, type: 'TOPUP' },
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+    });
+
+    res.json(topups);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
   }

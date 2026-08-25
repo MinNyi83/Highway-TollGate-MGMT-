@@ -73,6 +73,7 @@ export async function getTollRevenueByPlaza(startDate: Date, endDate: Date) {
   const revenueByPlaza = new Map<string, { plazaName: string; totalRevenue: number; transactionCount: number }>();
 
   for (const transaction of transactions) {
+    if (!transaction.event) continue;
     const plazaId = transaction.event.plaza.id;
     const plazaName = transaction.event.plaza.name;
     const amount = Number(transaction.amount);
