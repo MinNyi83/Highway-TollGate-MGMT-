@@ -49,7 +49,7 @@ tasks:
   - id: T003
     name: Vehicle + RFID flow tests
     objective: Test vehicle creation, RFID binding, and simulation of passage.
-    status: review
+    status: completed
     depends_on:
       - T001
     acceptance_criteria:
@@ -62,14 +62,16 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
-    result: null
+    result:
+      summary: T003 completed. Vehicle + RFID flow tests.
+      evidence: (no output)
     attempts: 1
     usage: null
   - id: T004
     name: Toll event + transaction flow tests
     objective: "Test complete toll event flow: entry, exit, auto-deduction, balance
       verification."
-    status: waiting
+    status: ready
     depends_on:
       - T003
     acceptance_criteria:
