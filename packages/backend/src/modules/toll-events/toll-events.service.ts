@@ -1,5 +1,6 @@
 import { PrismaClient, TollEventStatus } from '@prisma/client';
 import { createTransaction } from '../transactions/transactions.service';
+import { cache, invalidateCache } from '../../services/cache.service';
 
 const prisma = new PrismaClient();
 
@@ -30,6 +31,7 @@ export async function createEntryEvent(input: CreateEntryEventInput) {
     },
   });
 
+  invalidateCache('toll-events:*');
   return event;
 }
 
@@ -80,6 +82,8 @@ export async function completeExitEvent(input: CompleteExitEventInput) {
     },
   });
 
+  invalidateCache('toll-events:*');
+
   try {
     await createTransaction(event.id);
   } catch (error) {
@@ -90,7 +94,11 @@ export async function completeExitEvent(input: CompleteExitEventInput) {
 }
 
 export async function getTollEvents() {
-  return prisma.tollEvent.findMany({
+  const cacheKey = 'toll-events:list';
+  const cachedData = cache.get(cacheKey);
+  if (cachedData) return cachedData;
+
+  const events = await prisma.tollEvent.findMany({
     include: {
       vehicle: true,
       plaza: true,
@@ -99,11 +107,19 @@ export async function getTollEvents() {
     orderBy: {
       entryTime: 'desc',
     },
+    take: 100,
   });
+
+  cache.set(cacheKey, events, 30000);
+  return events;
 }
 
 export async function getTollEventById(id: string) {
-  return prisma.tollEvent.findUnique({
+  const cacheKey = `toll-events:${id}`;
+  const cachedData = cache.get(cacheKey);
+  if (cachedData) return cachedData;
+
+  const event = await prisma.tollEvent.findUnique({
     where: { id },
     include: {
       vehicle: true,
@@ -113,4 +129,9 @@ export async function getTollEventById(id: string) {
       violation: true,
     },
   });
+
+  if (event) {
+    cache.set(cacheKey, event, 60000);
+  }
+  return event;
 }

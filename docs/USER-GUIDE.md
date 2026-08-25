@@ -1,367 +1,299 @@
 # Highway Tollgate Management System - User Guide
 
-## Table of Contents
+## Overview
 
-1. [Getting Started](#getting-started)
-2. [Dashboard](#dashboard)
-3. [Vehicle Management](#vehicle-management)
-4. [Toll Plaza Management](#toll-plaza-management)
-5. [Toll Events](#toll-events)
-6. [Transactions](#transactions)
-7. [Violations](#violations)
-8. [Reports](#reports)
-9. [Device Status](#device-status)
-10. [Notifications](#notifications)
+The Highway Tollgate Management System is a comprehensive solution for managing toll collection, vehicle tracking, and fleet management. It supports RFID and ANPR technology for automatic toll collection.
 
 ---
 
 ## Getting Started
 
-### System Requirements
+### Customer Registration
 
-- Modern web browser (Chrome, Firefox, Edge)
-- Docker Desktop (for database)
-- Node.js 18+ (for development)
-
-### First Time Setup
-
-1. Start Docker Desktop
-2. Open terminal and navigate to project folder
-3. Run: `docker-compose up -d`
-4. Run: `npm install`
-5. Run: `cd packages/backend && npm run db:generate && npm run db:migrate && npm run db:seed`
-6. Run: `npm run dev` (in packages/backend folder)
-7. Run: `cd packages/frontend && npm run dev`
-8. Open browser to `http://localhost:5173`
+1. Visit the Customer Portal at `http://localhost:8080`
+2. Click "Register" and fill in your details
+3. Choose between Individual or Enterprise account
+4. After registration, you will receive your account number
 
 ### Login
 
-1. Enter your email and password
+1. Enter your email and password on the login page
 2. Click "Sign In"
-3. You will be redirected to the Dashboard
-
-**Default Accounts:**
-| Email | Password | Role |
-|-------|----------|------|
-| admin@tollgate.com | admin123 | Administrator |
-| operator@tollgate.com | operator123 | Operator |
-| viewer@tollgate.com | viewer123 | Viewer |
+3. You will be redirected to your dashboard
 
 ---
 
-## Dashboard
+## Individual Customer
 
-The Dashboard provides an overview of system activity.
+### Dashboard
 
-### What You See
+- View your current balance
+- See recent toll transactions
+- Check account status
 
-- **Total Vehicles** - Number of registered vehicles
-- **Today's Revenue** - Income from toll collections
-- **Active Violations** - Unresolved violations
-- **Events Today** - Toll events processed today
+### Vehicle Management
 
-### Charts
+1. Go to "My Vehicles"
+2. Click "Add Vehicle"
+3. Enter vehicle details:
+   - Plate number
+   - Vehicle class (SEDAN, SUV, TRUCK, BUS, etc.)
+   - Make and model
+   - Year
+4. Register an RFID tag for the vehicle
 
-- Revenue by Plaza (bar chart)
-- Violations by Type (pie chart)
-- Traffic by Hour (line chart)
+### Top Up Account
 
----
+1. Go to "Account"
+2. Click "Top Up"
+3. Enter the amount (in MMK)
+4. Choose payment method:
+   - KBZ Pay
+   - Wave Money
+   - MMQR
+   - Manual (admin-assisted)
+5. Complete the payment
 
-## Vehicle Management
+### View Toll History
 
-### View Vehicles
-
-1. Click **Vehicles** in the sidebar
-2. Browse the list of registered vehicles
-3. Use the search bar to filter by plate number or RFID tag
-4. Click column headers to sort
-
-### Register New Vehicle
-
-1. Click **Add Vehicle** button
-2. Fill in the form:
-   - Plate Number (e.g., ABC-1234)
-   - RFID Tag (auto-generated or manual)
-   - Vehicle Class (Sedan, SUV, Truck, Bus)
-   - Make & Model
-   - Year & Color
-3. Click **Save**
-
-### Bind RFID Tag
-
-1. Find the vehicle in the list
-2. Click the **RFID** icon
-3. Enter the RFID tag number
-4. Click **Bind**
-
-### Unbind RFID Tag
-
-1. Find the vehicle with bound RFID
-2. Click the **Unbind** icon
-3. Confirm the action
+1. Go to "Toll History"
+2. Filter by date range
+3. View transaction details including:
+   - Entry/exit times
+   - Plaza used
+   - Amount charged
 
 ---
 
-## Toll Plaza Management
+## Enterprise Customer
 
-### View Plazas
+### Fleet Dashboard
 
-1. Click **Toll Plazas** in the sidebar
-2. Browse the grid of plaza cards
-3. Each card shows:
-   - Plaza name and location
-   - Status (Active/Inactive)
-   - Rates per vehicle class
+- View fleet statistics
+- Total vehicles, trips, and revenue
+- Violation count
 
-### Add New Plaza
+### Fleet Management
 
-1. Click **Add Plaza** button
-2. Enter plaza details:
-   - Name
-   - Location/Address
-   - Status
-3. Click **Save**
+1. Go to "Fleet Vehicles"
+2. Add multiple vehicles to your fleet
+3. Assign RFID tags to each vehicle
 
-### Manage Rates
+### Trip Monitoring
 
-1. Click on a plaza card
-2. View current rates for each vehicle class
-3. Click **Edit Rates** to modify:
-   - Sedan rate
-   - SUV rate
-   - Truck rate
-   - Bus rate
-4. Click **Save Changes**
+1. Go to "Trip History"
+2. View all fleet trips
+3. Filter by vehicle, date, or plaza
+4. Export data to CSV
+
+### Spending Reports
+
+1. Go to "Spending"
+2. Select time period (daily, weekly, monthly)
+3. View spending breakdown by vehicle
+4. Download reports
 
 ---
 
-## Toll Events
+## Admin Dashboard
 
-The Toll Events page shows real-time vehicle passage activity.
+### Login
 
-### What You See
+1. Visit `http://localhost`
+2. Login with admin credentials
+3. Default: admin@example.com / password123
 
-- Live feed of toll events (auto-updates)
-- Entry and exit timestamps
-- Vehicle plate numbers
-- RFID tag reads
-- ANPR plate recognition results
-- Toll amounts
+### Dashboard Overview
 
-### Manual Entry
+- Real-time revenue metrics
+- Active users count
+- Total trips today
+- System status
 
-1. Click **Manual Entry** button
-2. Enter vehicle plate number
-3. Select toll plaza
-4. Click **Record Entry**
+### Toll Plaza Management
 
-### Manual Exit
+1. Go to "Toll Plazas"
+2. Add new plazas with location coordinates
+3. Set toll rates for each vehicle class
+4. Enable/disable plazas
 
-1. Find the entry event in the list
-2. Click **Record Exit**
-3. System calculates toll automatically
+### Toll Event Monitoring
 
-### Cross-Verification
+1. Go to "Toll Events"
+2. View real-time entry/exit events
+3. Monitor ANPR and RFID scans
+4. Review mismatch alerts
 
-The system automatically compares:
-- RFID tag read vs registered tag
-- ANPR plate vs registered plate
-- If mismatch detected, creates a violation
+### Violation Management
+
+1. Go to "Violations"
+2. Review RFID-ANPR mismatches
+3. Update violation status
+4. Process payments
+
+### Device Management
+
+1. Go to "Devices"
+2. Monitor device status
+3. View last ping times
+4. Identify offline devices
 
 ---
 
-## Transactions
+## Toll Plaza Operations
 
-View all financial transactions in the system.
+### How Toll Collection Works
 
-### Transaction Types
+1. **Vehicle Entry**:
+   - RFID tag is scanned at entry point
+   - ANPR captures license plate
+   - Entry event is created
 
-- **DEBIT** - Toll payment deducted from account
-- **TOPUP** - Account balance increase
-- **REFUND** - Refund for overcharge or error
+2. **During Transit**:
+   - Vehicle travels on the highway
+   - System tracks the journey
 
-### View Transactions
+3. **Vehicle Exit**:
+   - RFID tag is scanned at exit point
+   - ANPR captures license plate again
+   - System cross-verifies RFID and ANPR data
 
-1. Click **Transactions** in the sidebar
-2. Browse the list with columns:
-   - Date & Time
-   - Vehicle
-   - Type (Debit/Topup/Refund)
-   - Amount
-   - Balance After
-   - Status
+4. **Payment Processing**:
+   - System calculates toll based on:
+     - Entry plaza
+     - Exit plaza
+     - Vehicle class
+   - Amount is deducted from account
 
-### Filter Transactions
+5. **Violation Detection**:
+   - If RFID and ANPR don't match, violation is created
+   - Fine is applied to the account
 
-1. Use date range picker
-2. Filter by transaction type
-3. Search by vehicle plate number
+---
+
+## Payment Methods
+
+### KBZ Pay
+
+1. Select "KBZ Pay" as payment method
+2. Enter amount
+3. Scan QR code with KBZ Pay app
+4. Confirm payment
+
+### Wave Money
+
+1. Select "Wave Money" as payment method
+2. Enter amount
+3. Receive payment link via SMS
+4. Complete payment in Wave Money app
+
+### MMQR
+
+1. Select "MMQR" as payment method
+2. Enter amount
+3. Scan QR code with any Myanmar payment app
+4. Confirm payment
+
+---
+
+## Account Management
+
+### View Balance
+
+- Current balance is displayed on dashboard
+- Real-time updates after transactions
+
+### Transaction History
+
+1. Go to "Transactions"
+2. View all transactions:
+   - Toll deductions
+   - Top-ups
+   - Refunds
+   - Violation payments
+3. Filter by date or type
+4. Export to CSV
+
+### Update Profile
+
+1. Go to "Account"
+2. Click "Edit Profile"
+3. Update your information
+4. Save changes
 
 ---
 
 ## Violations
 
-Manage traffic violations detected by the system.
+### Understanding Violations
 
-### Violation Types
+- **RFID-ANPR Mismatch**: Vehicle plate doesn't match RFID tag
+- **Insufficient Balance**: Vehicle passed with zero/negative balance
+- **Expired Tag**: RFID tag has expired
 
-- **ANPR_MISMATCH** - Plate number doesn't match
-- **NO_RFID** - Vehicle without RFID tag
-- **INSUFFICIENT_BALANCE** - Account has insufficient funds
-- **TOLL_EVASION** - Attempted to avoid toll
+### Paying Violations
 
-### View Violations
+1. Go to "Violations" in Customer Portal
+2. View violation details
+3. Click "Pay Now"
+4. Complete payment
 
-1. Click **Violations** in the sidebar
-2. See list with:
-   - Vehicle plate number
-   - Violation type
-   - Fine amount
-   - Due date
-   - Status
+### Disputing Violations
 
-### Process Violation
-
-1. Find the violation in the list
-2. Click **Process** to acknowledge
-3. Click **Mark Paid** when payment received
-4. Click **Escalate** if needed
-
-### Violation Status Flow
-
-```
-PENDING → PROCESSING → PAID
-         ↓
-      ESCALATED
-```
-
----
-
-## Reports
-
-Generate and view system reports.
-
-### Revenue Report
-
-1. Click **Reports** in the sidebar
-2. Select date range
-3. View revenue by plaza (bar chart)
-4. See total revenue and transaction count
-
-### Violation Report
-
-1. View violation statistics (pie chart)
-2. See breakdown by violation type
-3. View total fines collected
-
-### Traffic Report
-
-1. See traffic patterns by hour
-2. Identify peak hours
-3. View vehicle class distribution
-
----
-
-## Device Status
-
-Monitor RFID and ANPR device health.
-
-### What You See
-
-- Device name and type
-- Current status (Online/Offline/Error)
-- Last ping timestamp
-- Assigned plaza
-
-### Device Status Indicators
-
-- **Green** - Online and working
-- **Red** - Offline or disconnected
-- **Yellow** - Error or warning
-
----
-
-## Notifications
-
-Stay informed with real-time notifications.
-
-### Notification Types
-
-- New toll event recorded
-- Violation detected
-- Account low balance
-- Device offline
-- System alerts
-
-### Notification Panel
-
-1. Click the **bell icon** in the header
-2. See unread notification count (red badge)
-3. Click notification to mark as read
-4. Click **Mark all read** to clear all
-
-### Real-time Updates
-
-Notifications appear automatically via WebSocket connection.
-
----
-
-## User Roles
-
-### Administrator
-
-- Full access to all features
-- Manage users and accounts
-- Configure system settings
-- View all reports
-
-### Operator
-
-- Manage vehicles and plazas
-- Process toll events
-- Handle violations
-- View reports
-
-### Viewer
-
-- Read-only access
-- View dashboard and reports
-- View vehicle and plaza information
+1. Contact support with violation ID
+2. Provide evidence (photos, receipts)
+3. Admin will review and respond
 
 ---
 
 ## Troubleshooting
 
-### Cannot Login
+### Login Issues
 
-1. Check email and password
-2. Ensure backend server is running
-3. Check browser console for errors
+- Check email and password
+- Reset password if needed
+- Contact admin if account is locked
 
-### No Data Showing
+### Payment Issues
 
-1. Verify database is running (`docker-compose ps`)
-2. Run seed script: `npm run db:seed`
-3. Check backend logs
+- Verify payment method is active
+- Check internet connection
+- Contact support if payment fails
 
-### WebSocket Not Connecting
+### Vehicle Not Recognized
 
-1. Ensure backend is running on port 3000
-2. Check firewall settings
-3. Refresh the page
-
-### Slow Performance
-
-1. Check database connection
-2. Verify Docker resources (CPU/Memory)
-3. Clear browser cache
+- Verify RFID tag is active
+- Check vehicle registration
+- Ensure account has sufficient balance
 
 ---
 
 ## Support
 
-For issues or questions:
-- Check the [E2E Test Script](./E2E-TEST-SCRIPT.md)
-- Review API documentation at `http://localhost:3000/api-docs`
-- Check server logs in terminal
+For technical support or inquiries:
+- Email: support@tollgate.com
+- Phone: 09-976543210
+- Office: Yangon, Myanmar
+
+---
+
+## System Requirements
+
+### Customer Portal
+- Modern web browser (Chrome, Firefox, Safari, Edge)
+- Internet connection
+- Mobile-friendly design
+
+### Admin Dashboard
+- Modern web browser
+- Stable internet connection
+- Recommended: Desktop or tablet
+
+---
+
+## Security Notes
+
+- Never share your login credentials
+- Log out after each session
+- Report suspicious activity immediately
+- Keep your contact information updated

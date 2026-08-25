@@ -1,4 +1,5 @@
 import { PrismaClient, VehicleClass, TollPlazaStatus } from '@prisma/client';
+import { cache, invalidateCache } from '../../services/cache.service';
 
 const prisma = new PrismaClient();
 
@@ -25,54 +26,68 @@ export interface CreateTollRateInput {
 }
 
 export async function getTollPlazas() {
-  return prisma.tollPlaza.findMany({
+  const cacheKey = 'toll-plazas:list';
+  const cachedData = cache.get(cacheKey);
+  if (cachedData) return cachedData;
+
+  const plazas = await prisma.tollPlaza.findMany({
     include: {
       tollRates: true,
     },
   });
+
+  cache.set(cacheKey, plazas, 300000);
+  return plazas;
 }
 
 export async function getTollPlazaById(id: string) {
-  return prisma.tollPlaza.findUnique({
+  const cacheKey = `toll-plazas:${id}`;
+  const cachedData = cache.get(cacheKey);
+  if (cachedData) return cachedData;
+
+  const plaza = await prisma.tollPlaza.findUnique({
     where: { id },
     include: {
       tollRates: true,
     },
   });
+
+  if (plaza) {
+    cache.set(cacheKey, plaza, 300000);
+  }
+  return plaza;
 }
 
 export async function createTollPlaza(input: CreateTollPlazaInput) {
-  return prisma.tollPlaza.create({
-    data: input,
-  });
+  const plaza = await prisma.tollPlaza.create({ data: input });
+  invalidateCache('toll-plazas:*');
+  return plaza;
 }
 
 export async function updateTollPlaza(id: string, input: UpdateTollPlazaInput) {
-  return prisma.tollPlaza.update({
-    where: { id },
-    data: input,
-  });
+  const plaza = await prisma.tollPlaza.update({ where: { id }, data: input });
+  invalidateCache('toll-plazas:*');
+  return plaza;
 }
 
 export async function getTollRates(plazaId: string) {
-  return prisma.tollRate.findMany({
-    where: { plazaId },
-  });
+  const cacheKey = `toll-rates:${plazaId}`;
+  const cachedData = cache.get(cacheKey);
+  if (cachedData) return cachedData;
+
+  const rates = await prisma.tollRate.findMany({ where: { plazaId } });
+  cache.set(cacheKey, rates, 300000);
+  return rates;
 }
 
 export async function createTollRate(plazaId: string, input: CreateTollRateInput) {
-  const plaza = await prisma.tollPlaza.findUnique({
-    where: { id: plazaId },
+  const plaza = await prisma.tollPlaza.findUnique({ where: { id: plazaId } });
+  if (!plaza) throw new Error('Toll plaza not found');
+
+  const rate = await prisma.tollRate.create({
+    data: { plazaId, ...input },
   });
 
-  if (!plaza) {
-    throw new Error('Toll plaza not found');
-  }
-
-  return prisma.tollRate.create({
-    data: {
-      plazaId,
-      ...input,
-    },
-  });
+  invalidateCache(`toll-rates:${plazaId}`);
+  return rate;
 }
