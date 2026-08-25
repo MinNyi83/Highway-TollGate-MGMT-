@@ -246,7 +246,7 @@ tasks:
     name: Reports page
     objective: Create reports page with date range selector, revenue reports,
       traffic reports, and violation stats using Recharts.
-    status: in_progress
+    status: review
     depends_on:
       - T004
     acceptance_criteria:

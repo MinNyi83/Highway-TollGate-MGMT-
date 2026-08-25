@@ -1,0 +1,2 @@
+summary: "T011 completed. Reports page with charts."
+evidence: "npx tsc --noEmit passes."
