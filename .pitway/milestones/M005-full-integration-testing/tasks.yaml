@@ -136,7 +136,7 @@ tasks:
     name: End-to-end manual test script
     objective: Create step-by-step script for manual verification of full flow
       without automation.
-    status: ready
+    status: review
     depends_on: []
     acceptance_criteria:
       - Step-by-step instructions for full flow
@@ -149,7 +149,7 @@ tasks:
       strategy: manual
       detail: Review test script for completeness
     result: null
-    attempts: 0
+    attempts: 1
     usage: null
   - id: T008
     name: Seed data verification
