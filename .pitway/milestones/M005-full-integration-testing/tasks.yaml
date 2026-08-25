@@ -114,7 +114,7 @@ tasks:
   - id: T006
     name: WebSocket integration test
     objective: Test WebSocket connection, room joining, and event broadcasting.
-    status: review
+    status: completed
     depends_on:
       - T001
     acceptance_criteria:
@@ -127,7 +127,9 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
-    result: null
+    result:
+      summary: T006 completed. WebSocket integration test.
+      evidence: (no output)
     attempts: 1
     usage: null
   - id: T007
