@@ -68,7 +68,7 @@ tasks:
   - id: T004
     name: Continuous simulation
     objective: Run simulation in loop with configurable interval between passages.
-    status: in_progress
+    status: review
     depends_on:
       - T003
     acceptance_criteria:

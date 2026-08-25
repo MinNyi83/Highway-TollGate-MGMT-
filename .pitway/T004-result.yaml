@@ -1,0 +1,2 @@
+summary: "T004 completed. Continuous simulation."
+evidence: "npx tsc --noEmit passes."
