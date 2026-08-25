@@ -179,7 +179,7 @@ tasks:
     name: Transactions list
     objective: Create transactions history page with filters for date range, status,
       and plaza.
-    status: in_progress
+    status: review
     depends_on:
       - T003
     acceptance_criteria:
