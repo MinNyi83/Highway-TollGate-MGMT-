@@ -94,7 +94,7 @@ tasks:
   - id: T005
     name: Violation flow tests
     objective: Test violation creation from ANPR mismatch and status update workflow.
-    status: review
+    status: completed
     depends_on:
       - T001
     acceptance_criteria:
@@ -106,7 +106,9 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
-    result: null
+    result:
+      summary: T005 completed. Violation flow tests.
+      evidence: (no output)
     attempts: 1
     usage: null
   - id: T006
