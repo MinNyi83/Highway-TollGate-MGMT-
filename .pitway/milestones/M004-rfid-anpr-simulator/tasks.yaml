@@ -24,7 +24,7 @@ tasks:
   - id: T002
     name: Vehicle pool generator
     objective: Generate random vehicles with plates, RFID tags, and vehicle classes.
-    status: review
+    status: completed
     depends_on:
       - T001
     acceptance_criteria:
@@ -38,13 +38,15 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/simulator && npx tsc --noEmit
-    result: null
+    result:
+      summary: T002 completed. Vehicle pool generator.
+      evidence: (no output)
     attempts: 1
     usage: null
   - id: T003
     name: Single passage simulation
     objective: Simulate one vehicle entering and exiting a toll plaza.
-    status: waiting
+    status: ready
     depends_on:
       - T002
     acceptance_criteria:
