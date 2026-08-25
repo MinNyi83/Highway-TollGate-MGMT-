@@ -133,7 +133,7 @@ tasks:
   - id: T007
     name: API integration
     objective: Wire simulator to backend API for toll event creation and completion.
-    status: ready
+    status: in_progress
     depends_on:
       - T003
     acceptance_criteria:
@@ -147,5 +147,5 @@ tasks:
       strategy: command
       detail: cd packages/simulator && npx tsc --noEmit
     result: null
-    attempts: 0
+    attempts: 1
     usage: null
