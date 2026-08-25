@@ -46,7 +46,7 @@ tasks:
   - id: T003
     name: Single passage simulation
     objective: Simulate one vehicle entering and exiting a toll plaza.
-    status: in_progress
+    status: review
     depends_on:
       - T002
     acceptance_criteria:
