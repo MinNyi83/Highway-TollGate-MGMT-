@@ -1,0 +1,2 @@
+summary: "T012 completed. Device status dashboard."
+evidence: "npx tsc --noEmit passes."
