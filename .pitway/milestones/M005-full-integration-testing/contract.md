@@ -2,7 +2,7 @@
 schema_version: 1
 id: M005
 title: Full Integration & Testing
-status: in_progress
+status: completed
 requirement: null
 confirmed_at: 2026-08-25T01:04:54Z
 verification_approved_hash: sha256:5c59133153f21c1dc0ac51d8e946e50801828c4f87631d479e68fd6b892a54ed
