@@ -1,2 +1,0 @@
-summary: "T010 completed. Notifications panel with mark as read."
-evidence: "npx tsc --noEmit passes."
