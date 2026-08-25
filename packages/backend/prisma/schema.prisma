@@ -13,6 +13,11 @@ enum UserRole {
   VIEWER
 }
 
+enum CustomerType {
+  INDIVIDUAL
+  ENTERPRISE
+}
+
 enum AccountStatus {
   ACTIVE
   SUSPENDED
@@ -101,35 +106,65 @@ enum DeviceStatusEnum {
 }
 
 model User {
-  id               String    @id @default(uuid())
-  email            String    @unique
-  passwordHash     String    @map("password_hash")
+  id               String        @id @default(uuid())
+  email            String        @unique
+  passwordHash     String        @map("password_hash")
   name             String
-  role             UserRole  @default(VIEWER)
-  resetToken       String?   @map("reset_token")
-  resetTokenExpiry DateTime? @map("reset_token_expiry")
-  createdAt        DateTime  @default(now()) @map("created_at")
-  updatedAt        DateTime  @updatedAt @map("updated_at")
+  role             UserRole      @default(VIEWER)
+  customerType     CustomerType  @default(INDIVIDUAL) @map("customer_type")
+  phone            String?
+  nrcNumber        String?       @map("nrc_number")
+  drivingLicense   String?       @map("driving_license")
+  companyName      String?       @map("company_name")
+  companyRegNo     String?       @map("company_reg_no")
+  companyAddress   String?       @map("company_address")
+  fleetManagerName String?       @map("fleet_manager_name")
+  smsProvider      String?       @map("sms_provider")
+  smsEnabled       Boolean       @default(false) @map("sms_enabled")
+  resetToken       String?       @map("reset_token")
+  resetTokenExpiry DateTime?     @map("reset_token_expiry")
+  createdAt        DateTime      @default(now()) @map("created_at")
+  updatedAt        DateTime      @updatedAt @map("updated_at")
 
-  accounts       Account[]
-  notifications  Notification[]
+  accounts      Account[]
+  notifications Notification[]
+  smsLogs       SMSLog[]
 
   @@map("users")
 }
 
 model Account {
-  id        String        @id @default(uuid())
-  userId    String        @map("user_id")
-  balance   Decimal       @default(0) @db.Decimal(10, 2)
-  status    AccountStatus @default(ACTIVE)
-  createdAt DateTime      @default(now()) @map("created_at")
-  updatedAt DateTime      @updatedAt @map("updated_at")
+  id              String        @id @default(uuid())
+  userId          String        @map("user_id")
+  customerType    CustomerType  @default(INDIVIDUAL) @map("customer_type")
+  balance         Decimal       @default(0) @db.Decimal(10, 2)
+  creditLimit     Decimal       @default(0) @db.Decimal(10, 2) @map("credit_limit")
+  paymentTerms    Int?          @map("payment_terms")
+  status          AccountStatus @default(ACTIVE)
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
 
   user          User          @relation(fields: [userId], references: [id])
   rfidTags      RFIDTag[]
   transactions  Transaction[]
 
   @@map("accounts")
+}
+
+model SMSLog {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  provider    String
+  phone       String
+  message     String
+  status      String   @default("sent")
+  externalId  String?  @map("external_id")
+  error       String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("sms_logs")
 }
 
 model Vehicle {

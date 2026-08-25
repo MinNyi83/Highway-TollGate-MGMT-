@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, CustomerType } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { generateToken, TokenPayload } from '../../utils/jwt';
 
@@ -8,6 +8,16 @@ export interface RegisterInput {
   email: string;
   password: string;
   name: string;
+  customerType: CustomerType;
+  phone?: string;
+  nrcNumber?: string;
+  drivingLicense?: string;
+  companyName?: string;
+  companyRegNo?: string;
+  companyAddress?: string;
+  fleetManagerName?: string;
+  smsProvider?: string;
+  smsEnabled?: boolean;
 }
 
 export interface LoginInput {
@@ -21,6 +31,7 @@ export interface AuthResponse {
     email: string;
     name: string;
     role: string;
+    customerType: string;
   };
   token: string;
 }
@@ -41,13 +52,26 @@ export async function register(input: RegisterInput): Promise<AuthResponse> {
       email: input.email,
       passwordHash,
       name: input.name,
+      customerType: input.customerType || 'INDIVIDUAL',
+      phone: input.phone,
+      nrcNumber: input.nrcNumber,
+      drivingLicense: input.drivingLicense,
+      companyName: input.companyName,
+      companyRegNo: input.companyRegNo,
+      companyAddress: input.companyAddress,
+      fleetManagerName: input.fleetManagerName,
+      smsProvider: input.smsProvider,
+      smsEnabled: input.smsEnabled || false,
     },
   });
 
   await prisma.account.create({
     data: {
       userId: user.id,
+      customerType: input.customerType || 'INDIVIDUAL',
       balance: 0,
+      creditLimit: input.customerType === 'ENTERPRISE' ? 1000 : 0,
+      paymentTerms: input.customerType === 'ENTERPRISE' ? 30 : null,
     },
   });
 
@@ -65,6 +89,7 @@ export async function register(input: RegisterInput): Promise<AuthResponse> {
       email: user.email,
       name: user.name,
       role: user.role,
+      customerType: user.customerType,
     },
     token,
   };
@@ -99,6 +124,7 @@ export async function login(input: LoginInput): Promise<AuthResponse> {
       email: user.email,
       name: user.name,
       role: user.role,
+      customerType: user.customerType,
     },
     token,
   };
@@ -165,4 +191,38 @@ export async function resetPassword(resetToken: string, newPassword: string): Pr
     where: { id: user.id },
     data: { passwordHash, resetToken: null, resetTokenExpiry: null },
   });
+}
+
+export async function updateProfile(userId: string, data: Partial<RegisterInput>): Promise<any> {
+  const user = await prisma.user.update({
+    where: { id: userId },
+    data: {
+      name: data.name,
+      phone: data.phone,
+      nrcNumber: data.nrcNumber,
+      drivingLicense: data.drivingLicense,
+      companyName: data.companyName,
+      companyRegNo: data.companyRegNo,
+      companyAddress: data.companyAddress,
+      fleetManagerName: data.fleetManagerName,
+      smsProvider: data.smsProvider,
+      smsEnabled: data.smsEnabled,
+    },
+  });
+
+  return {
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    customerType: user.customerType,
+    phone: user.phone,
+    nrcNumber: user.nrcNumber,
+    drivingLicense: user.drivingLicense,
+    companyName: user.companyName,
+    companyRegNo: user.companyRegNo,
+    companyAddress: user.companyAddress,
+    fleetManagerName: user.fleetManagerName,
+    smsProvider: user.smsProvider,
+    smsEnabled: user.smsEnabled,
+  };
 }
