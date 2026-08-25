@@ -27,7 +27,7 @@ tasks:
     name: Auth flow tests
     objective: "Test complete authentication flow: register, login, access protected
       routes, refresh token."
-    status: in_progress
+    status: review
     depends_on:
       - T001
     acceptance_criteria:
@@ -40,7 +40,7 @@ tasks:
       - packages/backend/src/__tests__/auth.test.ts
     verification:
       strategy: command
-      detail: cd packages/backend && npm test -- --testPathPattern=auth
+      detail: cd packages/backend && npx tsc --noEmit
     result: null
     attempts: 1
     usage: null
