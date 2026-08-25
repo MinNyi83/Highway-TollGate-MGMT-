@@ -201,7 +201,7 @@ tasks:
     name: Violations management
     objective: Create violations page with violation list, status update workflow,
       and fine details.
-    status: review
+    status: completed
     depends_on:
       - T003
     acceptance_criteria:
@@ -214,7 +214,9 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/frontend && npx tsc --noEmit
-    result: null
+    result:
+      summary: T009 completed. Violations management page.
+      evidence: (no output)
     attempts: 1
     usage: null
   - id: T010
