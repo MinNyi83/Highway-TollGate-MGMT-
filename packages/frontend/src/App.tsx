@@ -10,6 +10,7 @@ import Violations from './pages/Violations';
 import Reports from './pages/Reports';
 import DeviceStatus from './pages/DeviceStatus';
 import Simulator from './pages/Simulator';
+import VehicleDetail from './pages/VehicleDetail';
 import Layout from './components/Layout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
@@ -25,6 +26,7 @@ function App() {
             <Route element={<Layout />}>
               <Route path="/" element={<Dashboard />} />
               <Route path="/vehicles" element={<Vehicles />} />
+              <Route path="/vehicles/:id" element={<VehicleDetail />} />
               <Route path="/toll-plazas" element={<TollPlazas />} />
               <Route path="/toll-events" element={<TollEvents />} />
               <Route path="/transactions" element={<Transactions />} />
