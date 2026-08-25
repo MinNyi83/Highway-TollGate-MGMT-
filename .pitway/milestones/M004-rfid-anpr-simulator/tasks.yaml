@@ -46,7 +46,7 @@ tasks:
   - id: T003
     name: Single passage simulation
     objective: Simulate one vehicle entering and exiting a toll plaza.
-    status: review
+    status: completed
     depends_on:
       - T002
     acceptance_criteria:
@@ -60,13 +60,15 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/simulator && npx tsc --noEmit
-    result: null
+    result:
+      summary: T003 completed. Single passage simulation.
+      evidence: (no output)
     attempts: 1
     usage: null
   - id: T004
     name: Continuous simulation
     objective: Run simulation in loop with configurable interval between passages.
-    status: waiting
+    status: ready
     depends_on:
       - T003
     acceptance_criteria:
@@ -86,7 +88,7 @@ tasks:
     name: Configurable scenarios
     objective: "Support different simulation scenarios: normal passage, no-RFID
       vehicle, ANPR mismatch, insufficient balance."
-    status: waiting
+    status: ready
     depends_on:
       - T003
     acceptance_criteria:
@@ -125,7 +127,7 @@ tasks:
   - id: T007
     name: API integration
     objective: Wire simulator to backend API for toll event creation and completion.
-    status: waiting
+    status: ready
     depends_on:
       - T003
     acceptance_criteria:
