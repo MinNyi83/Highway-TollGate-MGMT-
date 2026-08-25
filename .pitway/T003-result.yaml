@@ -1,2 +1,0 @@
-summary: "T003 completed. Single passage simulation."
-evidence: "npx tsc --noEmit passes."
