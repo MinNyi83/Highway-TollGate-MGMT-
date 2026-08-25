@@ -2,7 +2,7 @@
 schema_version: 1
 id: M003
 title: Frontend Dashboard
-status: in_progress
+status: completed
 requirement: null
 confirmed_at: 2026-08-24T23:26:24Z
 verification_approved_hash: sha256:7e8f874babcb10a4823e7f5cfddbc3bc1275ade7396e9be3c1e629e62376d7dd
