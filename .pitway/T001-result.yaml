@@ -1,0 +1,2 @@
+summary: "T001 completed. CLI scaffold with Commander."
+evidence: "npx tsc --noEmit passes."

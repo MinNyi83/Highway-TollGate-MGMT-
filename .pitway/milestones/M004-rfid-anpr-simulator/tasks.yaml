@@ -3,7 +3,7 @@ tasks:
   - id: T001
     name: CLI scaffold
     objective: Set up Commander CLI with simulate, status, and config commands.
-    status: in_progress
+    status: review
     depends_on: []
     acceptance_criteria:
       - CLI responds to --help with available commands
