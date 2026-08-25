@@ -86,6 +86,11 @@ enum DeviceType {
   ANPR_CAMERA
   LIDAR
   LANE_CONTROLLER
+  BARRIER_GATE
+  TICKET_DISPENSER
+  LED_SIGN
+  INTERCOM
+  IP_CAMERA
 }
 
 enum DeviceStatusEnum {

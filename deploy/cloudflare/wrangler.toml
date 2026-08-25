@@ -1,0 +1,34 @@
+{
+  "name": "tollgate-api",
+  "compatibility_date": "2024-01-01",
+  "main": "src/worker.ts",
+  "minify": true,
+  "defines": {
+    "ENVIRONMENT": "production"
+  },
+  "kv_namespaces": [
+    {
+      "binding": "CACHE",
+      "id": "tollgate-cache"
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "tollgate-db",
+      "database_id": "your-d1-database-id"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "STORAGE",
+      "bucket_name": "tollgate-storage"
+    }
+  ],
+  "routes": [
+    {
+      "pattern": "api.tollgate.com/*",
+      "zone_name": "tollgate.com"
+    }
+  ]
+}
