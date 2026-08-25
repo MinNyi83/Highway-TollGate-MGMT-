@@ -2,8 +2,9 @@ schema_version: 1
 tasks:
   - id: T001
     name: Integration test setup
-    objective: Configure test environment with test database, test helpers, and API client.
-    status: ready
+    objective: Configure test environment with test database, test helpers, and API
+      client.
+    status: planned
     depends_on: []
     acceptance_criteria:
       - Test database configuration in place
@@ -17,15 +18,14 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
-    result:
-      summary: "Pending"
-      evidence: "Pending"
+    result: null
     attempts: 0
     usage: null
   - id: T002
     name: Auth flow tests
-    objective: "Test complete authentication flow: register, login, access protected routes, refresh token."
-    status: waiting
+    objective: "Test complete authentication flow: register, login, access protected
+      routes, refresh token."
+    status: planned
     depends_on:
       - T001
     acceptance_criteria:
@@ -39,15 +39,13 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/backend && npm test -- --testPathPattern=auth
-    result:
-      summary: "Pending"
-      evidence: "Pending"
+    result: null
     attempts: 0
     usage: null
   - id: T003
     name: Vehicle + RFID flow tests
-    objective: "Test vehicle creation, RFID binding, and simulation of passage."
-    status: waiting
+    objective: Test vehicle creation, RFID binding, and simulation of passage.
+    status: planned
     depends_on:
       - T001
     acceptance_criteria:
@@ -60,15 +58,14 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/backend && npm test -- --testPathPattern=vehicles
-    result:
-      summary: "Pending"
-      evidence: "Pending"
+    result: null
     attempts: 0
     usage: null
   - id: T004
     name: Toll event + transaction flow tests
-    objective: "Test complete toll event flow: entry, exit, auto-deduction, balance verification."
-    status: waiting
+    objective: "Test complete toll event flow: entry, exit, auto-deduction, balance
+      verification."
+    status: planned
     depends_on:
       - T003
     acceptance_criteria:
@@ -82,16 +79,15 @@ tasks:
       - packages/backend/src/__tests__/transactions.test.ts
     verification:
       strategy: command
-      detail: cd packages/backend && npm test -- --testPathPattern='toll-events|transactions'
-    result:
-      summary: "Pending"
-      evidence: "Pending"
+      detail: cd packages/backend && npm test --
+        --testPathPattern='toll-events|transactions'
+    result: null
     attempts: 0
     usage: null
   - id: T005
     name: Violation flow tests
-    objective: "Test violation creation from ANPR mismatch and status update workflow."
-    status: waiting
+    objective: Test violation creation from ANPR mismatch and status update workflow.
+    status: planned
     depends_on:
       - T001
     acceptance_criteria:
@@ -103,15 +99,13 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/backend && npm test -- --testPathPattern=violations
-    result:
-      summary: "Pending"
-      evidence: "Pending"
+    result: null
     attempts: 0
     usage: null
   - id: T006
     name: WebSocket integration test
     objective: Test WebSocket connection, room joining, and event broadcasting.
-    status: waiting
+    status: planned
     depends_on:
       - T001
     acceptance_criteria:
@@ -124,34 +118,32 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/backend && npm test -- --testPathPattern=websocket
-    result:
-      summary: "Pending"
-      evidence: "Pending"
+    result: null
     attempts: 0
     usage: null
   - id: T007
     name: End-to-end manual test script
-    objective: "Create step-by-step script for manual verification of full flow without automation."
-    status: waiting
+    objective: Create step-by-step script for manual verification of full flow
+      without automation.
+    status: planned
     depends_on: []
     acceptance_criteria:
       - Step-by-step instructions for full flow
       - Expected results for each step
-      - Covers login, create vehicle, simulate passage, check transaction, check violation
+      - Covers login, create vehicle, simulate passage, check transaction, check
+        violation
     relevant_files:
       - docs/E2E-TEST-SCRIPT.md
     verification:
       strategy: manual
       detail: Review test script for completeness
-    result:
-      summary: "Pending"
-      evidence: "Pending"
+    result: null
     attempts: 0
     usage: null
   - id: T008
     name: Seed data verification
-    objective: "Run seed script and verify all endpoints return data correctly."
-    status: waiting
+    objective: Run seed script and verify all endpoints return data correctly.
+    status: planned
     depends_on:
       - T001
     acceptance_criteria:
@@ -165,8 +157,6 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/backend && npm test -- --testPathPattern=seed
-    result:
-      summary: "Pending"
-      evidence: "Pending"
+    result: null
     attempts: 0
     usage: null
