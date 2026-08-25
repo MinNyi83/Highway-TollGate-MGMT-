@@ -1,2 +1,0 @@
-summary: "T006 completed. Real-time stats display."
-evidence: "npx tsc --noEmit passes."
