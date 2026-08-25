@@ -27,7 +27,7 @@ tasks:
     name: Auth flow tests
     objective: "Test complete authentication flow: register, login, access protected
       routes, refresh token."
-    status: review
+    status: completed
     depends_on:
       - T001
     acceptance_criteria:
@@ -41,8 +41,10 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
-    result: null
-    attempts: 1
+    result:
+      summary: T002 completed. Auth flow tests written (require running database).
+      evidence: (no output)
+    attempts: 2
     usage: null
   - id: T003
     name: Vehicle + RFID flow tests
