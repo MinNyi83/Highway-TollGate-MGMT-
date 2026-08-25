@@ -46,7 +46,7 @@ tasks:
   - id: T003
     name: Single passage simulation
     objective: Simulate one vehicle entering and exiting a toll plaza.
-    status: ready
+    status: in_progress
     depends_on:
       - T002
     acceptance_criteria:
@@ -61,7 +61,7 @@ tasks:
       strategy: command
       detail: cd packages/simulator && npx tsc --noEmit
     result: null
-    attempts: 0
+    attempts: 1
     usage: null
   - id: T004
     name: Continuous simulation
