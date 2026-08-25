@@ -112,7 +112,7 @@ tasks:
     name: Real-time stats
     objective: Display live statistics during simulation (vehicles processed,
       violations, revenue).
-    status: in_progress
+    status: review
     depends_on:
       - T004
     acceptance_criteria:
