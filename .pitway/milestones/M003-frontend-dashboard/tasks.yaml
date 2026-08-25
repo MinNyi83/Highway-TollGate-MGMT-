@@ -155,7 +155,7 @@ tasks:
     name: Toll Events feed
     objective: Create real-time toll events feed with WebSocket connection, event
       details view, and cross-verification status display.
-    status: in_progress
+    status: review
     depends_on:
       - T003
     acceptance_criteria:
