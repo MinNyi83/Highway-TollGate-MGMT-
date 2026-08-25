@@ -201,7 +201,7 @@ tasks:
     name: Violations management
     objective: Create violations page with violation list, status update workflow,
       and fine details.
-    status: ready
+    status: in_progress
     depends_on:
       - T003
     acceptance_criteria:
@@ -215,7 +215,7 @@ tasks:
       strategy: command
       detail: cd packages/frontend && npx tsc --noEmit
     result: null
-    attempts: 0
+    attempts: 1
     usage: null
   - id: T010
     name: Notifications panel
