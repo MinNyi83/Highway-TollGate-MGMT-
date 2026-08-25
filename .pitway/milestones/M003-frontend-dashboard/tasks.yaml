@@ -246,7 +246,7 @@ tasks:
     name: Reports page
     objective: Create reports page with date range selector, revenue reports,
       traffic reports, and violation stats using Recharts.
-    status: review
+    status: completed
     depends_on:
       - T004
     acceptance_criteria:
@@ -260,7 +260,9 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/frontend && npx tsc --noEmit
-    result: null
+    result:
+      summary: T011 completed. Reports page with charts.
+      evidence: (no output)
     attempts: 1
     usage: null
   - id: T012
