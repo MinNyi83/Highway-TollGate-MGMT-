@@ -90,7 +90,7 @@ tasks:
     name: Configurable scenarios
     objective: "Support different simulation scenarios: normal passage, no-RFID
       vehicle, ANPR mismatch, insufficient balance."
-    status: review
+    status: completed
     depends_on:
       - T003
     acceptance_criteria:
@@ -103,7 +103,9 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/simulator && npx tsc --noEmit
-    result: null
+    result:
+      summary: T005 completed. Configurable scenarios.
+      evidence: (no output)
     attempts: 1
     usage: null
   - id: T006
