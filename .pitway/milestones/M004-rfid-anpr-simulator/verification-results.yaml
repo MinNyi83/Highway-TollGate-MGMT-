@@ -1,2 +1,9 @@
 schema_version: 1
-results: []
+results:
+  - check: CT001
+    status: pass
+    at: 2026-08-25T01:00:34Z
+    evidence: (no output; exit 0)
+    recorded_by: command
+    duration_ms: 10676
+    termination_reason: exited

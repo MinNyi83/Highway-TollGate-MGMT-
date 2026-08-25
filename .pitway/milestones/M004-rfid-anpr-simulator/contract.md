@@ -2,7 +2,7 @@
 schema_version: 1
 id: M004
 title: RFID/ANPR Simulator
-status: in_progress
+status: completed
 requirement: null
 confirmed_at: 2026-08-25T00:26:52Z
 verification_approved_hash: sha256:272c571a2cc422db6c9e760848dfadce40d5a06a2e55cfdc179e2f06dc3c9f5c
