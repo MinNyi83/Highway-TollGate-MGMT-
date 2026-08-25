@@ -1,0 +1,2 @@
+summary: "T009 completed. Violations management page."
+evidence: "npx tsc --noEmit passes."
