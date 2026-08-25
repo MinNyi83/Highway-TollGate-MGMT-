@@ -1,2 +1,0 @@
-summary: "T003 completed. Vehicle + RFID flow tests."
-evidence: "npx tsc --noEmit passes."
