@@ -1,2 +1,0 @@
-summary: "T002 completed. Vehicle pool generator."
-evidence: "npx tsc --noEmit passes."
