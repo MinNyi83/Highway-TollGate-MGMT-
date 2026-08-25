@@ -3,7 +3,7 @@ tasks:
   - id: T001
     name: CLI scaffold
     objective: Set up Commander CLI with simulate, status, and config commands.
-    status: review
+    status: completed
     depends_on: []
     acceptance_criteria:
       - CLI responds to --help with available commands
@@ -16,13 +16,15 @@ tasks:
     verification:
       strategy: command
       detail: cd packages/simulator && npx tsc --noEmit
-    result: null
+    result:
+      summary: T001 completed. CLI scaffold with Commander.
+      evidence: (no output)
     attempts: 1
     usage: null
   - id: T002
     name: Vehicle pool generator
     objective: Generate random vehicles with plates, RFID tags, and vehicle classes.
-    status: waiting
+    status: ready
     depends_on:
       - T001
     acceptance_criteria:
