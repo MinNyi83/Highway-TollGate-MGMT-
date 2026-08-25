@@ -1,2 +1,0 @@
-summary: "T008 completed. Transactions list page."
-evidence: "npx tsc --noEmit passes."
