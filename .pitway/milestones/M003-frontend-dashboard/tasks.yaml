@@ -179,7 +179,7 @@ tasks:
     name: Transactions list
     objective: Create transactions history page with filters for date range, status,
       and plaza.
-    status: ready
+    status: in_progress
     depends_on:
       - T003
     acceptance_criteria:
@@ -193,7 +193,7 @@ tasks:
       strategy: command
       detail: cd packages/frontend && npx tsc --noEmit
     result: null
-    attempts: 0
+    attempts: 1
     usage: null
   - id: T009
     name: Violations management
