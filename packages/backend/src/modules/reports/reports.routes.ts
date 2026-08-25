@@ -142,4 +142,24 @@ router.get('/violations/csv', authMiddleware, async (req: Request, res: Response
   }
 });
 
+router.get('/summary', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const [totalVehicles, totalRevenue, activeViolations, totalEvents] = await Promise.all([
+      prisma.vehicle.count(),
+      prisma.transaction.aggregate({ where: { status: 'COMPLETED' }, _sum: { amount: true } }),
+      prisma.violation.count({ where: { status: { not: 'PAID' } } }),
+      prisma.tollEvent.count(),
+    ]);
+
+    res.json({
+      totalVehicles,
+      totalRevenue: totalRevenue._sum.amount || 0,
+      activeViolations,
+      totalEvents,
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 export default router;

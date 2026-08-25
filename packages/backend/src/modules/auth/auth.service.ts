@@ -123,3 +123,46 @@ export async function refreshToken(userId: string): Promise<{ token: string }> {
 
   return { token };
 }
+
+export async function changePassword(userId: string, currentPassword: string, newPassword: string): Promise<void> {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user) throw new Error('User not found');
+
+  const isValid = await bcrypt.compare(currentPassword, user.passwordHash);
+  if (!isValid) throw new Error('Current password is incorrect');
+
+  const passwordHash = await bcrypt.hash(newPassword, 10);
+  await prisma.user.update({ where: { id: userId }, data: { passwordHash } });
+}
+
+export async function forgotPassword(email: string): Promise<{ resetToken: string }> {
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user) throw new Error('User not found');
+
+  const resetToken = require('crypto').randomBytes(32).toString('hex');
+  const expires = new Date(Date.now() + 3600000);
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { resetToken, resetTokenExpiry: expires },
+  });
+
+  return { resetToken };
+}
+
+export async function resetPassword(resetToken: string, newPassword: string): Promise<void> {
+  const user = await prisma.user.findFirst({
+    where: {
+      resetToken,
+      resetTokenExpiry: { gt: new Date() },
+    },
+  });
+
+  if (!user) throw new Error('Invalid or expired reset token');
+
+  const passwordHash = await bcrypt.hash(newPassword, 10);
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { passwordHash, resetToken: null, resetTokenExpiry: null },
+  });
+}
