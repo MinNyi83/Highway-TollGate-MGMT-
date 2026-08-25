@@ -90,7 +90,7 @@ tasks:
     name: Configurable scenarios
     objective: "Support different simulation scenarios: normal passage, no-RFID
       vehicle, ANPR mismatch, insufficient balance."
-    status: in_progress
+    status: review
     depends_on:
       - T003
     acceptance_criteria:

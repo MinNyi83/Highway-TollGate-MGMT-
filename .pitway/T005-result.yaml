@@ -1,0 +1,2 @@
+summary: "T005 completed. Configurable scenarios."
+evidence: "npx tsc --noEmit passes."
