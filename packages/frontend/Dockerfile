@@ -5,12 +5,10 @@ FROM base AS deps
 COPY package.json package-lock.json ./
 COPY packages/frontend/package.json ./packages/frontend/
 COPY packages/shared/package.json ./packages/shared/
-RUN npm ci --workspace=packages/frontend --workspace=packages/shared
+RUN npm ci
 
 FROM base AS build
 COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/packages/frontend/node_modules ./packages/frontend/node_modules
-COPY --from=deps /app/packages/shared/node_modules ./packages/shared/node_modules
 COPY . .
 RUN cd packages/shared && npm run build
 RUN cd packages/frontend && npm run build
