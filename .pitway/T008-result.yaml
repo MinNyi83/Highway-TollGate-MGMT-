@@ -1,2 +1,0 @@
-summary: "T008 completed. Seed data verification tests."
-evidence: "npx tsc --noEmit passes."
