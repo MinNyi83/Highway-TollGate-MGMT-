@@ -9,6 +9,7 @@ import Transactions from './pages/Transactions';
 import Violations from './pages/Violations';
 import Reports from './pages/Reports';
 import DeviceStatus from './pages/DeviceStatus';
+import Simulator from './pages/Simulator';
 import Layout from './components/Layout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
@@ -30,6 +31,7 @@ function App() {
               <Route path="/violations" element={<Violations />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/device-status" element={<DeviceStatus />} />
+              <Route path="/simulator" element={<Simulator />} />
             </Route>
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

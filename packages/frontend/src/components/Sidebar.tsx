@@ -7,7 +7,8 @@ import {
   CreditCard, 
   AlertTriangle, 
   BarChart3, 
-  Settings
+  Settings,
+  PlayCircle
 } from 'lucide-react';
 
 const navItems = [
@@ -19,6 +20,7 @@ const navItems = [
   { to: '/violations', icon: AlertTriangle, label: 'Violations' },
   { to: '/reports', icon: BarChart3, label: 'Reports' },
   { to: '/device-status', icon: Settings, label: 'Device Status' },
+  { to: '/simulator', icon: PlayCircle, label: 'Simulator' },
 ];
 
 export default function Sidebar() {
