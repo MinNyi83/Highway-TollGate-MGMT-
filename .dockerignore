@@ -1,0 +1,11 @@
+node_modules
+packages/*/node_modules
+packages/*/dist
+.git
+.env
+.env.local
+coverage
+.turbo
+*.log
+packages/backend/uploads/*
+!packages/backend/uploads/.gitkeep

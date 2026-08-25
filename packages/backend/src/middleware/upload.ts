@@ -38,3 +38,9 @@ export const uploadVehiclePhotos = upload.fields([
   { name: 'vehiclePhoto', maxCount: 1 },
   { name: 'wheelTaxCard', maxCount: 1 },
 ]);
+
+export const uploadSingle = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: 10 * 1024 * 1024 },
+});

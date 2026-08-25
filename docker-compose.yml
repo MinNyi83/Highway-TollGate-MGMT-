@@ -1,36 +1,48 @@
 version: '3.8'
 
 services:
-  postgres:
+  db:
     image: postgres:16-alpine
-    container_name: tollgate-postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: tollgate
     ports:
-      - '5432:5432'
+      - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U postgres']
-      interval: 10s
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
       timeout: 5s
       retries: 5
 
-  redis:
-    image: redis:7-alpine
-    container_name: tollgate-redis
+  backend:
+    build:
+      context: .
+      dockerfile: packages/backend/Dockerfile
     ports:
-      - '6379:6379'
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/tollgate
+      JWT_SECRET: docker-dev-secret-key
+      JWT_EXPIRES_IN: 24h
+      NODE_ENV: development
+    depends_on:
+      db:
+        condition: service_healthy
     volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ['CMD', 'redis-cli', 'ping']
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      - uploads:/app/uploads
+
+  frontend:
+    build:
+      context: .
+      dockerfile: packages/frontend/Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
 
 volumes:
-  postgres_data:
-  redis_data:
+  pgdata:
+  uploads:

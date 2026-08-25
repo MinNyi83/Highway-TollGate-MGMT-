@@ -8,7 +8,7 @@ import {
   unbindRfidTag,
 } from './vehicles.service';
 import { authMiddleware } from '../../middleware/auth';
-import { uploadVehiclePhotos } from '../../middleware/upload';
+import { uploadVehiclePhotos, uploadSingle } from '../../middleware/upload';
 
 const router = Router();
 
@@ -128,6 +128,55 @@ router.delete('/:id/rfid/:tagId', authMiddleware, async (req: Request, res: Resp
       res.status(500).json({ error: 'Internal server error' });
     }
   }
+});
+
+router.post('/import/csv', authMiddleware, (req: Request, res: Response) => {
+  uploadSingle.single('file')(req, res, async (err) => {
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
+    if (!req.file) {
+      res.status(400).json({ error: 'No CSV file uploaded' });
+      return;
+    }
+
+    try {
+      const content = require('fs').readFileSync(req.file.path, 'utf-8');
+      const lines = content.split('\n').filter((line: string) => line.trim());
+      const header = lines[0].split(',').map((h: string) => h.trim().toLowerCase());
+      
+      const errors: string[] = [];
+      let imported = 0;
+
+      for (let i = 1; i < lines.length; i++) {
+        const values = lines[i].split(',').map((v: string) => v.trim());
+        const row: any = {};
+        header.forEach((h: string, idx: number) => { row[h] = values[idx]; });
+
+        try {
+          await createVehicle({
+            plateNumber: row.plateNumber,
+            make: row.make,
+            model: row.model,
+            year: parseInt(row.year, 10),
+            color: row.color || undefined,
+            vehicleClass: row.vehicleClass || 'SEDAN',
+          });
+          imported++;
+        } catch (e: any) {
+          errors.push(`Row ${i + 1}: ${e.message}`);
+        }
+      }
+
+      // Clean up uploaded file
+      require('fs').unlinkSync(req.file.path);
+
+      res.json({ imported, errors });
+    } catch (e) {
+      res.status(500).json({ error: 'Failed to process CSV' });
+    }
+  });
 });
 
 export default router;
