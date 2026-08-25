@@ -94,7 +94,7 @@ tasks:
   - id: T005
     name: Violation flow tests
     objective: Test violation creation from ANPR mismatch and status update workflow.
-    status: ready
+    status: review
     depends_on:
       - T001
     acceptance_criteria:
@@ -107,7 +107,7 @@ tasks:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
     result: null
-    attempts: 0
+    attempts: 1
     usage: null
   - id: T006
     name: WebSocket integration test

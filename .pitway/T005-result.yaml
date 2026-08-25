@@ -1,0 +1,2 @@
+summary: "T005 completed. Violation flow tests."
+evidence: "npx tsc --noEmit passes."
