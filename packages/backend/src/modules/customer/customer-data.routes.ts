@@ -138,31 +138,18 @@ router.post('/topup', authMiddleware, async (req: Request, res: Response) => {
       return;
     }
 
-    const account = await prisma.account.findFirst({
-      where: { userId: req.user!.userId },
+    const { initiateTopUp } = await import('../../services/payment/payment.service');
+    const result = await initiateTopUp({
+      userId: req.user!.userId,
+      amount: parseFloat(amount),
+      paymentMethod: paymentMethod || 'manual',
     });
 
-    if (!account) {
-      res.status(404).json({ error: 'Account not found' });
-      return;
+    if (result.success) {
+      res.json(result);
+    } else {
+      res.status(400).json(result);
     }
-
-    const updated = await prisma.account.update({
-      where: { id: account.id },
-      data: { balance: { increment: amount } },
-    });
-
-    await prisma.transaction.create({
-      data: {
-        accountId: account.id,
-        amount,
-        type: 'TOPUP',
-        status: 'COMPLETED',
-        paymentMethod: paymentMethod || 'manual',
-      },
-    });
-
-    res.json({ balance: updated.balance, message: `Added $${amount} to account` });
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
   }

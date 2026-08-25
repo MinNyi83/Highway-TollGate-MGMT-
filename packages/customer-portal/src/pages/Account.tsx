@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Wallet, Plus, Smartphone, CheckCircle, QrCode } from 'lucide-react';
+import { Wallet, Plus, Smartphone, CheckCircle, QrCode, Loader2, AlertCircle } from 'lucide-react';
 import api from '../lib/api';
 
 const walletOptions = [
@@ -10,15 +10,18 @@ const walletOptions = [
   { id: 'manual', name: 'Manual', icon: '💳' },
 ];
 
-const quickAmounts = [5, 10, 20, 50, 100];
+const quickAmounts = [1000, 5000, 10000, 20000, 50000];
 
 export default function Account() {
   const [topUpAmount, setTopUpAmount] = useState('');
   const [selectedWallet, setSelectedWallet] = useState('manual');
   const [showQr, setShowQr] = useState(false);
+  const [qrData, setQrData] = useState<{ qrCode: string; transactionId: string; orderId: string } | null>(null);
+  const [paymentStatus, setPaymentStatus] = useState<'idle' | 'polling' | 'completed' | 'failed'>('idle');
   const [topUpResult, setTopUpResult] = useState<{ balance: number; message: string } | null>(null);
   const [activeTab, setActiveTab] = useState<'topup' | 'history'>('topup');
   const queryClient = useQueryClient();
+  const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const { data: account, isLoading } = useQuery({
     queryKey: ['customer-account'],
@@ -36,34 +39,80 @@ export default function Account() {
     },
   });
 
+  const startPaymentPolling = useCallback((transactionId: string) => {
+    if (pollIntervalRef.current) {
+      clearInterval(pollIntervalRef.current);
+    }
+
+    pollIntervalRef.current = setInterval(async () => {
+      try {
+        const response = await api.get(`/payments/status/${transactionId}`);
+        const status = response.data;
+
+        if (status.status === 'completed') {
+          setPaymentStatus('completed');
+          if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+          setTimeout(() => {
+            setShowQr(false);
+            setQrData(null);
+            setPaymentStatus('idle');
+            setTopUpAmount('');
+            setTopUpResult({ balance: status.amount || 0, message: 'Payment confirmed! Balance updated.' });
+            queryClient.invalidateQueries({ queryKey: ['customer-account'] });
+            queryClient.invalidateQueries({ queryKey: ['customer-topup-history'] });
+          }, 2000);
+        } else if (status.status === 'failed') {
+          setPaymentStatus('failed');
+          if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+        }
+      } catch (error) {
+        console.error('Payment status check failed:', error);
+      }
+    }, 3000);
+
+    setTimeout(() => {
+      if (pollIntervalRef.current) {
+        clearInterval(pollIntervalRef.current);
+        setPaymentStatus('failed');
+      }
+    }, 300000);
+  }, [queryClient, topUpAmount]);
+
   const topUpMutation = useMutation({
     mutationFn: async ({ amount, paymentMethod }: { amount: number; paymentMethod: string }) => {
-      const response = await api.post('/customer/topup', { amount, paymentMethod });
+      const response = await api.post('/payments/topup', { amount, paymentMethod });
       return response.data;
     },
     onSuccess: (data) => {
-      setTopUpResult(data);
-      setTopUpAmount('');
-      queryClient.invalidateQueries({ queryKey: ['customer-account'] });
-      queryClient.invalidateQueries({ queryKey: ['customer-dashboard'] });
-      queryClient.invalidateQueries({ queryKey: ['customer-topup-history'] });
+      if (data.qrCode && data.transactionId) {
+        setQrData({
+          qrCode: data.qrCode,
+          transactionId: data.transactionId,
+          orderId: data.orderId,
+        });
+        setShowQr(true);
+        setPaymentStatus('polling');
+        startPaymentPolling(data.transactionId);
+      } else {
+        setTopUpResult(data);
+        setTopUpAmount('');
+        queryClient.invalidateQueries({ queryKey: ['customer-account'] });
+        queryClient.invalidateQueries({ queryKey: ['customer-topup-history'] });
+      }
     },
   });
 
   const handleTopUp = () => {
     const amount = parseFloat(topUpAmount);
     if (amount <= 0) return;
-    if (selectedWallet === 'manual') {
-      topUpMutation.mutate({ amount, paymentMethod: 'manual' });
-    } else {
-      setShowQr(true);
-    }
+    topUpMutation.mutate({ amount, paymentMethod: selectedWallet });
   };
 
-  const handleQrConfirm = () => {
-    const amount = parseFloat(topUpAmount);
-    topUpMutation.mutate({ amount, paymentMethod: selectedWallet });
+  const closeQrModal = () => {
+    if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
     setShowQr(false);
+    setQrData(null);
+    setPaymentStatus('idle');
   };
 
   if (isLoading) return <div className="text-center py-8">Loading...</div>;
@@ -77,7 +126,7 @@ export default function Account() {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-blue-200 text-xs md:text-sm">Available Balance</p>
-            <p className="text-3xl md:text-4xl font-bold mt-1">${account?.balance || 0}</p>
+            <p className="text-3xl md:text-4xl font-bold mt-1">{account?.balance?.toLocaleString() || 0} MMK</p>
           </div>
           <div className="bg-white/20 p-3 md:p-4 rounded-full">
             <Wallet size={28} />
@@ -103,24 +152,61 @@ export default function Account() {
       {activeTab === 'topup' && (
         <>
           {/* QR Modal */}
-          {showQr && (
+          {showQr && qrData && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
               <div className="bg-white rounded-xl p-6 w-full max-w-sm text-center">
                 <div className="bg-gray-100 p-6 rounded-lg mb-4">
-                  <div className="w-40 h-40 mx-auto bg-white border-2 border-dashed rounded-lg flex items-center justify-center">
-                    <div className="text-center">
-                      <QrCode size={48} className="mx-auto text-gray-400 mb-2" />
-                      <p className="font-bold text-lg">${topUpAmount}</p>
-                      <p className="text-xs text-gray-400">{walletOptions.find((w) => w.id === selectedWallet)?.name}</p>
-                    </div>
+                  <div className="w-48 h-48 mx-auto bg-white border-2 border-dashed rounded-lg flex items-center justify-center">
+                    {paymentStatus === 'polling' ? (
+                      <div className="text-center">
+                        <Loader2 size={48} className="mx-auto text-blue-500 mb-2 animate-spin" />
+                        <p className="font-bold text-lg">{parseFloat(topUpAmount).toLocaleString()} MMK</p>
+                        <p className="text-xs text-gray-400">{walletOptions.find((w) => w.id === selectedWallet)?.name}</p>
+                        <p className="text-xs text-blue-500 mt-2">Waiting for payment...</p>
+                      </div>
+                    ) : paymentStatus === 'completed' ? (
+                      <div className="text-center">
+                        <CheckCircle size={48} className="mx-auto text-green-500 mb-2" />
+                        <p className="font-bold text-lg text-green-600">Payment Confirmed!</p>
+                      </div>
+                    ) : paymentStatus === 'failed' ? (
+                      <div className="text-center">
+                        <AlertCircle size={48} className="mx-auto text-red-500 mb-2" />
+                        <p className="font-bold text-lg text-red-600">Payment Failed</p>
+                      </div>
+                    ) : (
+                      <div className="text-center">
+                        <QrCode size={48} className="mx-auto text-gray-400 mb-2" />
+                        <p className="font-bold text-lg">{parseFloat(topUpAmount).toLocaleString()} MMK</p>
+                        <p className="text-xs text-gray-400">{walletOptions.find((w) => w.id === selectedWallet)?.name}</p>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <p className="text-sm text-gray-600 mb-4">
-                  Scan with {walletOptions.find((w) => w.id === selectedWallet)?.name} app
+                  {paymentStatus === 'polling'
+                    ? 'Scan QR code with your payment app'
+                    : paymentStatus === 'completed'
+                    ? 'Payment successful!'
+                    : paymentStatus === 'failed'
+                    ? 'Payment timed out or failed'
+                    : `Scan with ${walletOptions.find((w) => w.id === selectedWallet)?.name} app`}
                 </p>
                 <div className="flex gap-2">
-                  <button onClick={() => setShowQr(false)} className="flex-1 py-2 border rounded-lg">Back</button>
-                  <button onClick={handleQrConfirm} className="flex-1 py-2 bg-green-600 text-white rounded-lg">I've Paid</button>
+                  <button onClick={closeQrModal} className="flex-1 py-2 border rounded-lg">
+                    {paymentStatus === 'failed' ? 'Try Again' : 'Cancel'}
+                  </button>
+                  {paymentStatus === 'failed' && (
+                    <button
+                      onClick={() => {
+                        setPaymentStatus('polling');
+                        startPaymentPolling(qrData.transactionId);
+                      }}
+                      className="flex-1 py-2 bg-blue-600 text-white rounded-lg"
+                    >
+                      Retry
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -175,7 +261,7 @@ export default function Account() {
                       : 'hover:bg-gray-50'
                   }`}
                 >
-                  ${amount}
+                  {amount.toLocaleString()}
                 </button>
               ))}
             </div>
@@ -191,7 +277,7 @@ export default function Account() {
               disabled={!topUpAmount || topUpMutation.isPending}
               className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 font-medium text-lg"
             >
-              {topUpMutation.isPending ? 'Processing...' : `Top Up $${topUpAmount || '0'}`}
+              {topUpMutation.isPending ? 'Processing...' : `Top Up ${parseFloat(topUpAmount || '0').toLocaleString()} MMK`}
             </button>
           </div>
         </>
@@ -202,13 +288,22 @@ export default function Account() {
           {topUpHistory?.map((t: any) => (
             <div key={t.id} className="bg-white rounded-lg shadow p-4 flex justify-between items-center">
               <div>
-                <p className="font-bold text-green-600">+${t.amount}</p>
+                <p className="font-bold text-green-600">+{Number(t.amount).toLocaleString()} MMK</p>
                 <p className="text-xs text-gray-400">{new Date(t.createdAt).toLocaleString()}</p>
               </div>
               <div className="text-right">
                 <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
-                  {walletOptions.find((w) => w.id === t.paymentMethod)?.name || 'Manual'}
+                  {walletOptions.find((w) => w.id === t.paymentMethod?.split('_')[0])?.name || 'Manual'}
                 </span>
+                {t.status && (
+                  <span className={`ml-2 px-2 py-1 text-xs rounded-full ${
+                    t.status === 'COMPLETED' ? 'bg-green-100 text-green-800' :
+                    t.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    {t.status}
+                  </span>
+                )}
               </div>
             </div>
           ))}
