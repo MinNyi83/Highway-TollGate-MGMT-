@@ -4,7 +4,7 @@ tasks:
     name: Integration test setup
     objective: Configure test environment with test database, test helpers, and API
       client.
-    status: ready
+    status: in_progress
     depends_on: []
     acceptance_criteria:
       - Test database configuration in place
@@ -19,7 +19,7 @@ tasks:
       strategy: command
       detail: cd packages/backend && npx tsc --noEmit
     result: null
-    attempts: 0
+    attempts: 1
     usage: null
   - id: T002
     name: Auth flow tests
