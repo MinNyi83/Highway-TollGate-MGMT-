@@ -16,7 +16,7 @@ program
   .command('simulate')
   .description('Simulate vehicle passages through toll plazas')
   .option('-e, --email <email>', 'Admin email for authentication', 'admin@tollgate.com')
-  .option('-p, --password <password>', 'Admin password', 'password123')
+  .option('-p, --password <password>', 'Admin password', 'admin123')
   .option('-c, --count <number>', 'Number of vehicles to simulate', '5')
   .option('-i, --interval <ms>', 'Interval between vehicles in ms', '3000')
   .option('-d, --delay <ms>', 'Entry-to-exit delay in ms', '1500')
