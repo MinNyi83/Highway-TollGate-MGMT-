@@ -4,6 +4,8 @@ import chalk from 'chalk';
 import { login, healthCheck, getVehicles, getTollPlazas } from './api/client';
 import { getRoutesForPlazas, TollPlaza, Vehicle } from './generators/vehiclePool';
 import { startContinuous, stopContinuous, getStats, displayStats as displayContinuousStats } from './simulation/continuous';
+import { startHoliday, stopHoliday } from './simulation/holiday-sim';
+import { HOLIDAY_CONFIGS, TRAFFIC_WAVES, HolidayType } from './simulation/holiday';
 
 const program = new Command();
 
@@ -129,6 +131,80 @@ program
       stopContinuous();
       process.exit(0);
     });
+  });
+
+program
+  .command('holiday')
+  .description('Simulate holiday traffic patterns')
+  .option('-e, --email <email>', 'Admin email', 'admin@tollgate.com')
+  .option('-p, --password <password>', 'Admin password', 'admin123')
+  .option('-t, --type <type>', 'Holiday type: thingyan, thadingyut, weekend, independence-day, normal-day', 'weekend')
+  .option('-c, --count <number>', 'Total vehicles to simulate', '50')
+  .option('-r, --route <name>', 'Route: full, short, medium, direct, return', 'full')
+  .option('--api <url>', 'Backend API URL', 'http://localhost:3000')
+  .action(async (options) => {
+    console.log(chalk.bold.magenta('=== Holiday Traffic Simulator ===\n'));
+
+    const healthy = await healthCheck();
+    if (!healthy) {
+      console.error(chalk.red('Cannot connect to API.'));
+      process.exit(1);
+    }
+    console.log(chalk.green('API is healthy\n'));
+
+    try {
+      await login(options.email, options.password);
+      console.log(chalk.green('Authenticated\n'));
+    } catch {
+      console.error(chalk.red('Authentication failed.'));
+      process.exit(1);
+    }
+
+    const rawVehicles = await getVehicles();
+    const vehicles: Vehicle[] = rawVehicles
+      .filter((v: any) => v.rfidTags?.length > 0)
+      .map((v: any) => ({
+        id: v.id, plateNumber: v.plateNumber, rfidTagId: v.rfidTags[0].id,
+        vehicleClass: v.vehicleClass, make: v.make, model: v.model,
+      }));
+    console.log(chalk.green(`${vehicles.length} vehicles with RFID tags\n`));
+
+    const rawPlazas = await getTollPlazas();
+    const plazas: TollPlaza[] = rawPlazas.map((p: any) => ({
+      id: p.id, name: p.name, gateCode: p.gateCode || null,
+      mileMarker: p.mileMarker, lanes: p.lanes, status: p.status,
+    }));
+    plazas.sort((a, b) => (a.mileMarker || 0) - (b.mileMarker || 0));
+
+    const routes = getRoutesForPlazas(plazas);
+    const routeMap: Record<string, number> = { full: 0, short: 1, medium: 2, direct: 3, return: 4 };
+    const selectedRoute = routes[routeMap[options.route] ?? 0];
+    const routePlazas = selectedRoute.plazas.map((id) => plazas.find((p) => p.id === id)!).filter(Boolean);
+
+    const holidayType = options.type as HolidayType;
+    const config = HOLIDAY_CONFIGS[holidayType] || HOLIDAY_CONFIGS['normal-day'];
+
+    console.log(chalk.magenta(`Holiday: ${config.name}`));
+    console.log(chalk.gray(`  ${config.description}`));
+    console.log(chalk.cyan(`  Vehicle multiplier: ${config.vehicleMultiplier}x`));
+    console.log(chalk.cyan(`  Congestion: ${config.congestionLevel}`));
+    console.log(chalk.cyan(`  Violation rate: ${(config.violationRate * 100).toFixed(0)}%`));
+    console.log(chalk.cyan(`  Route: ${selectedRoute.name}`));
+    console.log(chalk.cyan(`  Target: ${options.count} vehicles\n`));
+
+    console.log(chalk.yellow('Traffic Waves:'));
+    TRAFFIC_WAVES.forEach((w) => console.log(chalk.gray(`  ${w.label}`)));
+    console.log('');
+
+    startHoliday({
+      vehicles,
+      plazas: routePlazas,
+      holidayType,
+      count: parseInt(options.count),
+    });
+
+    process.on('SIGINT', () => { stopHoliday(); process.exit(0); });
+    process.on('SIGTERM', () => { stopHoliday(); process.exit(0); });
   });
 
 program
