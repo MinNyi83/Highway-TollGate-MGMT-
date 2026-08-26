@@ -109,6 +109,9 @@ export async function getTollEvents() {
       vehicle: true,
       plaza: true,
       rfidTag: true,
+      transaction: true,
+      violation: true,
+      photos: true,
     },
     orderBy: {
       entryTime: 'desc',
@@ -133,6 +136,7 @@ export async function getTollEventById(id: string) {
       rfidTag: true,
       transaction: true,
       violation: true,
+      photos: true,
     },
   });
 
