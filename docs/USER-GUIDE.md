@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Highway Tollgate Management System is a comprehensive solution for managing toll collection, vehicle tracking, and fleet management. It supports RFID and ANPR technology for automatic toll collection.
+The Highway Tollgate Management System is a comprehensive solution for managing toll collection, vehicle tracking, and fleet management. It supports RFID and ANPR technology for automatic toll collection, with full mobile-responsive design.
 
 ---
 
@@ -10,37 +10,45 @@ The Highway Tollgate Management System is a comprehensive solution for managing 
 
 ### Customer Registration
 
-1. Visit the Customer Portal at `http://localhost:8080`
+1. Visit the Customer Portal at `http://192.168.100.101:8080`
 2. Click "Register" and fill in your details
 3. Choose between Individual or Enterprise account
 4. After registration, you will receive your account number
 
 ### Login
 
-1. Enter your email and password on the login page
-2. Click "Sign In"
-3. You will be redirected to your dashboard
+| Portal | URL | Default Credentials |
+|--------|-----|---------------------|
+| Admin Dashboard | `http://192.168.100.101` | admin@tollgate.com / admin123 |
+| Customer Portal | `http://192.168.100.101:8080` | (Register new account) |
 
 ---
 
-## Individual Customer
+## Customer Portal
 
 ### Dashboard
 
-- View your current balance
+- View your current balance (MMK)
 - See recent toll transactions
-- Check account status
+- Quick access to vehicle registration and top-up
 
-### Vehicle Management
+### Vehicle Registration & Approval
 
 1. Go to "My Vehicles"
-2. Click "Add Vehicle"
-3. Enter vehicle details:
-   - Plate number
-   - Vehicle class (SEDAN, SUV, TRUCK, BUS, etc.)
-   - Make and model
-   - Year
-4. Register an RFID tag for the vehicle
+2. Click "Register" button
+3. Fill in vehicle details:
+   - Plate number (e.g., 1A-12345)
+   - Make and model (dropdown selection)
+   - Year (1997-2026)
+   - Color (20 options)
+   - Vehicle class (Motorcycle, Sedan, SUV, Truck, Bus)
+4. Upload vehicle photo (optional)
+5. Click "Register Vehicle"
+
+**Approval Status:**
+- ⏳ **Pending Approval** — Your vehicle is waiting for admin review
+- ✓ **Approved** — Vehicle is active and can use toll plazas
+- ✗ **Rejected** — Admin rejected with reason (shown in red banner)
 
 ### Top Up Account
 
@@ -57,41 +65,11 @@ The Highway Tollgate Management System is a comprehensive solution for managing 
 ### View Toll History
 
 1. Go to "Toll History"
-2. Filter by date range
-3. View transaction details including:
+2. View all trips with:
    - Entry/exit times
    - Plaza used
-   - Amount charged
-
----
-
-## Enterprise Customer
-
-### Fleet Dashboard
-
-- View fleet statistics
-- Total vehicles, trips, and revenue
-- Violation count
-
-### Fleet Management
-
-1. Go to "Fleet Vehicles"
-2. Add multiple vehicles to your fleet
-3. Assign RFID tags to each vehicle
-
-### Trip Monitoring
-
-1. Go to "Trip History"
-2. View all fleet trips
-3. Filter by vehicle, date, or plaza
-4. Export data to CSV
-
-### Spending Reports
-
-1. Go to "Spending"
-2. Select time period (daily, weekly, monthly)
-3. View spending breakdown by vehicle
-4. Download reports
+   - Amount charged (MMK)
+   - Duration
 
 ---
 
@@ -99,44 +77,125 @@ The Highway Tollgate Management System is a comprehensive solution for managing 
 
 ### Login
 
-1. Visit `http://localhost`
-2. Login with admin credentials
-3. Default: admin@example.com / password123
+1. Visit `http://192.168.100.101`
+2. Login with admin credentials: `admin@tollgate.com` / `admin123`
 
 ### Dashboard Overview
 
-- Real-time revenue metrics
-- Active users count
+- Real-time revenue metrics (MMK)
+- Active vehicles count
 - Total trips today
-- System status
+- System status indicators
+
+### Vehicle Management
+
+#### All Vehicles Tab
+1. Go to "Vehicles"
+2. View all registered vehicles with photos, plates, make/model
+3. Search by plate number, make, or model
+4. Click plate number to view vehicle detail
+
+#### Pending Approval Tab
+1. Click "Pending Approval" tab
+2. Review customer-submitted vehicles
+3. Click **Approve** (green) to approve
+4. Click **Reject** (red) to reject with reason
+5. Yellow badge shows pending count
+
+#### Add Vehicle (Admin)
+1. Click "Add Vehicle"
+2. Fill in all fields (plate, year, make/model dropdowns, color, class)
+3. Optionally scan RFID tag UID
+4. Upload vehicle photos (up to 2) and wheel tax card photos (up to 2)
+5. Click "Register Vehicle" — automatically APPROVED
+
+#### CSV Import
+1. Click "Import CSV"
+2. Upload CSV with format: `plateNumber,make,model,year,color,vehicleClass`
+3. Review import results
 
 ### Toll Plaza Management
 
 1. Go to "Toll Plazas"
-2. Add new plazas with location coordinates
-3. Set toll rates for each vehicle class
-4. Enable/disable plazas
+2. View all plazas with device status summary
+3. **Add Plaza:** Click "Add Plaza" → Enter name, gate code, coordinates, lanes
+4. **View Detail:** Click "View" → See device status, toll rates, add devices
+5. **Edit Plaza:** Click edit icon → Modify details
+6. **Delete Plaza:** Click delete icon → Confirm deletion
 
 ### Toll Event Monitoring
 
 1. Go to "Toll Events"
-2. View real-time entry/exit events
-3. Monitor ANPR and RFID scans
-4. Review mismatch alerts
+2. View card-based event list with expandable details:
+   - Vehicle photo, plate number
+   - ANPR match indicator (✓/✗)
+   - Plaza gate code, lane number, direction (↑/↓)
+   - Amount in MMK, duration
+   - RFID tag, transaction status
+3. Filter by status (success, violation, error)
+4. Search by plate number
+
+### Transaction Management
+
+1. Go to "Transactions"
+2. View color-coded transaction cards:
+   - 💳 Debit (red)
+   - 💰 Credit (green)
+   - 🔋 Top-up (blue)
+   - ⚠️ Fine (orange)
+3. Expandable details: Transaction info, Account info, Vehicle info
+4. Filter by type and status
+5. Search by account number or plate
 
 ### Violation Management
 
-1. Go to "Violations"
-2. Review RFID-ANPR mismatches
-3. Update violation status
-4. Process payments
+1. go to "Violations"
+2. View violation cards with:
+   - Type badges (ANPR Mismatch, No RFID, Insufficient Balance)
+   - Overdue indicators
+   - Amount in MMK
+3. Action buttons: Process Payment, Escalate, Dismiss, Mark Paid
+4. Filter by type and status
+
+### Reports & Analytics
+
+1. Go to "Reports"
+2. View summary cards and 4 charts:
+   - Revenue by Plaza (bar chart)
+   - Violations by Type (pie chart)
+   - Daily Revenue Trend (line chart)
+   - Events by Plaza (horizontal bar)
+3. Filter by date range
+4. **Excel Export** buttons:
+   - Transactions Excel
+   - Violations Excel
+   - Revenue Excel
+   - Events Excel
 
 ### Device Management
 
-1. Go to "Devices"
-2. Monitor device status
-3. View last ping times
-4. Identify offline devices
+1. Go to "Device Status"
+2. Filter by plaza
+3. Monitor device health:
+   - Online/Offline status
+   - Last ping times
+   - Device type (RFID Reader, ANPR Camera, etc.)
+
+### Simulator
+
+1. Go to "Simulator"
+2. Choose mode:
+   - **Manual:** Select vehicle, plaza, scenario, run single/continuous
+   - **Holiday Traffic:** Select holiday type, set vehicle count, run simulation
+
+#### Holiday Traffic Types
+| Type | Description |
+|------|-------------|
+| Thingyan | Water Festival (April) — 4x traffic, high congestion |
+| Thadingyut | Festival of Lights (Oct) — 2x traffic |
+| Weekend | Regular weekend — 1.5x traffic |
+| National Day | Independence/Union Day — 2.5x traffic |
+| Normal Day | Regular weekday — baseline |
 
 ---
 
@@ -144,30 +203,29 @@ The Highway Tollgate Management System is a comprehensive solution for managing 
 
 ### How Toll Collection Works
 
-1. **Vehicle Entry**:
-   - RFID tag is scanned at entry point
+1. **Vehicle Entry:**
+   - RFID tag scanned at entry point
    - ANPR captures license plate
-   - Entry event is created
+   - Entry event created with lane number and direction
 
-2. **During Transit**:
+2. **During Transit:**
    - Vehicle travels on the highway
    - System tracks the journey
 
-3. **Vehicle Exit**:
-   - RFID tag is scanned at exit point
+3. **Vehicle Exit:**
+   - RFID tag scanned at exit point
    - ANPR captures license plate again
    - System cross-verifies RFID and ANPR data
 
-4. **Payment Processing**:
+4. **Payment Processing:**
    - System calculates toll based on:
-     - Entry plaza
-     - Exit plaza
+     - Entry/exit plaza
      - Vehicle class
-   - Amount is deducted from account
+   - Amount deducted from account (MMK)
 
-5. **Violation Detection**:
-   - If RFID and ANPR don't match, violation is created
-   - Fine is applied to the account
+5. **Violation Detection:**
+   - If RFID and ANPR don't match → violation created
+   - Fine applied to the account
 
 ---
 
@@ -200,26 +258,19 @@ The Highway Tollgate Management System is a comprehensive solution for managing 
 
 ### View Balance
 
-- Current balance is displayed on dashboard
+- Current balance displayed on dashboard (MMK)
 - Real-time updates after transactions
 
 ### Transaction History
 
-1. Go to "Transactions"
+1. Go to "Transactions" (admin) or "Toll History" (customer)
 2. View all transactions:
    - Toll deductions
    - Top-ups
    - Refunds
    - Violation payments
 3. Filter by date or type
-4. Export to CSV
-
-### Update Profile
-
-1. Go to "Account"
-2. Click "Edit Profile"
-3. Update your information
-4. Save changes
+4. Export to CSV or Excel
 
 ---
 
@@ -227,9 +278,9 @@ The Highway Tollgate Management System is a comprehensive solution for managing 
 
 ### Understanding Violations
 
-- **RFID-ANPR Mismatch**: Vehicle plate doesn't match RFID tag
-- **Insufficient Balance**: Vehicle passed with zero/negative balance
-- **Expired Tag**: RFID tag has expired
+- **RFID-ANPR Mismatch:** Vehicle plate doesn't match RFID tag
+- **No RFID:** Vehicle passed without RFID tag
+- **Insufficient Balance:** Vehicle passed with zero/negative balance
 
 ### Paying Violations
 
@@ -263,7 +314,7 @@ The Highway Tollgate Management System is a comprehensive solution for managing 
 ### Vehicle Not Recognized
 
 - Verify RFID tag is active
-- Check vehicle registration
+- Check vehicle registration status (must be APPROVED)
 - Ensure account has sufficient balance
 
 ---
