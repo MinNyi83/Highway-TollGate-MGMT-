@@ -30,7 +30,7 @@ export default function Layout() {
           <div className="flex items-center gap-4">
             <NotificationPanel />
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-700">{user?.name || 'User'}</span>span>
+              <span className="text-sm text-gray-700">{user?.name || 'User'}</span>
               <button
                 onClick={handleLogout}
                 className="p-2 text-gray-500 hover:text-gray-700"
