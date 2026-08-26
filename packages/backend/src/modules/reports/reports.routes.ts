@@ -8,6 +8,7 @@ import {
 } from './reports.service';
 import { authMiddleware } from '../../middleware/auth';
 import { PrismaClient } from '@prisma/client';
+import ExcelJS from 'exceljs';
 
 const prisma = new PrismaClient();
 const router = Router();
@@ -105,13 +106,16 @@ router.get('/revenue/csv', authMiddleware, async (req: Request, res: Response) =
   try {
     const transactions = await prisma.transaction.findMany({
       where: { status: 'COMPLETED' },
-      include: { account: true },
+      include: {
+        account: { include: { user: true } },
+        event: { include: { vehicle: true, plaza: true } },
+      },
       orderBy: { createdAt: 'desc' },
     });
 
-    let csv = 'Date,Account ID,Amount,Type\n';
+    let csv = 'Date,Plate Number,Plaza,Vehicle Make,Vehicle Model,Amount (MMK),Type,Account Holder\n';
     transactions.forEach((t) => {
-      csv += `${t.createdAt.toISOString()},${t.accountId},${t.amount},${t.type}\n`;
+      csv += `${t.createdAt.toISOString()},${t.event?.vehicle?.plateNumber || ''},${t.event?.plaza?.name || ''},${t.event?.vehicle?.make || ''},${t.event?.vehicle?.model || ''},${t.amount},${t.type},${t.account?.user?.name || ''}\n`;
     });
 
     res.setHeader('Content-Type', 'text/csv');
@@ -125,13 +129,13 @@ router.get('/revenue/csv', authMiddleware, async (req: Request, res: Response) =
 router.get('/violations/csv', authMiddleware, async (req: Request, res: Response) => {
   try {
     const violations = await prisma.violation.findMany({
-      include: { vehicle: true },
+      include: { vehicle: true, event: { include: { plaza: true } } },
       orderBy: { createdAt: 'desc' },
     });
 
-    let csv = 'Date,Vehicle,Type,Fine Amount,Status\n';
+    let csv = 'Date,Plate Number,Vehicle,Plaza,Violation Type,Fine (MMK),Status,Due Date\n';
     violations.forEach((v) => {
-      csv += `${v.createdAt.toISOString()},${v.vehicle.plateNumber},${v.violationType},${v.fineAmount},${v.status}\n`;
+      csv += `${v.createdAt.toISOString()},${v.vehicle.plateNumber},${v.vehicle.make} ${v.vehicle.model},${v.event?.plaza?.name || ''},${v.violationType},${v.fineAmount},${v.status},${v.dueDate.toISOString()}\n`;
     });
 
     res.setHeader('Content-Type', 'text/csv');
@@ -139,6 +143,257 @@ router.get('/violations/csv', authMiddleware, async (req: Request, res: Response
     res.send(csv);
   } catch (error) {
     res.status(500).json({ error: 'Failed to generate report' });
+  }
+});
+
+router.get('/transactions/excel', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { startDate, endDate } = req.query;
+    const where: any = { status: 'COMPLETED' };
+    if (startDate && endDate) {
+      where.createdAt = { gte: new Date(startDate as string), lte: new Date(endDate as string) };
+    }
+
+    const transactions = await prisma.transaction.findMany({
+      where,
+      include: {
+        account: { include: { user: true } },
+        event: { include: { vehicle: true, plaza: true, rfidTag: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('Transactions');
+    sheet.columns = [
+      { header: 'Date', key: 'date', width: 20 },
+      { header: 'Transaction ID', key: 'id', width: 36 },
+      { header: 'Plate Number', key: 'plate', width: 15 },
+      { header: 'Vehicle', key: 'vehicle', width: 25 },
+      { header: 'Plaza', key: 'plaza', width: 20 },
+      { header: 'Gate Code', key: 'gateCode', width: 12 },
+      { header: 'Lane', key: 'lane', width: 8 },
+      { header: 'Direction', key: 'direction', width: 10 },
+      { header: 'Amount (MMK)', key: 'amount', width: 15 },
+      { header: 'Type', key: 'type', width: 12 },
+      { header: 'Status', key: 'status', width: 12 },
+      { header: 'Account Holder', key: 'account', width: 20 },
+      { header: 'RFID Tag', key: 'rfid', width: 25 },
+    ];
+
+    sheet.getRow(1).font = { bold: true };
+    sheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4472C4' } };
+    sheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+
+    transactions.forEach((t) => {
+      sheet.addRow({
+        date: t.createdAt.toISOString(),
+        id: t.id,
+        plate: t.event?.vehicle?.plateNumber || '',
+        vehicle: `${t.event?.vehicle?.make || ''} ${t.event?.vehicle?.model || ''}`,
+        plaza: t.event?.plaza?.name || '',
+        gateCode: t.event?.plaza?.gateCode || '',
+        lane: t.event?.laneNumber || '',
+        direction: t.event?.direction || '',
+        amount: Number(t.amount),
+        type: t.type,
+        status: t.status,
+        account: t.account?.user?.name || '',
+        rfid: t.event?.rfidTag?.tagUid || '',
+      });
+    });
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=transactions-report.xlsx');
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to generate Excel report' });
+  }
+});
+
+router.get('/violations/excel', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { startDate, endDate } = req.query;
+    const where: any = {};
+    if (startDate && endDate) {
+      where.createdAt = { gte: new Date(startDate as string), lte: new Date(endDate as string) };
+    }
+
+    const violations = await prisma.violation.findMany({
+      where,
+      include: {
+        vehicle: true,
+        event: { include: { plaza: true, rfidTag: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('Violations');
+    sheet.columns = [
+      { header: 'Date', key: 'date', width: 20 },
+      { header: 'Violation ID', key: 'id', width: 36 },
+      { header: 'Plate Number', key: 'plate', width: 15 },
+      { header: 'Vehicle', key: 'vehicle', width: 25 },
+      { header: 'Plaza', key: 'plaza', width: 20 },
+      { header: 'Lane', key: 'lane', width: 8 },
+      { header: 'Violation Type', key: 'type', width: 22 },
+      { header: 'Fine (MMK)', key: 'fine', width: 12 },
+      { header: 'Status', key: 'status', width: 12 },
+      { header: 'Due Date', key: 'dueDate', width: 15 },
+      { header: 'RFID Tag', key: 'rfid', width: 25 },
+    ];
+
+    sheet.getRow(1).font = { bold: true };
+    sheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFC000' } };
+    sheet.getRow(1).font = { bold: true, color: { argb: 'FF000000' } };
+
+    violations.forEach((v) => {
+      sheet.addRow({
+        date: v.createdAt.toISOString(),
+        id: v.id,
+        plate: v.vehicle.plateNumber,
+        vehicle: `${v.vehicle.make} ${v.vehicle.model}`,
+        plaza: v.event?.plaza?.name || '',
+        lane: v.event?.laneNumber || '',
+        type: v.violationType,
+        fine: Number(v.fineAmount),
+        status: v.status,
+        dueDate: v.dueDate.toISOString(),
+        rfid: v.event?.rfidTag?.tagUid || '',
+      });
+    });
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=violations-report.xlsx');
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to generate Excel report' });
+  }
+});
+
+router.get('/events/excel', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { startDate, endDate } = req.query;
+    const where: any = {};
+    if (startDate && endDate) {
+      where.entryTime = { gte: new Date(startDate as string), lte: new Date(endDate as string) };
+    }
+
+    const events = await prisma.tollEvent.findMany({
+      where,
+      include: {
+        vehicle: true,
+        plaza: true,
+        rfidTag: true,
+        transaction: true,
+      },
+      orderBy: { entryTime: 'desc' },
+    });
+
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('Toll Events');
+    sheet.columns = [
+      { header: 'Entry Time', key: 'entryTime', width: 20 },
+      { header: 'Exit Time', key: 'exitTime', width: 20 },
+      { header: 'Event ID', key: 'id', width: 36 },
+      { header: 'Plate Number', key: 'plate', width: 15 },
+      { header: 'Vehicle', key: 'vehicle', width: 25 },
+      { header: 'Plaza', key: 'plaza', width: 20 },
+      { header: 'Gate Code', key: 'gateCode', width: 12 },
+      { header: 'Lane', key: 'lane', width: 8 },
+      { header: 'Direction', key: 'direction', width: 10 },
+      { header: 'ANPR Plate', key: 'anpr', width: 15 },
+      { header: 'Amount (MMK)', key: 'amount', width: 15 },
+      { header: 'Status', key: 'status', width: 12 },
+      { header: 'RFID Tag', key: 'rfid', width: 25 },
+    ];
+
+    sheet.getRow(1).font = { bold: true };
+    sheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF70AD47' } };
+    sheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+
+    events.forEach((e) => {
+      sheet.addRow({
+        entryTime: e.entryTime.toISOString(),
+        exitTime: e.exitTime?.toISOString() || '',
+        id: e.id,
+        plate: e.vehicle.plateNumber,
+        vehicle: `${e.vehicle.make} ${e.vehicle.model}`,
+        plaza: e.plaza.name,
+        gateCode: e.plaza.gateCode || '',
+        lane: e.laneNumber || '',
+        direction: e.direction || '',
+        anpr: e.anprPlate || '',
+        amount: Number(e.amount || e.transaction?.amount || 0),
+        status: e.status,
+        rfid: e.rfidTag?.tagUid || '',
+      });
+    });
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=toll-events-report.xlsx');
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to generate Excel report' });
+  }
+});
+
+router.get('/revenue/excel', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { startDate, endDate } = req.query;
+    const where: any = { status: 'COMPLETED' };
+    if (startDate && endDate) {
+      where.createdAt = { gte: new Date(startDate as string), lte: new Date(endDate as string) };
+    }
+
+    const transactions = await prisma.transaction.findMany({
+      where,
+      include: {
+        event: { include: { plaza: true, vehicle: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('Revenue');
+    sheet.columns = [
+      { header: 'Date', key: 'date', width: 20 },
+      { header: 'Plate Number', key: 'plate', width: 15 },
+      { header: 'Plaza', key: 'plaza', width: 20 },
+      { header: 'Gate Code', key: 'gateCode', width: 12 },
+      { header: 'Vehicle Class', key: 'vehicleClass', width: 15 },
+      { header: 'Amount (MMK)', key: 'amount', width: 15 },
+      { header: 'Type', key: 'type', width: 12 },
+      { header: 'Status', key: 'status', width: 12 },
+    ];
+
+    sheet.getRow(1).font = { bold: true };
+    sheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4472C4' } };
+    sheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+
+    transactions.forEach((t) => {
+      sheet.addRow({
+        date: t.createdAt.toISOString(),
+        plate: t.event?.vehicle?.plateNumber || '',
+        plaza: t.event?.plaza?.name || '',
+        gateCode: t.event?.plaza?.gateCode || '',
+        vehicleClass: t.event?.vehicle?.vehicleClass || '',
+        amount: Number(t.amount),
+        type: t.type,
+        status: t.status,
+      });
+    });
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=revenue-report.xlsx');
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to generate Excel report' });
   }
 });
 
