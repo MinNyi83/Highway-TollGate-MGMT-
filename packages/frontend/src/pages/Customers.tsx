@@ -40,9 +40,9 @@ export default function Customers() {
   const { data: customers, isLoading } = useQuery<Customer[]>({
     queryKey: ['admin-customers', search],
     queryFn: async () => {
-      const params = search ? { params: { search } } : {};
-      const r = await api.get('/admin/customers', params);
-      return r.data;
+      const config = search ? { params: { search } } : undefined;
+      const r = await api.get('/admin/customers', config);
+      return Array.isArray(r.data) ? r.data : [];
     },
   });
 
