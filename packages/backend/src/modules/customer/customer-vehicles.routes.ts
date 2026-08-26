@@ -64,6 +64,7 @@ router.post('/register-vehicle', authMiddleware, upload.fields([
         year: parseInt(year),
         color: color || null,
         vehicleClass,
+        approvalStatus: 'PENDING',
         vehiclePhoto: vehiclePhoto || null,
         wheelTaxCard: wheelTaxCard || null,
       },

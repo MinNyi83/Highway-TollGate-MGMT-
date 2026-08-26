@@ -217,9 +217,19 @@ export default function MyVehicles() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
                     <h3 className="font-bold text-lg">{v.plateNumber}</h3>
-                    <span className={`px-2 py-1 text-xs rounded-full ${
-                      v.status === 'ACTIVE' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                    }`}>{v.status}</span>
+                    <div className="flex items-center gap-2">
+                      <span className={`px-2 py-1 text-xs rounded-full border ${
+                        v.approvalStatus === 'APPROVED' ? 'bg-green-100 text-green-800 border-green-300' :
+                        v.approvalStatus === 'REJECTED' ? 'bg-red-100 text-red-800 border-red-300' :
+                        'bg-yellow-100 text-yellow-800 border-yellow-300'
+                      }`}>
+                        {v.approvalStatus === 'PENDING' ? '⏳ Pending Approval' :
+                         v.approvalStatus === 'REJECTED' ? '✗ Rejected' : '✓ Approved'}
+                      </span>
+                      <span className={`px-2 py-1 text-xs rounded-full ${
+                        v.status === 'ACTIVE' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                      }`}>{v.status}</span>
+                    </div>
                   </div>
                   <p className="text-sm text-gray-500">{v.year} {v.make} {v.model} {v.color && `- ${v.color}`}</p>
                   <div className="flex items-center gap-4 mt-2 text-xs text-gray-400">
@@ -233,6 +243,18 @@ export default function MyVehicles() {
                       <span className={`text-xs ${v.rfidTag.status === 'ACTIVE' ? 'text-green-600' : 'text-red-600'}`}>
                         {v.rfidTag.status}
                       </span>
+                    </div>
+                  )}
+                  {v.approvalStatus === 'PENDING' && (
+                    <div className="flex items-center gap-2 mt-2 p-2 bg-yellow-50 rounded-lg border border-yellow-200">
+                      <AlertTriangle size={14} className="text-yellow-600" />
+                      <span className="text-xs text-yellow-700">Your vehicle registration is pending admin approval. You will be notified once reviewed.</span>
+                    </div>
+                  )}
+                  {v.approvalStatus === 'REJECTED' && v.rejectedReason && (
+                    <div className="flex items-center gap-2 mt-2 p-2 bg-red-50 rounded-lg border border-red-200">
+                      <AlertTriangle size={14} className="text-red-600" />
+                      <span className="text-xs text-red-700">Rejected: {v.rejectedReason}</span>
                     </div>
                   )}
                 </div>

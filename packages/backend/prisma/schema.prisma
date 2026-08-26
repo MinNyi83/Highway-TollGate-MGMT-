@@ -43,6 +43,12 @@ enum VehicleClass {
   BUS
 }
 
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 enum RFIDTagStatus {
   ACTIVE
   LOST
@@ -181,18 +187,22 @@ model SMSLog {
 }
 
 model Vehicle {
-  id             String      @id @default(uuid())
-  plateNumber    String      @unique @map("plate_number")
-  make           String
-  model          String
-  year           Int
-  color          String?
-  vehicleClass   VehicleClass @map("vehicle_class")
-  status         VehicleStatus @default(ACTIVE)
-  vehiclePhoto   String?     @map("vehicle_photo")
-  wheelTaxCard   String?     @map("wheel_tax_card")
-  createdAt      DateTime    @default(now()) @map("created_at")
-  updatedAt      DateTime    @updatedAt @map("updated_at")
+  id              String         @id @default(uuid())
+  plateNumber     String         @unique @map("plate_number")
+  make            String
+  model           String
+  year            Int
+  color           String?
+  vehicleClass    VehicleClass   @map("vehicle_class")
+  status          VehicleStatus  @default(ACTIVE)
+  approvalStatus  ApprovalStatus @default(APPROVED) @map("approval_status")
+  approvedBy      String?        @map("approved_by")
+  approvedAt      DateTime?      @map("approved_at")
+  rejectedReason  String?        @map("rejected_reason")
+  vehiclePhoto    String?        @map("vehicle_photo")
+  wheelTaxCard    String?        @map("wheel_tax_card")
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
 
   rfidTags       RFIDTag[]
   tollEvents     TollEvent[]

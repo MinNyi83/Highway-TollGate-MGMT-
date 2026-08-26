@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import api from '../lib/api';
-import { Plus, Search, X, Upload, Image, Edit, Trash2, CreditCard } from 'lucide-react';
+import { Plus, Search, X, Upload, Image, Edit, Trash2, CreditCard, CheckCircle, XCircle, Clock, AlertTriangle, User } from 'lucide-react';
 
 interface Vehicle {
   id: string;
@@ -12,10 +12,15 @@ interface Vehicle {
   year: number;
   vehicleClass: string;
   status: string;
+  approvalStatus: string;
+  approvedBy?: string;
+  approvedAt?: string;
+  rejectedReason?: string;
   color?: string;
   vehiclePhoto?: string;
   wheelTaxCard?: string;
   rfidTags: Array<{ id: string; tagUid: string; status: string }>;
+  createdAt?: string;
 }
 
 const vehicleClasses = ['MOTORCYCLE', 'SEDAN', 'SUV', 'TRUCK', 'BUS'];
@@ -47,11 +52,20 @@ const vehicleColors = [
 const currentYear = new Date().getFullYear();
 const yearOptions = Array.from({ length: 30 }, (_, i) => currentYear - i);
 
+const approvalStyles: Record<string, string> = {
+  PENDING: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+  APPROVED: 'bg-green-100 text-green-800 border-green-300',
+  REJECTED: 'bg-red-100 text-red-800 border-red-300',
+};
+
 export default function Vehicles() {
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
   const [showImport, setShowImport] = useState(false);
+  const [activeTab, setActiveTab] = useState<'all' | 'pending'>('all');
+  const [rejectModal, setRejectModal] = useState<{ vehicleId: string; plateNumber: string } | null>(null);
+  const [rejectReason, setRejectReason] = useState('');
   const queryClient = useQueryClient();
 
   const { data: vehicles, isLoading } = useQuery<Vehicle[]>({
@@ -60,6 +74,15 @@ export default function Vehicles() {
       const response = await api.get('/vehicles');
       return response.data;
     },
+  });
+
+  const { data: pendingVehicles, isLoading: loadingPending } = useQuery<Vehicle[]>({
+    queryKey: ['vehicles-pending'],
+    queryFn: async () => {
+      const response = await api.get('/vehicles/approvals/pending');
+      return response.data;
+    },
+    enabled: activeTab === 'pending',
   });
 
   const createMutation = useMutation({
@@ -94,15 +117,40 @@ export default function Vehicles() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['vehicles'] });
+      queryClient.invalidateQueries({ queryKey: ['vehicles-pending'] });
     },
   });
 
-  const filteredVehicles = vehicles?.filter(
+  const approveMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await api.patch(`/vehicles/${id}/approve`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['vehicles'] });
+      queryClient.invalidateQueries({ queryKey: ['vehicles-pending'] });
+    },
+  });
+
+  const rejectMutation = useMutation({
+    mutationFn: async ({ id, reason }: { id: string; reason: string }) => {
+      await api.patch(`/vehicles/${id}/reject`, { reason });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['vehicles'] });
+      queryClient.invalidateQueries({ queryKey: ['vehicles-pending'] });
+      setRejectModal(null);
+      setRejectReason('');
+    },
+  });
+
+  const filteredVehicles = (activeTab === 'pending' ? pendingVehicles : vehicles)?.filter(
     (v) =>
       v.plateNumber.toLowerCase().includes(search.toLowerCase()) ||
       v.make.toLowerCase().includes(search.toLowerCase()) ||
       v.model.toLowerCase().includes(search.toLowerCase())
   );
+
+  const pendingCount = vehicles?.filter((v) => v.approvalStatus === 'PENDING').length || 0;
 
   const getPhotoUrl = (filename?: string) => {
     if (!filename) return null;
@@ -117,6 +165,12 @@ export default function Vehicles() {
   const handleDelete = (vehicle: Vehicle) => {
     if (window.confirm(`Delete vehicle ${vehicle.plateNumber}? This cannot be undone.`)) {
       deleteMutation.mutate(vehicle.id);
+    }
+  };
+
+  const handleReject = () => {
+    if (rejectModal) {
+      rejectMutation.mutate({ id: rejectModal.vehicleId, reason: rejectReason });
     }
   };
 
@@ -140,6 +194,21 @@ export default function Vehicles() {
       {editingVehicle && <VehicleForm vehicle={editingVehicle} onClose={() => setEditingVehicle(null)} onSubmit={(fd) => updateMutation.mutate({ id: editingVehicle.id, formData: fd })} />}
       {showImport && <CsvImportModal onClose={() => setShowImport(false)} />}
 
+      {/* Tabs */}
+      <div className="flex gap-1 mb-4 bg-gray-100 p-1 rounded-lg w-fit">
+        <button onClick={() => { setActiveTab('all'); setSearch(''); }}
+          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'all' ? 'bg-white shadow text-blue-600' : 'text-gray-600 hover:text-gray-900'}`}>
+          All Vehicles ({vehicles?.length || 0})
+        </button>
+        <button onClick={() => { setActiveTab('pending'); setSearch(''); }}
+          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${activeTab === 'pending' ? 'bg-white shadow text-yellow-600' : 'text-gray-600 hover:text-gray-900'}`}>
+          <Clock size={14} /> Pending Approval
+          {pendingCount > 0 && (
+            <span className="bg-yellow-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold">{pendingCount}</span>
+          )}
+        </button>
+      </div>
+
       <div className="bg-white rounded-lg shadow">
         <div className="p-4 border-b">
           <div className="relative">
@@ -159,6 +228,9 @@ export default function Vehicles() {
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Color</th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Class</th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Status</th>
+                {activeTab === 'pending' && (
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Registered</th>
+                )}
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">RFID</th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Actions</th>
               </tr>
@@ -167,7 +239,7 @@ export default function Vehicles() {
               {filteredVehicles?.map((vehicle) => {
                 const photos = parsePhotos(vehicle.vehiclePhoto);
                 return (
-                  <tr key={vehicle.id} className="hover:bg-gray-50">
+                  <tr key={vehicle.id} className={`hover:bg-gray-50 ${vehicle.approvalStatus === 'PENDING' ? 'bg-yellow-50/50' : ''}`}>
                     <td className="px-4 py-3">
                       <div className="flex gap-1">
                         {photos.length > 0 ? photos.map((p, i) => (
@@ -185,8 +257,15 @@ export default function Vehicles() {
                     <td className="px-4 py-3 text-sm">{vehicle.color || '-'}</td>
                     <td className="px-4 py-3"><span className="px-2 py-1 text-xs rounded-full bg-gray-100">{vehicle.vehicleClass}</span></td>
                     <td className="px-4 py-3">
-                      <span className={`px-2 py-1 text-xs rounded-full ${vehicle.status === 'ACTIVE' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>{vehicle.status}</span>
+                      <span className={`px-2 py-1 text-xs rounded-full border ${approvalStyles[vehicle.approvalStatus] || 'bg-gray-100 text-gray-800'}`}>
+                        {vehicle.approvalStatus}
+                      </span>
                     </td>
+                    {activeTab === 'pending' && (
+                      <td className="px-4 py-3 text-xs text-gray-500">
+                        {vehicle.createdAt ? new Date(vehicle.createdAt).toLocaleDateString() : '-'}
+                      </td>
+                    )}
                     <td className="px-4 py-3">
                       {vehicle.rfidTags?.length > 0 ? (
                         <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800 font-mono">{vehicle.rfidTags[0].tagUid.slice(0, 8)}...</span>
@@ -196,8 +275,23 @@ export default function Vehicles() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex gap-1">
-                        <button onClick={() => setEditingVehicle(vehicle)} className="p-1 text-gray-500 hover:text-blue-600 rounded" title="Edit"><Edit size={16} /></button>
-                        <button onClick={() => handleDelete(vehicle)} className="p-1 text-gray-500 hover:text-red-600 rounded" title="Delete"><Trash2 size={16} /></button>
+                        {vehicle.approvalStatus === 'PENDING' ? (
+                          <>
+                            <button onClick={() => approveMutation.mutate(vehicle.id)} disabled={approveMutation.isPending}
+                              className="px-2 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 flex items-center gap-1">
+                              <CheckCircle size={12} /> Approve
+                            </button>
+                            <button onClick={() => setRejectModal({ vehicleId: vehicle.id, plateNumber: vehicle.plateNumber })}
+                              className="px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 flex items-center gap-1">
+                              <XCircle size={12} /> Reject
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button onClick={() => setEditingVehicle(vehicle)} className="p-1 text-gray-500 hover:text-blue-600 rounded" title="Edit"><Edit size={16} /></button>
+                            <button onClick={() => handleDelete(vehicle)} className="p-1 text-gray-500 hover:text-red-600 rounded" title="Delete"><Trash2 size={16} /></button>
+                          </>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -206,8 +300,40 @@ export default function Vehicles() {
             </tbody>
           </table>
         </div>
-        {filteredVehicles?.length === 0 && <div className="p-8 text-center text-gray-500">No vehicles found</div>}
+        {filteredVehicles?.length === 0 && (
+          <div className="p-8 text-center text-gray-500">
+            {activeTab === 'pending' ? 'No pending vehicles to approve' : 'No vehicles found'}
+          </div>
+        )}
       </div>
+
+      {/* Reject Modal */}
+      {rejectModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-red-100 rounded-full"><AlertTriangle className="text-red-600" size={20} /></div>
+              <div>
+                <h3 className="font-bold">Reject Vehicle</h3>
+                <p className="text-sm text-gray-500">{rejectModal.plateNumber}</p>
+              </div>
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Reason (optional)</label>
+              <textarea value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} rows={3}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                placeholder="Enter reason for rejection..." />
+            </div>
+            <div className="flex justify-end gap-2">
+              <button onClick={() => { setRejectModal(null); setRejectReason(''); }} className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50">Cancel</button>
+              <button onClick={handleReject} disabled={rejectMutation.isPending}
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50">
+                {rejectMutation.isPending ? 'Rejecting...' : 'Reject Vehicle'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

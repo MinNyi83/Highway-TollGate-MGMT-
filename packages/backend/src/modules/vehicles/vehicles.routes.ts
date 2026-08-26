@@ -7,6 +7,9 @@ import {
   updateVehicle,
   bindRfidTag,
   unbindRfidTag,
+  getPendingApprovals,
+  approveVehicle,
+  rejectVehicle,
 } from './vehicles.service';
 import { authMiddleware } from '../../middleware/auth';
 import { uploadVehiclePhotos, uploadSingle } from '../../middleware/upload';
@@ -189,6 +192,44 @@ router.post('/import/csv', authMiddleware, (req: Request, res: Response) => {
       res.status(500).json({ error: 'Failed to process CSV' });
     }
   });
+});
+
+router.get('/approvals/pending', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const vehicles = await getPendingApprovals();
+    res.json(vehicles);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.patch('/:id/approve', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.userId;
+    const vehicle = await approveVehicle(req.params.id, userId || 'admin');
+    res.json(vehicle);
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(400).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+});
+
+router.patch('/:id/reject', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.userId;
+    const { reason } = req.body;
+    const vehicle = await rejectVehicle(req.params.id, userId || 'admin', reason);
+    res.json(vehicle);
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(400).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  }
 });
 
 export default router;

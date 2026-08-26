@@ -1,4 +1,4 @@
-import { PrismaClient, VehicleClass, VehicleStatus } from '@prisma/client';
+import { PrismaClient, VehicleClass, VehicleStatus, ApprovalStatus } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -113,5 +113,45 @@ export async function unbindRfidTag(vehicleId: string, tagId: string) {
 
   return prisma.rFIDTag.delete({
     where: { id: tagId },
+  });
+}
+
+export async function getPendingApprovals() {
+  return prisma.vehicle.findMany({
+    where: { approvalStatus: 'PENDING' },
+    include: {
+      rfidTags: true,
+    },
+    orderBy: { createdAt: 'desc' },
+  });
+}
+
+export async function approveVehicle(id: string, approvedBy: string) {
+  const vehicle = await prisma.vehicle.findUnique({ where: { id } });
+  if (!vehicle) throw new Error('Vehicle not found');
+
+  return prisma.vehicle.update({
+    where: { id },
+    data: {
+      approvalStatus: 'APPROVED',
+      approvedBy,
+      approvedAt: new Date(),
+      rejectedReason: null,
+    },
+  });
+}
+
+export async function rejectVehicle(id: string, rejectedBy: string, reason?: string) {
+  const vehicle = await prisma.vehicle.findUnique({ where: { id } });
+  if (!vehicle) throw new Error('Vehicle not found');
+
+  return prisma.vehicle.update({
+    where: { id },
+    data: {
+      approvalStatus: 'REJECTED',
+      approvedBy: rejectedBy,
+      approvedAt: new Date(),
+      rejectedReason: reason || null,
+    },
   });
 }
