@@ -194,7 +194,6 @@ export class NotificationService {
           type,
           title,
           message,
-          data: data ? JSON.stringify(data) : null,
         },
       });
     } catch (error) {

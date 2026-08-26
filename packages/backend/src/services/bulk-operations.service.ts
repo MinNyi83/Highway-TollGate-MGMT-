@@ -98,7 +98,7 @@ export class BulkOperationsService {
         model: vehicle.model,
         year: vehicle.year,
         color: vehicle.color,
-        vehicleClass: vehicle.vehicleClass,
+        vehicleClass: vehicle.vehicleClass as any,
       },
     });
 
@@ -203,7 +203,7 @@ TOLL-2024-000002,5000,Bonus credit`;
   }
 
   async exportVehiclesToCSV(accountId?: string): Promise<string> {
-    const where = accountId ? { accounts: { some: { id: accountId } } } : {};
+    const where = accountId ? { rfidTags: { some: { accountId } } } : {};
 
     const vehicles = await this.prisma.vehicle.findMany({
       where,

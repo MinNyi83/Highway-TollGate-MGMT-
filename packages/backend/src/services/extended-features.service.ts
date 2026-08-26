@@ -68,12 +68,13 @@ export class LoyaltyService {
       });
 
       if (promo && promo.usedCount < promo.maxUses) {
+        const promoValue = Number(promo.value);
         switch (promo.type) {
           case 'PERCENTAGE':
-            discount = amount * (promo.value / 100);
+            discount = amount * (promoValue / 100);
             break;
           case 'FIXED':
-            discount = Math.min(promo.value, amount);
+            discount = Math.min(promoValue, amount);
             break;
           case 'FREE_TRIPS':
             discount = amount; // Free trip
@@ -98,7 +99,7 @@ export class LoyaltyService {
     if (account) {
       const trips = await this.prisma.tollEvent.count({
         where: {
-          vehicle: { accountId },
+          vehicle: { rfidTags: { some: { accountId } } },
           status: 'COMPLETED',
         },
       });

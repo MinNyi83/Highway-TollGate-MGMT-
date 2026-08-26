@@ -8,9 +8,14 @@ datasource db {
 }
 
 enum UserRole {
+  SUPER_ADMIN
   ADMIN
+  MANAGER
   OPERATOR
   VIEWER
+  CUSTOMER
+  ENTERPRISE_ADMIN
+  ENTERPRISE_USER
 }
 
 enum CustomerType {
@@ -84,6 +89,7 @@ enum ViolationStatus {
   PAID
   ESCALATED
   DISMISSED
+  RESOLVED
 }
 
 enum DeviceType {
@@ -106,25 +112,30 @@ enum DeviceStatusEnum {
 }
 
 model User {
-  id               String        @id @default(uuid())
-  email            String        @unique
-  passwordHash     String        @map("password_hash")
-  name             String
-  role             UserRole      @default(VIEWER)
-  customerType     CustomerType  @default(INDIVIDUAL) @map("customer_type")
-  phone            String?
-  nrcNumber        String?       @map("nrc_number")
-  drivingLicense   String?       @map("driving_license")
-  companyName      String?       @map("company_name")
-  companyRegNo     String?       @map("company_reg_no")
-  companyAddress   String?       @map("company_address")
-  fleetManagerName String?       @map("fleet_manager_name")
-  smsProvider      String?       @map("sms_provider")
-  smsEnabled       Boolean       @default(false) @map("sms_enabled")
-  resetToken       String?       @map("reset_token")
-  resetTokenExpiry DateTime?     @map("reset_token_expiry")
-  createdAt        DateTime      @default(now()) @map("created_at")
-  updatedAt        DateTime      @updatedAt @map("updated_at")
+  id                    String        @id @default(uuid())
+  email                 String        @unique
+  passwordHash          String        @map("password_hash")
+  name                  String
+  role                  UserRole      @default(VIEWER)
+  customerType          CustomerType  @default(INDIVIDUAL) @map("customer_type")
+  phone                 String?
+  nrcNumber             String?       @map("nrc_number")
+  drivingLicense        String?       @map("driving_license")
+  companyName           String?       @map("company_name")
+  companyRegNo          String?       @map("company_reg_no")
+  companyAddress        String?       @map("company_address")
+  fleetManagerName      String?       @map("fleet_manager_name")
+  smsProvider           String?       @map("sms_provider")
+  smsEnabled            Boolean       @default(false) @map("sms_enabled")
+  resetToken            String?       @map("reset_token")
+  resetTokenExpiry      DateTime?     @map("reset_token_expiry")
+  twoFactorSecret       String?       @map("two_factor_secret")
+  twoFactorEnabled      Boolean       @default(false) @map("two_factor_enabled")
+  twoFactorBackupCodes  String?       @map("two_factor_backup_codes")
+  customPermissions     String?       @map("custom_permissions")
+  language              String        @default("en")
+  createdAt             DateTime      @default(now()) @map("created_at")
+  updatedAt             DateTime      @updatedAt @map("updated_at")
 
   accounts      Account[]
   notifications Notification[]
@@ -136,6 +147,7 @@ model User {
 model Account {
   id              String        @id @default(uuid())
   userId          String        @map("user_id")
+  accountNumber   String?       @unique @map("account_number")
   customerType    CustomerType  @default(INDIVIDUAL) @map("customer_type")
   balance         Decimal       @default(0) @db.Decimal(10, 2)
   creditLimit     Decimal       @default(0) @db.Decimal(10, 2) @map("credit_limit")
@@ -147,6 +159,7 @@ model Account {
   user          User          @relation(fields: [userId], references: [id])
   rfidTags      RFIDTag[]
   transactions  Transaction[]
+  loyaltyPoints LoyaltyPoints[]
 
   @@map("accounts")
 }
@@ -207,6 +220,7 @@ model RFIDTag {
 model TollPlaza {
   id          String          @id @default(uuid())
   name        String
+  gateCode    String?         @unique @map("gate_code")
   locationLat Decimal         @map("location_lat") @db.Decimal(10, 7)
   locationLng Decimal         @map("location_lng") @db.Decimal(10, 7)
   mileMarker  Int?            @map("mile_marker")
@@ -242,8 +256,11 @@ model TollEvent {
   plazaId     String          @map("plaza_id")
   rfidTagId   String?         @map("rfid_tag_id")
   anprPlate   String?         @map("anpr_plate")
+  laneNumber  String?         @map("lane_number")
+  direction   String?         @default("DOWN")
   entryTime   DateTime        @default(now()) @map("entry_time")
   exitTime    DateTime?       @map("exit_time")
+  amount      Decimal?        @db.Decimal(10, 2)
   status      TollEventStatus @default(ENTRY)
   createdAt   DateTime        @default(now()) @map("created_at")
 
@@ -252,6 +269,7 @@ model TollEvent {
   rfidTag     RFIDTag?        @relation(fields: [rfidTagId], references: [id])
   transaction Transaction?
   violation   Violation?
+  photos      VehiclePhoto[]
 
   @@map("toll_events")
 }
@@ -264,6 +282,7 @@ model Transaction {
   type          TransactionType
   status        TransactionStatus @default(PENDING)
   paymentMethod String?           @map("payment_method")
+  description   String?
   createdAt     DateTime          @default(now()) @map("created_at")
 
   account       Account           @relation(fields: [accountId], references: [id])
@@ -290,14 +309,16 @@ model Violation {
 }
 
 model Notification {
-  id        String   @id @default(uuid())
-  userId    String   @map("user_id")
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
   type      String
+  title     String?
   message   String
-  read      Boolean  @default(false)
-  createdAt DateTime @default(now()) @map("created_at")
+  read      Boolean   @default(false)
+  readAt    DateTime? @map("read_at")
+  createdAt DateTime  @default(now()) @map("created_at")
 
-  user      User     @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
 
   @@map("notifications")
 }
@@ -338,4 +359,71 @@ model AuditLog {
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("audit_logs")
+}
+
+model PromoCode {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  type        String   // PERCENTAGE, FIXED, FREE_TRIPS
+  value       Decimal  @db.Decimal(10, 2)
+  maxUses     Int      @map("max_uses")
+  usedCount   Int      @default(0) @map("used_count")
+  validFrom   DateTime @map("valid_from")
+  validTo     DateTime @map("valid_to")
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("promo_codes")
+}
+
+model LoyaltyPoints {
+  id        String   @id @default(uuid())
+  accountId String   @map("account_id")
+  points    Int      @default(0)
+  earned    Int      @default(0)
+  redeemed  Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  account   Account  @relation(fields: [accountId], references: [id])
+
+  @@map("loyalty_points")
+}
+
+model Webhook {
+  id         String   @id @default(uuid())
+  url        String
+  events     String   // JSON array of event names
+  secret     String
+  active     Boolean  @default(true)
+  retryCount Int      @default(3) @map("retry_count")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("webhooks")
+}
+
+model VehiclePhoto {
+  id        String   @id @default(uuid())
+  eventId   String   @map("event_id")
+  photoType String   @map("photo_type") // ENTRY, EXIT
+  photoUrl  String   @map("photo_url")
+  metadata  Json?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  event     TollEvent @relation(fields: [eventId], references: [id])
+
+  @@map("vehicle_photos")
+}
+
+model Tenant {
+  id        String   @id @default(uuid())
+  name      String
+  domain    String   @unique
+  settings  Json?
+  status    String   @default("ACTIVE")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("tenants")
 }

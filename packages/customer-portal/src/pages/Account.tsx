@@ -1,13 +1,13 @@
 import { useState, useRef, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Wallet, Plus, Smartphone, CheckCircle, QrCode, Loader2, AlertCircle } from 'lucide-react';
+import { Wallet, Plus, Smartphone, CheckCircle, QrCode, Loader2, AlertCircle, History, ChevronRight, CreditCard } from 'lucide-react';
 import api from '../lib/api';
 
 const walletOptions = [
-  { id: 'kbzpay', name: 'KBZ Pay', icon: '🏦' },
-  { id: 'wavepay', name: 'Wave Pay', icon: '🌊' },
-  { id: 'mmqr', name: 'MMQR', icon: '📱' },
-  { id: 'manual', name: 'Manual', icon: '💳' },
+  { id: 'kbzpay', name: 'KBZ Pay', icon: '🏦', color: 'from-red-500 to-rose-600' },
+  { id: 'wavepay', name: 'Wave Pay', icon: '🌊', color: 'from-blue-500 to-cyan-600' },
+  { id: 'mmqr', name: 'MMQR', icon: '📱', color: 'from-green-500 to-emerald-600' },
+  { id: 'manual', name: 'Manual', icon: '💳', color: 'from-violet-500 to-purple-600' },
 ];
 
 const quickAmounts = [1000, 5000, 10000, 20000, 50000];
@@ -40,9 +40,7 @@ export default function Account() {
   });
 
   const startPaymentPolling = useCallback((transactionId: string) => {
-    if (pollIntervalRef.current) {
-      clearInterval(pollIntervalRef.current);
-    }
+    if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
 
     pollIntervalRef.current = setInterval(async () => {
       try {
@@ -85,11 +83,7 @@ export default function Account() {
     },
     onSuccess: (data) => {
       if (data.qrCode && data.transactionId) {
-        setQrData({
-          qrCode: data.qrCode,
-          transactionId: data.transactionId,
-          orderId: data.orderId,
-        });
+        setQrData({ qrCode: data.qrCode, transactionId: data.transactionId, orderId: data.orderId });
         setShowQr(true);
         setPaymentStatus('polling');
         startPaymentPolling(data.transactionId);
@@ -115,191 +109,230 @@ export default function Account() {
     setPaymentStatus('idle');
   };
 
-  if (isLoading) return <div className="text-center py-8">Loading...</div>;
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <div className="h-8 bg-gray-200 rounded w-48 animate-pulse" />
+        <div className="h-36 bg-gray-200 rounded-2xl animate-pulse" />
+        <div className="h-12 bg-gray-200 rounded-xl animate-pulse" />
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">Account</h1>
+    <div className="space-y-5">
+      {/* Header */}
+      <h1 className="text-2xl font-bold text-gray-900">Account</h1>
 
       {/* Balance Card */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl p-4 md:p-6 text-white mb-4 md:mb-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-blue-200 text-xs md:text-sm">Available Balance</p>
-            <p className="text-3xl md:text-4xl font-bold mt-1">{account?.balance?.toLocaleString() || 0} MMK</p>
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 p-5 text-white shadow-lg shadow-emerald-500/25">
+        <div className="absolute -right-8 -top-8 w-28 h-28 bg-white/10 rounded-full" />
+        <div className="absolute -right-4 -bottom-10 w-24 h-24 bg-white/5 rounded-full" />
+        <div className="relative">
+          <div className="flex items-center gap-2 mb-1">
+            <Wallet size={16} className="text-emerald-100" />
+            <p className="text-emerald-100 text-sm font-medium">Available Balance</p>
           </div>
-          <div className="bg-white/20 p-3 md:p-4 rounded-full">
-            <Wallet size={28} />
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-3xl font-bold">{account?.balance?.toLocaleString() || 0}</span>
+            <span className="text-emerald-200 text-sm font-medium">MMK</span>
           </div>
+          {account?.accountNumber && (
+            <p className="text-emerald-200 text-xs mt-2 font-mono">Account: {account.accountNumber}</p>
+          )}
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-4 mb-4 md:mb-6 border-b">
-        {(['topup', 'history'] as const).map((tab) => (
+      <div className="flex bg-gray-100 rounded-xl p-1">
+        {([
+          { key: 'topup', label: 'Top Up', icon: Plus },
+          { key: 'history', label: 'History', icon: History },
+        ] as const).map(({ key, label, icon: Icon }) => (
           <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`pb-2 px-2 md:px-4 font-medium text-sm md:text-base ${
-              activeTab === tab ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500'
+            key={key}
+            onClick={() => setActiveTab(key)}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              activeTab === key
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'
             }`}
           >
-            {tab === 'topup' ? 'Top Up' : 'History'}
+            <Icon size={14} />
+            {label}
           </button>
         ))}
       </div>
 
-      {activeTab === 'topup' && (
-        <>
-          {/* QR Modal */}
-          {showQr && qrData && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-              <div className="bg-white rounded-xl p-6 w-full max-w-sm text-center">
-                <div className="bg-gray-100 p-6 rounded-lg mb-4">
-                  <div className="w-48 h-48 mx-auto bg-white border-2 border-dashed rounded-lg flex items-center justify-center">
-                    {paymentStatus === 'polling' ? (
-                      <div className="text-center">
-                        <Loader2 size={48} className="mx-auto text-blue-500 mb-2 animate-spin" />
-                        <p className="font-bold text-lg">{parseFloat(topUpAmount).toLocaleString()} MMK</p>
-                        <p className="text-xs text-gray-400">{walletOptions.find((w) => w.id === selectedWallet)?.name}</p>
-                        <p className="text-xs text-blue-500 mt-2">Waiting for payment...</p>
-                      </div>
-                    ) : paymentStatus === 'completed' ? (
-                      <div className="text-center">
-                        <CheckCircle size={48} className="mx-auto text-green-500 mb-2" />
-                        <p className="font-bold text-lg text-green-600">Payment Confirmed!</p>
-                      </div>
-                    ) : paymentStatus === 'failed' ? (
-                      <div className="text-center">
-                        <AlertCircle size={48} className="mx-auto text-red-500 mb-2" />
-                        <p className="font-bold text-lg text-red-600">Payment Failed</p>
-                      </div>
-                    ) : (
-                      <div className="text-center">
-                        <QrCode size={48} className="mx-auto text-gray-400 mb-2" />
-                        <p className="font-bold text-lg">{parseFloat(topUpAmount).toLocaleString()} MMK</p>
-                        <p className="text-xs text-gray-400">{walletOptions.find((w) => w.id === selectedWallet)?.name}</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <p className="text-sm text-gray-600 mb-4">
-                  {paymentStatus === 'polling'
-                    ? 'Scan QR code with your payment app'
-                    : paymentStatus === 'completed'
-                    ? 'Payment successful!'
-                    : paymentStatus === 'failed'
-                    ? 'Payment timed out or failed'
-                    : `Scan with ${walletOptions.find((w) => w.id === selectedWallet)?.name} app`}
-                </p>
-                <div className="flex gap-2">
-                  <button onClick={closeQrModal} className="flex-1 py-2 border rounded-lg">
-                    {paymentStatus === 'failed' ? 'Try Again' : 'Cancel'}
-                  </button>
-                  {paymentStatus === 'failed' && (
-                    <button
-                      onClick={() => {
-                        setPaymentStatus('polling');
-                        startPaymentPolling(qrData.transactionId);
-                      }}
-                      className="flex-1 py-2 bg-blue-600 text-white rounded-lg"
-                    >
-                      Retry
-                    </button>
-                  )}
-                </div>
+      {/* QR Modal */}
+      {showQr && qrData && (
+        <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={closeQrModal} />
+          <div className="relative bg-white rounded-t-3xl md:rounded-2xl w-full max-w-sm p-6 md:m-4 animate-slide-in">
+            <div className="w-10 h-1 rounded-full bg-gray-300 mx-auto mb-4 md:hidden" />
+            <div className="text-center mb-6">
+              <div className={`w-16 h-16 rounded-2xl mx-auto mb-3 flex items-center justify-center ${
+                paymentStatus === 'completed' ? 'bg-emerald-100' :
+                paymentStatus === 'failed' ? 'bg-red-100' : 'bg-gray-100'
+              }`}>
+                {paymentStatus === 'polling' ? (
+                  <Loader2 size={28} className="text-blue-500 animate-spin" />
+                ) : paymentStatus === 'completed' ? (
+                  <CheckCircle size={28} className="text-emerald-500" />
+                ) : paymentStatus === 'failed' ? (
+                  <AlertCircle size={28} className="text-red-500" />
+                ) : (
+                  <QrCode size={28} className="text-gray-400" />
+                )}
               </div>
+              <h3 className="font-bold text-lg">
+                {paymentStatus === 'completed' ? 'Payment Confirmed!' :
+                 paymentStatus === 'failed' ? 'Payment Failed' :
+                 paymentStatus === 'polling' ? 'Waiting for Payment' : 'Scan to Pay'}
+              </h3>
+              <p className="text-sm text-gray-500 mt-1">
+                {parseFloat(topUpAmount).toLocaleString()} MMK via {walletOptions.find(w => w.id === selectedWallet)?.name}
+              </p>
             </div>
-          )}
 
-          {/* Payment Methods - Horizontal scroll on mobile */}
-          <div className="mb-4 md:mb-6">
-            <h2 className="font-bold mb-3 flex items-center gap-2 text-sm">
-              <Smartphone size={16} />
-              Payment Method
-            </h2>
-            <div className="flex gap-2 overflow-x-auto pb-2 md:grid md:grid-cols-4 md:overflow-visible">
+            <div className="bg-gray-50 rounded-xl p-4 mb-4 flex items-center justify-center h-48">
+              {paymentStatus === 'polling' ? (
+                <div className="text-center">
+                  <Loader2 size={48} className="mx-auto text-blue-500 animate-spin mb-2" />
+                  <p className="text-xs text-gray-400">Open your payment app and scan</p>
+                </div>
+              ) : paymentStatus === 'completed' ? (
+                <CheckCircle size={64} className="text-emerald-500" />
+              ) : paymentStatus === 'failed' ? (
+                <AlertCircle size={64} className="text-red-500" />
+              ) : (
+                <QrCode size={64} className="text-gray-300" />
+              )}
+            </div>
+
+            <div className="flex gap-3">
+              <button onClick={closeQrModal} className="flex-1 py-3 border border-gray-200 rounded-xl font-medium text-gray-700 hover:bg-gray-50">
+                {paymentStatus === 'failed' ? 'Try Again' : 'Cancel'}
+              </button>
+              {paymentStatus === 'failed' && (
+                <button
+                  onClick={() => { setPaymentStatus('polling'); startPaymentPolling(qrData.transactionId); }}
+                  className="flex-1 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700"
+                >
+                  Retry
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'topup' && (
+        <div className="space-y-5">
+          {/* Payment Methods */}
+          <div>
+            <h2 className="font-bold text-gray-900 mb-3 text-sm">Payment Method</h2>
+            <div className="grid grid-cols-2 gap-2">
               {walletOptions.map((wallet) => (
                 <button
                   key={wallet.id}
                   onClick={() => setSelectedWallet(wallet.id)}
-                  className={`flex items-center gap-2 p-3 rounded-lg border-2 min-w-[120px] md:min-w-0 transition-all ${
+                  className={`flex items-center gap-3 p-3.5 rounded-xl border-2 transition-all ${
                     selectedWallet === wallet.id
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200'
+                      ? 'border-blue-500 bg-blue-50 shadow-sm'
+                      : 'border-gray-100 bg-white hover:border-gray-200'
                   }`}
                 >
-                  <span className="text-xl">{wallet.icon}</span>
-                  <span className="font-medium text-sm whitespace-nowrap">{wallet.name}</span>
-                  {selectedWallet === wallet.id && <CheckCircle className="ml-auto text-blue-500" size={16} />}
+                  <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${wallet.color} flex items-center justify-center text-white text-lg`}>
+                    {wallet.icon}
+                  </div>
+                  <div className="text-left">
+                    <p className="font-medium text-sm text-gray-900">{wallet.name}</p>
+                    {selectedWallet === wallet.id && (
+                      <p className="text-[10px] text-blue-600 font-medium">Selected</p>
+                    )}
+                  </div>
                 </button>
               ))}
             </div>
           </div>
 
           {/* Amount Input */}
-          <div className="bg-white rounded-lg shadow p-4 md:p-6 mb-4 md:mb-6">
-            <h2 className="font-bold mb-3 text-sm">Enter Amount</h2>
-            <input
-              type="number"
-              min="1"
-              step="0.01"
-              value={topUpAmount}
-              onChange={(e) => setTopUpAmount(e.target.value)}
-              placeholder="Amount"
-              className="w-full px-4 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3"
-            />
+          <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+            <h2 className="font-bold text-gray-900 mb-3 text-sm">Enter Amount</h2>
+            <div className="relative mb-4">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-lg">K</span>
+              <input
+                type="number"
+                min="1"
+                step="0.01"
+                value={topUpAmount}
+                onChange={(e) => setTopUpAmount(e.target.value)}
+                placeholder="0"
+                className="w-full pl-8 pr-4 py-4 border border-gray-200 rounded-xl text-2xl font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
 
-            <div className="grid grid-cols-5 gap-2 mb-4">
+            <div className="grid grid-cols-5 gap-2 mb-5">
               {quickAmounts.map((amount) => (
                 <button
                   key={amount}
                   onClick={() => setTopUpAmount(amount.toString())}
-                  className={`py-2 border rounded-lg text-sm font-medium transition-colors ${
+                  className={`py-2.5 rounded-xl text-sm font-semibold transition-all ${
                     topUpAmount === amount.toString()
-                      ? 'bg-blue-500 text-white border-blue-500'
-                      : 'hover:bg-gray-50'
+                      ? 'bg-blue-600 text-white shadow-md shadow-blue-500/25'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 active:scale-95'
                   }`}
                 >
-                  {amount.toLocaleString()}
+                  {amount >= 1000 ? `${amount / 1000}K` : amount}
                 </button>
               ))}
             </div>
 
             {topUpResult && (
-              <div className="bg-green-50 text-green-700 px-4 py-2 rounded-lg text-sm mb-4">
-                {topUpResult.message} | New balance: ${topUpResult.balance}
+              <div className="bg-emerald-50 text-emerald-700 px-4 py-3 rounded-xl text-sm mb-4 flex items-center gap-2">
+                <CheckCircle size={16} />
+                {topUpResult.message} New balance: K{topUpResult.balance?.toLocaleString()}
               </div>
             )}
 
             <button
               onClick={handleTopUp}
               disabled={!topUpAmount || topUpMutation.isPending}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 font-medium text-lg"
+              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 rounded-xl font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed hover:from-blue-700 hover:to-indigo-700 active:scale-[0.98] transition-all shadow-lg shadow-blue-500/25"
             >
-              {topUpMutation.isPending ? 'Processing...' : `Top Up ${parseFloat(topUpAmount || '0').toLocaleString()} MMK`}
+              {topUpMutation.isPending ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Loader2 size={20} className="animate-spin" /> Processing...
+                </span>
+              ) : (
+                `Top Up ${parseFloat(topUpAmount || '0').toLocaleString()} MMK`
+              )}
             </button>
           </div>
-        </>
+        </div>
       )}
 
       {activeTab === 'history' && (
         <div className="space-y-2">
           {topUpHistory?.map((t: any) => (
-            <div key={t.id} className="bg-white rounded-lg shadow p-4 flex justify-between items-center">
-              <div>
-                <p className="font-bold text-green-600">+{Number(t.amount).toLocaleString()} MMK</p>
+            <div key={t.id} className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center flex-shrink-0">
+                <Plus size={18} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-bold text-emerald-600">+{Number(t.amount).toLocaleString()} MMK</p>
                 <p className="text-xs text-gray-400">{new Date(t.createdAt).toLocaleString()}</p>
               </div>
-              <div className="text-right">
-                <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
-                  {walletOptions.find((w) => w.id === t.paymentMethod?.split('_')[0])?.name || 'Manual'}
+              <div className="flex items-center gap-2">
+                <span className="px-2 py-1 text-[10px] rounded-full bg-gray-100 text-gray-600 font-medium">
+                  {walletOptions.find(w => w.id === t.paymentMethod?.split('_')[0])?.name || 'Manual'}
                 </span>
                 {t.status && (
-                  <span className={`ml-2 px-2 py-1 text-xs rounded-full ${
-                    t.status === 'COMPLETED' ? 'bg-green-100 text-green-800' :
-                    t.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-red-100 text-red-800'
+                  <span className={`px-2 py-1 text-[10px] rounded-full font-semibold ${
+                    t.status === 'COMPLETED' ? 'bg-emerald-100 text-emerald-700' :
+                    t.status === 'PENDING' ? 'bg-amber-100 text-amber-700' :
+                    'bg-red-100 text-red-700'
                   }`}>
                     {t.status}
                   </span>
@@ -308,23 +341,35 @@ export default function Account() {
             </div>
           ))}
           {(!topUpHistory || topUpHistory.length === 0) && (
-            <div className="text-center py-12 text-gray-500">No top-up history yet</div>
+            <div className="text-center py-16">
+              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
+                <History size={24} className="text-gray-400" />
+              </div>
+              <p className="text-gray-500 font-medium">No top-up history yet</p>
+            </div>
           )}
         </div>
       )}
 
-      {/* Vehicles */}
+      {/* Registered Vehicles */}
       {account?.rfidTags?.length > 0 && (
-        <div className="bg-white rounded-lg shadow p-4 md:p-6 mt-4 md:mt-6">
-          <h2 className="font-bold mb-3">Registered Vehicles</h2>
-          <div className="space-y-2">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="p-4 pb-3">
+            <h2 className="font-bold text-gray-900">Registered Vehicles</h2>
+          </div>
+          <div className="divide-y divide-gray-50">
             {account.rfidTags.map((tag: any) => (
-              <div key={tag.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div>
-                  <p className="font-medium text-sm">{tag.vehicle?.plateNumber}</p>
-                  <p className="text-xs text-gray-500">{tag.vehicle?.year} {tag.vehicle?.make}</p>
+              <div key={tag.id} className="px-4 py-3 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0">
+                  <CreditCard size={18} />
                 </div>
-                <span className={`px-2 py-1 text-xs rounded-full ${tag.status === 'ACTIVE' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm text-gray-900">{tag.vehicle?.plateNumber}</p>
+                  <p className="text-xs text-gray-500">{tag.vehicle?.year} {tag.vehicle?.make} {tag.vehicle?.model}</p>
+                </div>
+                <span className={`px-2 py-1 text-[10px] rounded-full font-semibold ${
+                  tag.status === 'ACTIVE' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
+                }`}>
                   {tag.status}
                 </span>
               </div>

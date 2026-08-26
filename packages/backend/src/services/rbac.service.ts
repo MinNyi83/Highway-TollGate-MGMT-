@@ -274,7 +274,7 @@ export class RBACService {
     // Check if user is enterprise admin and has enterprise permissions
     if (user.customerType === 'ENTERPRISE') {
       const account = user.accounts[0];
-      if (account && account.role === 'ADMIN') {
+      if (account && user.role === 'ENTERPRISE_ADMIN') {
         const enterprisePerms = this.rolePermissions.get(Role.ENTERPRISE_ADMIN) || [];
         if (enterprisePerms.includes(permission)) {
           return true;
@@ -328,7 +328,7 @@ export class RBACService {
     // Add enterprise permissions if applicable
     if (user.customerType === 'ENTERPRISE') {
       const account = user.accounts[0];
-      if (account && account.role === 'ADMIN') {
+      if (account && user.role === 'ENTERPRISE_ADMIN') {
         const enterprisePerms = this.rolePermissions.get(Role.ENTERPRISE_ADMIN) || [];
         enterprisePerms.forEach((p) => permissions.add(p));
       }
