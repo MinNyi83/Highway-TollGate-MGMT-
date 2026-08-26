@@ -6,7 +6,13 @@ export async function getViolations() {
   return prisma.violation.findMany({
     include: {
       vehicle: true,
-      event: true,
+      event: {
+        include: {
+          plaza: true,
+          rfidTag: true,
+          photos: true,
+        },
+      },
     },
     orderBy: {
       createdAt: 'desc',
@@ -19,7 +25,14 @@ export async function getViolationById(id: string) {
     where: { id },
     include: {
       vehicle: true,
-      event: true,
+      event: {
+        include: {
+          plaza: true,
+          rfidTag: true,
+          photos: true,
+          transaction: true,
+        },
+      },
     },
   });
 }
