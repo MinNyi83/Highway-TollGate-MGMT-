@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Search, Plus, Edit, Trash2, X, Wifi, WifiOff, AlertTriangle, Settings, Cpu, Radio, Camera, Cog, Wrench } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, X, Wifi, WifiOff, Settings, Cpu, Radio, Camera, Cog, Wrench } from 'lucide-react';
 import api from '../lib/api';
 
 interface Device {
