@@ -90,7 +90,7 @@ export default function Dashboard() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <h1 className="text-2xl font-bold dark:text-white">Dashboard</h1>
         <div className="flex items-center gap-2">
           {isConnected ? (
             <span className="flex items-center gap-1 text-green-600 text-sm">
@@ -106,63 +106,65 @@ export default function Dashboard() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow dark:shadow-gray-700">
           <div className="flex items-center gap-3">
-            <div className="bg-green-100 p-3 rounded-lg"><DollarSign className="text-green-600" size={20} /></div>
+            <div className="bg-green-100 dark:bg-green-900 p-3 rounded-lg"><DollarSign className="text-green-600 dark:text-green-400" size={20} /></div>
             <div>
-              <p className="text-sm text-gray-500">Total Revenue</p>
-              <p className="text-2xl font-bold text-green-600">${stats?.totalRevenue?.toLocaleString() || '0'}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Total Revenue</p>
+              <p className="text-2xl font-bold text-green-600 dark:text-green-400">${stats?.totalRevenue?.toLocaleString() || '0'}</p>
             </div>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow dark:shadow-gray-700">
           <div className="flex items-center gap-3">
-            <div className="bg-blue-100 p-3 rounded-lg"><Car className="text-blue-600" size={20} /></div>
+            <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg"><Car className="text-blue-600 dark:text-blue-400" size={20} /></div>
             <div>
-              <p className="text-sm text-gray-500">Total Vehicles</p>
-              <p className="text-2xl font-bold text-blue-600">{stats?.totalVehicles || 0}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Total Vehicles</p>
+              <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats?.totalVehicles || 0}</p>
             </div>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow dark:shadow-gray-700">
           <div className="flex items-center gap-3">
-            <div className="bg-red-100 p-3 rounded-lg"><AlertTriangle className="text-red-600" size={20} /></div>
+            <div className="bg-red-100 dark:bg-red-900 p-3 rounded-lg"><AlertTriangle className="text-red-600 dark:text-red-400" size={20} /></div>
             <div>
-              <p className="text-sm text-gray-500">Active Violations</p>
-              <p className="text-2xl font-bold text-red-600">{stats?.activeViolations || 0}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Active Violations</p>
+              <p className="text-2xl font-bold text-red-600 dark:text-red-400">{stats?.activeViolations || 0}</p>
             </div>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow dark:shadow-gray-700">
           <div className="flex items-center gap-3">
-            <div className="bg-purple-100 p-3 rounded-lg"><Activity className="text-purple-600" size={20} /></div>
+            <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-lg"><Activity className="text-purple-600 dark:text-purple-400" size={20} /></div>
             <div>
-              <p className="text-sm text-gray-500">Total Events</p>
-              <p className="text-2xl font-bold text-purple-600">{stats?.totalEvents || 0}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Total Events</p>
+              <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{stats?.totalEvents || 0}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Device Health */}
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-700 p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-medium">Device Health</h3>
+          <h3 className="font-medium dark:text-white">Device Health</h3>
           <div className="flex gap-4 text-sm">
-            <span className="flex items-center gap-1"><div className="w-2 h-2 bg-green-500 rounded-full" /> {onlineDevices} Online</span>
-            <span className="flex items-center gap-1"><div className="w-2 h-2 bg-red-500 rounded-full" /> {offlineDevices} Offline</span>
+            <span className="flex items-center gap-1 dark:text-gray-300"><div className="w-2 h-2 bg-green-500 rounded-full" /> {onlineDevices} Online</span>
+            <span className="flex items-center gap-1 dark:text-gray-300"><div className="w-2 h-2 bg-red-500 rounded-full" /> {offlineDevices} Offline</span>
           </div>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {deviceStatuses?.slice(0, 8).map((device: any) => (
             <div key={device.id} className={`p-3 rounded-lg border ${
-              device.status === 'ONLINE' ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'
+              device.status === 'ONLINE'
+                ? 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/30'
+                : 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/30'
             }`}>
               <div className="flex items-center gap-2">
-                <Radio size={14} className={device.status === 'ONLINE' ? 'text-green-600' : 'text-red-600'} />
-                <span className="text-xs font-medium truncate">{device.name || device.deviceType}</span>
+                <Radio size={14} className={device.status === 'ONLINE' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'} />
+                <span className="text-xs font-medium truncate dark:text-gray-200">{device.name || device.deviceType}</span>
               </div>
-              <p className="text-[10px] text-gray-500 mt-1">{device.plaza?.name}</p>
+              <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-1">{device.plaza?.name}</p>
             </div>
           ))}
         </div>
@@ -170,15 +172,15 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         {/* Revenue Chart */}
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-medium mb-4">Revenue by Plaza (30 Days)</h3>
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow dark:shadow-gray-700">
+          <h3 className="text-lg font-medium mb-4 dark:text-white">Revenue by Plaza (30 Days)</h3>
           {revenueData?.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={revenueData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="plazaName" />
-                <YAxis />
-                <Tooltip />
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <XAxis dataKey="plazaName" stroke="#9CA3AF" />
+                <YAxis stroke="#9CA3AF" />
+                <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: 'none', borderRadius: '8px' }} />
                 <Bar dataKey="totalRevenue" fill="#8884d8" name="Revenue" />
               </BarChart>
             </ResponsiveContainer>
@@ -188,8 +190,8 @@ export default function Dashboard() {
         </div>
 
         {/* Violations Chart */}
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-medium mb-4">Violations by Type</h3>
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow dark:shadow-gray-700">
+          <h3 className="text-lg font-medium mb-4 dark:text-white">Violations by Type</h3>
           {violationData?.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
@@ -198,7 +200,7 @@ export default function Dashboard() {
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: 'none', borderRadius: '8px' }} />
               </PieChart>
             </ResponsiveContainer>
           ) : (
@@ -208,9 +210,9 @@ export default function Dashboard() {
       </div>
 
       {/* Live Events Feed */}
-      <div className="bg-white rounded-lg shadow">
-        <div className="p-4 border-b flex items-center justify-between">
-          <h3 className="font-medium">Live Events Feed</h3>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-700">
+        <div className="p-4 border-b dark:border-gray-700 flex items-center justify-between">
+          <h3 className="font-medium dark:text-white">Live Events Feed</h3>
           {liveEvents.length > 0 && (
             <span className="flex items-center gap-1 text-xs text-green-600">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
@@ -218,21 +220,21 @@ export default function Dashboard() {
             </span>
           )}
         </div>
-        <div className="divide-y max-h-96 overflow-y-auto">
+        <div className="divide-y dark:divide-gray-700 max-h-96 overflow-y-auto">
           {combinedEvents.map((event: any, idx: number) => (
             <div key={event.id || idx} className={`px-4 py-3 flex items-center justify-between ${
-              idx < liveEvents.length ? 'bg-blue-50' : ''
+              idx < liveEvents.length ? 'bg-blue-50 dark:bg-blue-900/20' : ''
             }`}>
               <div className="flex items-center gap-3">
-                <div className={`w-2 h-2 rounded-full ${idx < liveEvents.length ? 'bg-blue-500 animate-pulse' : 'bg-gray-300'}`} />
+                <div className={`w-2 h-2 rounded-full ${idx < liveEvents.length ? 'bg-blue-500 animate-pulse' : 'bg-gray-300 dark:bg-gray-600'}`} />
                 <div>
-                  <p className="text-sm font-medium">{event.vehicle?.plateNumber || 'Unknown'}</p>
-                  <p className="text-xs text-gray-500">{event.plaza?.name || 'Unknown Plaza'}</p>
+                  <p className="text-sm font-medium dark:text-white">{event.vehicle?.plateNumber || 'Unknown'}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{event.plaza?.name || 'Unknown Plaza'}</p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-sm font-medium">${event.transaction?.amount || 0}</p>
-                <p className="text-xs text-gray-400">{new Date(event.entryTime || event.createdAt).toLocaleTimeString()}</p>
+                <p className="text-sm font-medium dark:text-white">${event.transaction?.amount || 0}</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500">{new Date(event.entryTime || event.createdAt).toLocaleTimeString()}</p>
               </div>
             </div>
           ))}
