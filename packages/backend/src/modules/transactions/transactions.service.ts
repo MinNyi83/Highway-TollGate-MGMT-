@@ -103,9 +103,16 @@ export async function getTransactions() {
         include: {
           vehicle: true,
           plaza: true,
+          rfidTag: true,
+          violation: true,
+          photos: true,
         },
       },
-      account: true,
+      account: {
+        include: {
+          user: true,
+        },
+      },
     },
     orderBy: {
       createdAt: 'desc',
@@ -121,9 +128,16 @@ export async function getTransactionById(id: string) {
         include: {
           vehicle: true,
           plaza: true,
+          rfidTag: true,
+          violation: true,
+          photos: true,
         },
       },
-      account: true,
+      account: {
+        include: {
+          user: true,
+        },
+      },
     },
   });
 }
