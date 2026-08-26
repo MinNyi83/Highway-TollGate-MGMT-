@@ -20,6 +20,33 @@ interface Vehicle {
 
 const vehicleClasses = ['MOTORCYCLE', 'SEDAN', 'SUV', 'TRUCK', 'BUS'];
 
+const vehicleMakes: Record<string, string[]> = {
+  'Toyota': ['Corolla', 'Camry', 'Vitz', 'Yaris', 'Prius', 'Land Cruiser', 'Rush', 'Avanza', 'Innova', 'Hilux', 'Fortuner', 'Raize'],
+  'Honda': ['Civic', 'City', 'Fit', 'Jazz', 'CR-V', 'HR-V', 'BR-V', 'WR-V', 'Accord', 'Brio'],
+  'Nissan': ['Sunny', 'Tiida', 'Note', 'Serena', 'X-Trail', 'Juke', 'Kicks', 'Navara', 'Patrol'],
+  'Mazda': ['Mazda2', 'Mazda3', 'Mazda6', 'CX-3', 'CX-5', 'CX-8', 'BT-50'],
+  'Hyundai': ['Accent', 'Elantra', 'Sonata', 'Tucson', 'Santa Fe', 'Creta', 'Stargazer'],
+  'Kia': ['Morning', 'Rio', 'Cerato', 'Sportage', 'Sorento', 'Carnival', 'Sonet'],
+  'Suzuki': ['Alto', 'Swift', 'Celerio', 'Wagon R', 'Jimny', 'Ertiga', 'Vitara', 'S-Presso'],
+  'Mitsubishi': ['Mirage', 'Attrage', 'Xpander', 'Outlander', 'Triton', 'Pajero Sport'],
+  'Ford': ['Ranger', 'Everest', 'EcoSport', 'Explorer'],
+  'Chevrolet': ['Spark', 'Cruze', 'Trailblazer', 'Colorado'],
+  'MG': ['ZS', 'HS', '3', '5', 'EP', 'Marvel R'],
+  'BYD': ['Atto 3', 'Dolphin', 'Seal', 'Tang', 'Song Plus'],
+  'Wuling': ['Almaz', 'Cortez', 'Confero', 'Air EV', 'Bingo'],
+  'Perodua': ['Myvi', 'Axia', 'Bezza', 'Ativa', 'Alza'],
+  'Proton': ['Saga', 'Persona', 'Iriz', 'X50', 'X70', 'X90'],
+};
+
+const vehicleColors = [
+  'White', 'Black', 'Silver', 'Gray', 'Red', 'Blue', 'Green', 'Brown',
+  'Gold', 'Beige', 'Orange', 'Yellow', 'Navy', 'Maroon', 'Purple',
+  'Pearl White', 'Metallic Gray', 'Champagne', 'Bronze', 'Cream',
+];
+
+const currentYear = new Date().getFullYear();
+const yearOptions = Array.from({ length: 30 }, (_, i) => currentYear - i);
+
 export default function Vehicles() {
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
@@ -237,7 +264,7 @@ function VehicleForm({
   const [plateNumber, setPlateNumber] = useState(vehicle?.plateNumber || '');
   const [make, setMake] = useState(vehicle?.make || '');
   const [model, setModel] = useState(vehicle?.model || '');
-  const [year, setYear] = useState(vehicle?.year?.toString() || new Date().getFullYear().toString());
+  const [year, setYear] = useState(vehicle?.year?.toString() || currentYear.toString());
   const [color, setColor] = useState(vehicle?.color || '');
   const [vehicleClass, setVehicleClass] = useState(vehicle?.vehicleClass || 'SEDAN');
   const [vehiclePhoto, setVehiclePhoto] = useState<File | null>(null);
@@ -248,6 +275,8 @@ function VehicleForm({
   const [taxPreview, setTaxPreview] = useState<string | null>(
     vehicle?.wheelTaxCard ? `${api.defaults.baseURL}/uploads/${vehicle.wheelTaxCard}` : null
   );
+
+  const availableModels = make ? (vehicleMakes[make] || []) : [];
 
   const handleFileChange = (file: File | null, type: 'vehicle' | 'tax') => {
     if (type === 'vehicle') {
@@ -297,27 +326,38 @@ function VehicleForm({
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Plate Number *</label>
               <input type="text" required value={plateNumber} onChange={(e) => setPlateNumber(e.target.value.toUpperCase())}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. 1A-1234" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Year *</label>
-              <input type="number" required value={year} onChange={(e) => setYear(e.target.value)}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <select required value={year} onChange={(e) => setYear(e.target.value)}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                {yearOptions.map((y) => <option key={y} value={y}>{y}</option>)}
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Make *</label>
-              <input type="text" required value={make} onChange={(e) => setMake(e.target.value)}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <select required value={make} onChange={(e) => { setMake(e.target.value); setModel(''); }}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">Select Make</option>
+                {Object.keys(vehicleMakes).map((m) => <option key={m} value={m}>{m}</option>)}
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Model *</label>
-              <input type="text" required value={model} onChange={(e) => setModel(e.target.value)}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <select required value={model} onChange={(e) => setModel(e.target.value)} disabled={!make}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100">
+                <option value="">{make ? 'Select Model' : 'Select Make first'}</option>
+                {availableModels.map((m) => <option key={m} value={m}>{m}</option>)}
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Color</label>
-              <input type="text" value={color} onChange={(e) => setColor(e.target.value)}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <select value={color} onChange={(e) => setColor(e.target.value)}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">Select Color</option>
+                {vehicleColors.map((c) => <option key={c} value={c}>{c}</option>)}
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Vehicle Class *</label>
