@@ -16,6 +16,7 @@ interface TollPlaza {
   id: string;
   name: string;
   gateCode?: string;
+  lanes: number;
 }
 
 type Scenario = 'normal' | 'no-rfid' | 'anpr-mismatch' | 'insufficient-balance';
@@ -226,7 +227,7 @@ export default function Simulator() {
         const now = new Date().toISOString();
         const eventId = 'hol-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
 
-        setEvents((prev) => [{ id: eventId, timestamp: now, vehiclePlate: vehicle.plateNumber, plazaName: plaza.name || plaza.gateCode, scenario: scenarioType, status: 'pending', message: `${wave?.name || tod} | ${direction} Lane ${lane}`, tollAmount: null, direction, lane }, ...prev.slice(0, 99)]);
+        setEvents((prev) => [{ id: eventId, timestamp: now, vehiclePlate: vehicle.plateNumber, plazaName: plaza.name || plaza.gateCode || plaza.id, scenario: scenarioType, status: 'pending', message: `${wave?.name || tod} | ${direction} Lane ${lane}`, tollAmount: null, direction, lane }, ...prev.slice(0, 99)]);
         setStats((prev) => ({ ...prev, total: prev.total + 1 }));
 
         try {
@@ -283,8 +284,8 @@ export default function Simulator() {
   }, []);
 
   const canSimulate = simMode === 'manual'
-    ? selectedVehicleId && (selectedPlazaId || plazas?.length) && !isRunning
-    : vehicles?.length > 0 && plazas?.length > 0 && !isRunning;
+    ? selectedVehicleId && (selectedPlazaId || (plazas?.length ?? 0) > 0) && !isRunning
+    : (vehicles?.length ?? 0) > 0 && (plazas?.length ?? 0) > 0 && !isRunning;
 
   return (
     <div className="h-full flex flex-col">
