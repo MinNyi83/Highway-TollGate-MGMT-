@@ -35,8 +35,8 @@ export const upload = multer({
 });
 
 export const uploadVehiclePhotos = upload.fields([
-  { name: 'vehiclePhoto', maxCount: 1 },
-  { name: 'wheelTaxCard', maxCount: 1 },
+  { name: 'vehiclePhoto', maxCount: 2 },
+  { name: 'wheelTaxCard', maxCount: 2 },
 ]);
 
 export const uploadSingle = multer({

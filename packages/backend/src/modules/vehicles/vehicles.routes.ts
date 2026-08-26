@@ -44,7 +44,7 @@ router.post('/', authMiddleware, (req: Request, res: Response) => {
     }
 
     try {
-      const { plateNumber, make, model, year, color, vehicleClass } = req.body;
+      const { plateNumber, make, model, year, color, vehicleClass, rfidTagUid } = req.body;
 
       if (!plateNumber || !make || !model || !year || !vehicleClass) {
         res.status(400).json({ error: 'Missing required fields' });
@@ -52,8 +52,8 @@ router.post('/', authMiddleware, (req: Request, res: Response) => {
       }
 
       const files = req.files as { [fieldname: string]: Express.Multer.File[] } | undefined;
-      const vehiclePhoto = files?.vehiclePhoto?.[0]?.filename || undefined;
-      const wheelTaxCard = files?.wheelTaxCard?.[0]?.filename || undefined;
+      const vehiclePhotos = files?.vehiclePhoto?.map((f) => f.filename) || [];
+      const wheelTaxCards = files?.wheelTaxCard?.map((f) => f.filename) || [];
 
       const vehicle = await createVehicle({
         plateNumber,
@@ -62,8 +62,9 @@ router.post('/', authMiddleware, (req: Request, res: Response) => {
         year: parseInt(year, 10),
         color,
         vehicleClass,
-        vehiclePhoto,
-        wheelTaxCard,
+        vehiclePhoto: vehiclePhotos.length > 0 ? JSON.stringify(vehiclePhotos) : undefined,
+        wheelTaxCard: wheelTaxCards.length > 0 ? JSON.stringify(wheelTaxCards) : undefined,
+        rfidTagUid: rfidTagUid || undefined,
       });
 
       res.status(201).json(vehicle);
@@ -84,11 +85,11 @@ router.put('/:id', authMiddleware, (req: Request, res: Response) => {
       const files = req.files as { [fieldname: string]: Express.Multer.File[] } | undefined;
       const updateData: any = { ...req.body };
 
-      if (files?.vehiclePhoto?.[0]) {
-        updateData.vehiclePhoto = files.vehiclePhoto[0].filename;
+      if (files?.vehiclePhoto?.length) {
+        updateData.vehiclePhoto = JSON.stringify(files.vehiclePhoto.map((f) => f.filename));
       }
-      if (files?.wheelTaxCard?.[0]) {
-        updateData.wheelTaxCard = files.wheelTaxCard[0].filename;
+      if (files?.wheelTaxCard?.length) {
+        updateData.wheelTaxCard = JSON.stringify(files.wheelTaxCard.map((f) => f.filename));
       }
 
       const vehicle = await updateVehicle(req.params.id, updateData);

@@ -11,6 +11,7 @@ export interface CreateVehicleInput {
   vehicleClass: VehicleClass;
   vehiclePhoto?: string;
   wheelTaxCard?: string;
+  rfidTagUid?: string;
 }
 
 export interface UpdateVehicleInput {
@@ -47,9 +48,22 @@ export async function getVehicleById(id: string) {
 }
 
 export async function createVehicle(input: CreateVehicleInput) {
-  return prisma.vehicle.create({
-    data: input,
+  const { rfidTagUid, ...vehicleData } = input;
+  const vehicle = await prisma.vehicle.create({
+    data: vehicleData,
   });
+
+  if (rfidTagUid) {
+    await prisma.rFIDTag.create({
+      data: {
+        tagUid: rfidTagUid,
+        vehicleId: vehicle.id,
+        accountId: vehicle.id,
+      },
+    });
+  }
+
+  return vehicle;
 }
 
 export async function updateVehicle(id: string, input: UpdateVehicleInput) {
