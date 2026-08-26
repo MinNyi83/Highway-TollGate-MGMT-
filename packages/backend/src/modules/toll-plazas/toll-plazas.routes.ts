@@ -35,14 +35,14 @@ router.get('/:id', authMiddleware, async (req: Request, res: Response) => {
 
 router.post('/', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const { name, locationLat, locationLng, lanes } = req.body;
+    const { name, gateCode, locationLat, locationLng, mileMarker, lanes } = req.body;
 
     if (!name || locationLat === undefined || locationLng === undefined) {
       res.status(400).json({ error: 'Missing required fields' });
       return;
     }
 
-    const plaza = await createTollPlaza({ name, locationLat, locationLng, lanes });
+    const plaza = await createTollPlaza({ name, gateCode, locationLat, locationLng, mileMarker, lanes });
     res.status(201).json(plaza);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });

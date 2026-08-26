@@ -5,8 +5,10 @@ const prisma = new PrismaClient();
 
 export interface CreateTollPlazaInput {
   name: string;
+  gateCode?: string;
   locationLat: number;
   locationLng: number;
+  mileMarker?: number;
   lanes?: number;
 }
 
