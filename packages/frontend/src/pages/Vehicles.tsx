@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import api from '../lib/api';
-import { Plus, Search, X, Upload, Image, Edit, Trash2, CreditCard, CheckCircle, XCircle, Clock, AlertTriangle, User } from 'lucide-react';
+import { Plus, Search, X, Upload, Image, Edit, Trash2, CreditCard, CheckCircle, XCircle, Clock, AlertTriangle } from 'lucide-react';
 
 interface Vehicle {
   id: string;
@@ -76,7 +76,7 @@ export default function Vehicles() {
     },
   });
 
-  const { data: pendingVehicles, isLoading: loadingPending } = useQuery<Vehicle[]>({
+  const { data: pendingVehicles } = useQuery<Vehicle[]>({
     queryKey: ['vehicles-pending'],
     queryFn: async () => {
       const response = await api.get('/vehicles/approvals/pending');
