@@ -28,39 +28,42 @@ const navItems = [
   { to: '/system-health', icon: HeartPulse, label: 'System Health', roles: ['ADMIN'] },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ collapsed = false }: { collapsed?: boolean }) {
   const { user } = useAuthStore();
   const userRole = user?.role || 'VIEWER';
   const visibleItems = navItems.filter((item) => item.roles.includes(userRole));
 
   return (
-    <aside className="bg-gray-900 text-white w-64 min-h-screen p-4">
-      <div className="mb-8">
-        <h1 className="text-xl font-bold">TollGate</h1>
-        <p className="text-gray-400 text-sm">RFID Pass System</p>
-        {user && (
+    <aside className={`${collapsed ? 'w-16' : 'w-64'} bg-gray-900 text-white min-h-screen p-4 transition-all duration-300 flex flex-col`}>
+      <div className={`${collapsed ? 'mb-4' : 'mb-8'} transition-all duration-300`}>
+        <h1 className={`font-bold ${collapsed ? 'text-lg' : 'text-xl'} transition-all duration-300`}>
+          {collapsed ? 'TG' : 'TollGate'}
+        </h1>
+        {!collapsed && <p className="text-gray-400 text-sm">RFID Pass System</p>}
+        {user && !collapsed && (
           <div className="mt-2 flex items-center gap-2 text-xs text-gray-400">
             <Shield size={14} />
             <span className="uppercase font-medium">{user.role}</span>
           </div>
         )}
       </div>
-      <nav>
+      <nav className="flex-1">
         {visibleItems.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
             end={item.to === '/'}
+            title={collapsed ? item.label : undefined}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2 rounded-md mb-1 transition-colors ${
+              `flex items-center ${collapsed ? 'justify-center' : 'gap-3'} px-3 py-2 rounded-md mb-1 transition-colors ${
                 isActive
                   ? 'bg-blue-600 text-white'
                   : 'text-gray-300 hover:bg-gray-800 hover:text-white'
               }`
             }
           >
-            <item.icon size={20} />
-            <span>{item.label}</span>
+            <item.icon size={20} className="flex-shrink-0" />
+            {!collapsed && <span>{item.label}</span>}
           </NavLink>
         ))}
       </nav>
