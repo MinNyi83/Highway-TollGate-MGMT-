@@ -55,6 +55,9 @@ export async function createEntryEvent(data: {
   plazaId: string;
   rfidTagId?: string;
   anprPlate?: string;
+  laneNumber?: string;
+  direction?: string;
+  amount?: number;
 }) {
   const response = await apiClient.post('/api/toll-events/entry', data);
   return response.data;

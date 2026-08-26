@@ -33,14 +33,14 @@ router.get('/:id', authMiddleware, async (req: Request, res: Response) => {
 
 router.post('/entry', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const { vehicleId, plazaId, rfidTagId, anprPlate } = req.body;
+    const { vehicleId, plazaId, rfidTagId, anprPlate, laneNumber, direction, amount } = req.body;
 
     if (!vehicleId || !plazaId) {
       res.status(400).json({ error: 'vehicleId and plazaId are required' });
       return;
     }
 
-    const event = await createEntryEvent({ vehicleId, plazaId, rfidTagId, anprPlate });
+    const event = await createEntryEvent({ vehicleId, plazaId, rfidTagId, anprPlate, laneNumber, direction, amount });
     res.status(201).json(event);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });

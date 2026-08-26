@@ -92,9 +92,11 @@ export async function startContinuous(options: ContinuousOptions) {
           stats.successfulPassages++;
           stats.totalRevenue += result.tollAmount;
         }
+
+        console.log(chalk.gray(`  Gate: ${result.plaza.gateCode || result.plaza.name} | Lane: ${result.laneNumber} | Dir: ${result.direction} | Amount: ${result.tollAmount} MMK`));
       }
 
-      console.log(chalk.cyan(`  Stats: ${stats.successfulPassages} OK, ${stats.violations} violations, $${stats.totalRevenue} revenue`));
+      console.log(chalk.cyan(`  Stats: ${stats.successfulPassages} OK, ${stats.violations} violations, ${stats.totalRevenue} MMK revenue`));
 
       count++;
       if (options.count && count >= options.count) {
@@ -125,7 +127,7 @@ export function displayStats() {
   console.log(chalk.green(`Successful: ${stats.successfulPassages}`));
   console.log(chalk.red(`Violations: ${stats.violations}`));
   console.log(chalk.red(`Errors: ${stats.errors}`));
-  console.log(chalk.magenta(`Revenue: $${stats.totalRevenue.toFixed(2)}`));
+  console.log(chalk.magenta(`Revenue: ${stats.totalRevenue} MMK`));
   console.log(chalk.white(`Unique vehicles: ${stats.vehiclesProcessed.size}`));
   console.log(chalk.white(`Plazas visited: ${stats.plazasVisited.size}`));
 }

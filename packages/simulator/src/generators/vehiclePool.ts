@@ -10,6 +10,7 @@ export interface Vehicle {
 export interface TollPlaza {
   id: string;
   name: string;
+  gateCode: string | null;
   mileMarker: number | null;
   lanes: number;
   status: string;

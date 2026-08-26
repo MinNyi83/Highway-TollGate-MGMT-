@@ -74,6 +74,7 @@ program
       plazas = rawPlazas.map((p: any) => ({
         id: p.id,
         name: p.name,
+        gateCode: p.gateCode || null,
         mileMarker: p.mileMarker,
         lanes: p.lanes,
         status: p.status,
@@ -154,6 +155,7 @@ program
       const plazas: TollPlaza[] = rawPlazas.map((p: any) => ({
         id: p.id,
         name: p.name,
+        gateCode: p.gateCode || null,
         mileMarker: p.mileMarker,
         lanes: p.lanes,
         status: p.status,
@@ -162,7 +164,7 @@ program
 
       console.log(chalk.cyan('Toll Plazas:'));
       plazas.forEach((p) => {
-        console.log(chalk.gray(`  ${p.name} (${p.mileMarker ?? '?'} Mile)`));
+        console.log(chalk.gray(`  ${p.gateCode || p.name} - ${p.name} (${p.mileMarker ?? '?'} Mile) [${p.lanes} lanes]`));
       });
       console.log('');
 

@@ -9,6 +9,9 @@ export interface CreateEntryEventInput {
   plazaId: string;
   rfidTagId?: string;
   anprPlate?: string;
+  laneNumber?: string;
+  direction?: string;
+  amount?: number;
 }
 
 export interface CompleteExitEventInput {
@@ -23,6 +26,9 @@ export async function createEntryEvent(input: CreateEntryEventInput) {
       plazaId: input.plazaId,
       rfidTagId: input.rfidTagId,
       anprPlate: input.anprPlate,
+      laneNumber: input.laneNumber,
+      direction: input.direction || 'DOWN',
+      amount: input.amount,
       status: TollEventStatus.ENTRY,
     },
     include: {
