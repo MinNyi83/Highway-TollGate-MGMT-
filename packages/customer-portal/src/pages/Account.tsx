@@ -65,15 +65,8 @@ export default function Account() {
       } catch (error) {
         console.error('Payment status check failed:', error);
       }
-    }, 3000);
-
-    setTimeout(() => {
-      if (pollIntervalRef.current) {
-        clearInterval(pollIntervalRef.current);
-        setPaymentStatus('failed');
-      }
-    }, 300000);
-  }, [queryClient, topUpAmount]);
+    }, 2000);
+  }, [queryClient]);
 
   const topUpMutation = useMutation({
     mutationFn: async ({ amount, paymentMethod }: { amount: number; paymentMethod: string }) => {

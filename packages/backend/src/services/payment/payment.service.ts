@@ -340,10 +340,34 @@ export async function checkPaymentStatus(transactionId: string): Promise<Payment
     return { status: 'failed', transactionId };
   }
 
-  // Try to query provider
+  // Auto-complete mock payments after 8 seconds (simulates payment confirmation)
+  if (transaction.paymentMethod?.includes('_mock')) {
+    const createdAt = new Date(transaction.createdAt).getTime();
+    const now = Date.now();
+    const elapsed = now - createdAt;
+
+    if (elapsed > 8000) {
+      // Auto-complete the mock payment
+      await prisma.transaction.update({
+        where: { id: transaction.id },
+        data: { status: 'COMPLETED' },
+      });
+
+      await prisma.account.update({
+        where: { id: transaction.accountId },
+        data: { balance: { increment: Number(transaction.amount) } },
+      });
+
+      return { status: 'completed', transactionId, amount: Number(transaction.amount) };
+    }
+
+    return { status: 'pending', transactionId };
+  }
+
+  // Try to query provider for real payments
   const method = transaction.paymentMethod?.split('_')[0];
   const provider = providers[method || ''];
-  if (provider && !transaction.paymentMethod?.includes('_mock')) {
+  if (provider) {
     return provider.queryStatus(transactionId);
   }
 
