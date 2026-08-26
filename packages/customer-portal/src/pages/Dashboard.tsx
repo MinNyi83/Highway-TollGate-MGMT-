@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Wallet, Car, Activity, AlertTriangle, ArrowUpRight, ArrowDownRight, ChevronRight, Zap, Clock, TrendingUp } from 'lucide-react';
+import { Wallet, Car, Activity, AlertTriangle, ArrowUpRight, ArrowDownRight, ChevronRight, Clock, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../lib/api';
 import { StatSkeleton, CardSkeleton } from '../components/Skeleton';
@@ -17,7 +17,7 @@ export default function Dashboard() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <div className="h-8 bg-gray-200 rounded w-48 animate-pulse" />
+        <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
         <div className="grid grid-cols-2 gap-3">
           {Array.from({ length: 4 }).map((_, i) => <StatSkeleton key={i} />)}
         </div>
@@ -28,13 +28,13 @@ export default function Dashboard() {
     );
   }
 
-  if (!data) return <div className="text-center py-8 text-gray-500">No data</div>;
+  if (!data) return <div className="text-center py-8 text-gray-500 dark:text-gray-400">No data</div>;
 
   const stats = [
-    { label: 'Balance', value: `${data.balance}`, icon: Wallet, gradient: 'from-emerald-500 to-teal-600', bg: 'bg-emerald-50', text: 'text-emerald-700', prefix: 'K' },
-    { label: 'Vehicles', value: data.vehicleCount, icon: Car, gradient: 'from-blue-500 to-indigo-600', bg: 'bg-blue-50', text: 'text-blue-700' },
-    { label: 'Trips', value: data.eventCount, icon: Activity, gradient: 'from-violet-500 to-purple-600', bg: 'bg-violet-50', text: 'text-violet-700' },
-    { label: 'Violations', value: data.violationCount, icon: AlertTriangle, gradient: 'from-rose-500 to-red-600', bg: 'bg-rose-50', text: 'text-rose-700' },
+    { label: 'Balance', value: `${data.balance}`, icon: Wallet, gradient: 'from-emerald-500 to-teal-600', bg: 'bg-emerald-50 dark:bg-emerald-900/30', text: 'text-emerald-700 dark:text-emerald-400', prefix: 'K' },
+    { label: 'Vehicles', value: data.vehicleCount, icon: Car, gradient: 'from-blue-500 to-indigo-600', bg: 'bg-blue-50 dark:bg-blue-900/30', text: 'text-blue-700 dark:text-blue-400' },
+    { label: 'Trips', value: data.eventCount, icon: Activity, gradient: 'from-violet-500 to-purple-600', bg: 'bg-violet-50 dark:bg-violet-900/30', text: 'text-violet-700 dark:text-violet-400' },
+    { label: 'Violations', value: data.violationCount, icon: AlertTriangle, gradient: 'from-rose-500 to-red-600', bg: 'bg-rose-50 dark:bg-rose-900/30', text: 'text-rose-700 dark:text-rose-400' },
   ];
 
   const recentEvents = data.recentEvents || [];
@@ -45,8 +45,8 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Welcome back!</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Here's your toll summary</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Welcome back!</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Here's your toll summary</p>
         </div>
         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm">
           {data.user?.name?.charAt(0) || 'U'}
@@ -83,12 +83,12 @@ export default function Dashboard() {
       {/* Quick Stats */}
       <div className="grid grid-cols-2 gap-3">
         {stats.map((stat) => (
-          <div key={stat.label} className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 active:scale-[0.98]">
+          <div key={stat.label} className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all duration-200 active:scale-[0.98]">
             <div className={`w-9 h-9 rounded-lg ${stat.bg} flex items-center justify-center mb-3`}>
               <stat.icon size={18} className={stat.text} />
             </div>
-            <p className="text-xs text-gray-500 font-medium">{stat.label}</p>
-            <p className="text-xl font-bold text-gray-900 mt-0.5">{stat.prefix || ''}{stat.value}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">{stat.label}</p>
+            <p className="text-xl font-bold text-gray-900 dark:text-white mt-0.5">{stat.prefix || ''}{stat.value}</p>
           </div>
         ))}
       </div>
@@ -97,43 +97,43 @@ export default function Dashboard() {
       <div className="grid grid-cols-3 gap-3">
         <button
           onClick={() => navigate('/account')}
-          className="bg-white rounded-xl p-3 shadow-sm border border-gray-100 flex flex-col items-center gap-2 hover:bg-gray-50 active:scale-[0.98] transition-all"
+          className="bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-750 active:scale-[0.98] transition-all"
         >
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-white">
             <Wallet size={18} />
           </div>
-          <span className="text-xs font-medium text-gray-700">Top Up</span>
+          <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Top Up</span>
         </button>
         <button
           onClick={() => navigate('/my-vehicles')}
-          className="bg-white rounded-xl p-3 shadow-sm border border-gray-100 flex flex-col items-center gap-2 hover:bg-gray-50 active:scale-[0.98] transition-all"
+          className="bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-750 active:scale-[0.98] transition-all"
         >
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white">
             <Car size={18} />
           </div>
-          <span className="text-xs font-medium text-gray-700">Vehicles</span>
+          <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Vehicles</span>
         </button>
         <button
           onClick={() => navigate('/toll-history')}
-          className="bg-white rounded-xl p-3 shadow-sm border border-gray-100 flex flex-col items-center gap-2 hover:bg-gray-50 active:scale-[0.98] transition-all"
+          className="bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-750 active:scale-[0.98] transition-all"
         >
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center text-white">
             <Clock size={18} />
           </div>
-          <span className="text-xs font-medium text-gray-700">History</span>
+          <span className="text-xs font-medium text-gray-700 dark:text-gray-300">History</span>
         </button>
       </div>
 
       {/* Recent Transactions */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
         <div className="flex items-center justify-between p-4 pb-3">
           <div>
-            <h2 className="font-bold text-gray-900">Recent Trips</h2>
-            <p className="text-xs text-gray-500 mt-0.5">{recentEvents.length} transactions</p>
+            <h2 className="font-bold text-gray-900 dark:text-white">Recent Trips</h2>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{recentEvents.length} transactions</p>
           </div>
           <button
             onClick={() => navigate('/toll-history')}
-            className="text-blue-600 text-sm font-medium flex items-center gap-0.5 hover:text-blue-700"
+            className="text-blue-600 dark:text-blue-400 text-sm font-medium flex items-center gap-0.5 hover:text-blue-700"
           >
             View all <ChevronRight size={14} />
           </button>
@@ -141,43 +141,43 @@ export default function Dashboard() {
 
         {recentEvents.length === 0 ? (
           <div className="p-8 text-center">
-            <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
-              <Activity size={24} className="text-gray-400" />
+            <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center mx-auto mb-3">
+              <Activity size={24} className="text-gray-400 dark:text-gray-500" />
             </div>
-            <p className="text-gray-500 text-sm">No trips yet</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">No trips yet</p>
           </div>
         ) : (
-          <div className="divide-y divide-gray-50">
+          <div className="divide-y divide-gray-50 dark:divide-gray-700">
             {recentEvents.slice(0, 5).map((event: any, idx: number) => (
               <div
                 key={event.id}
                 onClick={() => navigate(`/toll-history?event=${event.id}`)}
-                className="px-4 py-3 flex items-center gap-3 hover:bg-gray-50 active:bg-gray-100 transition-colors cursor-pointer"
+                className="px-4 py-3 flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-gray-750 active:bg-gray-100 dark:active:bg-gray-700 transition-colors cursor-pointer"
               >
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
                   event.status === 'COMPLETED'
-                    ? 'bg-emerald-100 text-emerald-600'
+                    ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400'
                     : event.status === 'ENTRY'
-                    ? 'bg-amber-100 text-amber-600'
-                    : 'bg-gray-100 text-gray-600'
+                    ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
                 }`}>
                   {event.status === 'COMPLETED' ? <ArrowDownRight size={18} /> : <ArrowUpRight size={18} />}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className="font-semibold text-sm text-gray-900 truncate">{event.vehicle?.plateNumber}</p>
+                    <p className="font-semibold text-sm text-gray-900 dark:text-white truncate">{event.vehicle?.plateNumber}</p>
                     {event.laneNumber && (
-                      <span className="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded font-medium">{event.laneNumber}</span>
+                      <span className="text-[10px] bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded font-medium">{event.laneNumber}</span>
                     )}
                   </div>
-                  <p className="text-xs text-gray-500 truncate">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                     {event.plaza?.name || event.plaza?.gateCode || 'Toll Plaza'}
                     {event.direction && ` · ${event.direction}`}
                   </p>
                 </div>
                 <div className="text-right flex-shrink-0">
-                  <p className="font-bold text-sm text-gray-900">{event.transaction?.amount || 0}</p>
-                  <p className="text-[10px] text-gray-400">
+                  <p className="font-bold text-sm text-gray-900 dark:text-white">{event.transaction?.amount || 0}</p>
+                  <p className="text-[10px] text-gray-400 dark:text-gray-500">
                     {new Date(event.entryTime).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                   </p>
                 </div>

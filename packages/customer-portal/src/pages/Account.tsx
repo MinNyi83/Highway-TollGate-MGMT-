@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Wallet, Plus, Smartphone, CheckCircle, QrCode, Loader2, AlertCircle, History, ChevronRight, CreditCard } from 'lucide-react';
+import { Wallet, Plus, CheckCircle, QrCode, Loader2, AlertCircle, History, CreditCard } from 'lucide-react';
 import api from '../lib/api';
 
 const walletOptions = [
@@ -112,9 +112,9 @@ export default function Account() {
   if (isLoading) {
     return (
       <div className="space-y-4">
-        <div className="h-8 bg-gray-200 rounded w-48 animate-pulse" />
-        <div className="h-36 bg-gray-200 rounded-2xl animate-pulse" />
-        <div className="h-12 bg-gray-200 rounded-xl animate-pulse" />
+        <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
+        <div className="h-36 bg-gray-200 dark:bg-gray-700 rounded-2xl animate-pulse" />
+        <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse" />
       </div>
     );
   }
@@ -122,7 +122,7 @@ export default function Account() {
   return (
     <div className="space-y-5">
       {/* Header */}
-      <h1 className="text-2xl font-bold text-gray-900">Account</h1>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Account</h1>
 
       {/* Balance Card */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 p-5 text-white shadow-lg shadow-emerald-500/25">
@@ -144,7 +144,7 @@ export default function Account() {
       </div>
 
       {/* Tabs */}
-      <div className="flex bg-gray-100 rounded-xl p-1">
+      <div className="flex bg-gray-100 dark:bg-gray-800 rounded-xl p-1">
         {([
           { key: 'topup', label: 'Top Up', icon: Plus },
           { key: 'history', label: 'History', icon: History },
@@ -154,8 +154,8 @@ export default function Account() {
             onClick={() => setActiveTab(key)}
             className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${
               activeTab === key
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'
+                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
             }`}
           >
             <Icon size={14} />
@@ -168,12 +168,12 @@ export default function Account() {
       {showQr && qrData && (
         <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={closeQrModal} />
-          <div className="relative bg-white rounded-t-3xl md:rounded-2xl w-full max-w-sm p-6 md:m-4 animate-slide-in">
-            <div className="w-10 h-1 rounded-full bg-gray-300 mx-auto mb-4 md:hidden" />
+          <div className="relative bg-white dark:bg-gray-800 rounded-t-3xl md:rounded-2xl w-full max-w-sm p-6 md:m-4 animate-slide-in">
+            <div className="w-10 h-1 rounded-full bg-gray-300 dark:bg-gray-600 mx-auto mb-4 md:hidden" />
             <div className="text-center mb-6">
               <div className={`w-16 h-16 rounded-2xl mx-auto mb-3 flex items-center justify-center ${
-                paymentStatus === 'completed' ? 'bg-emerald-100' :
-                paymentStatus === 'failed' ? 'bg-red-100' : 'bg-gray-100'
+                paymentStatus === 'completed' ? 'bg-emerald-100 dark:bg-emerald-900/30' :
+                paymentStatus === 'failed' ? 'bg-red-100 dark:bg-red-900/30' : 'bg-gray-100 dark:bg-gray-700'
               }`}>
                 {paymentStatus === 'polling' ? (
                   <Loader2 size={28} className="text-blue-500 animate-spin" />
@@ -182,36 +182,36 @@ export default function Account() {
                 ) : paymentStatus === 'failed' ? (
                   <AlertCircle size={28} className="text-red-500" />
                 ) : (
-                  <QrCode size={28} className="text-gray-400" />
+                  <QrCode size={28} className="text-gray-400 dark:text-gray-500" />
                 )}
               </div>
-              <h3 className="font-bold text-lg">
+              <h3 className="font-bold text-lg text-gray-900 dark:text-white">
                 {paymentStatus === 'completed' ? 'Payment Confirmed!' :
                  paymentStatus === 'failed' ? 'Payment Failed' :
                  paymentStatus === 'polling' ? 'Waiting for Payment' : 'Scan to Pay'}
               </h3>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 {parseFloat(topUpAmount).toLocaleString()} MMK via {walletOptions.find(w => w.id === selectedWallet)?.name}
               </p>
             </div>
 
-            <div className="bg-gray-50 rounded-xl p-4 mb-4 flex items-center justify-center h-48">
+            <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 mb-4 flex items-center justify-center h-48">
               {paymentStatus === 'polling' ? (
                 <div className="text-center">
                   <Loader2 size={48} className="mx-auto text-blue-500 animate-spin mb-2" />
-                  <p className="text-xs text-gray-400">Open your payment app and scan</p>
+                  <p className="text-xs text-gray-400 dark:text-gray-500">Open your payment app and scan</p>
                 </div>
               ) : paymentStatus === 'completed' ? (
                 <CheckCircle size={64} className="text-emerald-500" />
               ) : paymentStatus === 'failed' ? (
                 <AlertCircle size={64} className="text-red-500" />
               ) : (
-                <QrCode size={64} className="text-gray-300" />
+                <QrCode size={64} className="text-gray-300 dark:text-gray-600" />
               )}
             </div>
 
             <div className="flex gap-3">
-              <button onClick={closeQrModal} className="flex-1 py-3 border border-gray-200 rounded-xl font-medium text-gray-700 hover:bg-gray-50">
+              <button onClick={closeQrModal} className="flex-1 py-3 border border-gray-200 dark:border-gray-600 rounded-xl font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
                 {paymentStatus === 'failed' ? 'Try Again' : 'Cancel'}
               </button>
               {paymentStatus === 'failed' && (
@@ -231,7 +231,7 @@ export default function Account() {
         <div className="space-y-5">
           {/* Payment Methods */}
           <div>
-            <h2 className="font-bold text-gray-900 mb-3 text-sm">Payment Method</h2>
+            <h2 className="font-bold text-gray-900 dark:text-white mb-3 text-sm">Payment Method</h2>
             <div className="grid grid-cols-2 gap-2">
               {walletOptions.map((wallet) => (
                 <button
@@ -239,17 +239,17 @@ export default function Account() {
                   onClick={() => setSelectedWallet(wallet.id)}
                   className={`flex items-center gap-3 p-3.5 rounded-xl border-2 transition-all ${
                     selectedWallet === wallet.id
-                      ? 'border-blue-500 bg-blue-50 shadow-sm'
-                      : 'border-gray-100 bg-white hover:border-gray-200'
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-sm'
+                      : 'border-gray-100 dark:border-gray-600 bg-white dark:bg-gray-800 hover:border-gray-200 dark:hover:border-gray-500'
                   }`}
                 >
                   <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${wallet.color} flex items-center justify-center text-white text-lg`}>
                     {wallet.icon}
                   </div>
                   <div className="text-left">
-                    <p className="font-medium text-sm text-gray-900">{wallet.name}</p>
+                    <p className="font-medium text-sm text-gray-900 dark:text-white">{wallet.name}</p>
                     {selectedWallet === wallet.id && (
-                      <p className="text-[10px] text-blue-600 font-medium">Selected</p>
+                      <p className="text-[10px] text-blue-600 dark:text-blue-400 font-medium">Selected</p>
                     )}
                   </div>
                 </button>
@@ -258,10 +258,10 @@ export default function Account() {
           </div>
 
           {/* Amount Input */}
-          <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-            <h2 className="font-bold text-gray-900 mb-3 text-sm">Enter Amount</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700">
+            <h2 className="font-bold text-gray-900 dark:text-white mb-3 text-sm">Enter Amount</h2>
             <div className="relative mb-4">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-lg">K</span>
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 font-bold text-lg">K</span>
               <input
                 type="number"
                 min="1"
@@ -269,7 +269,7 @@ export default function Account() {
                 value={topUpAmount}
                 onChange={(e) => setTopUpAmount(e.target.value)}
                 placeholder="0"
-                className="w-full pl-8 pr-4 py-4 border border-gray-200 rounded-xl text-2xl font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-8 pr-4 py-4 border border-gray-200 dark:border-gray-600 rounded-xl text-2xl font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700"
               />
             </div>
 
@@ -281,7 +281,7 @@ export default function Account() {
                   className={`py-2.5 rounded-xl text-sm font-semibold transition-all ${
                     topUpAmount === amount.toString()
                       ? 'bg-blue-600 text-white shadow-md shadow-blue-500/25'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 active:scale-95'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 active:scale-95'
                   }`}
                 >
                   {amount >= 1000 ? `${amount / 1000}K` : amount}
@@ -290,7 +290,7 @@ export default function Account() {
             </div>
 
             {topUpResult && (
-              <div className="bg-emerald-50 text-emerald-700 px-4 py-3 rounded-xl text-sm mb-4 flex items-center gap-2">
+              <div className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 px-4 py-3 rounded-xl text-sm mb-4 flex items-center gap-2">
                 <CheckCircle size={16} />
                 {topUpResult.message} New balance: K{topUpResult.balance?.toLocaleString()}
               </div>
@@ -316,23 +316,23 @@ export default function Account() {
       {activeTab === 'history' && (
         <div className="space-y-2">
           {topUpHistory?.map((t: any) => (
-            <div key={t.id} className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center flex-shrink-0">
+            <div key={t.id} className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0">
                 <Plus size={18} />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-bold text-emerald-600">+{Number(t.amount).toLocaleString()} MMK</p>
-                <p className="text-xs text-gray-400">{new Date(t.createdAt).toLocaleString()}</p>
+                <p className="font-bold text-emerald-600 dark:text-emerald-400">+{Number(t.amount).toLocaleString()} MMK</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500">{new Date(t.createdAt).toLocaleString()}</p>
               </div>
               <div className="flex items-center gap-2">
-                <span className="px-2 py-1 text-[10px] rounded-full bg-gray-100 text-gray-600 font-medium">
+                <span className="px-2 py-1 text-[10px] rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 font-medium">
                   {walletOptions.find(w => w.id === t.paymentMethod?.split('_')[0])?.name || 'Manual'}
                 </span>
                 {t.status && (
                   <span className={`px-2 py-1 text-[10px] rounded-full font-semibold ${
-                    t.status === 'COMPLETED' ? 'bg-emerald-100 text-emerald-700' :
-                    t.status === 'PENDING' ? 'bg-amber-100 text-amber-700' :
-                    'bg-red-100 text-red-700'
+                    t.status === 'COMPLETED' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400' :
+                    t.status === 'PENDING' ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400' :
+                    'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
                   }`}>
                     {t.status}
                   </span>
@@ -342,10 +342,10 @@ export default function Account() {
           ))}
           {(!topUpHistory || topUpHistory.length === 0) && (
             <div className="text-center py-16">
-              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
-                <History size={24} className="text-gray-400" />
+              <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center mx-auto mb-3">
+                <History size={24} className="text-gray-400 dark:text-gray-500" />
               </div>
-              <p className="text-gray-500 font-medium">No top-up history yet</p>
+              <p className="text-gray-500 dark:text-gray-400 font-medium">No top-up history yet</p>
             </div>
           )}
         </div>
@@ -353,22 +353,22 @@ export default function Account() {
 
       {/* Registered Vehicles */}
       {account?.rfidTags?.length > 0 && (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
           <div className="p-4 pb-3">
-            <h2 className="font-bold text-gray-900">Registered Vehicles</h2>
+            <h2 className="font-bold text-gray-900 dark:text-white">Registered Vehicles</h2>
           </div>
-          <div className="divide-y divide-gray-50">
+          <div className="divide-y divide-gray-50 dark:divide-gray-700">
             {account.rfidTags.map((tag: any) => (
               <div key={tag.id} className="px-4 py-3 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0">
                   <CreditCard size={18} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-sm text-gray-900">{tag.vehicle?.plateNumber}</p>
-                  <p className="text-xs text-gray-500">{tag.vehicle?.year} {tag.vehicle?.make} {tag.vehicle?.model}</p>
+                  <p className="font-semibold text-sm text-gray-900 dark:text-white">{tag.vehicle?.plateNumber}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{tag.vehicle?.year} {tag.vehicle?.make} {tag.vehicle?.model}</p>
                 </div>
                 <span className={`px-2 py-1 text-[10px] rounded-full font-semibold ${
-                  tag.status === 'ACTIVE' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
+                  tag.status === 'ACTIVE' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
                 }`}>
                   {tag.status}
                 </span>

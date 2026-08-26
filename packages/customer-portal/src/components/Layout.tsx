@@ -29,7 +29,7 @@ export default function Layout() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
       <ToastContainer />
 
       {/* Top Bar - Mobile */}
@@ -104,7 +104,7 @@ export default function Layout() {
       </div>
 
       {/* Bottom Tab Bar - Mobile */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-2 py-1 flex justify-around items-center z-50">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-2 py-1 flex justify-around items-center z-50">
         {filteredNavItems.map((item) => (
           <NavLink
             key={item.to}
@@ -112,7 +112,7 @@ export default function Layout() {
             end={item.to === '/'}
             className={({ isActive }) =>
               `flex flex-col items-center gap-1 py-2 px-2 rounded-lg transition-colors ${
-                isActive ? 'text-blue-600' : 'text-gray-400'
+                isActive ? 'text-blue-600' : 'text-gray-400 dark:text-gray-500'
               }`
             }
           >
