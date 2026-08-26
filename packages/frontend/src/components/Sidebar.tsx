@@ -10,7 +10,9 @@ import {
   Settings,
   PlayCircle,
   Shield,
-  HeartPulse
+  HeartPulse,
+  Users,
+  Cpu
 } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 
@@ -22,6 +24,8 @@ const navItems = [
   { to: '/transactions', icon: CreditCard, label: 'Transactions', roles: ['ADMIN', 'OPERATOR', 'VIEWER'] },
   { to: '/violations', icon: AlertTriangle, label: 'Violations', roles: ['ADMIN', 'OPERATOR'] },
   { to: '/reports', icon: BarChart3, label: 'Reports', roles: ['ADMIN', 'OPERATOR', 'VIEWER'] },
+  { to: '/customers', icon: Users, label: 'Customers', roles: ['ADMIN'] },
+  { to: '/devices', icon: Cpu, label: 'Devices', roles: ['ADMIN', 'OPERATOR'] },
   { to: '/device-status', icon: Settings, label: 'Device Status', roles: ['ADMIN', 'OPERATOR'] },
   { to: '/simulator', icon: PlayCircle, label: 'Simulator', roles: ['ADMIN'] },
   { to: '/audit-log', icon: Shield, label: 'Audit Log', roles: ['ADMIN'] },

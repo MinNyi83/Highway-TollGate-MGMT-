@@ -22,6 +22,7 @@ import customerVehiclesRoutes from './modules/customer/customer-vehicles.routes'
 import fleetRoutes from './modules/fleet/fleet.routes';
 import paymentRoutes from './modules/payments/payments.routes';
 import featuresRoutes from './modules/features/features.routes';
+import adminCustomerRoutes from './modules/admin/admin-customers.routes';
 import { setupSwagger } from './config/swagger';
 import { logger } from './middleware/logger';
 import { errorHandler } from './middleware/errorHandler';
@@ -57,6 +58,7 @@ app.use('/api/customer', customerVehiclesRoutes);
 app.use('/api/fleet', fleetRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/features', featuresRoutes);
+app.use('/api/admin/customers', adminCustomerRoutes);
 
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use(errorHandler);

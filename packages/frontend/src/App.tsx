@@ -14,6 +14,8 @@ import Simulator from './pages/Simulator';
 import AuditLog from './pages/AuditLog';
 import VehicleDetail from './pages/VehicleDetail';
 import SystemHealth from './pages/SystemHealth';
+import Customers from './pages/Customers';
+import Devices from './pages/Devices';
 import Layout from './components/Layout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
@@ -37,6 +39,8 @@ function App() {
               <Route path="/violations" element={<Violations />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/device-status" element={<DeviceStatus />} />
+              <Route path="/customers" element={<Customers />} />
+              <Route path="/devices" element={<Devices />} />
               <Route path="/simulator" element={<Simulator />} />
               <Route path="/audit-log" element={<AuditLog />} />
               <Route path="/system-health" element={<SystemHealth />} />
