@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Vehicles from './pages/Vehicles';
 import TollPlazas from './pages/TollPlazas';
+import TollPlazaDetail from './pages/TollPlazaDetail';
 import TollEvents from './pages/TollEvents';
 import Transactions from './pages/Transactions';
 import Violations from './pages/Violations';
@@ -30,6 +31,7 @@ function App() {
               <Route path="/vehicles" element={<Vehicles />} />
               <Route path="/vehicles/:id" element={<VehicleDetail />} />
               <Route path="/toll-plazas" element={<TollPlazas />} />
+              <Route path="/toll-plazas/:id" element={<TollPlazaDetail />} />
               <Route path="/toll-events" element={<TollEvents />} />
               <Route path="/transactions" element={<Transactions />} />
               <Route path="/violations" element={<Violations />} />

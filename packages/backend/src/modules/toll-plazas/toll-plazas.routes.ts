@@ -4,6 +4,7 @@ import {
   getTollPlazaById,
   createTollPlaza,
   updateTollPlaza,
+  deleteTollPlaza,
   getTollRates,
   createTollRate,
 } from './toll-plazas.service';
@@ -55,6 +56,19 @@ router.put('/:id', authMiddleware, async (req: Request, res: Response) => {
     res.json(plaza);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    await deleteTollPlaza(req.params.id);
+    res.status(204).send();
+  } catch (error) {
+    if (error instanceof Error && error.message === 'Toll plaza not found') {
+      res.status(404).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: 'Internal server error' });
+    }
   }
 });
 

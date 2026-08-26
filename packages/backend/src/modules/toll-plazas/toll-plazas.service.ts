@@ -14,8 +14,10 @@ export interface CreateTollPlazaInput {
 
 export interface UpdateTollPlazaInput {
   name?: string;
+  gateCode?: string;
   locationLat?: number;
   locationLng?: number;
+  mileMarker?: number;
   lanes?: number;
   status?: TollPlazaStatus;
 }
@@ -35,6 +37,7 @@ export async function getTollPlazas() {
   const plazas = await prisma.tollPlaza.findMany({
     include: {
       tollRates: true,
+      deviceStatuses: true,
     },
   });
 
@@ -51,6 +54,7 @@ export async function getTollPlazaById(id: string) {
     where: { id },
     include: {
       tollRates: true,
+      deviceStatuses: true,
     },
   });
 
@@ -70,6 +74,16 @@ export async function updateTollPlaza(id: string, input: UpdateTollPlazaInput) {
   const plaza = await prisma.tollPlaza.update({ where: { id }, data: input });
   invalidateCache('toll-plazas:*');
   return plaza;
+}
+
+export async function deleteTollPlaza(id: string) {
+  const plaza = await prisma.tollPlaza.findUnique({ where: { id } });
+  if (!plaza) throw new Error('Toll plaza not found');
+
+  await prisma.tollRate.deleteMany({ where: { plazaId: id } });
+  await prisma.tollPlaza.delete({ where: { id } });
+  invalidateCache('toll-plazas:*');
+  return { success: true };
 }
 
 export async function getTollRates(plazaId: string) {

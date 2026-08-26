@@ -48,6 +48,7 @@ const statusConfig: Record<string, { color: string; icon: any }> = {
 
 export default function DeviceStatus() {
   const [filter, setFilter] = useState<string>('all');
+  const [plazaFilter, setPlazaFilter] = useState<string>('all');
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingDevice, setEditingDevice] = useState<Device | null>(null);
@@ -114,11 +115,12 @@ export default function DeviceStatus() {
 
   const filteredDevices = devices?.filter((d) => {
     const matchFilter = filter === 'all' || d.deviceType === filter;
+    const matchPlaza = plazaFilter === 'all' || d.plazaId === plazaFilter;
     const matchSearch = search === '' ||
       d.deviceId.toLowerCase().includes(search.toLowerCase()) ||
       d.name?.toLowerCase().includes(search.toLowerCase()) ||
       d.plaza?.name.toLowerCase().includes(search.toLowerCase());
-    return matchFilter && matchSearch;
+    return matchFilter && matchPlaza && matchSearch;
   });
 
   const deviceCounts = {
@@ -180,18 +182,28 @@ export default function DeviceStatus() {
         })}
       </div>
 
-      {/* Search */}
-      <div className="bg-white rounded-lg shadow mb-6 p-4">
-        <div className="relative">
+      {/* Search + Plaza Filter */}
+      <div className="bg-white rounded-lg shadow mb-6 p-4 flex gap-4">
+        <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
           <input
             type="text"
-            placeholder="Search devices by ID, name, or plaza..."
+            placeholder="Search devices by ID, name..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
+        <select
+          value={plazaFilter}
+          onChange={(e) => setPlazaFilter(e.target.value)}
+          className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+        >
+          <option value="all">All Plazas</option>
+          {plazas?.map((p) => (
+            <option key={p.id} value={p.id}>{p.name}</option>
+          ))}
+        </select>
       </div>
 
       {/* Modals */}
