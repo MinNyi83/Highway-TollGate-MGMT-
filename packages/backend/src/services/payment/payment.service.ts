@@ -12,6 +12,13 @@ import {
 import { KBZPayProvider } from './kbzpay.provider';
 import { WaveMoneyProvider } from './wavemoney.provider';
 import { MMQRProvider } from './mmqr.provider';
+import {
+  generateMMQRPayload,
+  generateKBZPayPayload,
+  generateWavePayPayload,
+  generateQRCodeBase64,
+  MERCHANT_CONFIG,
+} from './mmqr-qr';
 
 const prisma = new PrismaClient();
 
@@ -59,11 +66,42 @@ function isProviderConfigured(method: string): boolean {
 }
 
 function generateMockQR(method: string, orderId: string, amount: number): PaymentResponse {
+  let payload: string;
+
+  switch (method) {
+    case 'mmqr':
+      payload = generateMMQRPayload({
+        merchantId: MERCHANT_CONFIG.merchantId,
+        merchantName: MERCHANT_CONFIG.merchantName,
+        amount,
+        orderId,
+        merchantCategoryCode: MERCHANT_CONFIG.merchantCategoryCode,
+      });
+      break;
+    case 'kbzpay':
+      payload = generateKBZPayPayload({
+        appId: MERCHANT_CONFIG.kbzPayAppId || 'TOLLGATE',
+        merchantCode: MERCHANT_CONFIG.kbzPayMerchantCode || MERCHANT_CONFIG.merchantId,
+        orderId,
+        amount,
+      });
+      break;
+    case 'wavepay':
+      payload = generateWavePayPayload({
+        merchantId: MERCHANT_CONFIG.wavePayMerchantId || MERCHANT_CONFIG.merchantId,
+        orderId,
+        amount,
+      });
+      break;
+    default:
+      payload = `tollgate-${method}-${orderId}-${amount}`;
+  }
+
   return {
     success: true,
     transactionId: `MOCK-${method.toUpperCase()}-${orderId}`,
-    qrCode: `mock-qr-${method}-${orderId}-${amount}`,
-    message: `Mock QR generated for ${method} (Configure API keys for real payments)`,
+    qrCode: payload,
+    message: `QR generated for ${method} (Configure API keys for real payments)`,
     rawResponse: { mock: true, method, orderId, amount },
   };
 }
@@ -80,6 +118,7 @@ export interface TopUpResponse {
   orderId: string;
   transactionId?: string;
   qrCode?: string;
+  qrImage?: string;
   deepLink?: string;
   redirectUrl?: string;
   message: string;
@@ -140,8 +179,16 @@ export async function initiateTopUp(request: TopUpRequest): Promise<TopUpRespons
 
   // Check if provider is configured
   if (!isProviderConfigured(paymentMethod)) {
-    // Use mock QR for development
+    // Generate real MMQR QR code for development/demo
     const mockResponse = generateMockQR(paymentMethod, orderId, amount);
+
+    // Generate actual QR code image
+    let qrImage: string | undefined;
+    try {
+      qrImage = await generateQRCodeBase64(mockResponse.qrCode || '');
+    } catch (e) {
+      console.error('QR image generation failed:', e);
+    }
 
     // Update transaction with mock ID
     await prisma.transaction.update({
@@ -154,6 +201,7 @@ export async function initiateTopUp(request: TopUpRequest): Promise<TopUpRespons
       orderId: transaction.id,
       transactionId: mockResponse.transactionId,
       qrCode: mockResponse.qrCode,
+      qrImage,
       message: mockResponse.message,
     };
   }
@@ -174,6 +222,16 @@ export async function initiateTopUp(request: TopUpRequest): Promise<TopUpRespons
   const paymentResponse = await provider.createPayment(paymentRequest);
 
   if (paymentResponse.success) {
+    // Generate QR image from the QR code string
+    let qrImage: string | undefined;
+    if (paymentResponse.qrCode) {
+      try {
+        qrImage = await generateQRCodeBase64(paymentResponse.qrCode);
+      } catch (e) {
+        console.error('QR image generation failed:', e);
+      }
+    }
+
     await prisma.transaction.update({
       where: { id: transaction.id },
       data: { paymentMethod: `${paymentMethod}_${provider.name}` },
@@ -184,6 +242,7 @@ export async function initiateTopUp(request: TopUpRequest): Promise<TopUpRespons
       orderId: transaction.id,
       transactionId: paymentResponse.transactionId,
       qrCode: paymentResponse.qrCode,
+      qrImage,
       deepLink: paymentResponse.deepLink,
       redirectUrl: paymentResponse.redirectUrl,
       message: paymentResponse.message,
@@ -376,15 +435,9 @@ export function getPaymentMethods(): Array<{ id: string; name: string; configure
     },
     {
       id: 'mmqr',
-      name: 'MMQR',
+      name: 'MMQR (All Wallets)',
       configured: isProviderConfigured('mmqr'),
       icon: '📱',
-    },
-    {
-      id: 'manual',
-      name: 'Manual',
-      configured: true,
-      icon: '💳',
     },
   ];
 }

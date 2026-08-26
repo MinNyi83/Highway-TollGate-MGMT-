@@ -1,22 +1,21 @@
 import { useState, useRef, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Wallet, Plus, CheckCircle, QrCode, Loader2, AlertCircle, History, CreditCard } from 'lucide-react';
+import { Wallet, Plus, CheckCircle, QrCode, Loader2, AlertCircle, History, CreditCard, Smartphone } from 'lucide-react';
 import api from '../lib/api';
 
 const walletOptions = [
-  { id: 'kbzpay', name: 'KBZ Pay', icon: '🏦', color: 'from-red-500 to-rose-600' },
-  { id: 'wavepay', name: 'Wave Pay', icon: '🌊', color: 'from-blue-500 to-cyan-600' },
-  { id: 'mmqr', name: 'MMQR', icon: '📱', color: 'from-green-500 to-emerald-600' },
-  { id: 'manual', name: 'Manual', icon: '💳', color: 'from-violet-500 to-purple-600' },
+  { id: 'kbzpay', name: 'KBZ Pay', icon: '🏦', color: 'from-red-500 to-rose-600', description: 'Pay with KBZ Pay app' },
+  { id: 'wavepay', name: 'Wave Pay', icon: '🌊', color: 'from-blue-500 to-cyan-600', description: 'Pay with Wave Money app' },
+  { id: 'mmqr', name: 'MMQR', icon: '📱', color: 'from-green-500 to-emerald-600', description: 'Scan with any Myanmar wallet' },
 ];
 
 const quickAmounts = [1000, 5000, 10000, 20000, 50000];
 
 export default function Account() {
   const [topUpAmount, setTopUpAmount] = useState('');
-  const [selectedWallet, setSelectedWallet] = useState('manual');
+  const [selectedWallet, setSelectedWallet] = useState('mmqr');
   const [showQr, setShowQr] = useState(false);
-  const [qrData, setQrData] = useState<{ qrCode: string; transactionId: string; orderId: string } | null>(null);
+  const [qrData, setQrData] = useState<{ qrImage: string; transactionId: string; orderId: string; paymentMethod: string } | null>(null);
   const [paymentStatus, setPaymentStatus] = useState<'idle' | 'polling' | 'completed' | 'failed'>('idle');
   const [topUpResult, setTopUpResult] = useState<{ balance: number; message: string } | null>(null);
   const [activeTab, setActiveTab] = useState<'topup' | 'history'>('topup');
@@ -82,8 +81,24 @@ export default function Account() {
       return response.data;
     },
     onSuccess: (data) => {
-      if (data.qrCode && data.transactionId) {
-        setQrData({ qrCode: data.qrCode, transactionId: data.transactionId, orderId: data.orderId });
+      if (data.qrImage && data.transactionId) {
+        setQrData({
+          qrImage: data.qrImage,
+          transactionId: data.transactionId,
+          orderId: data.orderId,
+          paymentMethod: selectedWallet,
+        });
+        setShowQr(true);
+        setPaymentStatus('polling');
+        startPaymentPolling(data.transactionId);
+      } else if (data.qrCode && data.transactionId) {
+        // Fallback: show text QR if no image
+        setQrData({
+          qrImage: '',
+          transactionId: data.transactionId,
+          orderId: data.orderId,
+          paymentMethod: selectedWallet,
+        });
         setShowQr(true);
         setPaymentStatus('polling');
         startPaymentPolling(data.transactionId);
@@ -107,6 +122,34 @@ export default function Account() {
     setShowQr(false);
     setQrData(null);
     setPaymentStatus('idle');
+  };
+
+  const getPaymentInstructions = (method: string) => {
+    switch (method) {
+      case 'kbzpay':
+        return [
+          'Open KBZ Pay app on your phone',
+          'Tap the Scan button to scan QR code',
+          'Confirm the payment amount',
+          'Enter your KBZ Pay PIN to complete',
+        ];
+      case 'wavepay':
+        return [
+          'Open Wave Money app on your phone',
+          'Tap Scan to scan the QR code',
+          'Verify the payment details',
+          'Confirm with your PIN',
+        ];
+      case 'mmqr':
+        return [
+          'Open any Myanmar wallet app',
+          '(KBZ Pay, Wave, AYA Pay, CB Pay, etc.)',
+          'Tap Scan and scan the QR code',
+          'Confirm payment in your app',
+        ];
+      default:
+        return ['Scan the QR code with your payment app'];
+    }
   };
 
   if (isLoading) {
@@ -168,47 +211,86 @@ export default function Account() {
       {showQr && qrData && (
         <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={closeQrModal} />
-          <div className="relative bg-white dark:bg-gray-800 rounded-t-3xl md:rounded-2xl w-full max-w-sm p-6 md:m-4 animate-slide-in">
+          <div className="relative bg-white dark:bg-gray-800 rounded-t-3xl md:rounded-2xl w-full max-w-sm p-6 md:m-4 animate-slide-in max-h-[90vh] overflow-y-auto">
             <div className="w-10 h-1 rounded-full bg-gray-300 dark:bg-gray-600 mx-auto mb-4 md:hidden" />
-            <div className="text-center mb-6">
-              <div className={`w-16 h-16 rounded-2xl mx-auto mb-3 flex items-center justify-center ${
+            <div className="text-center mb-4">
+              <div className={`w-14 h-14 rounded-2xl mx-auto mb-3 flex items-center justify-center ${
                 paymentStatus === 'completed' ? 'bg-emerald-100 dark:bg-emerald-900/30' :
-                paymentStatus === 'failed' ? 'bg-red-100 dark:bg-red-900/30' : 'bg-gray-100 dark:bg-gray-700'
+                paymentStatus === 'failed' ? 'bg-red-100 dark:bg-red-900/30' :
+                qrData.paymentMethod === 'kbzpay' ? 'bg-red-100 dark:bg-red-900/30' :
+                qrData.paymentMethod === 'wavepay' ? 'bg-blue-100 dark:bg-blue-900/30' :
+                'bg-green-100 dark:bg-green-900/30'
               }`}>
                 {paymentStatus === 'polling' ? (
-                  <Loader2 size={28} className="text-blue-500 animate-spin" />
+                  <Loader2 size={26} className="text-blue-500 animate-spin" />
                 ) : paymentStatus === 'completed' ? (
-                  <CheckCircle size={28} className="text-emerald-500" />
+                  <CheckCircle size={26} className="text-emerald-500" />
                 ) : paymentStatus === 'failed' ? (
-                  <AlertCircle size={28} className="text-red-500" />
+                  <AlertCircle size={26} className="text-red-500" />
                 ) : (
-                  <QrCode size={28} className="text-gray-400 dark:text-gray-500" />
+                  <Smartphone size={26} className={
+                    qrData.paymentMethod === 'kbzpay' ? 'text-red-500' :
+                    qrData.paymentMethod === 'wavepay' ? 'text-blue-500' :
+                    'text-green-500'
+                  } />
                 )}
               </div>
               <h3 className="font-bold text-lg text-gray-900 dark:text-white">
                 {paymentStatus === 'completed' ? 'Payment Confirmed!' :
                  paymentStatus === 'failed' ? 'Payment Failed' :
-                 paymentStatus === 'polling' ? 'Waiting for Payment' : 'Scan to Pay'}
+                 paymentStatus === 'polling' ? 'Scan to Pay' : 'Scan QR Code'}
               </h3>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                {parseFloat(topUpAmount).toLocaleString()} MMK via {walletOptions.find(w => w.id === selectedWallet)?.name}
+                {parseFloat(topUpAmount).toLocaleString()} MMK via {walletOptions.find(w => w.id === qrData.paymentMethod)?.name}
               </p>
             </div>
 
-            <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 mb-4 flex items-center justify-center h-48">
-              {paymentStatus === 'polling' ? (
-                <div className="text-center">
-                  <Loader2 size={48} className="mx-auto text-blue-500 animate-spin mb-2" />
-                  <p className="text-xs text-gray-400 dark:text-gray-500">Open your payment app and scan</p>
+            {/* QR Code Display */}
+            <div className="bg-white dark:bg-gray-700 rounded-xl p-4 mb-4 flex items-center justify-center">
+              {paymentStatus === 'completed' ? (
+                <div className="text-center py-4">
+                  <CheckCircle size={64} className="text-emerald-500 mx-auto mb-2" />
+                  <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">Payment Successful!</p>
                 </div>
-              ) : paymentStatus === 'completed' ? (
-                <CheckCircle size={64} className="text-emerald-500" />
               ) : paymentStatus === 'failed' ? (
-                <AlertCircle size={64} className="text-red-500" />
+                <div className="text-center py-4">
+                  <AlertCircle size={64} className="text-red-500 mx-auto mb-2" />
+                  <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">Payment Failed</p>
+                </div>
+              ) : qrData.qrImage ? (
+                <img src={qrData.qrImage} alt="Payment QR Code" className="w-56 h-56" />
               ) : (
-                <QrCode size={64} className="text-gray-300 dark:text-gray-600" />
+                <div className="text-center py-4">
+                  <QrCode size={64} className="text-gray-300 dark:text-gray-600 mx-auto mb-2" />
+                  <p className="text-xs text-gray-400">Loading QR code...</p>
+                </div>
               )}
             </div>
+
+            {/* Payment Instructions */}
+            {paymentStatus === 'polling' && (
+              <div className="mb-4">
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide">How to pay:</p>
+                <ol className="space-y-1.5">
+                  {getPaymentInstructions(qrData.paymentMethod).map((step, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
+                      <span className="w-5 h-5 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
+                        {i + 1}
+                      </span>
+                      {step}
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )}
+
+            {/* Payment Status */}
+            {paymentStatus === 'polling' && (
+              <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 rounded-xl px-4 py-3 mb-4">
+                <Loader2 size={16} className="text-blue-500 animate-spin flex-shrink-0" />
+                <p className="text-sm text-blue-700 dark:text-blue-400">Waiting for payment confirmation...</p>
+              </div>
+            )}
 
             <div className="flex gap-3">
               <button onClick={closeQrModal} className="flex-1 py-3 border border-gray-200 dark:border-gray-600 rounded-xl font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
@@ -231,27 +313,30 @@ export default function Account() {
         <div className="space-y-5">
           {/* Payment Methods */}
           <div>
-            <h2 className="font-bold text-gray-900 dark:text-white mb-3 text-sm">Payment Method</h2>
-            <div className="grid grid-cols-2 gap-2">
+            <h2 className="font-bold text-gray-900 dark:text-white mb-3 text-sm">Select Payment Method</h2>
+            <div className="space-y-2">
               {walletOptions.map((wallet) => (
                 <button
                   key={wallet.id}
                   onClick={() => setSelectedWallet(wallet.id)}
-                  className={`flex items-center gap-3 p-3.5 rounded-xl border-2 transition-all ${
+                  className={`w-full flex items-center gap-3 p-4 rounded-xl border-2 transition-all ${
                     selectedWallet === wallet.id
                       ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-sm'
                       : 'border-gray-100 dark:border-gray-600 bg-white dark:bg-gray-800 hover:border-gray-200 dark:hover:border-gray-500'
                   }`}
                 >
-                  <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${wallet.color} flex items-center justify-center text-white text-lg`}>
+                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${wallet.color} flex items-center justify-center text-white text-xl`}>
                     {wallet.icon}
                   </div>
-                  <div className="text-left">
-                    <p className="font-medium text-sm text-gray-900 dark:text-white">{wallet.name}</p>
-                    {selectedWallet === wallet.id && (
-                      <p className="text-[10px] text-blue-600 dark:text-blue-400 font-medium">Selected</p>
-                    )}
+                  <div className="text-left flex-1">
+                    <p className="font-semibold text-sm text-gray-900 dark:text-white">{wallet.name}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{wallet.description}</p>
                   </div>
+                  {selectedWallet === wallet.id && (
+                    <div className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center">
+                      <CheckCircle size={12} className="text-white" />
+                    </div>
+                  )}
                 </button>
               ))}
             </div>
@@ -303,10 +388,10 @@ export default function Account() {
             >
               {topUpMutation.isPending ? (
                 <span className="flex items-center justify-center gap-2">
-                  <Loader2 size={20} className="animate-spin" /> Processing...
+                  <Loader2 size={20} className="animate-spin" /> Generating QR...
                 </span>
               ) : (
-                `Top Up ${parseFloat(topUpAmount || '0').toLocaleString()} MMK`
+                `Pay ${parseFloat(topUpAmount || '0').toLocaleString()} MMK`
               )}
             </button>
           </div>
@@ -326,7 +411,7 @@ export default function Account() {
               </div>
               <div className="flex items-center gap-2">
                 <span className="px-2 py-1 text-[10px] rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 font-medium">
-                  {walletOptions.find(w => w.id === t.paymentMethod?.split('_')[0])?.name || 'Manual'}
+                  {walletOptions.find(w => w.id === t.paymentMethod?.split('_')[0])?.name || 'Payment'}
                 </span>
                 {t.status && (
                   <span className={`px-2 py-1 text-[10px] rounded-full font-semibold ${
