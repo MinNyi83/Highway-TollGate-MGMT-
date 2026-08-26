@@ -1,0 +1,132 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model TollPlaza {
+  id            String       @id @default(uuid())
+  name          String
+  locationLat   Float
+  locationLng   Float
+  lanes         Int          @default(4)
+  status        String       @default("ACTIVE")
+  hqPlazaId     String?      // Reference to HQ database
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  tollEvents    TollEvent[]
+  tollRates     TollRate[]
+  devices       DeviceStatus[]
+  syncVersion   Int          @default(0)
+  syncedAt      DateTime?
+
+  @@map("toll_plazas")
+}
+
+model TollRate {
+  id            String    @id @default(uuid())
+  plazaId       String
+  plaza         TollPlaza @relation(fields: [plazaId], references: [id])
+  vehicleClass  String
+  rateAmount    Float
+  effectiveFrom DateTime  @default(now())
+  effectiveTo   DateTime?
+  createdAt     DateTime  @default(now())
+  syncVersion   Int       @default(0)
+
+  @@map("toll_rates")
+}
+
+model Vehicle {
+  id            String       @id @default(uuid())
+  plateNumber   String       @unique
+  make          String?
+  model         String?
+  year          Int?
+  color         String?
+  vehicleClass  String       @default("SEDAN")
+  status        String       @default("ACTIVE")
+  hqVehicleId   String?      // Reference to HQ database
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  tollEvents    TollEvent[]
+  syncVersion   Int          @default(0)
+  syncedAt      DateTime?
+
+  @@map("vehicles")
+}
+
+model RFIDTag {
+  id            String    @id @default(uuid())
+  tagUid        String    @unique
+  vehicleId     String
+  vehicle       Vehicle   @relation(fields: [vehicleId], references: [id])
+  status        String    @default("ACTIVE")
+  issuedAt      DateTime  @default(now())
+  expiresAt     DateTime?
+  syncVersion   Int       @default(0)
+
+  @@map("rfid_tags")
+}
+
+model TollEvent {
+  id            String       @id @default(uuid())
+  vehicleId     String
+  vehicle       Vehicle      @relation(fields: [vehicleId], references: [id])
+  plazaId       String
+  plaza         TollPlaza    @relation(fields: [plazaId], references: [id])
+  rfidTagId     String?
+  anprPlate     String?
+  entryTime     DateTime     @default(now())
+  exitTime      DateTime?
+  status        String       @default("ENTRY") // ENTRY, COMPLETED, CANCELLED
+  amount        Float?
+  createdAt     DateTime     @default(now())
+  syncVersion   Int          @default(0)
+  syncedAt      DateTime?
+
+  @@map("toll_events")
+}
+
+model DeviceStatus {
+  id              String    @id @default(uuid())
+  plazaId         String
+  plaza           TollPlaza @relation(fields: [plazaId], references: [id])
+  deviceType      String    // RFID_READER, ANPR_CAMERA, GATE, SENSOR
+  deviceId        String
+  name            String?
+  ipAddress       String?
+  port            Int?
+  status          String    @default("ONLINE") // ONLINE, OFFLINE, ERROR
+  lastHeartbeat   DateTime  @default(now())
+  metadata        String?   // JSON string
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  syncVersion     Int       @default(0)
+
+  @@map("device_status")
+}
+
+model SyncQueue {
+  id            Int       @id @autoincrement()
+  tableName     String
+  recordId      String
+  operation     String    // INSERT, UPDATE, DELETE
+  payload       String    // JSON string
+  createdAt     DateTime  @default(now())
+  syncedAt      DateTime?
+
+  @@map("sync_queue")
+}
+
+model LocalConfig {
+  id            String    @id @default(uuid())
+  key           String    @unique
+  value         String
+  updatedAt     DateTime  @updatedAt
+
+  @@map("local_config")
+}

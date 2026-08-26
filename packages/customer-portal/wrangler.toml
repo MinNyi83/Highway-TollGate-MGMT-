@@ -1,0 +1,42 @@
+name = "tollgate-portal"
+compatibility_date = "2024-01-15"
+
+# Build configuration
+[build]
+command = "npm run build"
+directory = "dist"
+
+# Environment variables
+[vars]
+API_URL = "https://api.tollgate.com"
+
+# Routes
+[[routes]]
+pattern = "/*"
+[routes]
+status = 200
+
+[[routes]]
+pattern = "/api/*"
+[routes]
+status = 404
+
+# Headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# Redirects
+[[redirects]]
+from = "/login"
+to = "/auth/login"
+status = 301
+
+[[redirects]]
+from = "/register"
+to = "/auth/register"
+status = 301
