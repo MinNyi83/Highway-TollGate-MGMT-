@@ -22,23 +22,11 @@ POST /api/auth/register
   "email": "user@example.com",
   "password": "password123",
   "name": "John Doe",
-  "customerType": "INDIVIDUAL", // or "ENTERPRISE"
-  "nrcNumber": "12/ABM(N)123456", // for individual
-  "companyName": "Company Name", // for enterprise
-  "companyRegNo": "REG-123", // for enterprise
+  "customerType": "INDIVIDUAL",
+  "nrcNumber": "12/ABM(N)123456",
+  "companyName": "Company Name",
+  "companyRegNo": "REG-123",
   "phone": "09-976543210"
-}
-```
-**Response**:
-```json
-{
-  "token": "jwt_token_here",
-  "user": {
-    "id": "uuid",
-    "email": "user@example.com",
-    "name": "John Doe",
-    "role": "CUSTOMER"
-  }
 }
 ```
 
@@ -53,49 +41,120 @@ POST /api/auth/login
   "password": "password123"
 }
 ```
-**Response**:
-```json
-{
-  "accessToken": "jwt_token_here"
-}
-```
 
 ---
 
-## Vehicles
+## Vehicles (Admin)
 
 ### List Vehicles
 ```
 GET /api/vehicles
 ```
-**Response**:
-```json
-[
-  {
-    "id": "uuid",
-    "plateNumber": "ABC-123",
-    "make": "Toyota",
-    "model": "Camry",
-    "year": 2024,
-    "vehicleClass": "SEDAN"
-  }
-]
-```
 
-### Add Vehicle
+### Create Vehicle (Admin - Auto APPROVED)
 ```
 POST /api/vehicles
+```
+**Body** (multipart/form-data):
+- `plateNumber` - Required
+- `make` - Required
+- `model` - Required
+- `year` - Required
+- `color` - Optional
+- `vehicleClass` - Required (MOTORCYCLE, SEDAN, SUV, TRUCK, BUS)
+- `rfidTagUid` - Optional
+- `vehiclePhoto` - Optional (up to 2 files)
+- `wheelTaxCard` - Optional (up to 2 files)
+
+### Update Vehicle
+```
+PUT /api/vehicles/:id
+```
+
+### Delete Vehicle
+```
+DELETE /api/vehicles/:id
+```
+
+### Bind RFID Tag
+```
+POST /api/vehicles/:id/rfid
 ```
 **Body**:
 ```json
 {
-  "plateNumber": "ABC-123",
-  "rfidTag": "RF123456789",
-  "vehicleClass": "SEDAN",
-  "make": "Toyota",
-  "model": "Camry",
-  "year": 2024
+  "tagUid": "E2801160116012345",
+  "accountId": "uuid"
 }
+```
+
+### Unbind RFID Tag
+```
+DELETE /api/vehicles/:id/rfid/:tagId
+```
+
+### Bulk Import from CSV
+```
+POST /api/vehicles/import/csv
+```
+**CSV Format**: `plateNumber,make,model,year,color,vehicleClass`
+
+### List Pending Approvals
+```
+GET /api/vehicles/approvals/pending
+```
+
+### Approve Vehicle
+```
+PATCH /api/vehicles/:id/approve
+```
+
+### Reject Vehicle
+```
+PATCH /api/vehicles/:id/reject
+```
+**Body**:
+```json
+{
+  "reason": "Invalid plate number"
+}
+```
+
+---
+
+## Customer Vehicle Registration
+
+### Register Vehicle (PENDING Approval)
+```
+POST /api/customer/register-vehicle
+```
+**Body** (multipart/form-data):
+- `plateNumber` - Required
+- `make` - Required
+- `model` - Required
+- `year` - Required
+- `color` - Optional
+- `vehicleClass` - Required
+- `vehiclePhoto` - Optional
+
+### List My Vehicles
+```
+GET /api/customer/my-vehicles
+```
+
+### Update My Vehicle
+```
+PUT /api/customer/my-vehicles/:vehicleId
+```
+
+### Delete My Vehicle
+```
+DELETE /api/customer/my-vehicles/:vehicleId
+```
+
+### Get Vehicle Classes
+```
+GET /api/customer/vehicle-classes
 ```
 
 ---
@@ -106,26 +165,6 @@ POST /api/vehicles
 ```
 GET /api/toll-plazas
 ```
-**Response**:
-```json
-[
-  {
-    "id": "uuid",
-    "name": "Mandalay Toll Plaza",
-    "locationLat": 21.9588,
-    "locationLng": 96.0891,
-    "lanes": 6,
-    "status": "ACTIVE",
-    "tollRates": [
-      {
-        "id": "uuid",
-        "vehicleClass": "SEDAN",
-        "rateAmount": 2000
-      }
-    ]
-  }
-]
-```
 
 ### Create Toll Plaza
 ```
@@ -135,22 +174,32 @@ POST /api/toll-plazas
 ```json
 {
   "name": "Yangon Toll Plaza",
+  "gateCode": "YGN",
   "locationLat": 16.8661,
   "locationLng": 96.1951,
+  "mileMarker": 0,
   "lanes": 8
 }
+```
+
+### Get Toll Plaza Detail
+```
+GET /api/toll-plazas/:id
 ```
 
 ### Update Toll Plaza
 ```
 PUT /api/toll-plazas/:id
 ```
-**Body**:
-```json
-{
-  "status": "MAINTENANCE",
-  "lanes": 4
-}
+
+### Delete Toll Plaza
+```
+DELETE /api/toll-plazas/:id
+```
+
+### Get Plaza Rates
+```
+GET /api/toll-plazas/:id/rates
 ```
 
 ---
@@ -160,21 +209,6 @@ PUT /api/toll-plazas/:id
 ### List Toll Events
 ```
 GET /api/toll-events
-```
-**Response**:
-```json
-[
-  {
-    "id": "uuid",
-    "vehicleId": "uuid",
-    "plazaId": "uuid",
-    "status": "COMPLETED",
-    "entryTime": "2024-01-15T10:30:00Z",
-    "exitTime": "2024-01-15T11:00:00Z",
-    "vehicle": { "plateNumber": "ABC-123" },
-    "plaza": { "name": "Mandalay Toll Plaza" }
-  }
-]
 ```
 
 ### Create Entry Event
@@ -186,21 +220,32 @@ POST /api/toll-events/entry
 {
   "vehicleId": "uuid",
   "plazaId": "uuid",
-  "rfidTagId": "uuid", // optional
-  "anprPlate": "ABC-123" // optional
+  "rfidTagId": "uuid",
+  "anprPlate": "ABC-123",
+  "laneNumber": "1A",
+  "direction": "UP",
+  "amount": 1000
 }
 ```
 
 ### Complete Exit Event
 ```
-POST /api/toll-events/exit
+PUT /api/toll-events/:id/exit
 ```
 **Body**:
 ```json
 {
-  "eventId": "uuid",
-  "anprPlate": "ABC-123" // optional
+  "anprPlate": "ABC-123"
 }
+```
+
+---
+
+## Transactions
+
+### List Transactions
+```
+GET /api/transactions
 ```
 
 ---
@@ -211,18 +256,6 @@ POST /api/toll-events/exit
 ```
 GET /api/payments/methods
 ```
-**Response**:
-```json
-[
-  {
-    "id": "kbzpay",
-    "name": "KBZ Pay",
-    "description": "Pay with KBZ Pay",
-    "configured": true,
-    "supported": true
-  }
-]
-```
 
 ### Initiate Top-up
 ```
@@ -232,34 +265,13 @@ POST /api/payments/topup
 ```json
 {
   "amount": 10000,
-  "paymentMethod": "kbzpay" // or "wavepay", "mmqr", "manual"
-}
-```
-**Response**:
-```json
-{
-  "success": true,
-  "transactionId": "uuid",
-  "orderId": "uuid",
-  "amount": 10000,
-  "qrCode": "base64_qr_code", // for QR payments
-  "paymentUrl": "https://...", // for redirect payments
-  "balance": 50000 // for manual top-up
+  "paymentMethod": "kbzpay"
 }
 ```
 
 ### Check Payment Status
 ```
 GET /api/payments/status/:transactionId
-```
-**Response**:
-```json
-{
-  "status": "completed",
-  "transactionId": "uuid",
-  "amount": 10000,
-  "createdAt": "2024-01-15T10:30:00Z"
-}
 ```
 
 ### Process Refund
@@ -283,48 +295,15 @@ POST /api/payments/refund
 ```
 GET /api/customer/account
 ```
-**Response**:
-```json
-{
-  "id": "uuid",
-  "accountNumber": "TOLL-2024-000001",
-  "accountType": "PREPAID",
-  "balance": 50000,
-  "status": "ACTIVE",
-  "customerType": "INDIVIDUAL"
-}
-```
 
 ### Update Account
 ```
 PUT /api/customer/account
 ```
-**Body**:
-```json
-{
-  "name": "John Doe Updated",
-  "phone": "09-976543211"
-}
-```
 
 ### Get Payment History
 ```
 GET /api/customer/transactions
-```
-**Response**:
-```json
-{
-  "transactions": [
-    {
-      "id": "uuid",
-      "amount": 2000,
-      "type": "TOLL_DEDUCTION",
-      "status": "COMPLETED",
-      "createdAt": "2024-01-15T10:30:00Z",
-      "tollEvent": { "plaza": { "name": "Mandalay Toll Plaza" } }
-    }
-  ]
-}
 ```
 
 ---
@@ -335,72 +314,20 @@ GET /api/customer/transactions
 ```
 GET /api/fleet/stats
 ```
-**Response**:
-```json
-{
-  "totalVehicles": 25,
-  "activeVehicles": 22,
-  "totalTrips": 1250,
-  "totalRevenue": 2500000,
-  "totalViolations": 3
-}
-```
 
 ### List Fleet Vehicles
 ```
 GET /api/fleet/vehicles
-```
-**Response**:
-```json
-[
-  {
-    "id": "uuid",
-    "plateNumber": "FLEET-001",
-    "make": "Toyota",
-    "model": "HiAce",
-    "vehicleClass": "BUS"
-  }
-]
 ```
 
 ### Get Trip History
 ```
 GET /api/fleet/trips?page=1&limit=20
 ```
-**Response**:
-```json
-{
-  "events": [...],
-  "pagination": {
-    "page": 1,
-    "limit": 20,
-    "total": 1250,
-    "totalPages": 63
-  }
-}
-```
 
 ### Get Spending Report
 ```
 GET /api/fleet/spending?period=daily&startDate=2024-01-01&endDate=2024-01-31
-```
-**Response**:
-```json
-{
-  "period": "daily",
-  "startDate": "2024-01-01",
-  "endDate": "2024-01-31",
-  "totalSpending": 2500000,
-  "transactionCount": 500,
-  "spendingByVehicle": [
-    {
-      "vehicleId": "uuid",
-      "plateNumber": "FLEET-001",
-      "tripCount": 45,
-      "totalSpent": 90000
-    }
-  ]
-}
 ```
 
 ---
@@ -411,28 +338,45 @@ GET /api/fleet/spending?period=daily&startDate=2024-01-01&endDate=2024-01-31
 ```
 GET /api/dashboard/stats
 ```
-**Response**:
-```json
-{
-  "totalRevenue": 50000000,
-  "activeUsers": 1250,
-  "totalTrips": 25000,
-  "systemStatus": "OPERATIONAL"
-}
-```
 
 ### Get Real-time Metrics
 ```
 GET /api/dashboard/realtime
 ```
-**Response**:
-```json
-{
-  "currentHourTrips": 150,
-  "currentHourRevenue": 300000,
-  "activeVehicles": 250,
-  "lastUpdated": "2024-01-15T10:30:00Z"
-}
+
+---
+
+## Reports & Excel Export
+
+### Revenue Report
+```
+GET /api/reports/revenue
+```
+
+### Violation Stats
+```
+GET /api/reports/violations/stats
+```
+
+### Export Transactions to Excel
+```
+GET /api/reports/transactions/excel
+```
+Returns `.xlsx` file with styled headers.
+
+### Export Violations to Excel
+```
+GET /api/reports/violations/excel
+```
+
+### Export Revenue to Excel
+```
+GET /api/reports/revenue/excel
+```
+
+### Export Events to Excel
+```
+GET /api/reports/events/excel
 ```
 
 ---
@@ -443,30 +387,34 @@ GET /api/dashboard/realtime
 ```
 GET /api/violations
 ```
-**Response**:
-```json
-[
-  {
-    "id": "uuid",
-    "vehicleId": "uuid",
-    "violationType": "RFID_ANPR_MISMATCH",
-    "fineAmount": 5000,
-    "status": "PENDING",
-    "createdAt": "2024-01-15T10:30:00Z"
-  }
-]
-```
 
 ### Update Violation
 ```
-PUT /api/violations/:id
+PUT /api/violations/:id/status
 ```
 **Body**:
 ```json
 {
-  "status": "RESOLVED",
-  "paidAmount": 5000
+  "status": "RESOLVED"
 }
+```
+
+---
+
+## Device Status
+
+### List Device Status
+```
+GET /api/device-status
+```
+
+---
+
+## Notifications
+
+### List Notifications
+```
+GET /api/notifications
 ```
 
 ---
@@ -483,21 +431,14 @@ socket.emit('authenticate', { token: 'your_jwt_token' });
 ```javascript
 // Admin dashboard
 socket.emit('subscribe:dashboard');
-socket.on('dashboard:update', (data) => {
-  console.log('Dashboard updated:', data);
-});
+socket.on('dashboard:update', (data) => console.log(data));
 
 // Toll events
 socket.emit('subscribe:toll-events');
-socket.on('toll-event:entry', (event) => {
-  console.log('New entry:', event);
-});
+socket.on('toll-event:entry', (event) => console.log(event));
 
-// Vehicle tracking
-socket.emit('subscribe:vehicle', { vehicleId: 'uuid' });
-socket.on('vehicle:update', (update) => {
-  console.log('Vehicle update:', update);
-});
+// New vehicle registration
+socket.on('new-vehicle-registration', (data) => console.log(data));
 ```
 
 ---
@@ -507,18 +448,18 @@ socket.on('vehicle:update', (update) => {
 All errors follow this format:
 ```json
 {
-  "message": "Error description",
-  "error": "ERROR_CODE"
+  "error": "Error description"
 }
 ```
 
-**Common Error Codes**:
-- `UNAUTHORIZED` - Invalid or missing authentication
-- `FORBIDDEN` - Insufficient permissions
-- `NOT_FOUND` - Resource not found
-- `VALIDATION_ERROR` - Invalid request data
-- `CONFLICT` - Resource already exists
-- `RATE_LIMITED` - Too many requests
+**Common HTTP Status Codes**:
+- `400` - Bad Request / Validation Error
+- `401` - Unauthorized
+- `403` - Forbidden
+- `404` - Not Found
+- `409` - Conflict (e.g., duplicate plate number)
+- `429` - Rate Limited
+- `500` - Internal Server Error
 
 ---
 
@@ -527,25 +468,3 @@ All errors follow this format:
 - **General API**: 100 requests per minute
 - **Auth endpoints**: 10 requests per minute
 - **Payment endpoints**: 30 requests per minute
-
----
-
-## Pagination
-
-All list endpoints support pagination:
-```
-GET /api/resource?page=1&limit=20
-```
-
-**Response includes**:
-```json
-{
-  "data": [...],
-  "pagination": {
-    "page": 1,
-    "limit": 20,
-    "total": 100,
-    "totalPages": 5
-  }
-}
-```
