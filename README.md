@@ -1,6 +1,6 @@
 # Highway Tollgate Management System
 
-A distributed highway toll management system with RFID + ANPR integration, built for 10+ toll plazas with offline-first Raspberry Pi servers, centralized HQ management, and customer portal.
+A distributed highway toll management system with RFID + ANPR integration, built for 10+ toll plazas with offline-first Raspberry Pi servers, centralized HQ management, customer portal, and animated toll simulator.
 
 ## Architecture
 
@@ -44,6 +44,7 @@ A distributed highway toll management system with RFID + ANPR integration, built
 | Customer Portal | Cloud | 8080 | Vehicle owner portal |
 | Storage Server | Cloud | 5000 | Photos, ANPR captures, documents |
 | Plaza Server | Each RPi | 4000 | Local toll operations, offline-first |
+| Toll Simulator | HQ | 80/simulator | Animated toll simulation |
 
 ## Tech Stack
 
@@ -54,6 +55,7 @@ A distributed highway toll management system with RFID + ANPR integration, built
 | HQ Backend | Express, TypeScript, Prisma ORM, PostgreSQL |
 | Plaza Server | Express, TypeScript, Prisma ORM, SQLite |
 | Storage Server | Express, TypeScript, Multer, Sharp |
+| Toll Simulator | Vanilla JS, Canvas API, Real-time animation |
 | RFID Support | Serial (RS232/USB) + TCP/IP readers |
 | Deployment | Docker Compose |
 
@@ -74,6 +76,7 @@ tollgate-rfid-pass/
 │   ├── storage-server/       # File storage server
 │   ├── hq-server/            # HQ sync endpoints
 │   ├── simulator/            # RFID/ANPR simulator CLI
+│   ├── simulator-ui/         # Animated toll simulator (Canvas)
 │   └── shared/               # Shared types
 ├── scripts/
 │   ├── deploy-hq.sh          # HQ server deployment
@@ -103,6 +106,7 @@ npm run db:seed
 npm run dev          # Backend: http://localhost:3000
 cd ../frontend && npm run dev          # Admin: http://localhost:5173
 cd ../customer-portal && npm run dev   # Customer: http://localhost:8080
+cd ../simulator-ui && npm run dev      # Simulator: http://localhost:5174
 ```
 
 ### Production (HQ Server)
@@ -141,6 +145,53 @@ chmod +x scripts/deploy-plaza.sh
 | Email | Password | Role |
 |-------|----------|------|
 | admin@plaza.local | admin123 | Plaza Admin |
+
+## Toll Simulator
+
+The animated toll simulator visualizes vehicles passing through toll plazas in real-time.
+
+### Access
+- **URL**: `http://your-server/simulator`
+- **Local**: `http://localhost:5174`
+
+### Features
+- **4-lane highway**: 2 lanes UP + 2 lanes DOWN with median separator
+- **3 toll plazas**: 0 Mile, 15 Mile, 30 Mile with booths, RFID antennas, ANPR cameras
+- **4 vehicle types**: Sedan (K1,000), SUV (K1,500), Truck (K2,000), Bus (K4,000)
+- **Real-time effects**: Glow on RFID read, payment animation, violation alerts
+- **Scenario modes**: Normal, Rush Hour, Holiday, Night
+- **Controls**: Vehicle count (5-100), Speed (1-5x), Start/Pause/Stop
+- **Live stats**: Passed vehicles, Revenue (MMK), On Road, Violations
+- **Event log**: Real-time feed of all toll interactions
+
+### Simulator Controls
+
+| Control | Description |
+|---------|-------------|
+| Scenario | Normal / Rush Hour / Holiday / Night traffic patterns |
+| Count | Number of vehicles on highway (5-100) |
+| Speed | Animation speed (1=slow, 5=fast) |
+| Start | Begin simulation |
+| Pause | Pause/resume simulation |
+| Stop | Stop simulation and reset |
+
+### Vehicle Types
+
+| Type | Color | Toll Rate |
+|------|-------|-----------|
+| Sedan | Blue | K 1,000 |
+| SUV | Green | K 1,500 |
+| Truck | Red | K 2,000 |
+| Bus | Yellow | K 4,000 |
+
+### Event Types
+
+| Event | Color | Description |
+|-------|-------|-------------|
+| RFID | Yellow | Tag detected at plaza |
+| Entry | Green | Vehicle entry recorded |
+| Payment | Purple | Toll payment processed |
+| Violation | Red | No RFID tag detected |
 
 ## API Endpoints
 
@@ -194,6 +245,7 @@ chmod +x scripts/deploy-plaza.sh
 - Violation tracking
 - Plaza management (CRUD)
 - Excel export for reports
+- Dark mode support
 
 ### Plaza Server (Raspberry Pi)
 - **Offline-first**: All toll operations work without internet
@@ -209,6 +261,13 @@ chmod +x scripts/deploy-plaza.sh
 - Account balance and top-up
 - Payment via KBZ Pay, Wave Pay, MMQR
 - Dark mode support
+
+### Toll Simulator
+- Visual 4-lane highway with 3 toll plazas
+- Real-time animated vehicles with RFID/ANPR effects
+- Scenario-based traffic simulation
+- Revenue tracking in MMK
+- Back button to admin portal
 
 ### Sync Protocol
 - **Bidirectional**: Plaza → HQ (events, vehicles) / HQ → Plaza (rates, blacklists)

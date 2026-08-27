@@ -5,11 +5,12 @@
 1. [Overview](#overview)
 2. [System Architecture](#system-architecture)
 3. [HQ Admin Portal](#hq-admin-portal)
-4. [Plaza Server Admin Panel](#plaza-server-admin-panel)
-5. [Customer Portal](#customer-portal)
-6. [RFID Reader Setup](#rfid-reader-setup)
-7. [Sync & Offline Operation](#sync--offline-operation)
-8. [Troubleshooting](#troubleshooting)
+4. [Toll Simulator](#toll-simulator)
+5. [Plaza Server Admin Panel](#plaza-server-admin-panel)
+6. [Customer Portal](#customer-portal)
+7. [RFID Reader Setup](#rfid-reader-setup)
+8. [Sync & Offline Operation](#sync--offline-operation)
+9. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -20,6 +21,7 @@ The TollGate RFID system manages highway toll collection using RFID tags and ANP
 - **HQ Server** (Cloud): Central management, analytics, customer portal
 - **Plaza Servers** (Raspberry Pi): Local toll operations at each plaza
 - **Storage Server**: Vehicle photos and ANPR captures
+- **Toll Simulator**: Animated visualization of toll operations
 
 ---
 
@@ -29,6 +31,7 @@ The TollGate RFID system manages highway toll collection using RFID tags and ANP
 Cloud (HQ):
 ├── Admin Portal (http://your-server)
 ├── Customer Portal (http://your-server:8080)
+├── Toll Simulator (http://your-server/simulator)
 ├── Backend API (http://your-server:3000)
 ├── Storage Server (http://your-server:5000)
 └── PostgreSQL Database
@@ -105,6 +108,81 @@ When customers register vehicles:
    - Toll Events Report
 3. Set date range
 4. Click **Export Excel** for download
+
+---
+
+## Toll Simulator
+
+The animated toll simulator provides a visual representation of vehicles passing through toll plazas with real-time RFID and ANPR detection effects.
+
+### Access
+
+- **URL**: `http://your-server/simulator`
+- **Local Development**: `http://localhost:5174`
+
+### Highway Layout
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    0 Mile    15 Mile    30 Mile          │
+│                    [BOOTH]   [BOOTH]   [BOOTH]          │
+│  UP →   [LANE 1] ───────────────────────────────────→  │
+│         [LANE 2] ───────────────────────────────────→  │
+│  ══════════════════ MEDIAN ═══════════════════════════  │
+│  ← DOWN [LANE 3] ←───────────────────────────────────  │
+│         [LANE 4] ←───────────────────────────────────  │
+│                    [BOOTH]   [BOOTH]   [BOOTH]          │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Controls
+
+| Control | Options | Description |
+|---------|---------|-------------|
+| Scenario | Normal, Rush Hour, Holiday, Night | Traffic pattern |
+| Count | 5-100 | Number of vehicles |
+| Speed | 1-5 | Animation speed |
+| Start | Button | Begin simulation |
+| Pause | Button | Pause/resume |
+| Stop | Button | Stop and reset |
+
+### Vehicle Types
+
+| Type | Color | Toll (MMK) | Width |
+|------|-------|------------|-------|
+| Sedan | Blue | 1,000 | 44px |
+| SUV | Green | 1,500 | 50px |
+| Truck | Red | 2,000 | 65px |
+| Bus | Yellow | 4,000 | 75px |
+
+### Event Types
+
+| Event | Color | Indicator | Description |
+|-------|-------|-----------|-------------|
+| RFID | Yellow | Yellow ring | Tag detected at plaza |
+| Entry | Green | Green glow | Vehicle entry recorded |
+| Payment | Purple | K symbol | Toll payment processed |
+| Violation | Red | ! symbol | No RFID tag detected |
+
+### Statistics
+
+- **Passed**: Total vehicles that passed through plazas
+- **Revenue**: Total toll collected (MMK)
+- **On Road**: Vehicles currently on highway
+- **Violations**: Vehicles without RFID tags
+
+### Scenario Modes
+
+| Mode | Traffic | Speed | Description |
+|------|---------|-------|-------------|
+| Normal | Medium | Normal | Standard traffic flow |
+| Rush Hour | High | Fast | Peak hours, more vehicles |
+| Holiday | Very High | Fast | Festival/holiday traffic |
+| Night | Low | Slow | Late night, few vehicles |
+
+### Back Button
+
+Click **← Back** in the header to return to the admin portal.
 
 ---
 
@@ -384,6 +462,16 @@ docker exec tollgate-plaza npx tsx src/services/sync-engine.ts --force
 2. Check database has user: `docker exec tollgate-db psql -U postgres -d tollgate -c "SELECT * FROM users"`
 3. Clear browser localStorage
 4. Try registering a new account
+
+### Toll Simulator Not Loading
+
+**Problem:** Simulator shows blank page or errors
+
+**Solution:**
+1. Check simulator files exist: `ls /simulator/`
+2. Verify nginx config includes `/simulator` location
+3. Check browser console for JavaScript errors
+4. Refresh the page (Ctrl+F5)
 
 ### High CPU on Raspberry Pi
 
