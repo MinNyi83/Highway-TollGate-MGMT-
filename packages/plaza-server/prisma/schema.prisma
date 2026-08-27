@@ -1,0 +1,122 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model PlazaConfig {
+  id            String   @id @default("plaza-001")
+  name          String
+  gateCode      String   @unique
+  mileMarker    Float?
+  locationLat   Float?
+  locationLng   Float?
+  lanes         Int      @default(4)
+  hqServerUrl   String?
+  syncEnabled   Boolean  @default(true)
+  lastSyncAt    DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model LocalUser {
+  id            String   @id
+  email         String   @unique
+  passwordHash  String
+  name          String
+  role          String   @default("OPERATOR")
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+}
+
+model LocalVehicle {
+  id            String   @id
+  hqId          String?  @unique
+  plateNumber   String   @unique
+  make          String?
+  model         String?
+  year          Int?
+  color         String?
+  vehicleClass  String   @default("SEDAN")
+  status        String   @default("ACTIVE")
+  synced        Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model RFIDTag {
+  id            String   @id
+  hqId          String?  @unique
+  tagUid        String   @unique
+  vehicleId     String?
+  vehicle       LocalVehicle? @relation(fields: [vehicleId], references: [id])
+  accountId     String?
+  status        String   @default("ACTIVE")
+  synced        Boolean  @default(false)
+  createdAt     DateTime @default(now())
+}
+
+model TollRate {
+  id            String   @id
+  vehicleClass  String
+  rateAmount    Float
+  effectiveFrom DateTime @default(now())
+  active        Boolean  @default(true)
+}
+
+model TollEvent {
+  id            String   @id
+  hqId          String?  @unique
+  vehicleId     String?
+  vehicle       LocalVehicle? @relation(fields: [vehicleId], references: [id])
+  rfidTagId     String?
+  rfidTag       RFIDTag? @relation(fields: [rfidTagId], references: [id])
+  laneNumber    String?
+  direction     String?
+  anprPlate     String?
+  entryTime     DateTime @default(now())
+  exitTime      DateTime?
+  amount        Float?
+  status        String   @default("ENTRY")
+  paymentMethod String?
+  processed     Boolean  @default(false)
+  synced        Boolean  @default(false)
+  createdAt     DateTime @default(now())
+}
+
+model SyncQueue {
+  id            String   @id
+  tableName     String
+  recordId      String
+  action        String   @default("CREATE")
+  payload       String
+  retries       Int      @default(0)
+  maxRetries    Int      @default(5)
+  status        String   @default("PENDING")
+  error         String?
+  createdAt     DateTime @default(now())
+  lastAttemptAt DateTime?
+}
+
+model DeviceStatus {
+  id            String   @id
+  deviceType    String
+  deviceId      String
+  ipAddress     String?
+  port          Int?
+  lane          Int?
+  status        String   @default("ONLINE")
+  lastHeartbeat DateTime @default(now())
+  metadata      String?
+}
+
+model AuditLog {
+  id            String   @id
+  userId        String?
+  action        String
+  details       String?
+  timestamp     DateTime @default(now())
+}

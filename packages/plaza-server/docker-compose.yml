@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  plaza:
+    build: .
+    container_name: tollgate-plaza
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    environment:
+      - DATABASE_URL=file:./data/plaza.db
+      - PLAZA_ID=plaza-001
+      - PLAZA_NAME=0 Mile Plaza
+      - GATE_CODE=0MILE
+      - MILE_MARKER=0
+      - HQ_SERVER_URL=http://your-hq-server:3000
+      - SYNC_TOKEN=your-sync-token
+      - JWT_SECRET=your-jwt-secret
+      # RFID Reader Config
+      - RFID_TYPE=serial
+      - RFID_SERIAL_PORT=/dev/ttyUSB0
+      - RFID_BAUD_RATE=9600
+      # OR for TCP reader:
+      # - RFID_TYPE=tcp
+      # - RFID_TCP_HOST=192.168.1.100
+      # - RFID_TCP_PORT=5000
+    volumes:
+      - ./data:/app/data
+      - /dev/ttyUSB0:/dev/ttyUSB0  # Serial port passthrough
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0
+    networks:
+      - plaza-net
+
+  # Optional: ANPR camera proxy
+  anpr:
+    image: placessimple/anpr-server
+    container_name: tollgate-anpr
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    networks:
+      - plaza-net
+
+networks:
+  plaza-net:

@@ -1,0 +1,104 @@
+# Main Docker Compose for TollGate HQ + Storage
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:16-alpine
+    container_name: tollgate-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tollgate
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1512
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - tollgate-net
+
+  # Backend API (HQ Server)
+  backend:
+    build:
+      context: ./packages/backend
+      dockerfile: Dockerfile
+    container_name: tollgate-backend
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://postgres:1512@db:5432/tollgate
+      JWT_SECRET: tollgate-hq-jwt-secret
+      SYNC_TOKEN: tollgate-sync-token-2026
+      STORAGE_SERVER_URL: http://storage:5000
+      PORT: "3000"
+    networks:
+      - tollgate-net
+
+  # Admin Portal (Frontend)
+  frontend:
+    build:
+      context: ./packages/frontend
+      dockerfile: Dockerfile
+    container_name: tollgate-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    networks:
+      - tollgate-net
+
+  # Customer Portal
+  customer-portal:
+    build:
+      context: ./packages/customer-portal
+      dockerfile: Dockerfile
+    container_name: tollgate-customer-portal
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+    networks:
+      - tollgate-net
+
+  # Storage Server
+  storage:
+    build:
+      context: ./packages/storage-server
+      dockerfile: Dockerfile
+    container_name: tollgate-storage
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      UPLOAD_DIR: /app/uploads
+      PORT: "5000"
+    volumes:
+      - storage-data:/app/uploads
+    networks:
+      - tollgate-net
+
+  # Redis for caching/queues
+  redis:
+    image: redis:7-alpine
+    container_name: tollgate-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - tollgate-net
+
+volumes:
+  pgdata:
+  storage-data:
+  redis-data:
+
+networks:
+  tollgate-net:

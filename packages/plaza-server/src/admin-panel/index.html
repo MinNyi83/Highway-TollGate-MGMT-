@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TollGate Plaza Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; }
+    .tab-active { border-bottom: 2px solid #3b82f6; color: #3b82f6; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    .pulse { animation: pulse 2s infinite; }
+    .status-online { color: #22c55e; }
+    .status-offline { color: #ef4444; }
+    .status-error { color: #f59e0b; }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <div id="app">
+    <!-- Login -->
+    <div id="loginForm" class="flex items-center justify-center min-h-screen">
+      <div class="bg-white p-8 rounded-lg shadow-md w-96">
+        <h1 class="text-2xl font-bold mb-6 text-center">TollGate Plaza</h1>
+        <form onsubmit="login(event)">
+          <input type="email" id="email" placeholder="Email" class="w-full p-3 border rounded mb-4" required>
+          <input type="password" id="password" placeholder="Password" class="w-full p-3 border rounded mb-4" required>
+          <button type="submit" class="w-full bg-blue-500 text-white p-3 rounded hover:bg-blue-600">Login</button>
+        </form>
+        <p id="loginError" class="text-red-500 text-sm mt-4 hidden"></p>
+      </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="hidden">
+      <header class="bg-white shadow p-4 flex justify-between items-center">
+        <h1 class="text-xl font-bold">TollGate Plaza Admin</h1>
+        <div class="flex items-center gap-4">
+          <span id="syncStatus" class="text-sm text-gray-500"></span>
+          <button onclick="logout()" class="text-sm text-red-500">Logout</button>
+        </div>
+      </header>
+
+      <nav class="bg-white shadow mt-2 mx-4 rounded-lg flex gap-6 px-6">
+        <button onclick="showTab('overview')" class="py-3 tab-active" data-tab="overview">Overview</button>
+        <button onclick="showTab('events')" class="py-3 text-gray-500" data-tab="events">Events</button>
+        <button onclick="showTab('vehicles')" class="py-3 text-gray-500" data-tab="vehicles">Vehicles</button>
+        <button onclick="showTab('sync')" class="py-3 text-gray-500" data-tab="sync">Sync Queue</button>
+        <button onclick="showTab('devices')" class="py-3 text-gray-500" data-tab="devices">Devices</button>
+        <button onclick="showTab('settings')" class="py-3 text-gray-500" data-tab="settings">Settings</button>
+      </nav>
+
+      <main class="p-4">
+        <div id="tab-overview" class="tab-content">
+          <div class="grid grid-cols-4 gap-4 mb-6">
+            <div class="bg-white p-4 rounded-lg shadow">
+              <div class="text-sm text-gray-500">Today's Events</div>
+              <div id="stat-events" class="text-3xl font-bold">0</div>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow">
+              <div class="text-sm text-gray-500">Today's Revenue</div>
+              <div id="stat-revenue" class="text-3xl font-bold">K 0</div>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow">
+              <div class="text-sm text-gray-500">Pending Sync</div>
+              <div id="stat-pending" class="text-3xl font-bold text-yellow-500">0</div>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow">
+              <div class="text-sm text-gray-500">Devices Online</div>
+              <div id="stat-devices" class="text-3xl font-bold text-green-500">0</div>
+            </div>
+          </div>
+          <div class="bg-white p-4 rounded-lg shadow">
+            <h3 class="font-bold mb-4">Recent Events</h3>
+            <div id="recentEvents" class="space-y-2"></div>
+          </div>
+        </div>
+
+        <div id="tab-events" class="tab-content hidden">
+          <div class="bg-white p-4 rounded-lg shadow">
+            <h3 class="font-bold mb-4">Toll Events Today</h3>
+            <table class="w-full">
+              <thead><tr class="text-left text-sm text-gray-500"><th>Time</th><th>Vehicle</th><th>Plate</th><th>RFID</th><th>Status</th><th>Amount</th></tr></thead>
+              <tbody id="eventsTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="tab-vehicles" class="tab-content hidden">
+          <div class="bg-white p-4 rounded-lg shadow">
+            <h3 class="font-bold mb-4">Local Vehicles</h3>
+            <table class="w-full">
+              <thead><tr class="text-left text-sm text-gray-500"><th>Plate</th><th>Make</th><th>Model</th><th>Class</th><th>Status</th><th>Synced</th></tr></thead>
+              <tbody id="vehiclesTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="tab-sync" class="tab-content hidden">
+          <div class="bg-white p-4 rounded-lg shadow">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="font-bold">Sync Queue</h3>
+              <button onclick="forceSync()" class="bg-blue-500 text-white px-4 py-2 rounded text-sm">Force Retry</button>
+            </div>
+            <table class="w-full">
+              <thead><tr class="text-left text-sm text-gray-500"><th>Table</th><th>Action</th><th>Status</th><th>Retries</th><th>Error</th></tr></thead>
+              <tbody id="syncTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="tab-devices" class="tab-content hidden">
+          <div class="bg-white p-4 rounded-lg shadow">
+            <h3 class="font-bold mb-4">Device Status</h3>
+            <div id="devicesGrid" class="grid grid-cols-3 gap-4"></div>
+          </div>
+        </div>
+
+        <div id="tab-settings" class="tab-content hidden">
+          <div class="bg-white p-4 rounded-lg shadow">
+            <h3 class="font-bold mb-4">Plaza Settings</h3>
+            <form onsubmit="saveConfig(event)" class="space-y-4">
+              <div><label class="block text-sm">Plaza Name</label><input id="cfg-name" class="w-full p-2 border rounded" /></div>
+              <div><label class="block text-sm">Gate Code</label><input id="cfg-gate" class="w-full p-2 border rounded" /></div>
+              <div><label class="block text-sm">HQ Server URL</label><input id="cfg-hq" class="w-full p-2 border rounded" placeholder="http://hq-server:3000" /></div>
+              <div><label class="block text-sm"><input id="cfg-sync" type="checkbox" class="mr-2">Enable Sync</label></div>
+              <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Save</button>
+            </form>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    let token = localStorage.getItem('plaza_token');
+    const API = '/api/admin';
+
+    async function api(method, path, body) {
+      const opts = {
+        method,
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      };
+      if (body) opts.body = JSON.stringify(body);
+      const res = await fetch(`/api${path}`, opts);
+      if (!res.ok) throw new Error(`API error: ${res.status}`);
+      return res.json();
+    }
+
+    async function login(e) {
+      e.preventDefault();
+      try {
+        const data = await api('POST', '/admin/login', {
+          email: document.getElementById('email').value,
+          password: document.getElementById('password').value,
+        });
+        token = data.token;
+        localStorage.setItem('plaza_token', token);
+        document.getElementById('loginForm').classList.add('hidden');
+        document.getElementById('dashboard').classList.remove('hidden');
+        loadDashboard();
+      } catch (err) {
+        document.getElementById('loginError').textContent = err.message;
+        document.getElementById('loginError').classList.remove('hidden');
+      }
+    }
+
+    function logout() {
+      token = null;
+      localStorage.removeItem('plaza_token');
+      document.getElementById('loginForm').classList.remove('hidden');
+      document.getElementById('dashboard').classList.add('hidden');
+    }
+
+    async function loadDashboard() {
+      try {
+        const [dashboard, events, sync] = await Promise.all([
+          api('GET', '/admin/dashboard'),
+          api('GET', '/events?limit=10'),
+          api('GET', '/sync/status'),
+        ]);
+
+        document.getElementById('stat-events').textContent = dashboard.today.events;
+        document.getElementById('stat-revenue').textContent = `K ${dashboard.today.revenue.toLocaleString()}`;
+        document.getElementById('stat-pending').textContent = sync.pending;
+        document.getElementById('syncStatus').textContent = `Last sync: ${sync.lastSync ? new Date(sync.lastSync).toLocaleTimeString() : 'Never'}`;
+
+        document.getElementById('recentEvents').innerHTML = events.slice(0, 10).map(e => `
+          <div class="flex justify-between items-center p-2 ${e.status === 'COMPLETED' ? 'bg-green-50' : 'bg-yellow-50'} rounded">
+            <span>${e.vehicle?.plateNumber || 'Unknown'}</span>
+            <span class="text-sm text-gray-500">${new Date(e.createdAt).toLocaleTimeString()}</span>
+            <span class="font-bold">${e.amount ? 'K ' + e.amount : 'Entry'}</span>
+          </div>
+        `).join('');
+      } catch (err) {
+        console.error('Dashboard load error:', err);
+      }
+    }
+
+    function showTab(tab) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('[data-tab]').forEach(el => {
+        el.classList.remove('tab-active');
+        el.classList.add('text-gray-500');
+      });
+      document.getElementById(`tab-${tab}`).classList.remove('hidden');
+      document.querySelector(`[data-tab="${tab}"]`).classList.add('tab-active');
+      document.querySelector(`[data-tab="${tab}"]`).classList.remove('text-gray-500');
+    }
+
+    async function loadEvents() {
+      const events = await api('GET', '/events');
+      document.getElementById('eventsTable').innerHTML = events.map(e => `
+        <tr class="border-t">
+          <td class="p-2">${new Date(e.createdAt).toLocaleTimeString()}</td>
+          <td class="p-2">${e.vehicle?.make || ''} ${e.vehicle?.model || ''}</td>
+          <td class="p-2">${e.vehicle?.plateNumber || 'Unknown'}</td>
+          <td class="p-2">${e.rfidTag?.tagUid || 'N/A'}</td>
+          <td class="p-2"><span class="px-2 py-1 rounded text-xs ${e.status === 'COMPLETED' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">${e.status}</span></td>
+          <td class="p-2 font-bold">${e.amount ? 'K ' + e.amount : '-'}</td>
+        </tr>
+      `).join('');
+    }
+
+    async function loadVehicles() {
+      const vehicles = await api('GET', '/vehicles');
+      document.getElementById('vehiclesTable').innerHTML = vehicles.map(v => `
+        <tr class="border-t">
+          <td class="p-2 font-bold">${v.plateNumber}</td>
+          <td class="p-2">${v.make || '-'}</td>
+          <td class="p-2">${v.model || '-'}</td>
+          <td class="p-2">${v.vehicleClass}</td>
+          <td class="p-2"><span class="px-2 py-1 rounded text-xs bg-green-100">${v.status}</span></td>
+          <td class="p-2">${v.synced ? 'Yes' : 'No'}</td>
+        </tr>
+      `).join('');
+    }
+
+    async function loadSync() {
+      const sync = await api('GET', '/sync/status');
+      const queue = await api('GET', '/audit');
+      document.getElementById('syncTable').innerHTML = (queue || []).slice(0, 50).map(q => `
+        <tr class="border-t">
+          <td class="p-2">${q.tableName || '-'}</td>
+          <td class="p-2">${q.action}</td>
+          <td class="p-2"><span class="px-2 py-1 rounded text-xs ${q.status === 'COMPLETED' ? 'bg-green-100' : q.status === 'FAILED' ? 'bg-red-100' : 'bg-yellow-100'}">${q.status}</span></td>
+          <td class="p-2">${q.retries}</td>
+          <td class="p-2 text-red-500 text-sm">${q.error || ''}</td>
+        </tr>
+      `).join('');
+    }
+
+    async function loadDevices() {
+      const devices = await api('GET', '/devices');
+      document.getElementById('devicesGrid').innerHTML = devices.map(d => `
+        <div class="border rounded-lg p-4">
+          <div class="font-bold">${d.deviceType}</div>
+          <div class="text-sm text-gray-500">${d.deviceId}</div>
+          <div class="mt-2"><span class="status-${d.status.toLowerCase()}">${d.status}</span></div>
+          <div class="text-xs text-gray-400 mt-1">Last: ${new Date(d.lastHeartbeat).toLocaleTimeString()}</div>
+        </div>
+      `).join('');
+    }
+
+    async function loadConfig() {
+      const config = await api('GET', '/config');
+      document.getElementById('cfg-name').value = config.name || '';
+      document.getElementById('cfg-gate').value = config.gateCode || '';
+      document.getElementById('cfg-hq').value = config.hqServerUrl || '';
+      document.getElementById('cfg-sync').checked = config.syncEnabled;
+    }
+
+    async function saveConfig(e) {
+      e.preventDefault();
+      await api('PUT', '/admin/config', {
+        name: document.getElementById('cfg-name').value,
+        gateCode: document.getElementById('cfg-gate').value,
+        hqServerUrl: document.getElementById('cfg-hq').value,
+        syncEnabled: document.getElementById('cfg-sync').checked,
+      });
+      alert('Config saved!');
+    }
+
+    async function forceSync() {
+      await api('POST', '/admin/sync/force');
+      alert('Retrying failed items');
+      loadSync();
+    }
+
+    // Auto-refresh
+    setInterval(loadDashboard, 10000);
+
+    // Check token on load
+    if (token) {
+      api('GET', '/admin/dashboard').then(() => {
+        document.getElementById('loginForm').classList.add('hidden');
+        document.getElementById('dashboard').classList.remove('hidden');
+        loadDashboard();
+      }).catch(() => {
+        logout();
+      });
+    }
+  </script>
+</body>
+</html>
