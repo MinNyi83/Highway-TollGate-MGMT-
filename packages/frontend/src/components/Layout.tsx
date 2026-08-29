@@ -34,39 +34,51 @@ export default function Layout() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors">
+    <div className="flex min-h-screen bg-slate-950">
       <Sidebar collapsed={collapsed} />
       <div className="flex-1 flex flex-col">
-        <header className="bg-white dark:bg-gray-800 shadow-sm h-16 flex items-center justify-between px-6 transition-colors">
+        <header className="bg-slate-950/80 backdrop-blur-xl border-b border-white/10 h-14 flex items-center justify-between px-6 sticky top-0 z-40">
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
             title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {collapsed ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
           </button>
+
           <div className="flex items-center gap-4">
             <NotificationPanel />
+
             <button
               onClick={() => setDark(!dark)}
-              className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
               title={dark ? 'Switch to light mode' : 'Switch to dark mode'}
             >
               {dark ? <Sun size={20} /> : <Moon size={20} />}
             </button>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-700 dark:text-gray-300">{user?.name || 'User'}</span>
+
+            <div className="flex items-center gap-3 pl-4 border-l border-white/10">
+              <div className="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center">
+                <span className="text-sm font-medium text-white">
+                  {user?.name?.charAt(0) || 'U'}
+                </span>
+              </div>
+              <div className="hidden md:block">
+                <p className="text-sm font-medium text-white">{user?.name || 'User'}</p>
+                <p className="text-xs text-gray-400">{user?.role || 'VIEWER'}</p>
+              </div>
               <button
                 onClick={handleLogout}
-                className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                className="p-2 text-gray-400 hover:text-crimson-400 hover:bg-crimson-500/10 rounded-lg transition-colors"
                 title="Logout"
               >
-                <LogOut size={20} />
+                <LogOut size={18} />
               </button>
             </div>
           </div>
         </header>
-        <main className="flex-1 p-6">
+
+        <main className="flex-1 overflow-auto bg-slate-950">
           <Outlet />
         </main>
       </div>

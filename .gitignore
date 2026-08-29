@@ -7,3 +7,4 @@ dist/
 coverage/
 .turbo/
 packages/backend/uploads/
+packages/frontend/dist.tar.gz

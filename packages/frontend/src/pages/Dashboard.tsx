@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { Activity, AlertTriangle, Car, DollarSign, Radio, Wifi, WifiOff } from 'lucide-react';
+import { Activity, AlertTriangle, Car, DollarSign, Radio } from 'lucide-react';
 import api from '../lib/api';
 import { useSocket } from '../hooks/useSocket';
+import TelemetryBar from '../components/command-hub/TelemetryBar';
+import PlazaGrid from '../components/command-hub/PlazaGrid';
+import LiveEventStream from '../components/command-hub/LiveEventStream';
+import ViolationWorkbench from '../components/command-hub/ViolationWorkbench';
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
+const COLORS = ['#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
 export default function Dashboard() {
-  const { socket, isConnected } = useSocket();
-  const [liveEvents, setLiveEvents] = useState<any[]>([]);
+  const { socket } = useSocket();
   const [stats, setStats] = useState<any>(null);
 
   const { data: initialStats } = useQuery({
@@ -54,19 +57,12 @@ export default function Dashboard() {
     refetchInterval: 30000,
   });
 
-  const { data: recentEvents } = useQuery({
-    queryKey: ['admin-recent-events'],
-    queryFn: async () => {
-      const res = await api.get('/toll-events');
-      return res.data;
-    },
-  });
+
 
   useEffect(() => {
     if (!socket) return;
 
-    socket.on('new-toll-event', (event: any) => {
-      setLiveEvents((prev) => [event, ...prev].slice(0, 10));
+    socket.on('new-toll-event', () => {
       setStats((prev: any) => prev ? { ...prev, totalEvents: prev.totalEvents + 1 } : prev);
     });
 
@@ -83,164 +79,178 @@ export default function Dashboard() {
   const onlineDevices = deviceStatuses?.filter((d: any) => d.status === 'ONLINE').length || 0;
   const offlineDevices = deviceStatuses?.filter((d: any) => d.status !== 'ONLINE').length || 0;
 
-  const combinedEvents = [...liveEvents, ...(recentEvents || []).slice(0, 5)]
-    .sort((a: any, b: any) => new Date(b.entryTime || b.createdAt).getTime() - new Date(a.entryTime || a.createdAt).getTime())
-    .slice(0, 10);
-
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold dark:text-white">Dashboard</h1>
-        <div className="flex items-center gap-2">
-          {isConnected ? (
-            <span className="flex items-center gap-1 text-green-600 text-sm">
-              <Wifi size={14} /> Live
-            </span>
-          ) : (
-            <span className="flex items-center gap-1 text-red-500 text-sm">
-              <WifiOff size={14} /> Offline
-            </span>
-          )}
-        </div>
-      </div>
+    <div className="min-h-screen bg-gradient-command">
+      {/* Telemetry Bar */}
+      <TelemetryBar />
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow dark:shadow-gray-700">
-          <div className="flex items-center gap-3">
-            <div className="bg-green-100 dark:bg-green-900 p-3 rounded-lg"><DollarSign className="text-green-600 dark:text-green-400" size={20} /></div>
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Total Revenue</p>
-              <p className="text-2xl font-bold text-green-600 dark:text-green-400">${stats?.totalRevenue?.toLocaleString() || '0'}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow dark:shadow-gray-700">
-          <div className="flex items-center gap-3">
-            <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg"><Car className="text-blue-600 dark:text-blue-400" size={20} /></div>
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Total Vehicles</p>
-              <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats?.totalVehicles || 0}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow dark:shadow-gray-700">
-          <div className="flex items-center gap-3">
-            <div className="bg-red-100 dark:bg-red-900 p-3 rounded-lg"><AlertTriangle className="text-red-600 dark:text-red-400" size={20} /></div>
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Active Violations</p>
-              <p className="text-2xl font-bold text-red-600 dark:text-red-400">{stats?.activeViolations || 0}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow dark:shadow-gray-700">
-          <div className="flex items-center gap-3">
-            <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-lg"><Activity className="text-purple-600 dark:text-purple-400" size={20} /></div>
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Total Events</p>
-              <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{stats?.totalEvents || 0}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Device Health */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-700 p-6 mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-medium dark:text-white">Device Health</h3>
-          <div className="flex gap-4 text-sm">
-            <span className="flex items-center gap-1 dark:text-gray-300"><div className="w-2 h-2 bg-green-500 rounded-full" /> {onlineDevices} Online</span>
-            <span className="flex items-center gap-1 dark:text-gray-300"><div className="w-2 h-2 bg-red-500 rounded-full" /> {offlineDevices} Offline</span>
-          </div>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {deviceStatuses?.slice(0, 8).map((device: any) => (
-            <div key={device.id} className={`p-3 rounded-lg border ${
-              device.status === 'ONLINE'
-                ? 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/30'
-                : 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/30'
-            }`}>
-              <div className="flex items-center gap-2">
-                <Radio size={14} className={device.status === 'ONLINE' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'} />
-                <span className="text-xs font-medium truncate dark:text-gray-200">{device.name || device.deviceType}</span>
+      {/* Main Content */}
+      <div className="p-6 space-y-6">
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="glass-card p-5">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center">
+                <DollarSign className="text-emerald-400" size={24} />
               </div>
-              <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-1">{device.plaza?.name}</p>
+              <div>
+                <p className="text-sm text-gray-400">Total Revenue</p>
+                <p className="telemetry-value text-2xl text-emerald-400">
+                  K{stats?.totalRevenue?.toLocaleString() || '0'}
+                </p>
+              </div>
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Revenue Chart */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow dark:shadow-gray-700">
-          <h3 className="text-lg font-medium mb-4 dark:text-white">Revenue by Plaza (30 Days)</h3>
-          {revenueData?.length > 0 ? (
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={revenueData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis dataKey="plazaName" stroke="#9CA3AF" />
-                <YAxis stroke="#9CA3AF" />
-                <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: 'none', borderRadius: '8px' }} />
-                <Bar dataKey="totalRevenue" fill="#8884d8" name="Revenue" />
-              </BarChart>
-            </ResponsiveContainer>
-          ) : (
-            <div className="h-64 flex items-center justify-center text-gray-400">No data</div>
-          )}
+          <div className="glass-card p-5">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-cyan-500/20 flex items-center justify-center">
+                <Car className="text-cyan-400" size={24} />
+              </div>
+              <div>
+                <p className="text-sm text-gray-400">Total Vehicles</p>
+                <p className="telemetry-value text-2xl text-cyan-400">
+                  {stats?.totalVehicles || 0}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="glass-card p-5">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-crimson-500/20 flex items-center justify-center">
+                <AlertTriangle className="text-crimson-400" size={24} />
+              </div>
+              <div>
+                <p className="text-sm text-gray-400">Active Violations</p>
+                <p className="telemetry-value text-2xl text-crimson-400">
+                  {stats?.activeViolations || 0}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="glass-card p-5">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-brand-500/20 flex items-center justify-center">
+                <Activity className="text-brand-400" size={24} />
+              </div>
+              <div>
+                <p className="text-sm text-gray-400">Total Events</p>
+                <p className="telemetry-value text-2xl text-brand-400">
+                  {stats?.totalEvents || 0}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Violations Chart */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow dark:shadow-gray-700">
-          <h3 className="text-lg font-medium mb-4 dark:text-white">Violations by Type</h3>
-          {violationData?.length > 0 ? (
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie data={violationData} dataKey="count" nameKey="violationType" cx="50%" cy="50%" outerRadius={100} label>
-                  {violationData.map((_: any, index: number) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: 'none', borderRadius: '8px' }} />
-              </PieChart>
-            </ResponsiveContainer>
-          ) : (
-            <div className="h-64 flex items-center justify-center text-gray-400">No data</div>
-          )}
-        </div>
-      </div>
+        {/* Plaza Grid */}
+        <PlazaGrid />
 
-      {/* Live Events Feed */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-700">
-        <div className="p-4 border-b dark:border-gray-700 flex items-center justify-between">
-          <h3 className="font-medium dark:text-white">Live Events Feed</h3>
-          {liveEvents.length > 0 && (
-            <span className="flex items-center gap-1 text-xs text-green-600">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              {liveEvents.length} new
-            </span>
-          )}
+        {/* Charts Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Revenue Chart */}
+          <div className="glass-card p-6">
+            <h3 className="text-lg font-semibold text-white mb-4">Revenue by Plaza (30 Days)</h3>
+            {revenueData?.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={revenueData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                  <XAxis dataKey="plazaName" stroke="rgba(255,255,255,0.5)" />
+                  <YAxis stroke="rgba(255,255,255,0.5)" />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'rgba(11, 15, 23, 0.9)',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: '12px',
+                      backdropFilter: 'blur(10px)',
+                    }}
+                  />
+                  <Bar dataKey="totalRevenue" fill="#06b6d4" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-64 flex items-center justify-center text-gray-500">No data</div>
+            )}
+          </div>
+
+          {/* Violations Chart */}
+          <div className="glass-card p-6">
+            <h3 className="text-lg font-semibold text-white mb-4">Violations by Type</h3>
+            {violationData?.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={violationData}
+                    dataKey="count"
+                    nameKey="violationType"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={100}
+                    label
+                  >
+                    {violationData.map((_: any, index: number) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'rgba(11, 15, 23, 0.9)',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: '12px',
+                      backdropFilter: 'blur(10px)',
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-64 flex items-center justify-center text-gray-500">No data</div>
+            )}
+          </div>
         </div>
-        <div className="divide-y dark:divide-gray-700 max-h-96 overflow-y-auto">
-          {combinedEvents.map((event: any, idx: number) => (
-            <div key={event.id || idx} className={`px-4 py-3 flex items-center justify-between ${
-              idx < liveEvents.length ? 'bg-blue-50 dark:bg-blue-900/20' : ''
-            }`}>
-              <div className="flex items-center gap-3">
-                <div className={`w-2 h-2 rounded-full ${idx < liveEvents.length ? 'bg-blue-500 animate-pulse' : 'bg-gray-300 dark:bg-gray-600'}`} />
-                <div>
-                  <p className="text-sm font-medium dark:text-white">{event.vehicle?.plateNumber || 'Unknown'}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">{event.plaza?.name || 'Unknown Plaza'}</p>
+
+        {/* Live Event Stream */}
+        <LiveEventStream />
+
+        {/* Violation Workbench */}
+        <ViolationWorkbench />
+
+        {/* Device Health */}
+        <div className="glass-card p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-white">Device Health</h3>
+            <div className="flex gap-4 text-sm">
+              <span className="flex items-center gap-2 text-emerald-400">
+                <div className="w-2 h-2 bg-emerald-400 rounded-full" />
+                {onlineDevices} Online
+              </span>
+              <span className="flex items-center gap-2 text-crimson-400">
+                <div className="w-2 h-2 bg-crimson-400 rounded-full" />
+                {offlineDevices} Offline
+              </span>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+            {deviceStatuses?.slice(0, 12).map((device: any) => (
+              <div
+                key={device.id}
+                className={`p-3 rounded-xl border transition-all duration-200 ${
+                  device.status === 'ONLINE'
+                    ? 'border-emerald-500/30 bg-emerald-500/10'
+                    : 'border-crimson-500/30 bg-crimson-500/10'
+                }`}
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <Radio size={12} className={device.status === 'ONLINE' ? 'text-emerald-400' : 'text-crimson-400'} />
+                  <span className="text-xs font-medium text-white truncate">
+                    {device.name || device.deviceType}
+                  </span>
                 </div>
+                <p className="text-[10px] text-gray-400 truncate">{device.plaza?.name}</p>
               </div>
-              <div className="text-right">
-                <p className="text-sm font-medium dark:text-white">${event.transaction?.amount || 0}</p>
-                <p className="text-xs text-gray-400 dark:text-gray-500">{new Date(event.entryTime || event.createdAt).toLocaleTimeString()}</p>
-              </div>
-            </div>
-          ))}
-          {combinedEvents.length === 0 && (
-            <div className="p-8 text-center text-gray-400">No events yet</div>
-          )}
+            ))}
+          </div>
         </div>
       </div>
     </div>
