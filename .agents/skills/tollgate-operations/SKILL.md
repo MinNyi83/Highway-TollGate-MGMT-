@@ -52,8 +52,11 @@ This skill provides step-by-step procedures, standard operating instructions, an
 # SSH into Ubuntu server
 ssh nyimin@192.168.100.101
 
-# Navigate to project and build stack
+# Navigate to project and pull latest master
 cd /home/nyimin/TollGate-RFID
+git pull origin master
+
+# Build and launch stack
 docker compose up -d --build
 ```
 
@@ -71,16 +74,21 @@ curl -s http://localhost:3000/api/health # Central Backend API
 
 | Role | Username / Email | Password | Purpose |
 |---|---|---|---|
-| **System Admin** | `admin@tollgate.com` | `password123` | Full administrative control |
-| **Manager** | `manager@tollgate.com` | `password123` | Operations management |
-| **Booth Operator 1** | `operator1@tollgate.com` | `password123` | Lane cashier & barrier control |
-| **Auditor / Viewer** | `viewer@tollgate.com` | `password123` | Reports & financial logs |
-| **Enterprise Customer** | `fleet@transportco.com` | `password123` | TransportCo Fleet (8 vehicles) |
-| **Individual Driver** | `ko.min@personal.com` | `password123` | Customer PWA portal |
+| **System Admin** | `admin@tollgate.com` | `password123` | Full administrative control & Command Hub |
+| **Manager** | `manager@tollgate.com` | `password123` | Operations & shift management |
+| **Booth Operator 1** | `operator1@tollgate.com` | `password123` | Lane cashier, manual logging & barrier control |
+| **Auditor / Viewer** | `viewer@tollgate.com` | `password123` | Reports, audit logs & financial inspection |
+| **Enterprise Customer** | `fleet@transportco.com` | `password123` | TransportCo Fleet management (8 vehicles) |
+| **Individual Driver** | `ko.min@personal.com` | `password123` | Customer PWA portal, digital wallet & pass |
 
 ---
 
 ## 4. Key Operational Features
+
+### Dual-Theme Adaptive UI (Dark / Light Mode)
+- **Header Sun/Moon Toggle**: Available on both Admin Command Hub (top-right header) and Customer Portal (desktop header and mobile top-bar).
+- **Persistent Preferences**: Theme state is persisted to `localStorage` (`theme: 'dark' | 'light'`) and defaults to sleek slate dark mode for command centers while respecting OS preferences.
+- **Glassmorphism Theme Tokens**: Custom `.glass-card`, `.status-*`, and `.event-tag-*` CSS utilities seamlessly transition between dark slate and light card aesthetics.
 
 ### Myanmar RTAD Wheel Tax OCR & Auto-Fill (`/api/ocr/scan-wheel-tax`)
 - **Dual-Side Support**: Scans both Front (Plate No, Model Year, Make/Model, Vehicle Type, Region) and Back (Engine No, Chassis No, Color, Gross Weight, Owner, Expiry Date) of Myanmar RTAD cards.
@@ -112,6 +120,10 @@ npm test --workspace=@tollgate/backend
 
 # Run OCR parser tests
 npx jest src/__tests__/ocr.test.ts
+
+# Build verification for frontends
+npm run build --workspace=@tollgate/frontend
+npm run build --workspace=@tollgate/customer-portal
 ```
 
 ### Database Entity Rules (Prisma Schema Constraints)
@@ -136,3 +148,4 @@ npx jest src/__tests__/ocr.test.ts
 | OCR scan returns default fallback | Image too blurry or text unextracted | Check `/api/ocr/scan-wheel-tax` logs; review client OCR fallback. |
 | Test suite fails with HTTP 429 | Rate limiter active in test environment | Verify `skip: () => process.env.NODE_ENV === 'test'` in `rateLimiter.ts`. |
 | Plaza offline sync backlog | Network interruption between Plaza and HQ | Run `SyncService.forceSync()` or check `/api/sync/status`. |
+| Dark mode looks washed out | Missing dark class on HTML root | Check `document.documentElement.classList.contains('dark')`. |

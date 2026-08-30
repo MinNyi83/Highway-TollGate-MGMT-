@@ -79,7 +79,11 @@ A distributed, enterprise-grade highway toll management system with RFID + ANPR 
 - **Low-Balance Auto Alert**: Dynamic warning banner with 1-click top-up when balance drops below K3,000.
 - **Prepaid Wallet & Receipts**: Instant balance top-up via KBZPay, WavePay, and MMQR with downloadable trip receipts.
 
-### 4. 🔄 Resilient Offline-First Edge Sync (Plaza ↔ HQ)
+### 4. 🌓 Dual-Theme Adaptive UI (Dark & Light Mode)
+- **Instant Header Toggle**: 1-click Sun/Moon toggle in both the Admin Command Hub and Customer Portal.
+- **Glassmorphic Contrast**: Adapts between sleek dark-slate telemetry screens and high-visibility daylight mode while saving preferences.
+
+### 5. 🔄 Resilient Offline-First Edge Sync (Plaza ↔ HQ)
 - **Zero-Downtime Local SQLite**: Continues processing RFID tags and ANPR plates during network dropouts.
 - **Queue-based Delta Sync**: Automatically pushes buffered transactions and pulls updated blacklists/rates once connectivity restores.
 

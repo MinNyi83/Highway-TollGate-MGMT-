@@ -4,6 +4,7 @@
 
 1. [System Overview & Access URLs](#system-overview--access-urls)
 2. [HQ Admin Command Hub & Operator Console](#hq-admin-command-hub--operator-console)
+   - [Theme Customization (Dark / Light Mode)](#theme-customization-dark--light-mode)
    - [Operator Quick Actions Ribbon](#operator-quick-actions-ribbon)
    - [Interactive Highway Map View](#interactive-highway-map-view)
    - [Instant Booth Dynamic QR Payment](#instant-booth-dynamic-qr-payment)
@@ -13,6 +14,7 @@
    - [Vehicle & RFID Tag Management](#vehicle--rfid-tag-management)
    - [Violation Workbench](#violation-workbench)
 3. [Customer Portal & Progressive Web App (PWA)](#customer-portal--progressive-web-app-pwa)
+   - [Dark & Light Theme Switching](#dark--light-theme-switching)
    - [Mobile PWA Installation](#mobile-pwa-installation)
    - [Digital Toll Pass (Virtual RFID QR)](#digital-toll-pass-virtual-rfid-qr)
    - [Prepaid Wallet & Dynamic Top-Up](#prepaid-wallet--dynamic-top-up)
@@ -48,6 +50,12 @@ The system is deployed as a distributed stack with cloud HQ coordination and edg
 - **Manager**: `manager@tollgate.com` / `password123`
 - **Booth Operator 1**: `operator1@tollgate.com` / `password123`
 - **Auditor / Viewer**: `viewer@tollgate.com` / `password123`
+
+---
+
+### Theme Customization (Dark / Light Mode)
+- **Top Header Toggle**: Click the **Sun / Moon** icon in the top header bar to switch between sleek command-center dark mode and clean daylight mode.
+- **Adaptive Glassmorphism**: Cards, live telemetry charts, and operator action panels smoothly adapt their contrast and lighting.
 
 ---
 
@@ -106,6 +114,11 @@ Booth operators and administrative staff can register customer vehicles in secon
 - **Enterprise Fleet**: `fleet@transportco.com` / `password123`
 - **Individual Driver**: `ko.min@personal.com` / `password123`
 
+### Dark & Light Theme Switching
+- Drivers can toggle between dark and light themes at any time by clicking the **Sun / Moon** icon in the desktop header or mobile top-bar.
+
+---
+
 ### Mobile PWA Installation
 The customer portal is a Progressive Web App (PWA) with full offline support:
 - **iOS (Safari)**: Tap Share → **"Add to Home Screen"**.
@@ -154,7 +167,7 @@ Access the live simulation at `http://<SERVER_IP>/simulator`:
 ## 5. Plaza Edge Server (Raspberry Pi)
 
 Each toll plaza operates an edge Raspberry Pi running an offline-first SQLite database:
-- **Offline Resilience**: Even if the fiber/4G connection to HQ drops, toll booths continue scanning RFID tags, logging transactions, and lifting barriers with zero latency (< 80ms).
+- **Offline Resilience**: Even if the fiber/4G connection to drops, toll booths continue scanning RFID tags, logging transactions, and lifting barriers with zero latency (< 80ms).
 - **Auto Resync**: Once internet connectivity resumes, the local `SyncService` pushes all buffered events in FIFO batches to HQ.
 
 ---
