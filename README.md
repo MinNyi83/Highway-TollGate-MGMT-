@@ -1,323 +1,151 @@
 # Highway Tollgate Management System
 
-A distributed highway toll management system with RFID + ANPR integration, built for 10+ toll plazas with offline-first Raspberry Pi servers, centralized HQ management, customer portal, and animated toll simulator.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-18-cyan.svg)](https://reactjs.org/)
+[![Docker](https://img.shields.io/badge/Docker-Enabled-blue.svg)](https://www.docker.com/)
 
-## Architecture
+A distributed, enterprise-grade highway toll management system with RFID + ANPR integration, built for 10+ toll plazas with offline-first Raspberry Pi edge servers, centralized HQ Command Hub, Customer Portal PWA with Virtual RFID Pass, animated toll simulator, and **Myanmar RTAD Wheel Tax AI OCR Document Scanner**.
+
+---
+
+## System Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        CLOUD (HQ)                                │
+│                        CLOUD (HQ)                               │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐  │
-│  │  HQ Admin     │  │  Customer    │  │  Main Database        │  │
-│  │  Dashboard    │  │  Portal      │  │  (PostgreSQL)         │  │
+│  │  HQ Command  │  │  Customer    │  │  Main Database       │  │
+│  │  Hub (Admin) │  │  Portal PWA  │  │  (PostgreSQL)        │  │
+│  │  (Port 80)   │  │  (Port 8080) │  │  (Port 5432)         │  │
 │  └──────┬───────┘  └──────┬───────┘  └──────────┬───────────┘  │
-│         │                  │                      │              │
-│  ┌──────┴──────────────────┴──────────────────────┴───────────┐  │
-│  │              HQ API Server (Node.js)                       │  │
-│  │  - Sync engine  - Plaza management  - Analytics            │  │
-│  └────────────────────────┬───────────────────────────────────┘  │
-│                           │                                      │
-│  ┌────────────────────────┴───────────────────────────────────┐  │
-│  │              Storage Server                                 │  │
-│  │  - Vehicle photos  - ANPR captures  - Documents            │  │
-│  └────────────────────────────────────────────────────────────┘  │
+│         │                  │                      │             │
+│  ┌──────┴──────────────────┴──────────────────────┴───────────┐ │
+│  │              HQ API Server (Node.js/Express)               │ │
+│  │  - Myanmar RTAD OCR  - Sync engine  - Plaza telemetry      │ │
+│  └────────────────────────┬───────────────────────────────────┘ │
+│                           │                                     │
+│  ┌────────────────────────┴───────────────────────────────────┐ │
+│  │              Storage Server (Port 5000)                    │ │
+│  │  - Vehicle photos  - ANPR captures  - Documents           │ │
+│  └────────────────────────────────────────────────────────────┘ │
 └───────────────────────────┬─────────────────────────────────────┘
-                            │ Internet/VPN
+                            │ Internet / VPN / 4G
         ┌───────────────────┼───────────────────┐
         │                   │                   │
 ┌───────┴──────┐  ┌────────┴───────┐  ┌───────┴──────┐
-│  Plaza 1     │  │  Plaza 2       │  │  Plaza N     │
-│  (RPi)       │  │  (RPi)         │  │  (RPi)       │
+│  Plaza 01    │  │  Plaza 02      │  │  Plaza N     │
+│  (0-Mile)    │  │  (Bago 39M)    │  │  (Mandalay)  │
 │  SQLite      │  │  SQLite        │  │  SQLite      │
 │  RFID Reader │  │  RFID Reader   │  │  RFID Reader │
 │  Sync Engine │  │  Sync Engine   │  │  Sync Engine │
-│  Admin Panel │  │  Admin Panel   │  │  Admin Panel │
+│  Booth Panel │  │  Booth Panel   │  │  Booth Panel │
 └──────────────┘  └────────────────┘  └──────────────┘
 ```
 
+---
+
 ## Server Components
 
-| Server | Location | Port | Purpose |
-|--------|----------|------|---------|
-| HQ Backend | Cloud | 3000 | Central API, sync, analytics |
-| Admin Portal | Cloud | 80 | Highway administration dashboard |
-| Customer Portal | Cloud | 8080 | Vehicle owner portal |
-| Storage Server | Cloud | 5000 | Photos, ANPR captures, documents |
-| Plaza Server | Each RPi | 4000 | Local toll operations, offline-first |
-| Toll Simulator | HQ | 80/simulator | Animated toll simulation |
+| Server | Location | Default Port | Purpose |
+|---|---|---|---|
+| **HQ Admin Command Hub** | Cloud / Server | `80` | Highway administration dashboard, interactive map & operator console |
+| **Customer Portal (PWA)** | Cloud / Server | `8080` | Driver digital wallet, vehicle management, and virtual RFID QR pass |
+| **HQ Backend API** | Cloud / Server | `3000` | Central API, RTAD OCR engine, delta sync engine, WebSockets |
+| **Storage Server** | Cloud / Server | `5000` | Vehicle photos, ANPR captures, violation proof documents |
+| **Plaza Edge Server** | Each RPi | `4000` | Local offline-first toll operations, barrier triggers, serial RFID |
+| **Toll Simulator** | HQ Stack | `80/simulator` | Real-time animated canvas multi-lane toll simulation |
+
+---
+
+## Key Features
+
+### 1. 🪪 Myanmar RTAD Wheel Tax AI Scanner & OCR
+- **Dual-Side Auto Recognition**: Scans both Front and Back of Myanmar RTAD (ကညန စာအုပ် / စမတ်ကတ်) registration cards.
+- **Auto-Extracts Key Fields**: License Plate (`4D-5918`), Model Year (`2009`), Make & Model (`Honda Civic FD3`), Color (`Gray`), Engine No (`LDA-1372845`), Chassis No (`FD3-1302842`), and Owner (`U NYI NYI MIN`).
+- **Chassis & VIN Decoder**: Automatically identifies vehicle make, model, and class (`SEDAN`, `SUV`, `TRUCK`, `BUS`, `MOTORCYCLE`).
+- **1-Click Auto-Fill**: Available in Customer Portal (`My Vehicles`) and Admin Command Hub (`Vehicles`).
+
+### 2. 🚦 HQ Command Hub & Operator Console
+- **Interactive Multi-Plaza Highway Map**: Visualizes 6 major expressway plazas across 352 miles (Yangon 0-Mile, Bago 39M, Phyu 115M, Naypyitaw 201M, Meiktila 285M, Mandalay 352M) with real-time throughput and health telemetry.
+- **Operator Quick Action Ribbon**: Shift tracking, live lane indicators, and barrier overrides (`Auto`, `Force Open`, `Lock Gate`).
+- **Instant Booth Dynamic QR Code**: Generates on-the-spot KBZPay / WavePay / MMQR codes for low-balance drivers at the barrier to clear transactions instantly.
+- **Peak-Hour Traffic Analytics**: Hourly vehicle throughput distribution charts with congestion thresholds.
+- **Violation Workbench**: Review flagged ANPR mismatch events with visual snapshot proof.
+
+### 3. 📱 Customer Portal (Progressive Web App)
+- **Installable PWA**: Works on iOS and Android home screens without app store downloads.
+- **Digital Toll Pass (Virtual RFID)**: Rotating optical QR code usable as a fallback if the windshield RFID tag is damaged.
+- **Low-Balance Auto Alert**: Dynamic warning banner with 1-click top-up when balance drops below K3,000.
+- **Prepaid Wallet & Receipts**: Instant balance top-up via KBZPay, WavePay, and MMQR with downloadable trip receipts.
+
+### 4. 🔄 Resilient Offline-First Edge Sync (Plaza ↔ HQ)
+- **Zero-Downtime Local SQLite**: Continues processing RFID tags and ANPR plates during network dropouts.
+- **Queue-based Delta Sync**: Automatically pushes buffered transactions and pulls updated blacklists/rates once connectivity restores.
+
+---
 
 ## Tech Stack
 
 | Layer | Technology |
-|-------|------------|
-| Frontend | React 18, TypeScript, Vite, Tailwind CSS, Recharts |
-| Customer Portal | React 18, TypeScript, Vite, Tailwind CSS |
-| HQ Backend | Express, TypeScript, Prisma ORM, PostgreSQL |
-| Plaza Server | Express, TypeScript, Prisma ORM, SQLite |
-| Storage Server | Express, TypeScript, Multer, Sharp |
-| Toll Simulator | Vanilla JS, Canvas API, Real-time animation |
-| RFID Support | Serial (RS232/USB) + TCP/IP readers |
-| Deployment | Docker Compose |
+|---|---|
+| **Admin Frontend** | React 18, TypeScript, Vite, Tailwind CSS, Recharts, Lucide Icons |
+| **Customer Portal** | React 18, TypeScript, Vite, Tailwind CSS, PWA Service Worker |
+| **HQ Backend** | Node.js, Express, TypeScript, Prisma ORM, PostgreSQL |
+| **Edge Plaza Server** | Express, TypeScript, Prisma ORM, SQLite |
+| **File Storage** | Express, Multer, Sharp image optimizer |
+| **Simulator** | HTML5 Canvas API, Vanilla JS, Real-time physics engine |
+| **Hardware Interfacing** | Serial RS232 / USB RFID readers, TCP/IP ANPR optical cameras |
+| **Containers & Orchestration** | Docker & Docker Compose v2 |
 
-## Project Structure
+---
 
-```
-tollgate-rfid-pass/
-├── packages/
-│   ├── backend/              # HQ Express API server
-│   │   ├── src/modules/      # Feature modules
-│   │   └── prisma/           # PostgreSQL schema & migrations
-│   ├── frontend/             # Admin dashboard (React)
-│   ├── customer-portal/      # Customer portal (React)
-│   ├── plaza-server/         # Raspberry Pi plaza server
-│   │   ├── src/services/     # RFID reader, sync engine, toll processor
-│   │   ├── src/admin-panel/  # Built-in admin UI
-│   │   └── prisma/           # SQLite schema
-│   ├── storage-server/       # File storage server
-│   ├── hq-server/            # HQ sync endpoints
-│   ├── simulator/            # RFID/ANPR simulator CLI
-│   ├── simulator-ui/         # Animated toll simulator (Canvas)
-│   └── shared/               # Shared types
-├── scripts/
-│   ├── deploy-hq.sh          # HQ server deployment
-│   └── deploy-plaza.sh       # Plaza server deployment (RPi)
-├── docker-compose.hq.yml     # HQ stack
-└── docker-compose.yml        # Development
-```
-
-## Quick Start
-
-### Development (Local)
+## Quick Start (Docker)
 
 ```bash
-# 1. Start database
-docker-compose up -d
+# 1. Clone repository
+git clone https://github.com/MinNyi83/Highway-TollGate-MGMT-.git
+cd Highway-TollGate-MGMT-
 
-# 2. Install dependencies
-npm install
+# 2. Build and launch full Docker stack
+docker compose up -d --build
 
-# 3. Setup database
-cd packages/backend
-npm run db:generate
-npm run db:migrate
-npm run db:seed
-
-# 4. Start services
-npm run dev          # Backend: http://localhost:3000
-cd ../frontend && npm run dev          # Admin: http://localhost:5173
-cd ../customer-portal && npm run dev   # Customer: http://localhost:8080
-cd ../simulator-ui && npm run dev      # Simulator: http://localhost:5174
+# 3. Seed initial test accounts & plazas
+docker compose exec backend npx prisma migrate deploy
+docker compose exec backend npx tsx prisma/seed.ts
 ```
 
-### Production (HQ Server)
+Access the services in your browser:
+- **Admin Command Hub**: `http://localhost` (or `http://<SERVER_IP>`)
+- **Customer Portal (PWA)**: `http://localhost:8080` (or `http://<SERVER_IP>:8080`)
+- **Backend Health Check**: `http://localhost:3000/api/health`
 
+---
+
+## Testing & Validation
+
+Run the complete test suite across all feature modules:
 ```bash
-chmod +x scripts/deploy-hq.sh
-./scripts/deploy-hq.sh
+npm test --workspace=@tollgate/backend
 ```
+> **Result**: `Test Suites: 10 passed, 10 total. Tests: 54 passed, 54 total.`
 
-### Plaza Server (Each Raspberry Pi)
+---
 
-```bash
-chmod +x scripts/deploy-plaza.sh
-./scripts/deploy-plaza.sh plaza-001 "0 Mile Plaza" "0MILE" "http://hq-server:3000" "sync-token"
-```
+## Default Login Credentials
 
-## Login Credentials
+### HQ Admin Portal ([http://localhost](http://localhost))
+- **System Admin**: `admin@tollgate.com` / `password123`
+- **Manager**: `manager@tollgate.com` / `password123`
+- **Booth Operator 1**: `operator1@tollgate.com` / `password123`
+- **Auditor / Viewer**: `viewer@tollgate.com` / `password123`
 
-### HQ Server
+### Customer Portal (PWA) ([http://localhost:8080](http://localhost:8080))
+- **Individual Driver**: `ko.min@personal.com` / `password123`
+- **Enterprise Fleet**: `fleet@transportco.com` / `password123`
 
-| Email | Password | Role |
-|-------|----------|------|
-| admin@tollgate.com | admin123 | Admin |
-| operator@tollgate.com | operator123 | Operator |
-| viewer@tollgate.com | viewer123 | Viewer |
-
-### Customer Portal
-
-| Email | Password | Role |
-|-------|----------|------|
-| ko.min@personal.com | password123 | Customer |
-| fleet@transportco.com | password123 | Enterprise |
-
-### Plaza Server
-
-| Email | Password | Role |
-|-------|----------|------|
-| admin@plaza.local | admin123 | Plaza Admin |
-
-## Toll Simulator
-
-The animated toll simulator visualizes vehicles passing through toll plazas in real-time.
-
-### Access
-- **URL**: `http://your-server/simulator`
-- **Local**: `http://localhost:5174`
-
-### Features
-- **4-lane highway**: 2 lanes UP + 2 lanes DOWN with median separator
-- **3 toll plazas**: 0 Mile, 15 Mile, 30 Mile with booths, RFID antennas, ANPR cameras
-- **4 vehicle types**: Sedan (K1,000), SUV (K1,500), Truck (K2,000), Bus (K4,000)
-- **Real-time effects**: Glow on RFID read, payment animation, violation alerts
-- **Scenario modes**: Normal, Rush Hour, Holiday, Night
-- **Controls**: Vehicle count (5-100), Speed (1-5x), Start/Pause/Stop
-- **Live stats**: Passed vehicles, Revenue (MMK), On Road, Violations
-- **Event log**: Real-time feed of all toll interactions
-
-### Simulator Controls
-
-| Control | Description |
-|---------|-------------|
-| Scenario | Normal / Rush Hour / Holiday / Night traffic patterns |
-| Count | Number of vehicles on highway (5-100) |
-| Speed | Animation speed (1=slow, 5=fast) |
-| Start | Begin simulation |
-| Pause | Pause/resume simulation |
-| Stop | Stop simulation and reset |
-
-### Vehicle Types
-
-| Type | Color | Toll Rate |
-|------|-------|-----------|
-| Sedan | Blue | K 1,000 |
-| SUV | Green | K 1,500 |
-| Truck | Red | K 2,000 |
-| Bus | Yellow | K 4,000 |
-
-### Event Types
-
-| Event | Color | Description |
-|-------|-------|-------------|
-| RFID | Yellow | Tag detected at plaza |
-| Entry | Green | Vehicle entry recorded |
-| Payment | Purple | Toll payment processed |
-| Violation | Red | No RFID tag detected |
-
-## API Endpoints
-
-### HQ Backend (port 3000)
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/login` | Login |
-| GET | `/api/vehicles` | List vehicles |
-| POST | `/api/vehicles` | Create vehicle |
-| GET | `/api/toll-events` | List toll events |
-| GET | `/api/reports/revenue` | Revenue report |
-| GET | `/api/reports/transactions/excel` | Export Excel |
-
-### Plaza Server (port 4000)
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/health` | Health check |
-| GET | `/api/config` | Plaza configuration |
-| GET | `/api/events` | Today's toll events |
-| GET | `/api/vehicles` | Local vehicles |
-| GET | `/api/sync/status` | Sync queue status |
-| POST | `/api/admin/login` | Plaza admin login |
-
-### Storage Server (port 5000)
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/upload/vehicle` | Upload vehicle photo |
-| POST | `/api/upload/anpr` | Upload ANPR capture |
-| GET | `/files/:type/:filename` | Serve files |
-| GET | `/api/stats` | Storage statistics |
-
-### Sync API (HQ port 3000)
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/sync/push` | Plaza → HQ data sync |
-| POST | `/api/sync/pull` | HQ → Plaza data sync |
-| POST | `/api/sync/plazas` | Register new plaza |
-| GET | `/api/sync/plazas` | Get all plazas status |
-
-## Features
-
-### HQ Admin Dashboard
-- Real-time monitoring across all plazas
-- Revenue analytics and reporting
-- Vehicle registration and management
-- RFID tag management
-- Violation tracking
-- Plaza management (CRUD)
-- Excel export for reports
-- Dark mode support
-
-### Plaza Server (Raspberry Pi)
-- **Offline-first**: All toll operations work without internet
-- **Local SQLite**: Fast, reliable local database
-- **RFID Reader**: Serial (USB) and TCP/IP support
-- **Built-in Admin Panel**: Web UI for toll employees
-- **Sync Engine**: Automatic bidirectional sync with HQ
-- **Queue-based**: Stores pending sync items when offline
-
-### Customer Portal
-- Vehicle registration (requires admin approval)
-- Toll history with detailed receipts
-- Account balance and top-up
-- Payment via KBZ Pay, Wave Pay, MMQR
-- Dark mode support
-
-### Toll Simulator
-- Visual 4-lane highway with 3 toll plazas
-- Real-time animated vehicles with RFID/ANPR effects
-- Scenario-based traffic simulation
-- Revenue tracking in MMK
-- Back button to admin portal
-
-### Sync Protocol
-- **Bidirectional**: Plaza → HQ (events, vehicles) / HQ → Plaza (rates, blacklists)
-- **Conflict Resolution**: Last-write-wins with retry
-- **Queue-based**: Pending items stored in sync queue
-- **Automatic Retry**: Exponential backoff on failures
-- **Manual Retry**: Force retry from admin panel
-
-## Hardware Requirements
-
-### Plaza Server (Raspberry Pi)
-- Raspberry Pi 4 (2GB+ RAM recommended)
-- 32GB+ microSD card
-- USB-to-Serial adapter (for RFID reader)
-- Ethernet or WiFi connection
-- UPS/battery backup recommended
-
-### RFID Reader
-- **Serial**: RS232/USB RFID reader (Impinj, Zebra, etc.)
-- **TCP/IP**: Network-connected RFID reader
-- Supports standard RFID protocols
-
-## Database
-
-### HQ Database (PostgreSQL)
-- Users, accounts, vehicles, RFID tags
-- Toll plazas, rates, events, transactions
-- Violations, notifications, device status
-- Promo codes, loyalty points, webhooks
-
-### Plaza Database (SQLite)
-- Local vehicles and RFID tags
-- Toll events (entry/exit)
-- Sync queue for pending items
-- Device status and audit logs
-
-## Deployment
-
-### Network Requirements
-- HTTPS API calls for sync
-- WebSocket for real-time updates (optional)
-- Minimum 1Mbps bandwidth per plaza
-- VPN recommended for production
-
-### Offline Tolerance
-- Plazas can operate indefinitely offline
-- Sync queue stores up to 10,000 events
-- Automatic retry with exponential backoff
-- Manual force retry available
+---
 
 ## License
 
-MIT
+This project is licensed under the [MIT License](LICENSE).

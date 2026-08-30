@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import api from '../lib/api';
-import { Plus, Search, X, Upload, Image, Edit, Trash2, CreditCard, CheckCircle, XCircle, Clock, AlertTriangle } from 'lucide-react';
+import { Plus, Search, X, Upload, Image, Edit, Trash2, CreditCard, CheckCircle, XCircle, Clock, AlertTriangle, Sparkles } from 'lucide-react';
+import OcrScannerModal, { ExtractedVehicleData } from '../components/command-hub/OcrScannerModal';
 
 interface Vehicle {
   id: string;
@@ -181,6 +182,9 @@ export default function Vehicles() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Vehicles</h1>
         <div className="flex gap-2">
+          <button onClick={() => setShowForm(true)} className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:from-cyan-500 hover:to-blue-500 font-medium shadow-sm">
+            <Sparkles size={18} /> Scan Document (AI)
+          </button>
           <button onClick={() => setShowImport(true)} className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-green-700">
             <Upload size={20} /> Import CSV
           </button>
@@ -339,6 +343,7 @@ export default function Vehicles() {
 }
 
 function VehicleForm({ vehicle, onClose, onSubmit }: { vehicle?: Vehicle; onClose: () => void; onSubmit: (fd: FormData) => void }) {
+  const [showOcrModal, setShowOcrModal] = useState(false);
   const [plateNumber, setPlateNumber] = useState(vehicle?.plateNumber || '');
   const [make, setMake] = useState(vehicle?.make || '');
   const [model, setModel] = useState(vehicle?.model || '');
@@ -351,6 +356,25 @@ function VehicleForm({ vehicle, onClose, onSubmit }: { vehicle?: Vehicle; onClos
   const [wheelTaxCards, setWheelTaxCards] = useState<(File | null)[]>([null, null]);
   const [vehiclePreviews, setVehiclePreviews] = useState<(string | null)[]>([null, null]);
   const [taxPreviews, setTaxPreviews] = useState<(string | null)[]>([null, null]);
+
+  const handleOcrApply = (data: ExtractedVehicleData, file?: File) => {
+    setPlateNumber(data.plateNumber);
+    setMake(data.make);
+    setModel(data.model);
+    setYear(data.year.toString());
+    setColor(data.color || 'Gray');
+    setVehicleClass(data.vehicleClass || 'SEDAN');
+
+    if (file) {
+      const newCards = [...wheelTaxCards];
+      newCards[0] = file;
+      setWheelTaxCards(newCards);
+
+      const newPreviews = [...taxPreviews];
+      newPreviews[0] = URL.createObjectURL(file);
+      setTaxPreviews(newPreviews);
+    }
+  };
 
   const existingVehiclePhotos = vehicle ? (() => { try { return JSON.parse(vehicle.vehiclePhoto || '[]'); } catch { return vehicle.vehiclePhoto ? [vehicle.vehiclePhoto] : []; } })() : [];
   const existingTaxPhotos = vehicle ? (() => { try { return JSON.parse(vehicle.wheelTaxCard || '[]'); } catch { return vehicle.wheelTaxCard ? [vehicle.wheelTaxCard] : []; } })() : [];
@@ -437,7 +461,19 @@ function VehicleForm({ vehicle, onClose, onSubmit }: { vehicle?: Vehicle; onClos
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center p-4 border-b">
-          <h2 className="text-lg font-bold">{vehicle ? 'Edit Vehicle' : 'Register New Vehicle'}</h2>
+          <div className="flex items-center gap-3">
+            <h2 className="text-lg font-bold">{vehicle ? 'Edit Vehicle' : 'Register New Vehicle'}</h2>
+            {!vehicle && (
+              <button
+                type="button"
+                onClick={() => setShowOcrModal(true)}
+                className="text-xs bg-cyan-50 text-cyan-700 border border-cyan-300 px-2.5 py-1 rounded-md flex items-center gap-1.5 hover:bg-cyan-100 font-semibold"
+              >
+                <Sparkles size={13} />
+                Auto-Fill from RTAD Card
+              </button>
+            )}
+          </div>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700"><X size={20} /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-4 space-y-4">
@@ -512,6 +548,13 @@ function VehicleForm({ vehicle, onClose, onSubmit }: { vehicle?: Vehicle; onClos
             </button>
           </div>
         </form>
+
+        {/* RTAD Document OCR Scanner Modal */}
+        <OcrScannerModal
+          isOpen={showOcrModal}
+          onClose={() => setShowOcrModal(false)}
+          onApply={handleOcrApply}
+        />
       </div>
     </div>
   );

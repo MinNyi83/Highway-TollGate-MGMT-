@@ -7,8 +7,15 @@ describe('Vehicle + RFID Flow', () => {
   beforeAll(async () => {
     const registerResponse = await request(app)
       .post('/api/auth/register')
-      .send({ email: `vehicle-test-${Date.now()}@example.com`, password: 'password123', name: 'Vehicle Test', role: 'ADMIN' });
-    token = registerResponse.body.accessToken;
+      .send({
+        email: `vehicle-test-${Date.now()}@example.com`,
+        password: 'password123',
+        name: 'Vehicle Test',
+        role: 'ADMIN',
+        customerType: 'INDIVIDUAL',
+        nrcNumber: '12/VEH(N)123456',
+      });
+    token = registerResponse.body.token || registerResponse.body.accessToken;
   });
 
   describe('Vehicle Creation', () => {

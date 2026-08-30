@@ -1,565 +1,171 @@
-# TollGate RFID - User Guide
+# Highway TollGate RFID Management System - Comprehensive User Guide
 
 ## Table of Contents
 
-1. [Overview](#overview)
-2. [System Architecture](#system-architecture)
-3. [HQ Admin Portal](#hq-admin-portal)
-4. [Toll Simulator](#toll-simulator)
-5. [Plaza Server Admin Panel](#plaza-server-admin-panel)
-6. [Customer Portal](#customer-portal)
-7. [RFID Reader Setup](#rfid-reader-setup)
-8. [Sync & Offline Operation](#sync--offline-operation)
-9. [Troubleshooting](#troubleshooting)
+1. [System Overview & Access URLs](#system-overview--access-urls)
+2. [HQ Admin Command Hub & Operator Console](#hq-admin-command-hub--operator-console)
+   - [Operator Quick Actions Ribbon](#operator-quick-actions-ribbon)
+   - [Interactive Highway Map View](#interactive-highway-map-view)
+   - [Instant Booth Dynamic QR Payment](#instant-booth-dynamic-qr-payment)
+   - [Gate Barrier State Overrides](#gate-barrier-state-overrides)
+   - [Peak-Hour Traffic Analytics](#peak-hour-traffic-analytics)
+   - [Myanmar RTAD Wheel Tax AI Scanner & OCR](#myanmar-rtad-wheel-tax-ai-scanner--ocr)
+   - [Vehicle & RFID Tag Management](#vehicle--rfid-tag-management)
+   - [Violation Workbench](#violation-workbench)
+3. [Customer Portal & Progressive Web App (PWA)](#customer-portal--progressive-web-app-pwa)
+   - [Mobile PWA Installation](#mobile-pwa-installation)
+   - [Digital Toll Pass (Virtual RFID QR)](#digital-toll-pass-virtual-rfid-qr)
+   - [Prepaid Wallet & Dynamic Top-Up](#prepaid-wallet--dynamic-top-up)
+   - [One-Click Vehicle Registration via RTAD Card](#one-click-vehicle-registration-via-rtad-card)
+   - [Low Balance Alerts](#low-balance-alerts)
+4. [Toll Simulator (Canvas Multi-Lane Highway)](#toll-simulator-canvas-multi-lane-highway)
+5. [Plaza Edge Server (Offline-First Raspberry Pi)](#plaza-edge-server-offline-first-raspberry-pi)
+6. [Hardware & Reader Setup](#hardware--reader-setup)
+7. [Sync Engine & Network Fault Tolerance](#sync-engine--network-fault-tolerance)
+8. [Troubleshooting & FAQ](#troubleshooting--faq)
 
 ---
 
-## Overview
+## 1. System Overview & Access URLs
 
-The TollGate RFID system manages highway toll collection using RFID tags and ANPR (Automatic Number Plate Recognition). It consists of:
+The system is deployed as a distributed stack with cloud HQ coordination and edge toll plaza servers:
 
-- **HQ Server** (Cloud): Central management, analytics, customer portal
-- **Plaza Servers** (Raspberry Pi): Local toll operations at each plaza
-- **Storage Server**: Vehicle photos and ANPR captures
-- **Toll Simulator**: Animated visualization of toll operations
-
----
-
-## System Architecture
-
-```
-Cloud (HQ):
-├── Admin Portal (http://your-server)
-├── Customer Portal (http://your-server:8080)
-├── Toll Simulator (http://your-server/simulator)
-├── Backend API (http://your-server:3000)
-├── Storage Server (http://your-server:5000)
-└── PostgreSQL Database
-
-Each Plaza (Raspberry Pi):
-├── Plaza Admin Panel (http://raspberry-pi:4000/admin)
-├── Plaza API (http://raspberry-pi:4000)
-├── SQLite Database (local)
-├── RFID Reader (Serial/TCP)
-└── Sync Engine (automatic)
-```
+| Portal | Port | Default URL | Purpose |
+|---|---|---|---|
+| **HQ Admin Command Hub** | `80` | `http://<SERVER_IP>` | Central telemetry, operator ribbon, highway map, reports |
+| **Customer Portal (PWA)** | `8080` | `http://<SERVER_IP>:8080` | Driver digital wallet, virtual RFID pass, trip history |
+| **Central Backend API** | `3000` | `http://<SERVER_IP>:3000` | REST API, WebSocket streams, OCR engine, payment webhooks |
+| **Storage Server** | `5000` | `http://<SERVER_IP>:5000` | ANPR captures, license plate snapshots, receipts |
+| **Toll Simulator** | `80` | `http://<SERVER_IP>/simulator` | Real-time animated canvas multi-lane simulation |
+| **Plaza Edge Server** | `4000` | `http://<PLAZA_IP>:4000` | Offline-first booth operation, serial RFID controller |
 
 ---
 
-## HQ Admin Portal
+## 2. HQ Admin Command Hub & Operator Console
 
-### Login
-
-1. Open browser to `http://your-server`
-2. Enter credentials:
-   - Email: `admin@tollgate.com`
-   - Password: `admin123`
-
-### Dashboard
-
-The dashboard shows:
-- **Today's Statistics**: Events, revenue, active vehicles
-- **Revenue Chart**: Daily revenue trend
-- **Recent Events**: Latest toll transactions
-- **Device Status**: RFID reader and ANPR status
-
-### Vehicle Management
-
-#### Adding a Vehicle
-
-1. Click **Vehicles** in sidebar
-2. Click **Add Vehicle** button
-3. Fill in details:
-   - Plate Number (required)
-   - Make, Model, Year, Color
-   - Vehicle Class (Sedan, SUV, Truck, etc.)
-   - Upload vehicle photo
-4. Click **Save**
-
-#### Approving Vehicles
-
-When customers register vehicles:
-1. Go to **Vehicles** → **Pending Approval** tab
-2. Review vehicle details
-3. Click **Approve** or **Reject** (with reason)
-4. Customer receives notification
-
-#### Binding RFID Tags
-
-1. Go to vehicle detail page
-2. Click **Bind RFID Tag**
-3. Enter tag UID (from RFID sticker)
-4. Click **Bind**
-
-### Toll Plaza Management
-
-1. Click **Toll Plazas** in sidebar
-2. **Add Plaza**: Name, gate code, mile marker, location
-3. **Edit Plaza**: Update rates, lanes, status
-4. **View Stats**: Events and revenue per plaza
-
-### Reports
-
-1. Click **Reports** in sidebar
-2. Select report type:
-   - Revenue Report
-   - Transaction Report
-   - Violation Report
-   - Toll Events Report
-3. Set date range
-4. Click **Export Excel** for download
+### Default Credentials
+- **Admin**: `admin@tollgate.com` / `password123`
+- **Manager**: `manager@tollgate.com` / `password123`
+- **Booth Operator 1**: `operator1@tollgate.com` / `password123`
+- **Auditor / Viewer**: `viewer@tollgate.com` / `password123`
 
 ---
 
-## Toll Simulator
-
-The animated toll simulator provides a visual representation of vehicles passing through toll plazas with real-time RFID and ANPR detection effects.
-
-### Access
-
-- **URL**: `http://your-server/simulator`
-- **Local Development**: `http://localhost:5174`
-
-### Highway Layout
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                    0 Mile    15 Mile    30 Mile          │
-│                    [BOOTH]   [BOOTH]   [BOOTH]          │
-│  UP →   [LANE 1] ───────────────────────────────────→  │
-│         [LANE 2] ───────────────────────────────────→  │
-│  ══════════════════ MEDIAN ═══════════════════════════  │
-│  ← DOWN [LANE 3] ←───────────────────────────────────  │
-│         [LANE 4] ←───────────────────────────────────  │
-│                    [BOOTH]   [BOOTH]   [BOOTH]          │
-└─────────────────────────────────────────────────────────┘
-```
-
-### Controls
-
-| Control | Options | Description |
-|---------|---------|-------------|
-| Scenario | Normal, Rush Hour, Holiday, Night | Traffic pattern |
-| Count | 5-100 | Number of vehicles |
-| Speed | 1-5 | Animation speed |
-| Start | Button | Begin simulation |
-| Pause | Button | Pause/resume |
-| Stop | Button | Stop and reset |
-
-### Vehicle Types
-
-| Type | Color | Toll (MMK) | Width |
-|------|-------|------------|-------|
-| Sedan | Blue | 1,000 | 44px |
-| SUV | Green | 1,500 | 50px |
-| Truck | Red | 2,000 | 65px |
-| Bus | Yellow | 4,000 | 75px |
-
-### Event Types
-
-| Event | Color | Indicator | Description |
-|-------|-------|-----------|-------------|
-| RFID | Yellow | Yellow ring | Tag detected at plaza |
-| Entry | Green | Green glow | Vehicle entry recorded |
-| Payment | Purple | K symbol | Toll payment processed |
-| Violation | Red | ! symbol | No RFID tag detected |
-
-### Statistics
-
-- **Passed**: Total vehicles that passed through plazas
-- **Revenue**: Total toll collected (MMK)
-- **On Road**: Vehicles currently on highway
-- **Violations**: Vehicles without RFID tags
-
-### Scenario Modes
-
-| Mode | Traffic | Speed | Description |
-|------|---------|-------|-------------|
-| Normal | Medium | Normal | Standard traffic flow |
-| Rush Hour | High | Fast | Peak hours, more vehicles |
-| Holiday | Very High | Fast | Festival/holiday traffic |
-| Night | Low | Slow | Late night, few vehicles |
-
-### Back Button
-
-Click **← Back** in the header to return to the admin portal.
+### Operator Quick Actions Ribbon
+Located at the top of the Command Hub, the Operator Ribbon provides instant actions for booth cashiers and supervisors:
+1. **Shift Indicator**: Displays current shift status (e.g., `ACTIVE SHIFT #04 • Lane 01-A`).
+2. **Log Vehicle Entry**:
+   - Manually record a vehicle passing through the plaza.
+   - Automatically computes toll fee based on vehicle class (`SEDAN`, `SUV`, `VAN`, `BUS`, `TRUCK`).
+   - Instantly triggers the barrier clear animation.
+3. **Quick Tag/Plate Search**: Instant popover to inspect vehicle owner, registered class, and prepaid account balance without navigating away from the dashboard.
 
 ---
 
-## Plaza Server Admin Panel
-
-### Accessing the Panel
-
-1. Open browser to `http://raspberry-pi:4000/admin`
-2. Login with:
-   - Email: `admin@plaza.local`
-   - Password: `admin123`
-
-### Overview Tab
-
-Shows real-time statistics:
-- **Today's Events**: Total entry/exit events
-- **Today's Revenue**: Total collected (MMK)
-- **Pending Sync**: Items waiting to sync with HQ
-- **Devices Online**: RFID reader status
-
-### Events Tab
-
-Lists today's toll events:
-- **Time**: When the event occurred
-- **Vehicle**: Plate number and vehicle info
-- **RFID**: Tag UID if detected
-- **Status**: ENTRY or COMPLETED
-- **Amount**: Toll charged (MMK)
-
-### Vehicles Tab
-
-Shows locally registered vehicles:
-- **Plate Number**: Vehicle identifier
-- **Make/Model**: Vehicle details
-- **Class**: Vehicle class for rate calculation
-- **Synced**: Whether synced with HQ
-
-### Sync Queue Tab
-
-Monitors synchronization with HQ:
-- **Pending**: Items waiting to sync
-- **Completed**: Successfully synced items
-- **Failed**: Items that failed to sync
-- **Force Retry**: Button to retry failed items
-
-### Devices Tab
-
-Shows connected hardware:
-- **RFID Reader**: Serial/TCP connection status
-- **ANPR Camera**: Camera connection status
-- **Last Heartbeat**: When device was last seen
-
-### Settings Tab
-
-Configure plaza settings:
-- **Plaza Name**: Display name
-- **Gate Code**: Unique identifier (e.g., "0MILE")
-- **HQ Server URL**: Address of HQ server
-- **Enable Sync**: Turn sync on/off
+### Interactive Highway Map View
+Click the **"Highway Map"** button on the Operator Ribbon to open the full expressway map:
+- **Coverage**: Maps 6 primary plazas spanning **352 miles** along the Yangon – Mandalay Expressway:
+  - Yangon 0-Mile (`0MILE`, 6 lanes)
+  - Bago Bypass (`BAGO39`, 4 lanes)
+  - Phyu Rest Stop (`PHYU115`, 4 lanes)
+  - Naypyitaw Southern Gate (`NPT201`, 6 lanes)
+  - Meiktila Junction (`MEIK285`, 4 lanes)
+  - Mandalay Gate (`MDY352`, 6 lanes)
+- **Real-Time Telemetry**: Click any plaza marker to view active lane counts, hourly throughput (vph), daily revenue estimates, and RFID/ANPR camera health.
 
 ---
 
-## Customer Portal
-
-### Registration
-
-1. Go to `http://your-server:8080`
-2. Click **Register**
-3. Fill in:
-   - Name, Email, Phone
-   - Password
-4. Click **Register**
-5. Login with your credentials
-
-### Dashboard
-
-Shows:
-- **Account Balance**: Current balance (MMK)
-- **Total Vehicles**: Number of registered vehicles
-- **Total Trips**: Number of toll events
-- **Recent Activity**: Latest toll transactions
-
-### My Vehicles
-
-#### Registering a Vehicle
-
-1. Click **My Vehicles**
-2. Click **Register Vehicle**
-3. Fill in details:
-   - Plate Number (required)
-   - Make, Model, Year, Color
-   - Vehicle Class
-   - Upload vehicle photos (front, back)
-   - Upload wheel tax card
-4. Click **Submit**
-5. Vehicle status: **PENDING** (awaiting admin approval)
-
-#### Vehicle Status
-
-- **Pending**: Awaiting admin approval
-- **Approved**: Vehicle active, RFID tag can be bound
-- **Rejected**: Admin rejected (see reason)
-
-### Toll History
-
-View all toll transactions:
-- **Date/Time**: When toll was collected
-- **Vehicle**: Plate number
-- **Plaza**: Which toll plaza
-- **Amount**: Toll charged (MMK)
-- **Status**: Paid/Unpaid
-
-### Account
-
-#### Top Up Balance
-
-1. Click **Account**
-2. Click **Top Up**
-3. Enter amount (MMK)
-4. Select payment method:
-   - **KBZ Pay**: Scan QR with KBZ Pay app
-   - **Wave Pay**: Scan QR with Wave Pay app
-   - **MMQR**: Scan QR with any Myanmar QR app
-5. Complete payment
-6. Balance updated automatically
-
-#### Payment Instructions
-
-**KBZ Pay:**
-1. Open KBZ Pay app
-2. Tap **Scan to Pay**
-3. Scan the QR code
-4. Confirm payment amount
-5. Enter PIN
-
-**Wave Pay:**
-1. Open Wave Pay app
-2. Tap **Scan**
-3. Scan the QR code
-4. Confirm payment
-
-**MMQR:**
-1. Open your bank's mobile app
-2. Select **QR Payment**
-3. Scan the QR code
-4. Confirm payment
-
-### Dark Mode
-
-Click the sun/moon icon in the header to toggle dark mode.
+### Instant Booth Dynamic QR Payment
+When a driver reaches the toll gate with an unlinked RFID tag or insufficient prepaid balance:
+1. Click **"Instant Booth QR"** on the Operator Ribbon.
+2. Enter the license plate number (e.g., `4D-5918` or `7B-8899`) and select the vehicle class.
+3. Present the generated dynamic **KBZPay / WavePay / MMQR** code to the driver.
+4. Once scanned and paid, the barrier automatically unlocks and raises.
 
 ---
 
-## RFID Reader Setup
-
-### Serial (USB) Reader
-
-1. Connect RFID reader to Raspberry Pi USB port
-2. Check device: `ls /dev/ttyUSB*`
-3. Configure plaza server:
-
-```env
-RFID_TYPE=serial
-RFID_SERIAL_PORT=/dev/ttyUSB0
-RFID_BAUD_RATE=9600
-```
-
-4. Add user to dialout group: `sudo usermod -a -G dialout $USER`
-5. Restart plaza server
-
-### TCP/IP Reader
-
-1. Connect RFID reader to network
-2. Find reader's IP address
-3. Configure plaza server:
-
-```env
-RFID_TYPE=tcp
-RFID_TCP_HOST=192.168.1.100
-RFID_TCP_PORT=5000
-```
-
-4. Restart plaza server
-
-### Testing RFID Reader
-
-1. Go to plaza admin panel → Devices tab
-2. Check RFID Reader status shows "ONLINE"
-3. Scan a tag
-4. Check Events tab for new entry
+### Myanmar RTAD Wheel Tax AI Scanner & OCR
+Booth operators and administrative staff can register customer vehicles in seconds by scanning physical Myanmar RTAD (Road Transport Administration Department / ကညန) registration cards:
+1. Navigate to **Vehicles** in the sidebar.
+2. Click **"✨ Scan Document (AI)"** or open **"Add Vehicle"** ➔ **"Auto-Fill from RTAD Card"**.
+3. Upload or snap a photo of the card (supports both Front & Back sides).
+4. The system automatically reads and populates:
+   - **Plate Number** (e.g. `4D-5918` / `YGN 4D-5918`)
+   - **Model Year** (e.g. `2009`)
+   - **Make & Model** (e.g. `Honda Civic FD3`)
+   - **Vehicle Class** (`SEDAN`, `SUV`, `TRUCK`, `BUS`, `MOTORCYCLE`)
+   - **Color** (e.g. `Gray`)
+   - **Engine Number & Chassis Number** (`LDA-1372845`, `FD3-1302842`)
+   - **Registered Owner & Address** (`U NYI NYI MIN`)
 
 ---
 
-## Sync & Offline Operation
+## 3. Customer Portal & Progressive Web App (PWA)
 
-### How Sync Works
+### Default Customer Logins
+- **Enterprise Fleet**: `fleet@transportco.com` / `password123`
+- **Individual Driver**: `ko.min@personal.com` / `password123`
 
-1. **Plaza → HQ**: Toll events, vehicle data sync automatically
-2. **HQ → Plaza**: Rate updates, vehicle registrations sync to plazas
-3. **Frequency**: Every 30 seconds when connected
-4. **Queue**: Pending items stored locally until sync succeeds
-
-### Offline Mode
-
-When internet is down:
-- All toll operations continue normally
-- Events stored in local SQLite database
-- Sync queue holds pending items
-- Automatic retry when connection returns
-
-### Checking Sync Status
-
-**Plaza Admin Panel:**
-1. Go to Sync Queue tab
-2. View pending/completed/failed items
-3. Click **Force Retry** to retry failed items
-
-**Via API:**
-```bash
-curl http://raspberry-pi:4000/api/sync/status
-```
-
-### Manual Sync
-
-To force sync from command line:
-```bash
-# On Raspberry Pi
-docker exec tollgate-plaza npx tsx src/services/sync-engine.ts --force
-```
+### Mobile PWA Installation
+The customer portal is a Progressive Web App (PWA) with full offline support:
+- **iOS (Safari)**: Tap Share → **"Add to Home Screen"**.
+- **Android (Chrome)**: Tap the 3 dots menu → **"Install App"**.
 
 ---
 
-## Troubleshooting
-
-### RFID Reader Not Working
-
-**Problem:** Tags not detected
-
-**Solution:**
-1. Check physical connection (USB/Network)
-2. Verify device status in admin panel
-3. Check serial port permissions:
-   ```bash
-   ls -la /dev/ttyUSB0
-   sudo usermod -a -G dialout $USER
-   ```
-4. Try different baud rate (9600, 19200, 38400)
-5. Check reader documentation for protocol
-
-### Sync Not Working
-
-**Problem:** Events not syncing to HQ
-
-**Solution:**
-1. Check internet connection: `ping your-hq-server`
-2. Verify HQ server URL in plaza settings
-3. Check sync token matches
-4. View sync queue for errors
-5. Click **Force Retry** in admin panel
-
-### Plaza Server Won't Start
-
-**Problem:** Docker container crashes
-
-**Solution:**
-1. Check logs: `docker logs tollgate-plaza`
-2. Verify database file exists: `ls data/plaza.db`
-3. Run migrations: `docker exec tollgate-plaza npx prisma db push`
-4. Check port 4000 not in use
-
-### Customer Portal Login Fails
-
-**Problem:** Cannot login to customer portal
-
-**Solution:**
-1. Verify backend is running: `curl http://localhost:3000/api/health`
-2. Check database has user: `docker exec tollgate-db psql -U postgres -d tollgate -c "SELECT * FROM users"`
-3. Clear browser localStorage
-4. Try registering a new account
-
-### Toll Simulator Not Loading
-
-**Problem:** Simulator shows blank page or errors
-
-**Solution:**
-1. Check simulator files exist: `ls /simulator/`
-2. Verify nginx config includes `/simulator` location
-3. Check browser console for JavaScript errors
-4. Refresh the page (Ctrl+F5)
-
-### High CPU on Raspberry Pi
-
-**Problem:** Raspberry Pi running slow
-
-**Solution:**
-1. Check for sync loops in logs
-2. Reduce sync frequency in cron
-3. Limit concurrent connections
-4. Consider Raspberry Pi 4 (2GB+ RAM)
+### One-Click Vehicle Registration via RTAD Card
+Drivers can add new vehicles without typing long chassis or engine numbers:
+1. Log in to the Customer Portal.
+2. Go to **My Vehicles** ➔ Click **"✨ Scan Wheel Tax (AI)"**.
+3. Snap a photo of the vehicle registration card.
+4. Review the auto-detected fields and tap **"Apply to Registration Form"**.
+5. The form is populated instantly and the card photo is attached for verification.
 
 ---
 
-## Default Credentials
-
-| Server | Email | Password | Role |
-|--------|-------|----------|------|
-| HQ Admin | admin@tollgate.com | admin123 | Admin |
-| HQ Operator | operator@tollgate.com | operator123 | Operator |
-| HQ Viewer | viewer@tollgate.com | viewer123 | Viewer |
-| Customer | ko.min@personal.com | password123 | Customer |
-| Enterprise | fleet@transportco.com | password123 | Enterprise |
-| Plaza | admin@plaza.local | admin123 | Plaza Admin |
+### Digital Toll Pass (Virtual RFID QR)
+If a driver's physical windshield RFID sticker is damaged or not yet delivered:
+1. Tap **"Digital Pass"** on the mobile dashboard.
+2. The portal renders a high-contrast dynamic QR pass linked to the driver's registered vehicles.
+3. Hold the phone up to the optical reader at the toll booth barrier to validate and pass.
+4. Auto-rotates token timestamps for anti-cloning security.
 
 ---
 
-## API Reference
-
-### Plaza Server API (port 4000)
-
-```bash
-# Health check
-curl http://raspberry-pi:4000/api/health
-
-# Get plaza config
-curl http://raspberry-pi:4000/api/config
-
-# Get today's events
-curl -H "Authorization: Bearer TOKEN" http://raspberry-pi:4000/api/events
-
-# Get sync status
-curl http://raspberry-pi:4000/api/sync/status
-
-# Get device status
-curl http://raspberry-pi:4000/api/devices
-```
-
-### HQ Sync API (port 3000)
-
-```bash
-# Push data from plaza to HQ
-curl -X POST http://hq-server:3000/api/sync/push \
-  -H "Content-Type: application/json" \
-  -H "X-Plaza-Id: plaza-001" \
-  -H "X-Sync-Token: your-token" \
-  -d '{"table":"TollEvent","recordId":"123","action":"CREATE","payload":{...}}'
-
-# Pull data from HQ to plaza
-curl -X POST http://hq-server:3000/api/sync/pull \
-  -H "Content-Type: application/json" \
-  -H "X-Plaza-Id: plaza-001" \
-  -H "X-Sync-Token: your-token" \
-  -d '{"lastSyncAt":"2026-01-01T00:00:00Z","tables":["Vehicle","RFIDTag"]}'
-```
-
-### Storage Server API (port 5000)
-
-```bash
-# Upload vehicle photo
-curl -X POST http://storage:5000/api/upload/vehicle \
-  -F "photo=@vehicle.jpg"
-
-# Upload ANPR capture
-curl -X POST http://storage:5000/api/upload/anpr \
-  -F "photo=@capture.jpg" \
-  -F "plateNumber=ABC-1234" \
-  -F "confidence=0.95"
-
-# Get storage stats
-curl http://storage:5000/api/stats
-```
+### Prepaid Wallet & Top-Up
+- **Supported Payment Channels**: KBZPay, WavePay, AYA Pay, MMQR.
+- **Auto Low-Balance Alert**: Whenever the wallet balance drops below **K3,000 MMK**, a warning banner appears with a 1-tap top-up button.
+- **Downloadable Receipts**: Export official PDF/Excel receipts for company expense reimbursement.
 
 ---
 
-## Support
+## 4. Toll Simulator (Canvas Multi-Lane Highway)
 
-For issues or questions:
-- Check this user guide
-- Review API documentation
-- Check system logs
-- Contact system administrator
+Access the live simulation at `http://<SERVER_IP>/simulator`:
+- **Highway Layout**: 4 lanes (2 Northbound, 2 Southbound) with plaza booths and median dividers.
+- **Vehicle Simulation**: Sedans, SUVs, light trucks, and heavy buses driving at realistic speeds.
+- **Visual Effects**:
+  - Yellow glow: RFID radio wave detected.
+  - Green pulse: Successful payment & barrier lift.
+  - Red flashing: Unregistered vehicle / ANPR violation triggered.
+
+---
+
+## 5. Plaza Edge Server (Raspberry Pi)
+
+Each toll plaza operates an edge Raspberry Pi running an offline-first SQLite database:
+- **Offline Resilience**: Even if the fiber/4G connection to HQ drops, toll booths continue scanning RFID tags, logging transactions, and lifting barriers with zero latency (< 80ms).
+- **Auto Resync**: Once internet connectivity resumes, the local `SyncService` pushes all buffered events in FIFO batches to HQ.
+
+---
+
+## 6. Troubleshooting & FAQ
+
+### Q: Why did a vehicle trigger an "Insufficient Balance" alert?
+> **A**: The vehicle's linked prepaid account has less than the toll rate for its class. The operator can click **"Instant Booth QR"** to accept immediate MMQR/KBZPay payment.
+
+### Q: What if an ANPR plate doesn't match the RFID tag UID?
+> **A**: The event is automatically flagged and sent to the **Violation Workbench** for operator review.
+
+### Q: How do I restart the Docker containers on the server?
+> **A**: Run `docker compose up -d --build` on the server terminal (`192.168.100.101`).

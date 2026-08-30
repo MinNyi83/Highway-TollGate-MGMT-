@@ -8,6 +8,7 @@ import TelemetryBar from '../components/command-hub/TelemetryBar';
 import PlazaGrid from '../components/command-hub/PlazaGrid';
 import LiveEventStream from '../components/command-hub/LiveEventStream';
 import ViolationWorkbench from '../components/command-hub/ViolationWorkbench';
+import OperatorQuickActions from '../components/command-hub/OperatorQuickActions';
 
 const COLORS = ['#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
@@ -15,7 +16,7 @@ export default function Dashboard() {
   const { socket } = useSocket();
   const [stats, setStats] = useState<any>(null);
 
-  const { data: initialStats } = useQuery({
+  const { data: initialStats, refetch: refetchStats } = useQuery({
     queryKey: ['admin-dashboard-stats'],
     queryFn: async () => {
       const res = await api.get('/reports/summary');
@@ -57,8 +58,6 @@ export default function Dashboard() {
     refetchInterval: 30000,
   });
 
-
-
   useEffect(() => {
     if (!socket) return;
 
@@ -86,6 +85,9 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <div className="p-6 space-y-6">
+        {/* Operator Quick Actions & Gate Control Ribbon (Stitch UI) */}
+        <OperatorQuickActions onEventCreated={() => refetchStats()} />
+
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="glass-card p-5">
@@ -208,6 +210,49 @@ export default function Dashboard() {
               <div className="h-64 flex items-center justify-center text-gray-500">No data</div>
             )}
           </div>
+        </div>
+
+        {/* Peak-Hour Hourly Traffic Congestion Throughput */}
+        <div className="glass-card p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="text-lg font-semibold text-white">Peak-Hour Highway Traffic Throughput</h3>
+              <p className="text-xs text-gray-400">Hourly vehicle flow distribution across all active lanes</p>
+            </div>
+            <span className="px-3 py-1 rounded-full text-xs font-bold bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
+              OPTIMAL FLOW: 850 vph/lane
+            </span>
+          </div>
+
+          <ResponsiveContainer width="100%" height={240}>
+            <BarChart
+              data={[
+                { hour: '00:00', vehicles: 120, avgSpeed: 75 },
+                { hour: '03:00', vehicles: 85, avgSpeed: 80 },
+                { hour: '06:00', vehicles: 450, avgSpeed: 65 },
+                { hour: '08:00', vehicles: 980, avgSpeed: 45 },
+                { hour: '10:00', vehicles: 740, avgSpeed: 60 },
+                { hour: '12:00', vehicles: 620, avgSpeed: 65 },
+                { hour: '14:00', vehicles: 580, avgSpeed: 70 },
+                { hour: '17:00', vehicles: 1120, avgSpeed: 40 },
+                { hour: '19:00', vehicles: 890, avgSpeed: 55 },
+                { hour: '21:00', vehicles: 430, avgSpeed: 70 },
+              ]}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
+              <XAxis dataKey="hour" stroke="rgba(255,255,255,0.5)" />
+              <YAxis stroke="rgba(255,255,255,0.5)" />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'rgba(11, 15, 23, 0.9)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '12px',
+                  backdropFilter: 'blur(10px)',
+                }}
+              />
+              <Bar dataKey="vehicles" name="Vehicles / Hour" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
 
         {/* Live Event Stream */}

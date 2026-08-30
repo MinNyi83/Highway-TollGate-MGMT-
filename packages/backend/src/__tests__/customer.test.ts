@@ -12,8 +12,14 @@ describe('Customer Portal API', () => {
     customerEmail = `customer-${Date.now()}@test.com`;
     const regRes = await request(app)
       .post('/api/auth/register')
-      .send({ email: customerEmail, password: 'password123', name: 'Test Customer' });
-    customerToken = regRes.body.token;
+      .send({
+        email: customerEmail,
+        password: 'password123',
+        name: 'Test Customer',
+        customerType: 'INDIVIDUAL',
+        nrcNumber: '12/TEST(N)123456',
+      });
+    customerToken = regRes.body.token || regRes.body.accessToken;
   });
 
   describe('POST /api/customer/login', () => {
@@ -167,10 +173,22 @@ describe('Reports API', () => {
   let adminToken: string;
 
   beforeAll(async () => {
-    const res = await request(app)
+    let res = await request(app)
       .post('/api/auth/login')
       .send({ email: 'admin@tollgate.com', password: 'password123' });
-    adminToken = res.body.token;
+    if (res.status !== 200) {
+      res = await request(app)
+        .post('/api/auth/register')
+        .send({
+          email: `admin-rep-${Date.now()}@tollgate.com`,
+          password: 'password123',
+          name: 'System Admin',
+          role: 'ADMIN',
+          customerType: 'INDIVIDUAL',
+          nrcNumber: '12/ADM(N)123456',
+        });
+    }
+    adminToken = res.body.token || res.body.accessToken;
   });
 
   describe('GET /api/reports/summary', () => {
@@ -212,10 +230,22 @@ describe('Device Status API', () => {
   let adminToken: string;
 
   beforeAll(async () => {
-    const res = await request(app)
+    let res = await request(app)
       .post('/api/auth/login')
       .send({ email: 'admin@tollgate.com', password: 'password123' });
-    adminToken = res.body.token;
+    if (res.status !== 200) {
+      res = await request(app)
+        .post('/api/auth/register')
+        .send({
+          email: `admin-dev-${Date.now()}@tollgate.com`,
+          password: 'password123',
+          name: 'System Admin',
+          role: 'ADMIN',
+          customerType: 'INDIVIDUAL',
+          nrcNumber: '12/DEV(N)123456',
+        });
+    }
+    adminToken = res.body.token || res.body.accessToken;
   });
 
   describe('GET /api/device-status', () => {

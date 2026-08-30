@@ -7,8 +7,15 @@ describe('Violation Flow', () => {
   beforeAll(async () => {
     const registerResponse = await request(app)
       .post('/api/auth/register')
-      .send({ email: `violation-test-${Date.now()}@example.com`, password: 'password123', name: 'Violation Test', role: 'ADMIN' });
-    token = registerResponse.body.accessToken;
+      .send({
+        email: `violation-test-${Date.now()}@example.com`,
+        password: 'password123',
+        name: 'Violation Test',
+        role: 'ADMIN',
+        customerType: 'INDIVIDUAL',
+        nrcNumber: '12/VIO(N)123456',
+      });
+    token = registerResponse.body.token || registerResponse.body.accessToken;
   });
 
   describe('Violation List', () => {

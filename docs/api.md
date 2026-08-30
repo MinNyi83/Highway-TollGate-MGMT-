@@ -443,6 +443,46 @@ socket.on('new-vehicle-registration', (data) => console.log(data));
 
 ---
 
+## OCR & Document Parsing
+
+### Scan Myanmar RTAD Wheel Tax Card
+```
+POST /api/ocr/scan-wheel-tax
+```
+**Request**: `multipart/form-data` with `document` (image file) or JSON `{ "rawText": "..." }`
+
+**Response (`200 OK`)**:
+```json
+{
+  "success": true,
+  "data": {
+    "plateNumber": "4D-5918",
+    "make": "Honda",
+    "model": "Civic FD3",
+    "year": 2009,
+    "color": "Gray",
+    "vehicleClass": "SEDAN",
+    "engineNumber": "LDA-1372845",
+    "chassisNumber": "FD3-1302842",
+    "enginePower": "1339 CC",
+    "grossVehicleWeight": "1270 Kg + 4P",
+    "seatingCapacity": 4,
+    "useCharacter": "Private",
+    "vehicleType": "SALOON(4X2)(R)",
+    "ownerName": "U NYI NYI MIN",
+    "ownerAddress": "B-28/R-89, MUDITAR HOUSING ST, YWAR MA WEST QTR, INSEIN TSP.",
+    "township": "INSEIN",
+    "region": "Yangon (YGN)",
+    "issueDate": "04/06/2024",
+    "expiryDate": "30/06/2026",
+    "confidence": 0.99
+  },
+  "message": "Vehicle registration document scanned successfully"
+}
+```
+
+---
+
 ## Error Responses
 
 All errors follow this format:

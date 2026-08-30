@@ -1,11 +1,16 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Wallet, Car, Activity, AlertTriangle, ArrowUpRight, ArrowDownRight, ChevronRight, Clock, TrendingUp } from 'lucide-react';
+import { Wallet, Car, Activity, AlertTriangle, ArrowUpRight, ArrowDownRight, ChevronRight, Clock, TrendingUp, QrCode, AlertCircle, Map } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../lib/api';
 import { StatSkeleton, CardSkeleton } from '../components/Skeleton';
+import DigitalPassModal from '../components/DigitalPassModal';
+import RoutePlannerModal from '../components/RoutePlannerModal';
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const [showPassModal, setShowPassModal] = useState(false);
+  const [showRoutePlanner, setShowRoutePlanner] = useState(false);
   const { data, isLoading } = useQuery({
     queryKey: ['customer-dashboard'],
     queryFn: async () => {
@@ -80,6 +85,27 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* Low Balance Warning Banner */}
+      {Number(data.balance) < 3000 && (
+        <div className="bg-amber-500/15 border border-amber-500/30 rounded-2xl p-4 flex items-center justify-between animate-in fade-in">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-500">
+              <AlertCircle size={20} />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-amber-500">Low Toll Balance Warning</p>
+              <p className="text-[11px] text-gray-600 dark:text-gray-400">Balance below K3,000. Top up to avoid barrier delays.</p>
+            </div>
+          </div>
+          <button
+            onClick={() => navigate('/account')}
+            className="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-sm transition-all"
+          >
+            Top Up Now
+          </button>
+        </div>
+      )}
+
       {/* Quick Stats */}
       <div className="grid grid-cols-2 gap-3">
         {stats.map((stat) => (
@@ -93,34 +119,52 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-3 gap-3">
+      {/* Quick Actions (5-Column Grid) */}
+      <div className="grid grid-cols-5 gap-2">
+        <button
+          onClick={() => setShowPassModal(true)}
+          className="bg-white dark:bg-gray-800 rounded-xl p-2.5 shadow-sm border border-blue-500/30 dark:border-blue-500/40 flex flex-col items-center gap-1 hover:bg-blue-50 dark:hover:bg-blue-950/20 active:scale-[0.98] transition-all"
+        >
+          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+            <QrCode size={16} />
+          </div>
+          <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400">Pass</span>
+        </button>
+        <button
+          onClick={() => setShowRoutePlanner(true)}
+          className="bg-white dark:bg-gray-800 rounded-xl p-2.5 shadow-sm border border-indigo-500/30 dark:border-indigo-500/40 flex flex-col items-center gap-1 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 active:scale-[0.98] transition-all"
+        >
+          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
+            <Map size={16} />
+          </div>
+          <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400">Plan</span>
+        </button>
         <button
           onClick={() => navigate('/account')}
-          className="bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-750 active:scale-[0.98] transition-all"
+          className="bg-white dark:bg-gray-800 rounded-xl p-2.5 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-1 hover:bg-gray-50 dark:hover:bg-gray-750 active:scale-[0.98] transition-all"
         >
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-white">
-            <Wallet size={18} />
+          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-white">
+            <Wallet size={16} />
           </div>
-          <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Top Up</span>
+          <span className="text-[10px] font-medium text-gray-700 dark:text-gray-300">Top Up</span>
         </button>
         <button
           onClick={() => navigate('/my-vehicles')}
-          className="bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-750 active:scale-[0.98] transition-all"
+          className="bg-white dark:bg-gray-800 rounded-xl p-2.5 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-1 hover:bg-gray-50 dark:hover:bg-gray-750 active:scale-[0.98] transition-all"
         >
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white">
-            <Car size={18} />
+          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white">
+            <Car size={16} />
           </div>
-          <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Vehicles</span>
+          <span className="text-[10px] font-medium text-gray-700 dark:text-gray-300">Vehicles</span>
         </button>
         <button
           onClick={() => navigate('/toll-history')}
-          className="bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-750 active:scale-[0.98] transition-all"
+          className="bg-white dark:bg-gray-800 rounded-xl p-2.5 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-1 hover:bg-gray-50 dark:hover:bg-gray-750 active:scale-[0.98] transition-all"
         >
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center text-white">
-            <Clock size={18} />
+          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center text-white">
+            <Clock size={16} />
           </div>
-          <span className="text-xs font-medium text-gray-700 dark:text-gray-300">History</span>
+          <span className="text-[10px] font-medium text-gray-700 dark:text-gray-300">History</span>
         </button>
       </div>
 
@@ -175,17 +219,25 @@ export default function Dashboard() {
                     {event.direction && ` · ${event.direction}`}
                   </p>
                 </div>
-                <div className="text-right flex-shrink-0">
-                  <p className="font-bold text-sm text-gray-900 dark:text-white">{event.transaction?.amount || 0}</p>
-                  <p className="text-[10px] text-gray-400 dark:text-gray-500">
-                    {new Date(event.entryTime).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                  </p>
-                </div>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {/* Digital Toll Pass (Virtual RFID QR) Modal */}
+      <DigitalPassModal
+        isOpen={showPassModal}
+        onClose={() => setShowPassModal(false)}
+        user={data.user}
+        balance={Number(data.balance) || 0}
+      />
+
+      {/* Expressway Trip & Toll Calculator Modal */}
+      <RoutePlannerModal
+        isOpen={showRoutePlanner}
+        onClose={() => setShowRoutePlanner(false)}
+      />
     </div>
   );
 }

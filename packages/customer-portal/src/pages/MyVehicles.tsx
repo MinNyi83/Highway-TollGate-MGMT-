@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Car, Plus, Upload, Trash2, AlertTriangle, Radio, Image, X } from 'lucide-react';
+import { Car, Plus, Upload, Trash2, AlertTriangle, Radio, Image, X, Sparkles, Camera } from 'lucide-react';
 import api from '../lib/api';
 import { showToast } from '../components/Toast';
+import OcrScannerModal, { ExtractedVehicleData } from '../components/OcrScannerModal';
 
 const vehicleClasses = [
   { value: 'MOTORCYCLE', label: 'Motorcycle', icon: '🏍️' },
@@ -41,6 +42,7 @@ const yearOptions = Array.from({ length: 30 }, (_, i) => currentYear - i);
 
 export default function MyVehicles() {
   const [showForm, setShowForm] = useState(false);
+  const [showOcrScanner, setShowOcrScanner] = useState(false);
   const [form, setForm] = useState({
     plateNumber: '', make: '', model: '', year: currentYear.toString(), color: '', vehicleClass: 'SEDAN',
   });
@@ -49,6 +51,30 @@ export default function MyVehicles() {
   const [vehiclePreviews, setVehiclePreviews] = useState<(string | null)[]>([null, null]);
   const [taxPreviews, setTaxPreviews] = useState<(string | null)[]>([null, null]);
   const queryClient = useQueryClient();
+
+  const handleOcrApply = (data: ExtractedVehicleData, file?: File) => {
+    setForm({
+      plateNumber: data.plateNumber,
+      make: data.make,
+      model: data.model,
+      year: data.year.toString(),
+      color: data.color || 'Gray',
+      vehicleClass: data.vehicleClass || 'SEDAN',
+    });
+
+    if (file) {
+      const newCards = [...wheelTaxCards];
+      newCards[0] = file;
+      setWheelTaxCards(newCards);
+
+      const newPreviews = [...taxPreviews];
+      newPreviews[0] = URL.createObjectURL(file);
+      setTaxPreviews(newPreviews);
+    }
+
+    setShowForm(true);
+    showToast('success', `✨ Auto-filled: ${data.make} ${data.model} (${data.plateNumber})`);
+  };
 
   const { data: vehicles, isLoading } = useQuery({
     queryKey: ['my-vehicles'],
@@ -166,22 +192,40 @@ export default function MyVehicles() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4 md:mb-6">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-4 md:mb-6">
         <h1 className="text-xl md:text-2xl font-bold dark:text-white">My Vehicles</h1>
-        <button
-          onClick={() => { setShowForm(true); resetForm(); }}
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700"
-        >
-          <Plus size={16} />
-          Register
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowOcrScanner(true)}
+            className="flex items-center gap-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-medium px-4 py-2 rounded-lg text-sm shadow-md shadow-cyan-500/20 transition"
+          >
+            <Sparkles size={16} className="text-cyan-200" />
+            <span>Scan Wheel Tax (AI)</span>
+          </button>
+          <button
+            onClick={() => { setShowForm(true); resetForm(); }}
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 font-medium"
+          >
+            <Plus size={16} />
+            Register Manual
+          </button>
+        </div>
       </div>
 
       {/* Registration Form */}
       {showForm && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 md:p-6 mb-4 md:mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-bold dark:text-white">Register New Vehicle</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 md:p-6 mb-4 md:mb-6 border dark:border-gray-700">
+          <div className="flex items-center justify-between mb-4 pb-3 border-b dark:border-gray-700">
+            <div className="flex items-center gap-2">
+              <h2 className="font-bold dark:text-white">Register New Vehicle</h2>
+              <button
+                onClick={() => setShowOcrScanner(true)}
+                className="text-xs bg-cyan-50 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-700 px-2.5 py-1 rounded-md flex items-center gap-1.5 hover:bg-cyan-100 transition"
+              >
+                <Sparkles size={13} />
+                <span>Auto-Fill from RTAD Card</span>
+              </button>
+            </div>
             <button onClick={() => setShowForm(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><X size={20} /></button>
           </div>
 
@@ -366,6 +410,13 @@ export default function MyVehicles() {
           )}
         </div>
       )}
+
+      {/* RTAD Document OCR Scanner Modal */}
+      <OcrScannerModal
+        isOpen={showOcrScanner}
+        onClose={() => setShowOcrScanner(false)}
+        onApply={handleOcrApply}
+      />
     </div>
   );
 }

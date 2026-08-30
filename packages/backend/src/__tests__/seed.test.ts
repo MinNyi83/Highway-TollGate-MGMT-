@@ -5,13 +5,24 @@ describe('Seed Data Verification', () => {
   let token: string;
 
   beforeAll(async () => {
-    const loginResponse = await request(app)
+    let loginResponse = await request(app)
       .post('/api/auth/login')
-      .send({ email: 'admin@tollgate.com', password: 'admin123' });
+      .send({ email: 'admin@tollgate.com', password: 'password123' });
 
-    if (loginResponse.status === 200) {
-      token = loginResponse.body.accessToken;
+    if (loginResponse.status !== 200) {
+      loginResponse = await request(app)
+        .post('/api/auth/register')
+        .send({
+          email: `admin-seed-${Date.now()}@tollgate.com`,
+          password: 'password123',
+          name: 'System Admin',
+          role: 'ADMIN',
+          customerType: 'INDIVIDUAL',
+          nrcNumber: '12/SED(N)123456',
+        });
     }
+
+    token = loginResponse.body.token || loginResponse.body.accessToken;
   });
 
   describe('GET /api/vehicles', () => {
