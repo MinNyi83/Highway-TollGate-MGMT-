@@ -64,22 +64,25 @@ The TollGate Management System uses a **3-tier distributed architecture**:
 - **Queue**: BullMQ (for async tasks)
 
 **Responsibilities**:
-- Admin dashboard API
+- Admin dashboard API & interactive real Leaflet GPS maps
 - Central user/account management
-- Payment processing
-- Report generation
-- Branch server synchronization
-- Fleet management
-- Violation management
+- Myanmar RTAD Wheel Tax AI / OCR document engine
+- Payment processing (KBZPay, WavePay, Dynamic Booth QR)
+- Report generation (PDF, Excel, CSV)
+- Branch server synchronization & conflict resolution
+- Fleet management & prepaid billing
+- Violation workbench & ANPR optical audit logs
 
 **API Endpoints**:
 ```
-/api/admin/*          - Admin operations
-/api/auth/*           - Authentication
-/api/accounts/*       - Account management
-/api/payments/*       - Payment processing
-/api/reports/*        - Report generation
-/api/sync/*           - Branch synchronization
+/api/admin/*          - Admin operations & system stats
+/api/auth/*           - Authentication & JWT issuance
+/api/accounts/*       - Account & wallet balance management
+/api/ocr/*            - Myanmar RTAD wheel tax card scanner
+/api/payments/*       - Payment gateways & dynamic booth QR
+/api/toll-plazas/*    - Plaza locations & GPS telemetry
+/api/reports/*        - Financial & operational analytics
+/api/sync/*           - Edge branch synchronization
 ```
 
 ---
