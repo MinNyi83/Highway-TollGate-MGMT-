@@ -1,7 +1,23 @@
 import { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, History, AlertTriangle, Wallet, LogOut, Car, Menu, X, Settings, Building2, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { 
+  LayoutDashboard, 
+  History, 
+  AlertTriangle, 
+  Wallet, 
+  LogOut, 
+  Car, 
+  Menu, 
+  X, 
+  Settings, 
+  Building2, 
+  PanelLeftClose, 
+  PanelLeftOpen,
+  Sun,
+  Moon
+} from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
+import { useTheme } from '../hooks/useTheme';
 import NotificationBell from './NotificationBell';
 import ToastContainer from './Toast';
 
@@ -17,6 +33,7 @@ const navItems = [
 
 export default function Layout() {
   const { user, logout } = useAuthStore();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
@@ -30,16 +47,23 @@ export default function Layout() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex flex-col transition-colors duration-200">
       <ToastContainer />
 
       {/* Top Bar - Mobile */}
-      <header className="bg-gray-900 text-white px-4 py-3 flex items-center justify-between md:hidden">
+      <header className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-800 px-4 py-3 flex items-center justify-between md:hidden transition-colors">
         <div className="flex items-center gap-2">
-          <Car className="text-blue-400" size={20} />
+          <Car className="text-blue-600 dark:text-blue-400" size={20} />
           <span className="font-bold">TollGate</span>
         </div>
         <div className="flex items-center gap-2">
+          <button
+            onClick={toggleTheme}
+            className="p-1.5 text-gray-600 dark:text-gray-300 hover:text-blue-600 rounded-lg"
+            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {theme === 'dark' ? <Sun size={18} className="text-amber-400" /> : <Moon size={18} />}
+          </button>
           <NotificationBell />
           <button onClick={() => setMenuOpen(!menuOpen)} className="p-1">
             {menuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -48,11 +72,11 @@ export default function Layout() {
       </header>
 
       {menuOpen && (
-        <div className="bg-gray-800 text-white md:hidden">
+        <div className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white md:hidden border-b border-gray-200 dark:border-gray-700">
           <div className="p-4">
-            <p className="text-sm text-gray-400 mb-1">{user?.name}</p>
+            <p className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">{user?.name}</p>
             <p className="text-xs text-gray-500 mb-3">{user?.email}</p>
-            <button onClick={handleLogout} className="flex items-center gap-2 text-red-400 text-sm">
+            <button onClick={handleLogout} className="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm font-medium">
               <LogOut size={16} />
               Sign Out
             </button>
@@ -62,13 +86,13 @@ export default function Layout() {
 
       <div className="flex flex-1">
         {/* Desktop Sidebar */}
-        <aside className={`${collapsed ? 'w-16' : 'w-64'} hidden md:flex bg-gray-900 text-white min-h-screen p-4 flex-col transition-all duration-300`}>
+        <aside className={`${collapsed ? 'w-16' : 'w-64'} hidden md:flex bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-r border-gray-200 dark:border-gray-800 min-h-screen p-4 flex-col transition-all duration-300`}>
           <div className={`${collapsed ? 'mb-4' : 'mb-8'} transition-all duration-300`}>
             <div className={`flex items-center ${collapsed ? 'justify-center' : 'gap-2'} mb-1`}>
-              <Car className="text-blue-400 flex-shrink-0" size={collapsed ? 20 : 24} />
+              <Car className="text-blue-600 dark:text-blue-400 flex-shrink-0" size={collapsed ? 20 : 24} />
               {!collapsed && <h1 className="text-xl font-bold">TollGate</h1>}
             </div>
-            {!collapsed && <p className="text-gray-400 text-sm">Customer Portal</p>}
+            {!collapsed && <p className="text-gray-500 dark:text-gray-400 text-sm">Customer Portal</p>}
           </div>
           <nav className="flex-1">
             {filteredNavItems.map((item) => (
@@ -79,8 +103,10 @@ export default function Layout() {
                 onClick={() => setMenuOpen(false)}
                 title={collapsed ? item.label : undefined}
                 className={({ isActive }) =>
-                  `flex items-center ${collapsed ? 'justify-center' : 'gap-3'} px-3 py-2 rounded-md mb-1 transition-colors ${
-                    isActive ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                  `flex items-center ${collapsed ? 'justify-center' : 'gap-3'} px-3 py-2 rounded-md mb-1 transition-colors font-medium ${
+                    isActive
+                      ? 'bg-blue-600 text-white shadow-sm'
+                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
                   }`
                 }
               >
@@ -90,12 +116,12 @@ export default function Layout() {
             ))}
           </nav>
           {!collapsed && (
-            <div className="border-t border-gray-700 pt-4">
+            <div className="border-t border-gray-200 dark:border-gray-800 pt-4">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-sm text-gray-400 truncate">{user?.name}</p>
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate">{user?.name}</p>
                 <NotificationBell />
               </div>
-              <button onClick={handleLogout} className="flex items-center gap-2 text-gray-400 hover:text-white text-sm">
+              <button onClick={handleLogout} className="flex items-center gap-2 text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 text-sm">
                 <LogOut size={16} />
                 Sign Out
               </button>
@@ -103,9 +129,9 @@ export default function Layout() {
           )}
         </aside>
 
-        <div className="flex-1 flex flex-col">
-          {/* Desktop Header with Collapse Toggle */}
-          <header className="hidden md:flex bg-white dark:bg-gray-800 shadow-sm h-16 items-center justify-between px-6">
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Desktop Header with Collapse & Dark Mode Toggle */}
+          <header className="hidden md:flex bg-white dark:bg-gray-800/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 h-16 items-center justify-between px-6 transition-colors shadow-sm">
             <button
               onClick={() => setCollapsed(!collapsed)}
               className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
@@ -114,6 +140,13 @@ export default function Layout() {
               {collapsed ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
             </button>
             <div className="flex items-center gap-4">
+              <button
+                onClick={toggleTheme}
+                className="p-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-cyan-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              >
+                {theme === 'dark' ? <Sun size={20} className="text-amber-400" /> : <Moon size={20} className="text-gray-600" />}
+              </button>
               <NotificationBell />
             </div>
           </header>
@@ -133,7 +166,7 @@ export default function Layout() {
             end={item.to === '/'}
             className={({ isActive }) =>
               `flex flex-col items-center gap-1 py-2 px-2 rounded-lg transition-colors ${
-                isActive ? 'text-blue-600' : 'text-gray-400 dark:text-gray-500'
+                isActive ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-gray-500 dark:text-gray-400'
               }`
             }
           >

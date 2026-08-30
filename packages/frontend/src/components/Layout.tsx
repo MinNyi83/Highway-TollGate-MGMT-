@@ -11,10 +11,11 @@ export default function Layout() {
   const [collapsed, setCollapsed] = useState(false);
   const [dark, setDark] = useState(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('theme') === 'dark' ||
-        (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      const stored = localStorage.getItem('theme');
+      if (stored) return stored === 'dark';
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
     }
-    return false;
+    return true; // default to sleek dark mode for Command Hub
   });
 
   useEffect(() => {
@@ -34,42 +35,42 @@ export default function Layout() {
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-950">
+    <div className="flex min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-200">
       <Sidebar collapsed={collapsed} />
-      <div className="flex-1 flex flex-col">
-        <header className="bg-slate-950/80 backdrop-blur-xl border-b border-white/10 h-14 flex items-center justify-between px-6 sticky top-0 z-40">
+      <div className="flex-1 flex flex-col min-w-0">
+        <header className="bg-white/90 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/10 h-14 flex items-center justify-between px-6 sticky top-0 z-40 transition-colors duration-200 shadow-sm">
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+            className="p-2 text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg transition-colors"
             title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {collapsed ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
           </button>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <NotificationPanel />
 
             <button
               onClick={() => setDark(!dark)}
-              className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+              className="p-2 text-slate-600 dark:text-gray-300 hover:text-brand-600 dark:hover:text-cyan-400 hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg transition-colors"
               title={dark ? 'Switch to light mode' : 'Switch to dark mode'}
             >
-              {dark ? <Sun size={20} /> : <Moon size={20} />}
+              {dark ? <Sun size={20} className="text-amber-400" /> : <Moon size={20} className="text-slate-600" />}
             </button>
 
-            <div className="flex items-center gap-3 pl-4 border-l border-white/10">
-              <div className="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center">
+            <div className="flex items-center gap-3 pl-3 border-l border-slate-200 dark:border-white/10">
+              <div className="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center shadow-sm">
                 <span className="text-sm font-medium text-white">
                   {user?.name?.charAt(0) || 'U'}
                 </span>
               </div>
               <div className="hidden md:block">
-                <p className="text-sm font-medium text-white">{user?.name || 'User'}</p>
-                <p className="text-xs text-gray-400">{user?.role || 'VIEWER'}</p>
+                <p className="text-sm font-semibold text-slate-800 dark:text-white">{user?.name || 'User'}</p>
+                <p className="text-xs text-slate-500 dark:text-gray-400 font-medium">{user?.role || 'VIEWER'}</p>
               </div>
               <button
                 onClick={handleLogout}
-                className="p-2 text-gray-400 hover:text-crimson-400 hover:bg-crimson-500/10 rounded-lg transition-colors"
+                className="p-2 text-slate-400 hover:text-crimson-600 dark:hover:text-crimson-400 hover:bg-crimson-500/10 rounded-lg transition-colors"
                 title="Logout"
               >
                 <LogOut size={18} />
@@ -78,7 +79,7 @@ export default function Layout() {
           </div>
         </header>
 
-        <main className="flex-1 overflow-auto bg-slate-950">
+        <main className="flex-1 overflow-auto bg-slate-100/60 dark:bg-slate-950 p-6 transition-colors duration-200">
           <Outlet />
         </main>
       </div>

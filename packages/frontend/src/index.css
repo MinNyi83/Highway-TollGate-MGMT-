@@ -28,8 +28,12 @@ body {
 @layer components {
   /* Glass morphism card */
   .glass-card {
-    @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    @apply bg-white dark:bg-white/5 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 rounded-2xl text-slate-900 dark:text-white;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+  }
+
+  .dark .glass-card {
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
   }
 
   .glass-card-hover {
@@ -37,9 +41,13 @@ body {
   }
 
   .glass-card-hover:hover {
-    @apply bg-white/10 border-white/20;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.5);
+    @apply bg-slate-50 dark:bg-white/10 border-slate-300 dark:border-white/20;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
+  }
+
+  .dark .glass-card-hover:hover {
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.5);
   }
 
   /* Telemetry counter - monospace with tabular nums */
@@ -51,19 +59,19 @@ body {
 
   /* Status badges */
   .status-online {
-    @apply bg-emerald-500/20 text-emerald-400 border border-emerald-500/30;
+    @apply bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 dark:border-emerald-500/30;
   }
 
   .status-offline {
-    @apply bg-crimson-500/20 text-crimson-400 border border-crimson-500/30;
+    @apply bg-crimson-500/10 dark:bg-crimson-500/20 text-crimson-600 dark:text-crimson-400 border border-crimson-500/20 dark:border-crimson-500/30;
   }
 
   .status-warning {
-    @apply bg-amber-500/20 text-amber-400 border border-amber-500/30;
+    @apply bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/20 dark:border-amber-500/30;
   }
 
   .status-syncing {
-    @apply bg-cyan-500/20 text-cyan-400 border border-cyan-500/30;
+    @apply bg-cyan-500/10 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 dark:border-cyan-500/30;
   }
 
   /* Event tags */
@@ -72,29 +80,29 @@ body {
   }
 
   .event-tag-rfid {
-    @apply bg-cyan-500/20 text-cyan-400;
+    @apply bg-cyan-500/10 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-400;
   }
 
   .event-tag-anpr {
-    @apply bg-brand-500/20 text-brand-400;
+    @apply bg-brand-500/10 dark:bg-brand-500/20 text-brand-700 dark:text-brand-400;
   }
 
   .event-tag-violation {
-    @apply bg-crimson-500/20 text-crimson-400;
+    @apply bg-crimson-500/10 dark:bg-crimson-500/20 text-crimson-700 dark:text-crimson-400;
   }
 
   .event-tag-payment {
-    @apply bg-emerald-500/20 text-emerald-400;
+    @apply bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400;
   }
 
   /* Plate number display */
   .plate-number {
-    @apply font-mono font-bold px-3 py-1.5 rounded-lg bg-amber-400 text-black text-sm tracking-wider;
+    @apply font-mono font-bold px-3 py-1.5 rounded-lg bg-amber-400 text-black text-sm tracking-wider shadow-sm;
   }
 
   /* Revenue counter animation */
   .revenue-counter {
-    @apply font-mono text-3xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent;
+    @apply font-mono text-3xl font-bold bg-gradient-to-r from-emerald-500 to-cyan-500 dark:from-emerald-400 dark:to-cyan-400 bg-clip-text text-transparent;
   }
 
   /* Plaza node on map */
@@ -130,7 +138,7 @@ body {
 
   /* Skeleton loader */
   .skeleton {
-    @apply animate-pulse bg-white/10 rounded;
+    @apply animate-pulse bg-slate-200 dark:bg-white/10 rounded;
   }
 
   /* Custom scrollbar */
@@ -143,11 +151,11 @@ body {
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-white/20 rounded-full;
+    @apply bg-slate-300 dark:bg-white/20 rounded-full;
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    @apply bg-white/30;
+    @apply bg-slate-400 dark:bg-white/30;
   }
 
   /* Button styles */
@@ -168,17 +176,17 @@ body {
   }
 
   .btn-ghost {
-    @apply btn-command bg-white/5 hover:bg-white/10 text-gray-300;
+    @apply btn-command bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-gray-300;
   }
 }
 
 @layer utilities {
   .text-gradient {
-    @apply bg-gradient-to-r from-brand-400 to-cyan-400 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-brand-600 to-cyan-600 dark:from-brand-400 dark:to-cyan-400 bg-clip-text text-transparent;
   }
 
   .border-glow {
-    @apply border border-white/10;
+    @apply border border-slate-200 dark:border-white/10;
     box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
   }
 }

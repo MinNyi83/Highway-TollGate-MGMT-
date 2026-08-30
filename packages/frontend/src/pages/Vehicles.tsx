@@ -199,101 +199,101 @@ export default function Vehicles() {
       {showImport && <CsvImportModal onClose={() => setShowImport(false)} />}
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-4 bg-gray-100 p-1 rounded-lg w-fit">
+      <div className="flex gap-1 mb-4 bg-slate-200/80 dark:bg-slate-800 p-1 rounded-xl w-fit transition-colors">
         <button onClick={() => { setActiveTab('all'); setSearch(''); }}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'all' ? 'bg-white shadow text-blue-600' : 'text-gray-600 hover:text-gray-900'}`}>
+          className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'all' ? 'bg-white dark:bg-slate-700 shadow-sm text-blue-600 dark:text-cyan-400' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}>
           All Vehicles ({vehicles?.length || 0})
         </button>
         <button onClick={() => { setActiveTab('pending'); setSearch(''); }}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${activeTab === 'pending' ? 'bg-white shadow text-yellow-600' : 'text-gray-600 hover:text-gray-900'}`}>
+          className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 ${activeTab === 'pending' ? 'bg-white dark:bg-slate-700 shadow-sm text-yellow-600 dark:text-yellow-400' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}>
           <Clock size={14} /> Pending Approval
           {pendingCount > 0 && (
-            <span className="bg-yellow-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold">{pendingCount}</span>
+            <span className="bg-amber-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold">{pendingCount}</span>
           )}
         </button>
       </div>
 
-      <div className="bg-white rounded-lg shadow">
-        <div className="p-4 border-b">
+      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 transition-colors overflow-hidden">
+        <div className="p-4 border-b border-slate-200 dark:border-slate-800">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={20} />
             <input type="text" placeholder="Search by plate, make, or model..." value={search} onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50">
+          <table className="w-full text-left">
+            <thead className="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800">
               <tr>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Photo</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Plate</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Make</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Model</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Color</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Class</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Status</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Photo</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Plate</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Make</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Model</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Color</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Class</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
                 {activeTab === 'pending' && (
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Registered</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Registered</th>
                 )}
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">RFID</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Actions</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">RFID</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
               {filteredVehicles?.map((vehicle) => {
                 const photos = parsePhotos(vehicle.vehiclePhoto);
                 return (
-                  <tr key={vehicle.id} className={`hover:bg-gray-50 ${vehicle.approvalStatus === 'PENDING' ? 'bg-yellow-50/50' : ''}`}>
+                  <tr key={vehicle.id} className={`hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors ${vehicle.approvalStatus === 'PENDING' ? 'bg-amber-500/5 dark:bg-amber-500/10' : ''}`}>
                     <td className="px-4 py-3">
                       <div className="flex gap-1">
                         {photos.length > 0 ? photos.map((p, i) => (
-                          <img key={i} src={getPhotoUrl(p)!} alt="" className="w-8 h-8 rounded object-cover" />
+                          <img key={i} src={getPhotoUrl(p)!} alt="" className="w-8 h-8 rounded-md object-cover border border-slate-200 dark:border-slate-700" />
                         )) : (
-                          <div className="w-8 h-8 rounded bg-gray-100 flex items-center justify-center"><Image className="text-gray-400" size={14} /></div>
+                          <div className="w-8 h-8 rounded-md bg-slate-100 dark:bg-slate-800 flex items-center justify-center border border-slate-200 dark:border-slate-700"><Image className="text-slate-400" size={14} /></div>
                         )}
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <Link to={`/vehicles/${vehicle.id}`} className="text-blue-600 hover:underline font-medium">{vehicle.plateNumber}</Link>
+                      <Link to={`/vehicles/${vehicle.id}`} className="text-blue-600 dark:text-cyan-400 hover:underline font-semibold">{vehicle.plateNumber}</Link>
                     </td>
-                    <td className="px-4 py-3 text-sm">{vehicle.make}</td>
-                    <td className="px-4 py-3 text-sm">{vehicle.model}</td>
-                    <td className="px-4 py-3 text-sm">{vehicle.color || '-'}</td>
-                    <td className="px-4 py-3"><span className="px-2 py-1 text-xs rounded-full bg-gray-100">{vehicle.vehicleClass}</span></td>
+                    <td className="px-4 py-3 text-sm text-slate-700 dark:text-slate-300 font-medium">{vehicle.make}</td>
+                    <td className="px-4 py-3 text-sm text-slate-700 dark:text-slate-300 font-medium">{vehicle.model}</td>
+                    <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400">{vehicle.color || '-'}</td>
+                    <td className="px-4 py-3"><span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">{vehicle.vehicleClass}</span></td>
                     <td className="px-4 py-3">
-                      <span className={`px-2 py-1 text-xs rounded-full border ${approvalStyles[vehicle.approvalStatus] || 'bg-gray-100 text-gray-800'}`}>
+                      <span className={`px-2.5 py-1 text-xs font-semibold rounded-full border ${approvalStyles[vehicle.approvalStatus] || 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200'}`}>
                         {vehicle.approvalStatus}
                       </span>
                     </td>
                     {activeTab === 'pending' && (
-                      <td className="px-4 py-3 text-xs text-gray-500">
+                      <td className="px-4 py-3 text-xs text-slate-500 dark:text-slate-400">
                         {vehicle.createdAt ? new Date(vehicle.createdAt).toLocaleDateString() : '-'}
                       </td>
                     )}
                     <td className="px-4 py-3">
                       {vehicle.rfidTags?.length > 0 ? (
-                        <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800 font-mono">{vehicle.rfidTags[0].tagUid.slice(0, 8)}...</span>
+                        <span className="px-2.5 py-1 text-xs rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-cyan-300 border border-blue-200 dark:border-blue-700/50 font-mono">{vehicle.rfidTags[0].tagUid.slice(0, 8)}...</span>
                       ) : (
-                        <span className="text-gray-400 text-xs">None</span>
+                        <span className="text-slate-400 text-xs font-medium">None</span>
                       )}
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex gap-1">
+                      <div className="flex gap-1.5">
                         {vehicle.approvalStatus === 'PENDING' ? (
                           <>
                             <button onClick={() => approveMutation.mutate(vehicle.id)} disabled={approveMutation.isPending}
-                              className="px-2 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 flex items-center gap-1">
+                              className="px-2.5 py-1 text-xs bg-emerald-600 text-white rounded-md hover:bg-emerald-500 font-semibold disabled:opacity-50 flex items-center gap-1 shadow-sm">
                               <CheckCircle size={12} /> Approve
                             </button>
                             <button onClick={() => setRejectModal({ vehicleId: vehicle.id, plateNumber: vehicle.plateNumber })}
-                              className="px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 flex items-center gap-1">
+                              className="px-2.5 py-1 text-xs bg-crimson-600 text-white rounded-md hover:bg-crimson-500 font-semibold flex items-center gap-1 shadow-sm">
                               <XCircle size={12} /> Reject
                             </button>
                           </>
                         ) : (
                           <>
-                            <button onClick={() => setEditingVehicle(vehicle)} className="p-1 text-gray-500 hover:text-blue-600 rounded" title="Edit"><Edit size={16} /></button>
-                            <button onClick={() => handleDelete(vehicle)} className="p-1 text-gray-500 hover:text-red-600 rounded" title="Delete"><Trash2 size={16} /></button>
+                            <button onClick={() => setEditingVehicle(vehicle)} className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-cyan-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" title="Edit"><Edit size={16} /></button>
+                            <button onClick={() => handleDelete(vehicle)} className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-crimson-600 dark:hover:text-crimson-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" title="Delete"><Trash2 size={16} /></button>
                           </>
                         )}
                       </div>
@@ -305,7 +305,7 @@ export default function Vehicles() {
           </table>
         </div>
         {filteredVehicles?.length === 0 && (
-          <div className="p-8 text-center text-gray-500">
+          <div className="p-8 text-center text-slate-400 dark:text-slate-500 font-medium">
             {activeTab === 'pending' ? 'No pending vehicles to approve' : 'No vehicles found'}
           </div>
         )}
@@ -313,25 +313,25 @@ export default function Vehicles() {
 
       {/* Reject Modal */}
       {rejectModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl w-full max-w-md p-6 text-slate-900 dark:text-white">
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-red-100 rounded-full"><AlertTriangle className="text-red-600" size={20} /></div>
+              <div className="p-2 bg-crimson-500/10 text-crimson-500 rounded-full"><AlertTriangle size={20} /></div>
               <div>
-                <h3 className="font-bold">Reject Vehicle</h3>
-                <p className="text-sm text-gray-500">{rejectModal.plateNumber}</p>
+                <h3 className="font-bold text-lg">Reject Vehicle</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{rejectModal.plateNumber}</p>
               </div>
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Reason (optional)</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Reason (optional)</label>
               <textarea value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} rows={3}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
                 placeholder="Enter reason for rejection..." />
             </div>
             <div className="flex justify-end gap-2">
-              <button onClick={() => { setRejectModal(null); setRejectReason(''); }} className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50">Cancel</button>
+              <button onClick={() => { setRejectModal(null); setRejectReason(''); }} className="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-medium">Cancel</button>
               <button onClick={handleReject} disabled={rejectMutation.isPending}
-                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50">
+                className="px-4 py-2 bg-crimson-600 text-white rounded-lg hover:bg-crimson-500 font-semibold disabled:opacity-50 shadow-sm">
                 {rejectMutation.isPending ? 'Rejecting...' : 'Reject Vehicle'}
               </button>
             </div>
@@ -428,21 +428,21 @@ function VehicleForm({ vehicle, onClose, onSubmit }: { vehicle?: Vehicle; onClos
 
   const PhotoUpload = ({ label, previews, existing, onChange, type }: { label: string; previews: (string | null)[]; existing: string[]; onChange: (file: File | null, type: 'vehicle' | 'tax', index: number) => void; type: 'vehicle' | 'tax' }) => (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{label}</label>
       <div className="grid grid-cols-2 gap-2">
         {[0, 1].map((i) => {
           const preview = previews[i];
           const exist = existing[i];
           return (
-            <label key={i} className="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-2 cursor-pointer hover:bg-gray-50 min-h-[100px]">
+            <label key={i} className="flex flex-col items-center justify-center border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/60 min-h-[100px] transition-colors">
               {preview ? (
-                <img src={preview} alt="" className="w-full h-20 object-cover rounded" />
+                <img src={preview} alt="" className="w-full h-20 object-cover rounded-lg" />
               ) : exist ? (
-                <img src={`${api.defaults.baseURL}/uploads/${exist}`} alt="" className="w-full h-20 object-cover rounded" />
+                <img src={`${api.defaults.baseURL}/uploads/${exist}`} alt="" className="w-full h-20 object-cover rounded-lg" />
               ) : (
                 <>
-                  <Upload className="text-gray-400 mb-1" size={18} />
-                  <span className="text-xs text-gray-500">Photo {i + 1}</span>
+                  <Upload className="text-slate-400 mb-1" size={18} />
+                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Photo {i + 1}</span>
                 </>
               )}
               <input type="file" accept="image/*" className="hidden" onChange={(e) => onChange(e.target.files?.[0] || null, type, i)} />
@@ -452,98 +452,98 @@ function VehicleForm({ vehicle, onClose, onSubmit }: { vehicle?: Vehicle; onClos
       </div>
       {(previews.some(Boolean) || existing.some(Boolean)) && (
         <button type="button" onClick={() => { if (type === 'vehicle') { setVehiclePhotos([null, null]); setVehiclePreviews([null, null]); } else { setWheelTaxCards([null, null]); setTaxPreviews([null, null]); } }}
-          className="text-xs text-red-600 mt-1">Remove all</button>
+          className="text-xs text-crimson-600 dark:text-crimson-400 mt-1 font-medium hover:underline">Remove all</button>
       )}
     </div>
   );
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center p-4 border-b">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto text-slate-900 dark:text-white">
+        <div className="flex justify-between items-center p-5 border-b border-slate-200 dark:border-slate-800">
           <div className="flex items-center gap-3">
             <h2 className="text-lg font-bold">{vehicle ? 'Edit Vehicle' : 'Register New Vehicle'}</h2>
             {!vehicle && (
               <button
                 type="button"
                 onClick={() => setShowOcrModal(true)}
-                className="text-xs bg-cyan-50 text-cyan-700 border border-cyan-300 px-2.5 py-1 rounded-md flex items-center gap-1.5 hover:bg-cyan-100 font-semibold"
+                className="text-xs bg-cyan-50 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-800 px-2.5 py-1 rounded-md flex items-center gap-1.5 hover:bg-cyan-100 dark:hover:bg-cyan-900/50 font-semibold transition-colors"
               >
                 <Sparkles size={13} />
                 Auto-Fill from RTAD Card
               </button>
             )}
           </div>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700"><X size={20} /></button>
+          <button onClick={onClose} className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg"><X size={20} /></button>
         </div>
-        <form onSubmit={handleSubmit} className="p-4 space-y-4">
+        <form onSubmit={handleSubmit} className="p-5 space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Plate Number *</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Plate Number *</label>
               <input type="text" required value={plateNumber} onChange={(e) => setPlateNumber(e.target.value.toUpperCase())}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. 1A-1234" />
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. 1A-1234" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Year *</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Year *</label>
               <select required value={year} onChange={(e) => setYear(e.target.value)}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                 {yearOptions.map((y) => <option key={y} value={y}>{y}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Make *</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Make *</label>
               <select required value={make} onChange={(e) => { setMake(e.target.value); setModel(''); }}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="">Select Make</option>
                 {Object.keys(vehicleMakes).map((m) => <option key={m} value={m}>{m}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Model *</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Model *</label>
               <select required value={model} onChange={(e) => setModel(e.target.value)} disabled={!make}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100">
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50">
                 <option value="">{make ? 'Select Model' : 'Select Make first'}</option>
                 {availableModels.map((m) => <option key={m} value={m}>{m}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Color</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Color</label>
               <select value={color} onChange={(e) => setColor(e.target.value)}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="">Select Color</option>
                 {vehicleColors.map((c) => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Vehicle Class *</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Vehicle Class *</label>
               <select value={vehicleClass} onChange={(e) => setVehicleClass(e.target.value)}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                 {vehicleClasses.map((vc) => <option key={vc} value={vc}>{vc}</option>)}
               </select>
             </div>
           </div>
 
-          <div className="border-t pt-4">
+          <div className="border-t border-slate-200 dark:border-slate-800 pt-4">
             <div className="flex items-center gap-2 mb-3">
-              <CreditCard size={16} className="text-blue-600" />
-              <h3 className="font-medium text-sm text-gray-700">RFID Tag</h3>
+              <CreditCard size={16} className="text-blue-600 dark:text-cyan-400" />
+              <h3 className="font-semibold text-sm text-slate-700 dark:text-slate-300">RFID Tag</h3>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">RFID Tag UID</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">RFID Tag UID</label>
               <input type="text" value={rfidTagUid} onChange={(e) => setRfidTagUid(e.target.value)}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono" placeholder="e.g. E2801160116012345" />
-              <p className="text-xs text-gray-400 mt-1">Scan or enter the RFID tag UID to bind to this vehicle</p>
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono" placeholder="e.g. E2801160116012345" />
+              <p className="text-xs text-slate-400 mt-1">Scan or enter the RFID tag UID to bind to this vehicle</p>
             </div>
           </div>
 
-          <div className="border-t pt-4 space-y-4">
+          <div className="border-t border-slate-200 dark:border-slate-800 pt-4 space-y-4">
             <PhotoUpload label="Vehicle Photos (up to 2)" previews={vehiclePreviews} existing={existingVehiclePhotos} onChange={handleFileChange} type="vehicle" />
             <PhotoUpload label="Wheel Tax Card Photos (up to 2)" previews={taxPreviews} existing={existingTaxPhotos} onChange={handleFileChange} type="tax" />
           </div>
 
-          <div className="flex justify-end gap-2 pt-4 border-t">
-            <button type="button" onClick={onClose} className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50">Cancel</button>
-            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+          <div className="flex justify-end gap-2 pt-4 border-t border-slate-200 dark:border-slate-800">
+            <button type="button" onClick={onClose} className="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-medium">Cancel</button>
+            <button type="submit" className="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-lg font-semibold shadow-sm">
               {vehicle ? 'Save Changes' : 'Register Vehicle'}
             </button>
           </div>
@@ -575,28 +575,28 @@ function CsvImportModal({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl w-full max-w-md p-6 text-slate-900 dark:text-white">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-bold">Import Vehicles from CSV</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700"><X size={20} /></button>
+          <button onClick={onClose} className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg"><X size={20} /></button>
         </div>
         {!result ? (
           <>
-            <p className="text-sm text-gray-600 mb-4">CSV format: <code>plateNumber,make,model,year,color,vehicleClass</code></p>
-            <input type="file" accept=".csv" onChange={(e) => setFile(e.target.files?.[0] || null)} className="w-full mb-4" />
-            <button onClick={handleUpload} disabled={!file} className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 disabled:opacity-50">Import</button>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">CSV format: <code>plateNumber,make,model,year,color,vehicleClass</code></p>
+            <input type="file" accept=".csv" onChange={(e) => setFile(e.target.files?.[0] || null)} className="w-full mb-4 text-slate-700 dark:text-slate-300" />
+            <button onClick={handleUpload} disabled={!file} className="w-full bg-brand-600 hover:bg-brand-500 text-white py-2 rounded-lg font-semibold disabled:opacity-50 shadow-sm">Import</button>
           </>
         ) : (
           <div>
-            <p className="text-green-600 font-medium mb-2">Imported {result.imported} vehicles</p>
+            <p className="text-emerald-600 dark:text-emerald-400 font-semibold mb-2">Imported {result.imported} vehicles</p>
             {result.errors.length > 0 && (
               <div className="mt-2">
-                <p className="text-red-600 font-medium mb-1">Errors:</p>
-                <ul className="text-sm text-red-600 max-h-40 overflow-y-auto">{result.errors.map((e, i) => <li key={i}>{e}</li>)}</ul>
+                <p className="text-crimson-600 dark:text-crimson-400 font-semibold mb-1">Errors:</p>
+                <ul className="text-sm text-crimson-600 dark:text-crimson-400 max-h-40 overflow-y-auto">{result.errors.map((e, i) => <li key={i}>{e}</li>)}</ul>
               </div>
             )}
-            <button onClick={onClose} className="w-full mt-4 bg-gray-600 text-white py-2 rounded-md hover:bg-gray-700">Close</button>
+            <button onClick={onClose} className="w-full mt-4 bg-slate-600 hover:bg-slate-500 text-white py-2 rounded-lg font-medium">Close</button>
           </div>
         )}
       </div>
