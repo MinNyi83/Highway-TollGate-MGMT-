@@ -97,9 +97,18 @@ curl -s http://localhost:3000/api/health # Central Backend API
   - Customer Portal: `MyVehicles.tsx` with **"✨ Scan Wheel Tax (AI)"**
   - Admin Hub: `Vehicles.tsx` with **"✨ Scan Document (AI)"**
 
-### Interactive Multi-Plaza Highway Map
-- Accessible via the **"Highway Map"** button on the Operator Ribbon.
-- Shows live telemetry for Yangon 0-Mile, Bago 39M, Phyu 115M, Naypyitaw 201M, Meiktila 285M, and Mandalay 352M.
+### Real Geographic GPS Highway Map (Leaflet / OpenStreetMap)
+- **Interactive Leaflet Map Engine**: Fully integrated real map with satellite imagery, street map, and CartoDB dark mode tile layers.
+- **Corridor Coverage (Highway 1)**: Visualizes 352.0 miles along the Yangon – Mandalay Expressway with real GPS waypoints and custom pulsing plaza markers:
+  - Yangon 0-Mile (`lat: 17.0372, lng: 96.1788`)
+  - Bago Bypass 39M (`lat: 17.3353, lng: 96.4817`)
+  - Phyu Rest Oasis 115M (`lat: 18.5284, lng: 96.4385`)
+  - Naypyitaw Capital Gate 201M (`lat: 19.7450, lng: 96.1297`)
+  - Meiktila Junction 285M (`lat: 20.8762, lng: 95.8611`)
+  - Mandalay Southern Gate 352M (`lat: 21.9750, lng: 96.0836`)
+- **Access Points**:
+  - **Admin Command Hub**: Click **"Highway Map"** on the Operator Ribbon or switch to **"🗺️ Real Map View"** on the Toll Plazas page.
+  - **Customer Portal**: Click **"Trip Planner"** on the dashboard to view real GPS route segment previews, distance, fuel, and toll fee calculations.
 
 ### Dynamic Booth QR Code (Pay-at-Gate)
 - Triggered directly from **Operator Quick Actions** ribbon when a vehicle arrives with insufficient balance.

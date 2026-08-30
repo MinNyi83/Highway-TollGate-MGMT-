@@ -6,11 +6,12 @@
 2. [HQ Admin Command Hub & Operator Console](#hq-admin-command-hub--operator-console)
    - [Theme Customization (Dark / Light Mode)](#theme-customization-dark--light-mode)
    - [Operator Quick Actions Ribbon](#operator-quick-actions-ribbon)
-   - [Interactive Highway Map View](#interactive-highway-map-view)
+   - [Real Interactive Geographic Highway Map (Leaflet)](#real-interactive-geographic-highway-map-leaflet)
    - [Instant Booth Dynamic QR Payment](#instant-booth-dynamic-qr-payment)
    - [Myanmar RTAD Wheel Tax AI Scanner & OCR](#myanmar-rtad-wheel-tax-ai-scanner--ocr)
 3. [Customer Portal & Progressive Web App (PWA)](#customer-portal--progressive-web-app-pwa)
    - [Dark & Light Theme Switching](#dark--light-theme-switching)
+   - [Expressway Trip Planner with Live Mini-Map](#expressway-trip-planner-with-live-mini-map)
    - [One-Click Vehicle Registration via RTAD Card](#one-click-vehicle-registration-via-rtad-card)
    - [Digital Toll Pass (Virtual RFID QR)](#digital-toll-pass-virtual-rfid-qr)
    - [Prepaid Wallet & Dynamic Top-Up](#prepaid-wallet--dynamic-top-up)
@@ -23,8 +24,8 @@
 
 | Portal | Port | Default URL | Purpose |
 |---|---|---|---|
-| **HQ Admin Command Hub** | `80` | `http://<SERVER_IP>` | Central telemetry, operator ribbon, highway map, reports |
-| **Customer Portal (PWA)** | `8080` | `http://<SERVER_IP>:8080` | Driver digital wallet, virtual RFID pass, trip history |
+| **HQ Admin Command Hub** | `80` | `http://<SERVER_IP>` | Central telemetry, operator ribbon, real highway map, reports |
+| **Customer Portal (PWA)** | `8080` | `http://<SERVER_IP>:8080` | Driver digital wallet, virtual RFID pass, trip history & route planner |
 | **Central Backend API** | `3000` | `http://<SERVER_IP>:3000` | REST API, WebSocket streams, OCR engine, payment webhooks |
 | **Toll Simulator** | `80` | `http://<SERVER_IP>/simulator` | Real-time animated canvas multi-lane simulation |
 
@@ -43,8 +44,9 @@
 
 ---
 
-## 3. Myanmar RTAD Wheel Tax AI Scanner & OCR
+## 3. Real Geographic GPS Highway Map (Leaflet)
 
-The system includes built-in AI / OCR scanning for Myanmar RTAD (Road Transport Administration Department / ကညန) registration cards (Front & Back):
-- Auto-extracts **License Plate** (e.g. `4D-5918`), **Model Year** (`2009`), **Make & Model** (`Honda Civic FD3`), **Class** (`SEDAN`), **Color** (`Gray`), **Engine No** (`LDA-1372845`), **Chassis No** (`FD3-1302842`), and **Owner Name** (`U NYI NYI MIN`).
-- Available in both **Customer Portal** (`My Vehicles` ➔ `Scan Wheel Tax`) and **Admin Command Hub** (`Vehicles` ➔ `Scan Document`).
+The system features real OpenStreetMap and Satellite Leaflet mapping across all portals:
+- **Plaza Nodes & Waypoints**: Plots Yangon (0M), Bago (39M), Phyu (115M), Naypyitaw (201M), Meiktila (285M), and Mandalay (352M).
+- **Interactive Layer Switcher**: Switch between CartoDB Dark Mode, Standard Street Map, and Satellite Imagery.
+- **Corridor Telemetry**: Displays real-time active lane counts, vehicle throughput, and barrier health.

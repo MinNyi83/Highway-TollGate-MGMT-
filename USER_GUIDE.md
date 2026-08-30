@@ -70,16 +70,17 @@ Located at the top of the Command Hub, the Operator Ribbon provides instant acti
 
 ---
 
-### Interactive Highway Map View
-Click the **"Highway Map"** button on the Operator Ribbon to open the full expressway map:
-- **Coverage**: Maps 6 primary plazas spanning **352 miles** along the Yangon – Mandalay Expressway:
-  - Yangon 0-Mile (`0MILE`, 6 lanes)
-  - Bago Bypass (`BAGO39`, 4 lanes)
-  - Phyu Rest Stop (`PHYU115`, 4 lanes)
-  - Naypyitaw Southern Gate (`NPT201`, 6 lanes)
-  - Meiktila Junction (`MEIK285`, 4 lanes)
-  - Mandalay Gate (`MDY352`, 6 lanes)
-- **Real-Time Telemetry**: Click any plaza marker to view active lane counts, hourly throughput (vph), daily revenue estimates, and RFID/ANPR camera health.
+### Real Interactive Geographic Highway Map (Leaflet)
+Click the **"Highway Map"** button on the Operator Ribbon or switch to **"🗺️ Real Map View"** on the Toll Plazas page to open the live GPS map:
+- **Leaflet & Multi-Layer Tiles**: Switch between Dark Mode tiles, Street Map (OpenStreetMap), and Satellite Imagery (Esri World Imagery).
+- **Corridor Coverage**: Maps 6 primary plazas spanning **352 miles** along Highway 1 with real geographic GPS coordinates:
+  - Yangon 0-Mile (`0MILE`, `17.0372° N, 96.1788° E`, 6 lanes)
+  - Bago Bypass (`BAGO39`, `17.3353° N, 96.4817° E`, 4 lanes)
+  - Phyu Rest Stop (`PHYU115`, `18.5284° N, 96.4385° E`, 4 lanes)
+  - Naypyitaw Southern Gate (`NPT201`, `19.7450° N, 96.1297° E`, 6 lanes)
+  - Meiktila Junction (`MEIK285`, `20.8762° N, 95.8611° E`, 4 lanes)
+  - Mandalay Gate (`MDY352`, `21.9750° N, 96.0836° E`, 6 lanes)
+- **Real-Time Telemetry & Controls**: Click any plaza marker to fly to its GPS coordinates, view active lane counts, hourly throughput, daily revenue, and RFID/ANPR camera health. Zoom in/out and route auto-fit controls are built in.
 
 ---
 

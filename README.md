@@ -67,7 +67,7 @@ A distributed, enterprise-grade highway toll management system with RFID + ANPR 
 - **1-Click Auto-Fill**: Available in Customer Portal (`My Vehicles`) and Admin Command Hub (`Vehicles`).
 
 ### 2. 🚦 HQ Command Hub & Operator Console
-- **Interactive Multi-Plaza Highway Map**: Visualizes 6 major expressway plazas across 352 miles (Yangon 0-Mile, Bago 39M, Phyu 115M, Naypyitaw 201M, Meiktila 285M, Mandalay 352M) with real-time throughput and health telemetry.
+- **Real Interactive Geographic Highway Map (Leaflet)**: Visualizes the entire 352-mile Yangon – Mandalay Expressway on real OpenStreetMap / CartoDB / Satellite tile layers with pulsing GPS plaza nodes, real expressway route paths, live vehicle throughput, and lane health telemetry.
 - **Operator Quick Action Ribbon**: Shift tracking, live lane indicators, and barrier overrides (`Auto`, `Force Open`, `Lock Gate`).
 - **Instant Booth Dynamic QR Code**: Generates on-the-spot KBZPay / WavePay / MMQR codes for low-balance drivers at the barrier to clear transactions instantly.
 - **Peak-Hour Traffic Analytics**: Hourly vehicle throughput distribution charts with congestion thresholds.
