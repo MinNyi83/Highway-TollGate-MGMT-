@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import { 
   LayoutDashboard, 
+  DollarSign,
   Car, 
   MapPin, 
   Activity, 
@@ -20,6 +21,7 @@ import { useAuthStore } from '../stores/authStore';
 
 const navItems = [
   { to: '/', icon: LayoutDashboard, label: 'Command Center', roles: ['ADMIN', 'OPERATOR', 'VIEWER'] },
+  { to: '/revenue-transfers', icon: DollarSign, label: 'Revenue Transfers', roles: ['ADMIN', 'OPERATOR', 'VIEWER'] },
   { to: '/vehicles', icon: Car, label: 'Vehicles', roles: ['ADMIN', 'OPERATOR', 'VIEWER'] },
   { to: '/toll-plazas', icon: MapPin, label: 'Toll Plazas', roles: ['ADMIN', 'OPERATOR', 'VIEWER'] },
   { to: '/toll-events', icon: Activity, label: 'Toll Events', roles: ['ADMIN', 'OPERATOR', 'VIEWER'] },

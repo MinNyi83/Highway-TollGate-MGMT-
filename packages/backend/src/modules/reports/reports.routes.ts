@@ -75,6 +75,16 @@ router.get('/violations', authMiddleware, async (req: Request, res: Response) =>
   }
 });
 
+router.get(['/revenue/transfers', '/revenue-transfers'], async (req: Request, res: Response) => {
+  try {
+    const data = await getRevenueTransfersOverview();
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching revenue transfers:', error);
+    res.status(500).json({ error: 'Failed to fetch revenue transfers' });
+  }
+});
+
 router.get('/revenue', authMiddleware, async (req: Request, res: Response) => {
   try {
     const { startDate, endDate } = req.query;

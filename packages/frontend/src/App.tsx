@@ -17,6 +17,7 @@ import SystemHealth from './pages/SystemHealth';
 import Customers from './pages/Customers';
 import Devices from './pages/Devices';
 import Presentation from './pages/Presentation';
+import RevenueTransfers from './pages/RevenueTransfers';
 import Layout from './components/Layout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
@@ -31,6 +32,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<Layout />}>
               <Route path="/" element={<Dashboard />} />
+              <Route path="/revenue-transfers" element={<RevenueTransfers />} />
               <Route path="/vehicles" element={<Vehicles />} />
               <Route path="/vehicles/:id" element={<VehicleDetail />} />
               <Route path="/toll-plazas" element={<TollPlazas />} />
