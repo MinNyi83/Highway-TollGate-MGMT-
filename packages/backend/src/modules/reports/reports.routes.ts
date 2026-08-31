@@ -5,6 +5,8 @@ import {
   getViolationsByDateRange,
   getTollRevenueByPlaza,
   getViolationStats,
+  getRevenueTransfersOverview,
+  confirmRevenueTransfer,
 } from './reports.service';
 import { authMiddleware } from '../../middleware/auth';
 import { PrismaClient } from '@prisma/client';
@@ -414,6 +416,77 @@ router.get('/summary', authMiddleware, async (req: Request, res: Response) => {
     });
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.get('/revenue/transfers', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const data = await getRevenueTransfersOverview();
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching revenue transfers:', error);
+    res.status(500).json({ error: 'Failed to fetch revenue transfers' });
+  }
+});
+
+router.post('/revenue/transfers/confirm', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { date, plazaId, plazaName, amount, tripCount, bankName, refNumber, transferredBy, notes } = req.body;
+    if (!date || !plazaId) {
+      res.status(400).json({ error: 'date and plazaId are required' });
+      return;
+    }
+
+    const record = await confirmRevenueTransfer({
+      date,
+      plazaId,
+      plazaName,
+      amount: Number(amount) || 0,
+      tripCount: Number(tripCount) || 0,
+      bankName,
+      refNumber,
+      transferredBy: transferredBy || (req as any).user?.name || 'Authorized Supervisor',
+      notes,
+    });
+
+    res.json({ success: true, record });
+  } catch (error) {
+    console.error('Error confirming revenue transfer:', error);
+    res.status(500).json({ error: 'Failed to confirm revenue transfer' });
+  }
+});
+
+router.post('/revenue/transfers/batch-confirm', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { date, plazaIds, bankName, refNumberPrefix } = req.body;
+    if (!date || !Array.isArray(plazaIds) || plazaIds.length === 0) {
+      res.status(400).json({ error: 'date and plazaIds array are required' });
+      return;
+    }
+
+    const overview = await getRevenueTransfersOverview();
+    const results = [];
+
+    for (const plazaId of plazaIds) {
+      const plazaData = overview.plazas.find((p) => p.plazaId === plazaId);
+      const record = await confirmRevenueTransfer({
+        date,
+        plazaId,
+        plazaName: plazaData?.plazaName,
+        amount: plazaData?.previousDayRevenue || 0,
+        tripCount: plazaData?.previousDayTrips || 0,
+        bankName: bankName || 'KBZ Corporate Central Settlement',
+        refNumber: `${refNumberPrefix || 'BATCH-DEP'}-${Math.floor(100000 + Math.random() * 900000)}`,
+        transferredBy: (req as any).user?.name || 'HQ Treasury Admin',
+        notes: 'Batch settlement auto-approved via central console',
+      });
+      results.push(record);
+    }
+
+    res.json({ success: true, count: results.length, records: results });
+  } catch (error) {
+    console.error('Error in batch revenue transfer:', error);
+    res.status(500).json({ error: 'Failed to batch confirm revenue transfers' });
   }
 });
 

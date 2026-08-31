@@ -23,6 +23,7 @@ This skill provides step-by-step procedures, standard operating instructions, an
 │  │              HQ Backend API (Port 3000)                    │  │
 │  │  - Express / TypeScript / Prisma                           │  │
 │  │  - Myanmar RTAD OCR Document Parser (/api/ocr)             │  │
+│  │  - Day-by-Day Revenue Transfer & Settlement (/api/reports) │  │
 │  │  - WebSocket Telemetry & Payment Webhooks                  │  │
 │  └────────────────────────┬───────────────────────────────────┘  │
 └───────────────────────────┼─────────────────────────────────────┘
@@ -56,16 +57,17 @@ ssh nyimin@192.168.100.101
 cd /home/nyimin/TollGate-RFID
 git pull origin master
 
-# Build and launch stack
+# Build and launch Docker compose stack
 docker compose up -d --build
 ```
 
-### Checking Service Health
+### Checking Service Health & Port Mappings
 ```bash
 docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
-curl -sI http://localhost:80       # Admin Command Hub
-curl -sI http://localhost:8080     # Customer Portal PWA
-curl -s http://localhost:3000/api/health # Central Backend API
+curl -sI http://localhost:80                 # Admin Command Hub (Frontend)
+curl -sI http://localhost:80/presentation.html # Dahua Highway Solution Portal & Slides
+curl -sI http://localhost:8080               # Customer Portal PWA
+curl -s http://localhost:3000/api/health     # Central Backend API
 ```
 
 ---
@@ -85,38 +87,49 @@ curl -s http://localhost:3000/api/health # Central Backend API
 
 ## 4. Key Operational Features
 
-### Dual-Theme Adaptive UI (Dark / Light Mode)
-- **Header Sun/Moon Toggle**: Available on both Admin Command Hub (top-right header) and Customer Portal (desktop header and mobile top-bar).
-- **Persistent Preferences**: Theme state is persisted to `localStorage` (`theme: 'dark' | 'light'`) and defaults to sleek slate dark mode for command centers while respecting OS preferences.
-- **Glassmorphism Theme Tokens**: Custom `.glass-card`, `.status-*`, and `.event-tag-*` CSS utilities seamlessly transition between dark slate and light card aesthetics.
+### 1. Day-by-Day Revenue Transfer & Plaza Settlement Monitor
+- **Live Today's Revenue**: Continuous live accumulating revenue ticker per plaza and total system.
+- **Previous Day Total Revenue**: Yesterday's toll collection total across all plazas.
+- **Settlement Status Indicators**:
+  - 🟢 **`TRANSFERRED` (Green)**: Plaza revenue confirmed and transferred to HQ central bank account (with Bank Name, Deposit Ref ID, and timestamp).
+  - 🔴 **`NEED TRANSFER` (Red Pulsing)**: Highlights plazas with pending transfers that require immediate settlement.
+- **Interactive Transfer Actions**:
+  - **1-Click Modal**: Enter bank name, transaction reference ID, and confirm settlement.
+  - **Batch Settle**: Bulk approve all pending plazas for yesterday in a single click.
+  - **Historical Audit Table**: Filter and inspect settlement history day-by-day.
+- **API Endpoints**:
+  - `GET /api/reports/revenue/transfers`: Full overview and 7-day settlement history.
+  - `POST /api/reports/revenue/transfers/confirm`: Confirm individual plaza transfer.
+  - `POST /api/reports/revenue/transfers/batch-confirm`: Batch confirm pending plazas.
 
-### Myanmar RTAD Wheel Tax OCR & Auto-Fill (`/api/ocr/scan-wheel-tax`)
+### 2. Dahua Highway Solution Presentation & Web Portal (`/presentation.html`)
+- **Dual-Mode Switcher**:
+  - **📽️ Slide Deck Mode**: 14-slide executive presentation with timer, fullscreen mode, slide drawer, and keyboard controls (`Arrow Keys` / `Space`).
+  - **🌐 Web Solution Portal Mode**: Scrollable enterprise layout matching Dahua's highway solution with sticky navigation tabs (*Overview*, *Scenario Aerial View*, *Challenges & Offers*, *System Topology*, *Product Recommendation*, *Field Deployment*).
+- **3D Isometric Scenario Digital Twin**:
+  - High-resolution 3D cutaway rendering of toll plaza solar canopy, mountain tunnel, and suspension bridge.
+  - Interactive floating Dahua pill badges (`(1) General Road`, `(2) Toll Plaza`, `(3) Bridge Gantry`, `(4) Tunnel System`).
+- **Industrial Edge Hardware Catalog**:
+  - Real industrial studio hardware photography for `DHI-ITC-RFID`, `DHI-ITC431` 4K ANPR Camera, `ITS-RADAR-79G` 79GHz Radar, and `DHI-EDGE-RPI` Industrial Gateway Box.
+
+### 3. Myanmar RTAD Wheel Tax OCR & Auto-Fill (`/api/ocr/scan-wheel-tax`)
 - **Dual-Side Support**: Scans both Front (Plate No, Model Year, Make/Model, Vehicle Type, Region) and Back (Engine No, Chassis No, Color, Gross Weight, Owner, Expiry Date) of Myanmar RTAD cards.
 - **VIN/Chassis Decoder**: Automatically maps chassis codes (e.g. `FD3` -> Honda Civic Hybrid, `NCP91` -> Toyota Vitz, `JB64W` -> Suzuki Jimny, `GUN125` -> Toyota Hilux) to vehicle make, model, and class (`SEDAN`, `SUV`, `TRUCK`, `BUS`, `MOTORCYCLE`).
-- **One-Click Auto-Fill**:
-  - Customer Portal: `MyVehicles.tsx` with **"✨ Scan Wheel Tax (AI)"**
-  - Admin Hub: `Vehicles.tsx` with **"✨ Scan Document (AI)"**
+- **One-Click Auto-Fill**: Available in Customer Portal (`My Vehicles`) and Admin Hub (`Vehicles`).
 
-### Real Geographic GPS Highway Map (Leaflet / OpenStreetMap)
-- **Interactive Leaflet Map Engine**: Fully integrated real map with satellite imagery, street map, and CartoDB dark mode tile layers.
-- **Corridor Coverage (Highway 1)**: Visualizes 352.0 miles along the Yangon – Mandalay Expressway with real GPS waypoints and custom pulsing plaza markers:
+### 4. Real Geographic GPS Highway Map (Leaflet / OpenStreetMap)
+- **Interactive Leaflet Map Engine**: Satellite imagery, street map, and CartoDB dark mode tile layers.
+- **Corridor Coverage (Highway 1)**: Visualizes 352.0 miles along the Yangon – Mandalay Expressway with real GPS waypoints:
   - Yangon 0-Mile (`lat: 17.0372, lng: 96.1788`)
   - Bago Bypass 39M (`lat: 17.3353, lng: 96.4817`)
   - Phyu Rest Oasis 115M (`lat: 18.5284, lng: 96.4385`)
   - Naypyitaw Capital Gate 201M (`lat: 19.7450, lng: 96.1297`)
   - Meiktila Junction 285M (`lat: 20.8762, lng: 95.8611`)
   - Mandalay Southern Gate 352M (`lat: 21.9750, lng: 96.0836`)
-- **Access Points**:
-  - **Admin Command Hub**: Click **"Highway Map"** on the Operator Ribbon or switch to **"🗺️ Real Map View"** on the Toll Plazas page.
-  - **Customer Portal**: Click **"Trip Planner"** on the dashboard to view real GPS route segment previews, distance, fuel, and toll fee calculations.
 
-### Dynamic Booth QR Code (Pay-at-Gate)
-- Triggered directly from **Operator Quick Actions** ribbon when a vehicle arrives with insufficient balance.
-- Dynamically calculates toll rate per vehicle class and verifies payment for instant gate raise.
-
-### Customer Portal Progressive Web App (PWA)
-- Manifest configured at `packages/customer-portal/public/manifest.json`.
-- Supports mobile home-screen installation with **Digital Toll Pass** (virtual dynamic RFID QR code).
+### 5. Dual-Theme Adaptive UI (Dark / Light Mode)
+- **Header Sun/Moon Toggle**: Available on both Admin Command Hub (top-right header) and Customer Portal.
+- **Persistent Preferences**: Theme state is persisted to `localStorage` (`theme: 'dark' | 'light'`).
 
 ---
 
@@ -135,18 +148,6 @@ npm run build --workspace=@tollgate/frontend
 npm run build --workspace=@tollgate/customer-portal
 ```
 
-### Database Entity Rules (Prisma Schema Constraints)
-- **`model User`**:
-  - `customerType`: `'INDIVIDUAL'` requires `nrcNumber`.
-  - `customerType`: `'ENTERPRISE'` requires `companyName` and `companyRegNo`.
-- **`model TollPlaza`**:
-  - Primary code field is `gateCode` (not `code`).
-  - GPS coordinates require `locationLat` and `locationLng` as Decimals.
-- **`model Vehicle`**:
-  - Related to `User` via `RFIDTag` or `Account` models.
-- **Unit Test Throttling**:
-  - `rateLimiter.ts` automatically bypasses limits when `NODE_ENV === 'test'`.
-
 ---
 
 ## 6. Troubleshooting Runbook
@@ -154,7 +155,7 @@ npm run build --workspace=@tollgate/customer-portal
 | Symptom | Probable Cause | Resolution |
 |---|---|---|
 | Relation "User" does not exist | Fresh PostgreSQL instance unmigrated | Run `npx prisma migrate deploy` and `npx tsx prisma/seed.ts` in `packages/backend`. |
-| OCR scan returns default fallback | Image too blurry or text unextracted | Check `/api/ocr/scan-wheel-tax` logs; review client OCR fallback. |
+| Revenue Transfer status shows Pending | Yesterday's revenue transfer unconfirmed | Click "Transfer Revenue Now" or use "Settle All Pending" on Command Hub. |
+| Presentation page shows 404 | Missing presentation.html in web root | Copy `PRESENTATION.html` to `packages/frontend/dist/presentation.html`. |
 | Test suite fails with HTTP 429 | Rate limiter active in test environment | Verify `skip: () => process.env.NODE_ENV === 'test'` in `rateLimiter.ts`. |
 | Plaza offline sync backlog | Network interruption between Plaza and HQ | Run `SyncService.forceSync()` or check `/api/sync/status`. |
-| Dark mode looks washed out | Missing dark class on HTML root | Check `document.documentElement.classList.contains('dark')`. |

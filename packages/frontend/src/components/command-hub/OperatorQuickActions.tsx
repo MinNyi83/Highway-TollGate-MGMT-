@@ -14,7 +14,8 @@ import {
   QrCode,
   Camera,
   ArrowLeftRight,
-  FileCheck
+  FileCheck,
+  Presentation
 } from 'lucide-react';
 import api from '../../lib/api';
 import PlazaMapModal from './PlazaMapModal';
@@ -225,6 +226,17 @@ export default function OperatorQuickActions({ onEventCreated }: QuickActionsPro
               <FileText size={16} className="text-emerald-400" />
               Daily Report
             </button>
+
+            <a
+              href="/presentation.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-gradient-to-r from-blue-600/30 to-cyan-500/30 hover:from-blue-600/50 hover:to-cyan-500/50 border border-cyan-500/40 text-cyan-200 text-sm font-semibold transition-all shadow-sm"
+              title="Open Dahua-Style Highway Solution Presentation"
+            >
+              <Presentation size={16} className="text-cyan-400" />
+              Presentation
+            </a>
 
             {/* Barrier Override Toggles */}
             <div className="flex items-center bg-black/40 rounded-xl p-1 border border-white/10">

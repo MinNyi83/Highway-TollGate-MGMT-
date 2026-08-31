@@ -3,7 +3,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import NotificationPanel from './NotificationPanel';
 import { useAuthStore } from '../stores/authStore';
-import { LogOut, PanelLeftClose, PanelLeftOpen, Sun, Moon } from 'lucide-react';
+import { LogOut, PanelLeftClose, PanelLeftOpen, Sun, Moon, Presentation } from 'lucide-react';
 
 export default function Layout() {
   const { user, logout } = useAuthStore();
@@ -48,6 +48,17 @@ export default function Layout() {
           </button>
 
           <div className="flex items-center gap-3">
+            <a
+              href="/presentation.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white rounded-lg text-xs font-semibold shadow-sm shadow-blue-500/20 transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+              title="Open Dahua-Style Project Presentation"
+            >
+              <Presentation size={15} />
+              <span className="hidden sm:inline">Presentation</span>
+            </a>
+
             <NotificationPanel />
 
             <button

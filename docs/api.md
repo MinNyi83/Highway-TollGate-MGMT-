@@ -353,6 +353,80 @@ GET /api/dashboard/realtime
 GET /api/reports/revenue
 ```
 
+### Day-by-Day Revenue Transfers Overview
+```
+GET /api/reports/revenue/transfers
+```
+**Response**:
+```json
+{
+  "todayDate": "2026-08-31",
+  "previousDayDate": "2026-08-30",
+  "summary": {
+    "todayRevenue": 13820000,
+    "todayTrips": 3860,
+    "previousDayRevenue": 13820000,
+    "previousDayTrips": 3860,
+    "previousDayTransferStatus": "PENDING",
+    "completedPlazas": 2,
+    "pendingPlazas": 2,
+    "totalPlazas": 4
+  },
+  "plazas": [
+    {
+      "plazaId": "uuid",
+      "plazaName": "0-Mile Express Toll Plaza",
+      "gateCode": "P01",
+      "location": "0-Mile Corridor",
+      "todayRevenue": 4850000,
+      "todayTrips": 1420,
+      "previousDayRevenue": 4850000,
+      "previousDayTrips": 1420,
+      "previousDayDate": "2026-08-30",
+      "transferStatus": "COMPLETED",
+      "transferDetails": {
+        "id": "TRF-2026-08-30-P01",
+        "bankName": "KBZ Corporate Bank",
+        "refNumber": "KBZ-DEP-994812",
+        "transferredAt": "2026-08-30T10:00:00.000Z"
+      }
+    }
+  ],
+  "history": []
+}
+```
+
+### Confirm Single Plaza Revenue Transfer
+```
+POST /api/reports/revenue/transfers/confirm
+```
+**Body**:
+```json
+{
+  "date": "2026-08-30",
+  "plazaId": "uuid",
+  "plazaName": "0-Mile Express Plaza",
+  "amount": 4850000,
+  "tripCount": 1420,
+  "bankName": "KBZ Corporate Bank",
+  "refNumber": "KBZ-DEP-994812",
+  "notes": "Daily revenue settlement"
+}
+```
+
+### Batch Confirm Revenue Transfers
+```
+POST /api/reports/revenue/transfers/batch-confirm
+```
+**Body**:
+```json
+{
+  "date": "2026-08-30",
+  "plazaIds": ["uuid1", "uuid2"],
+  "bankName": "KBZ Corporate Central Settlement"
+}
+```
+
 ### Violation Stats
 ```
 GET /api/reports/violations/stats

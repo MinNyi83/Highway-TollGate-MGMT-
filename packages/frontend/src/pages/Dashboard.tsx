@@ -9,6 +9,7 @@ import PlazaGrid from '../components/command-hub/PlazaGrid';
 import LiveEventStream from '../components/command-hub/LiveEventStream';
 import ViolationWorkbench from '../components/command-hub/ViolationWorkbench';
 import OperatorQuickActions from '../components/command-hub/OperatorQuickActions';
+import RevenueTransferMonitor from '../components/command-hub/RevenueTransferMonitor';
 
 const COLORS = ['#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
@@ -146,6 +147,9 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+
+        {/* Day-by-Day Revenue Transfer & Plaza Settlement Monitor */}
+        <RevenueTransferMonitor />
 
         {/* Plaza Grid */}
         <PlazaGrid />
