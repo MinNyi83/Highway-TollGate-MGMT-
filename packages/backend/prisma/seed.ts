@@ -310,7 +310,7 @@ async function main() {
   // Create toll rates (distance-based pricing)
   const ratePromises: Promise<any>[] = [];
   for (const plaza of tollPlazas) {
-    const mileFactor = plaza.mileMarker === 0 ? 1 : plaza.mileMarker / 50;
+    const mileFactor = (plaza.mileMarker ?? 0) === 0 ? 1 : (plaza.mileMarker ?? 50) / 50;
     const rates = [
       { vehicleClass: VehicleClass.MOTORCYCLE, baseRate: 30 },
       { vehicleClass: VehicleClass.SEDAN, baseRate: 80 },
