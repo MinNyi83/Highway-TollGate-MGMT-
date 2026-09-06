@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TollGate RFID Pass — Financial Report FY2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --primary: #0070ba;
+  --primary-glow: #0088ff;
+  --accent-cyan: #00d2ff;
+  --accent-green: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-red: #ef4444;
+  --accent-purple: #8b5cf6;
+  --bg-dark: #060d1a;
+  --bg-surface: #0c182b;
+  --bg-card: #112240;
+  --border-subtle: #1e3a66;
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+  background: var(--bg-dark);
+  color: var(--text-main);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 32px;
+  background: radial-gradient(ellipse at 50% 30%, rgba(0,112,186,0.15) 0%, transparent 60%);
+  position: relative;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 59px, rgba(30,58,102,0.15) 59px, rgba(30,58,102,0.15) 60px),
+              repeating-linear-gradient(90deg, transparent, transparent 59px, rgba(30,58,102,0.15) 59px, rgba(30,58,102,0.15) 60px);
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0,112,186,0.15);
+  border: 1px solid rgba(0,112,186,0.3);
+  padding: 8px 20px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-cyan);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+  position: relative;
+  z-index: 1;
+}
+.hero h1 {
+  font-size: clamp(40px, 6vw, 80px);
+  font-weight: 800;
+  letter-spacing: -2px;
+  line-height: 1.05;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 1;
+}
+.hero h1 .gradient {
+  background: linear-gradient(135deg, #0070ba 0%, #00d2ff 50%, #10b981 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.hero-sub {
+  font-size: 18px;
+  color: var(--text-muted);
+  max-width: 600px;
+  margin-bottom: 48px;
+  position: relative;
+  z-index: 1;
+}
+.hero-stats {
+  display: flex;
+  gap: 48px;
+  position: relative;
+  z-index: 1;
+}
+.hero-stat {
+  text-align: center;
+}
+.hero-stat-value {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--accent-cyan);
+  font-family: 'JetBrains Mono', monospace;
+}
+.hero-stat-label {
+  font-size: 12px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+.act-divider {
+  padding: 80px 32px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.act-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0,112,186,0.1);
+  border: 1px solid rgba(0,112,186,0.25);
+  padding: 6px 16px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--primary-glow);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.act-title {
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin-bottom: 8px;
+}
+.act-subtitle {
+  font-size: 16px;
+  color: var(--text-muted);
+  max-width: 700px;
+}
+.section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 32px;
+}
+.section-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 24px;
+  transition: all 0.2s;
+}
+.card:hover {
+  border-color: rgba(0,112,186,0.4);
+  box-shadow: 0 0 20px rgba(0,112,186,0.08);
+}
+.card-label {
+  font-size: 12px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.card-value {
+  font-size: 32px;
+  font-weight: 800;
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 4px;
+}
+.card-value.green { color: var(--accent-green); }
+.card-value.red { color: var(--accent-red); }
+.card-value.cyan { color: var(--accent-cyan); }
+.card-value.amber { color: var(--accent-amber); }
+.card-value.purple { color: var(--accent-purple); }
+.card-change {
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.card-change.up { color: var(--accent-green); }
+.card-change.down { color: var(--accent-red); }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 32px;
+  background: var(--bg-card);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+}
+th {
+  background: rgba(0,112,186,0.1);
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--accent-cyan);
+  border-bottom: 1px solid var(--border-subtle);
+}
+td {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(30,58,102,0.3);
+  font-size: 14px;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(0,112,186,0.04); }
+.text-right { text-align: right; }
+.text-green { color: var(--accent-green); }
+.text-red { color: var(--accent-red); }
+.text-cyan { color: var(--accent-cyan); }
+.text-amber { color: var(--accent-amber); }
+.text-muted { color: var(--text-muted); }
+.font-mono { font-family: 'JetBrains Mono', monospace; }
+.font-bold { font-weight: 700; }
+.chart-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+}
+.chart-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--text-muted);
+}
+.chart-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+@media (max-width: 768px) {
+  .chart-row { grid-template-columns: 1fr; }
+  .hero-stats { flex-direction: column; gap: 24px; }
+}
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+@media (max-width: 768px) {
+  .kpi-row { grid-template-columns: 1fr 1fr; }
+}
+.kpi {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+}
+.kpi-value {
+  font-size: 28px;
+  font-weight: 800;
+  font-family: 'JetBrains Mono', monospace;
+}
+.kpi-label {
+  font-size: 11px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 6px;
+}
+.risk-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.risk-card {
+  background: var(--bg-card);
+  border-left: 4px solid var(--accent-amber);
+  border-radius: 0 12px 12px 0;
+  padding: 20px;
+}
+.risk-card.high { border-left-color: var(--accent-red); }
+.risk-card.medium { border-left-color: var(--accent-amber); }
+.risk-card.low { border-left-color: var(--accent-green); }
+.risk-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.risk-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.risk-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 8px;
+}
+.risk-tag.high { background: rgba(239,68,68,0.15); color: var(--accent-red); }
+.risk-tag.medium { background: rgba(245,158,11,0.15); color: var(--accent-amber); }
+.risk-tag.low { background: rgba(16,185,129,0.15); color: var(--accent-green); }
+.footer {
+  text-align: center;
+  padding: 60px 32px;
+  color: var(--text-dim);
+  font-size: 13px;
+  border-top: 1px solid var(--border-subtle);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== HERO ==================== -->
+<div class="hero">
+  <div class="hero-badge">FINANCIAL REPORT FY2026</div>
+  <h1><span class="gradient">TollGate RFID Pass</span><br>Annual Financial Report</h1>
+  <p class="hero-sub">Highway Toll Management System — Full Year Performance, Financial Statements, Analysis & Forward Guidance</p>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-value">MMK 2.4B</div>
+      <div class="hero-stat-label">Total Revenue</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-value">18.2%</div>
+      <div class="hero-stat-label">Net Margin</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-value">42%</div>
+      <div class="hero-stat-label">YoY Growth</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-value">6</div>
+      <div class="hero-stat-label">Active Plazas</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== ACT 1: THE HEADLINE ==================== -->
+<div class="act-divider">
+  <div class="act-label">ACT 1</div>
+  <div class="act-title">The Headline</div>
+  <div class="act-subtitle">FY2026 at a glance — revenue, costs, and the shape of the year</div>
+</div>
+
+<div class="section">
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-value text-cyan">MMK 2.4B</div>
+      <div class="kpi-label">Total Revenue</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-value text-green">MMK 436M</div>
+      <div class="kpi-label">Net Profit</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-value text-amber">MMK 1.68B</div>
+      <div class="kpi-label">Total Costs</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-value text-purple">1,247,000</div>
+      <div class="kpi-label">Total Transactions</div>
+    </div>
+  </div>
+
+  <div class="chart-row">
+    <div class="chart-container">
+      <div class="chart-title">Monthly Revenue Trend (MMK Millions)</div>
+      <canvas id="revenueTrend" height="220"></canvas>
+    </div>
+    <div class="chart-container">
+      <div class="chart-title">Revenue by Plaza (% of Total)</div>
+      <canvas id="plazaRevenue" height="220"></canvas>
+    </div>
+  </div>
+
+  <div class="section-title">Revenue Breakdown by Category</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Revenue Category</th>
+        <th class="text-right">FY2026 (MMK)</th>
+        <th class="text-right">FY2025 (MMK)</th>
+        <th class="text-right">YoY Change</th>
+        <th class="text-right">% of Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="font-bold">Toll Collections (RFID)</td>
+        <td class="text-right font-mono">1,680,000,000</td>
+        <td class="text-right font-mono text-muted">1,120,000,000</td>
+        <td class="text-right text-green font-mono">+50.0%</td>
+        <td class="text-right font-mono">70.0%</td>
+      </tr>
+      <tr>
+        <td class="font-bold">Toll Collections (ANPR)</td>
+        <td class="text-right font-mono">360,000,000</td>
+        <td class="text-right font-mono text-muted">280,000,000</td>
+        <td class="text-right text-green font-mono">+28.6%</td>
+        <td class="text-right font-mono">15.0%</td>
+      </tr>
+      <tr>
+        <td class="font-bold">Manual / Cash Collections</td>
+        <td class="text-right font-mono">216,000,000</td>
+        <td class="text-right font-mono text-muted">196,000,000</td>
+        <td class="text-right text-green font-mono">+10.2%</td>
+        <td class="text-right font-mono">9.0%</td>
+      </tr>
+      <tr>
+        <td class="font-bold">Fleet Subscription Fees</td>
+        <td class="text-right font-mono">96,000,000</td>
+        <td class="text-right font-mono text-muted">60,000,000</td>
+        <td class="text-right text-green font-mono">+60.0%</td>
+        <td class="text-right font-mono">4.0%</td>
+      </tr>
+      <tr>
+        <td class="font-bold">Violation Fines & Penalties</td>
+        <td class="text-right font-mono">48,000,000</td>
+        <td class="text-right font-mono text-muted">36,000,000</td>
+        <td class="text-right text-green font-mono">+33.3%</td>
+        <td class="text-right font-mono">2.0%</td>
+      </tr>
+      <tr style="background: rgba(0,112,186,0.08);">
+        <td class="font-bold text-cyan">Total Revenue</td>
+        <td class="text-right font-mono font-bold text-cyan">2,400,000,000</td>
+        <td class="text-right font-mono text-muted">1,692,000,000</td>
+        <td class="text-right text-green font-mono font-bold">+41.8%</td>
+        <td class="text-right font-mono font-bold">100.0%</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">Cost Structure</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Cost Category</th>
+        <th class="text-right">FY2026 (MMK)</th>
+        <th class="text-right">FY2025 (MMK)</th>
+        <th class="text-right">YoY Change</th>
+        <th class="text-right">% of Revenue</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Staff Salaries & Benefits</td>
+        <td class="text-right font-mono">480,000,000</td>
+        <td class="text-right font-mono text-muted">420,000,000</td>
+        <td class="text-right text-red font-mono">+14.3%</td>
+        <td class="text-right font-mono">20.0%</td>
+      </tr>
+      <tr>
+        <td>Hardware Maintenance & RFID Readers</td>
+        <td class="text-right font-mono">240,000,000</td>
+        <td class="text-right font-mono text-muted">180,000,000</td>
+        <td class="text-right text-red font-mono">+33.3%</td>
+        <td class="text-right font-mono">10.0%</td>
+      </tr>
+      <tr>
+        <td>Cloud Infrastructure & Hosting</td>
+        <td class="text-right font-mono">192,000,000</td>
+        <td class="text-right font-mono text-muted">144,000,000</td>
+        <td class="text-right text-red font-mono">+33.3%</td>
+        <td class="text-right font-mono">8.0%</td>
+      </tr>
+      <tr>
+        <td>Network & Connectivity (4G/Fiber)</td>
+        <td class="text-right font-mono">168,000,000</td>
+        <td class="text-right font-mono text-muted">120,000,000</td>
+        <td class="text-right text-red font-mono">+40.0%</td>
+        <td class="text-right font-mono">7.0%</td>
+      </tr>
+      <tr>
+        <td>Payment Gateway Commissions</td>
+        <td class="text-right font-mono">144,000,000</td>
+        <td class="text-right font-mono text-muted">96,000,000</td>
+        <td class="text-right text-red font-mono">+50.0%</td>
+        <td class="text-right font-mono">6.0%</td>
+      </tr>
+      <tr>
+        <td>Insurance & Compliance</td>
+        <td class="text-right font-mono">96,000,000</td>
+        <td class="text-right font-mono text-muted">84,000,000</td>
+        <td class="text-right text-red font-mono">+14.3%</td>
+        <td class="text-right font-mono">4.0%</td>
+      </tr>
+      <tr>
+        <td>Depreciation & Amortization</td>
+        <td class="text-right font-mono">216,000,000</td>
+        <td class="text-right font-mono text-muted">192,000,000</td>
+        <td class="text-right text-red font-mono">+12.5%</td>
+        <td class="text-right font-mono">9.0%</td>
+      </tr>
+      <tr>
+        <td>Marketing & Customer Acquisition</td>
+        <td class="text-right font-mono">72,000,000</td>
+        <td class="text-right font-mono text-muted">48,000,000</td>
+        <td class="text-right text-red font-mono">+50.0%</td>
+        <td class="text-right font-mono">3.0%</td>
+      </tr>
+      <tr>
+        <td>Miscellaneous & Contingency</td>
+        <td class="text-right font-mono">72,000,000</td>
+        <td class="text-right font-mono text-muted">60,000,000</td>
+        <td class="text-right text-red font-mono">+20.0%</td>
+        <td class="text-right font-mono">3.0%</td>
+      </tr>
+      <tr style="background: rgba(239,68,68,0.06);">
+        <td class="font-bold text-red">Total Operating Costs</td>
+        <td class="text-right font-mono font-bold text-red">1,680,000,000</td>
+        <td class="text-right font-mono text-muted">1,344,000,000</td>
+        <td class="text-right text-red font-mono font-bold">+25.0%</td>
+        <td class="text-right font-mono font-bold">70.0%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ==================== ACT 2: FINANCIAL STATEMENTS ==================== -->
+<div class="act-divider">
+  <div class="act-label">ACT 2</div>
+  <div class="act-title">Financial Statements</div>
+  <div class="act-subtitle">The three core statements — Profit & Loss, Balance Sheet, and Cash Flow</div>
+</div>
+
+<div class="section">
+  <div class="section-title">Consolidated Statement of Profit & Loss</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Line Item</th>
+        <th class="text-right">FY2026 (MMK)</th>
+        <th class="text-right">FY2025 (MMK)</th>
+        <th class="text-right">Change</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="font-bold">Revenue</td>
+        <td class="text-right font-mono font-bold">2,400,000,000</td>
+        <td class="text-right font-mono text-muted">1,692,000,000</td>
+        <td class="text-right text-green font-mono">+41.8%</td>
+      </tr>
+      <tr>
+        <td class="text-muted">Cost of Revenue</td>
+        <td class="text-right font-mono text-muted">(1,008,000,000)</td>
+        <td class="text-right font-mono text-muted">(756,000,000)</td>
+        <td class="text-right text-red font-mono">+33.3%</td>
+      </tr>
+      <tr style="background: rgba(16,185,129,0.06);">
+        <td class="font-bold text-green">Gross Profit</td>
+        <td class="text-right font-mono font-bold text-green">1,392,000,000</td>
+        <td class="text-right font-mono text-muted">936,000,000</td>
+        <td class="text-right text-green font-mono font-bold">+48.7%</td>
+      </tr>
+      <tr>
+        <td class="text-muted">Gross Margin</td>
+        <td class="text-right font-mono text-green">58.0%</td>
+        <td class="text-right font-mono text-muted">55.3%</td>
+        <td class="text-right text-green font-mono">+2.7pp</td>
+      </tr>
+      <tr><td colspan="4" style="height:8px;"></td></tr>
+      <tr>
+        <td>Operating Expenses</td>
+        <td></td><td></td><td></td>
+      </tr>
+      <tr>
+        <td class="text-muted" style="padding-left:24px;">Staff Salaries & Benefits</td>
+        <td class="text-right font-mono text-muted">(480,000,000)</td>
+        <td class="text-right font-mono text-muted">(420,000,000)</td>
+        <td class="text-right text-red font-mono">+14.3%</td>
+      </tr>
+      <tr>
+        <td class="text-muted" style="padding-left:24px;">Hardware & Maintenance</td>
+        <td class="text-right font-mono text-muted">(240,000,000)</td>
+        <td class="text-right font-mono text-muted">(180,000,000)</td>
+        <td class="text-right text-red font-mono">+33.3%</td>
+      </tr>
+      <tr>
+        <td class="text-muted" style="padding-left:24px;">Cloud & Infrastructure</td>
+        <td class="text-right font-mono text-muted">(192,000,000)</td>
+        <td class="text-right font-mono text-muted">(144,000,000)</td>
+        <td class="text-right text-red font-mono">+33.3%</td>
+      </tr>
+      <tr>
+        <td class="text-muted" style="padding-left:24px;">Network & Connectivity</td>
+        <td class="text-right font-mono text-muted">(168,000,000)</td>
+        <td class="text-right font-mono text-muted">(120,000,000)</td>
+        <td class="text-right text-red font-mono">+40.0%</td>
+      </tr>
+      <tr>
+        <td class="text-muted" style="padding-left:24px;">Other Operating Costs</td>
+        <td class="text-right font-mono text-muted">(240,000,000)</td>
+        <td class="text-right font-mono text-muted">(192,000,000)</td>
+        <td class="text-right text-red font-mono">+25.0%</td>
+      </tr>
+      <tr style="background: rgba(0,112,186,0.06);">
+        <td class="font-bold">Total Operating Expenses</td>
+        <td class="text-right font-mono font-bold">(1,320,000,000)</td>
+        <td class="text-right font-mono text-muted">(1,056,000,000)</td>
+        <td class="text-right text-red font-mono">+25.0%</td>
+      </tr>
+      <tr style="background: rgba(16,185,129,0.08);">
+        <td class="font-bold text-green">Operating Income (EBIT)</td>
+        <td class="text-right font-mono font-bold text-green">1,080,000,000</td>
+        <td class="text-right font-mono text-muted">636,000,000</td>
+        <td class="text-right text-green font-mono font-bold">+69.8%</td>
+      </tr>
+      <tr>
+        <td class="text-muted">Interest Expense</td>
+        <td class="text-right font-mono text-muted">(120,000,000)</td>
+        <td class="text-right font-mono text-muted">(96,000,000)</td>
+        <td class="text-right text-red font-mono">+25.0%</td>
+      </tr>
+      <tr>
+        <td class="text-muted">Depreciation & Amortization</td>
+        <td class="text-right font-mono text-muted">(216,000,000)</td>
+        <td class="text-right font-mono text-muted">(192,000,000)</td>
+        <td class="text-right text-red font-mono">+12.5%</td>
+      </tr>
+      <tr>
+        <td class="text-muted">Tax Expense (20%)</td>
+        <td class="text-right font-mono text-muted">(308,000,000)</td>
+        <td class="text-right font-mono text-muted">(208,800,000)</td>
+        <td class="text-right text-red font-mono">+47.5%</td>
+      </tr>
+      <tr style="background: rgba(16,185,129,0.12);">
+        <td class="font-bold text-green" style="font-size:16px;">Net Profit</td>
+        <td class="text-right font-mono font-bold text-green" style="font-size:16px;">436,000,000</td>
+        <td class="text-right font-mono text-muted">139,200,000</td>
+        <td class="text-right text-green font-mono font-bold">+213.2%</td>
+      </tr>
+      <tr>
+        <td class="text-muted">Net Profit Margin</td>
+        <td class="text-right font-mono text-green">18.2%</td>
+        <td class="text-right font-mono text-muted">8.2%</td>
+        <td class="text-right text-green font-mono">+10.0pp</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">Consolidated Statement of Financial Position (Balance Sheet)</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Assets</th>
+        <th class="text-right">FY2026 (MMK)</th>
+        <th class="text-right">FY2025 (MMK)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="3" class="font-bold text-cyan" style="padding-top:8px;">Current Assets</td></tr>
+      <tr>
+        <td style="padding-left:24px;">Cash & Cash Equivalents</td>
+        <td class="text-right font-mono">520,000,000</td>
+        <td class="text-right font-mono text-muted">312,000,000</td>
+      </tr>
+      <tr>
+        <td style="padding-left:24px;">Accounts Receivable</td>
+        <td class="text-right font-mono">180,000,000</td>
+        <td class="text-right font-mono text-muted">144,000,000</td>
+      </tr>
+      <tr>
+        <td style="padding-left:24px;">Prepaid Expenses</td>
+        <td class="text-right font-mono">48,000,000</td>
+        <td class="text-right font-mono text-muted">36,000,000</td>
+      </tr>
+      <tr style="background: rgba(0,112,186,0.04);">
+        <td class="font-bold" style="padding-left:24px;">Total Current Assets</td>
+        <td class="text-right font-mono font-bold">748,000,000</td>
+        <td class="text-right font-mono text-muted">492,000,000</td>
+      </tr>
+      <tr><td colspan="3" class="font-bold text-cyan" style="padding-top:8px;">Non-Current Assets</td></tr>
+      <tr>
+        <td style="padding-left:24px;">Property, Plant & Equipment</td>
+        <td class="text-right font-mono">1,440,000,000</td>
+        <td class="text-right font-mono text-muted">1,200,000,000</td>
+      </tr>
+      <tr>
+        <td style="padding-left:24px;">RFID & ANPR Hardware</td>
+        <td class="text-right font-mono">720,000,000</td>
+        <td class="text-right font-mono text-muted">540,000,000</td>
+      </tr>
+      <tr>
+        <td style="padding-left:24px;">Software & Intangibles</td>
+        <td class="text-right font-mono">360,000,000</td>
+        <td class="text-right font-mono text-muted">240,000,000</td>
+      </tr>
+      <tr style="background: rgba(0,112,186,0.04);">
+        <td class="font-bold" style="padding-left:24px;">Total Non-Current Assets</td>
+        <td class="text-right font-mono font-bold">2,520,000,000</td>
+        <td class="text-right font-mono text-muted">1,980,000,000</td>
+      </tr>
+      <tr style="background: rgba(16,185,129,0.08);">
+        <td class="font-bold text-green">Total Assets</td>
+        <td class="text-right font-mono font-bold text-green">3,268,000,000</td>
+        <td class="text-right font-mono text-muted">2,472,000,000</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Liabilities & Equity</th>
+        <th class="text-right">FY2026 (MMK)</th>
+        <th class="text-right">FY2025 (MMK)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="3" class="font-bold text-cyan" style="padding-top:8px;">Current Liabilities</td></tr>
+      <tr>
+        <td style="padding-left:24px;">Accounts Payable</td>
+        <td class="text-right font-mono">168,000,000</td>
+        <td class="text-right font-mono text-muted">120,000,000</td>
+      </tr>
+      <tr>
+        <td style="padding-left:24px;">Customer Wallet Float</td>
+        <td class="text-right font-mono">240,000,000</td>
+        <td class="text-right font-mono text-muted">168,000,000</td>
+      </tr>
+      <tr>
+        <td style="padding-left:24px;">Short-term Debt</td>
+        <td class="text-right font-mono">120,000,000</td>
+        <td class="text-right font-mono text-muted">96,000,000</td>
+      </tr>
+      <tr style="background: rgba(0,112,186,0.04);">
+        <td class="font-bold" style="padding-left:24px;">Total Current Liabilities</td>
+        <td class="text-right font-mono font-bold">528,000,000</td>
+        <td class="text-right font-mono text-muted">384,000,000</td>
+      </tr>
+      <tr><td colspan="3" class="font-bold text-cyan" style="padding-top:8px;">Non-Current Liabilities</td></tr>
+      <tr>
+        <td style="padding-left:24px;">Long-term Debt</td>
+        <td class="text-right font-mono">600,000,000</td>
+        <td class="text-right font-mono text-muted">480,000,000</td>
+      </tr>
+      <tr style="background: rgba(0,112,186,0.04);">
+        <td class="font-bold" style="padding-left:24px;">Total Non-Current Liabilities</td>
+        <td class="text-right font-mono font-bold">600,000,000</td>
+        <td class="text-right font-mono text-muted">480,000,000</td>
+      </tr>
+      <tr><td colspan="3" class="font-bold text-cyan" style="padding-top:8px;">Shareholders' Equity</td></tr>
+      <tr>
+        <td style="padding-left:24px;">Paid-in Capital</td>
+        <td class="text-right font-mono">1,200,000,000</td>
+        <td class="text-right font-mono text-muted">1,200,000,000</td>
+      </tr>
+      <tr>
+        <td style="padding-left:24px;">Retained Earnings</td>
+        <td class="text-right font-mono">940,000,000</td>
+        <td class="text-right font-mono text-muted">408,000,000</td>
+      </tr>
+      <tr style="background: rgba(0,112,186,0.04);">
+        <td class="font-bold" style="padding-left:24px;">Total Equity</td>
+        <td class="text-right font-mono font-bold">2,140,000,000</td>
+        <td class="text-right font-mono text-muted">1,608,000,000</td>
+      </tr>
+      <tr style="background: rgba(16,185,129,0.08);">
+        <td class="font-bold text-green">Total Liabilities & Equity</td>
+        <td class="text-right font-mono font-bold text-green">3,268,000,000</td>
+        <td class="text-right font-mono text-muted">2,472,000,000</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">Consolidated Statement of Cash Flows</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Cash Flow Category</th>
+        <th class="text-right">FY2026 (MMK)</th>
+        <th class="text-right">FY2025 (MMK)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="3" class="font-bold text-cyan">Operating Activities</td></tr>
+      <tr>
+        <td style="padding-left:24px;">Net Profit</td>
+        <td class="text-right font-mono">436,000,000</td>
+        <td class="text-right font-mono text-muted">139,200,000</td>
+      </tr>
+      <tr>
+        <td style="padding-left:24px;">Depreciation & Amortization</td>
+        <td class="text-right font-mono">216,000,000</td>
+        <td class="text-right font-mono text-muted">192,000,000</td>
+      </tr>
+      <tr>
+        <td style="padding-left:24px;">Changes in Working Capital</td>
+        <td class="text-right font-mono">(48,000,000)</td>
+        <td class="text-right font-mono text-muted">(36,000,000)</td>
+      </tr>
+      <tr style="background: rgba(16,185,129,0.06);">
+        <td class="font-bold text-green" style="padding-left:24px;">Net Cash from Operations</td>
+        <td class="text-right font-mono font-bold text-green">604,000,000</td>
+        <td class="text-right font-mono text-muted">295,200,000</td>
+      </tr>
+      <tr><td colspan="3" class="font-bold text-cyan">Investing Activities</td></tr>
+      <tr>
+        <td style="padding-left:24px;">Capital Expenditure (Hardware)</td>
+        <td class="text-right font-mono">(480,000,000)</td>
+        <td class="text-right font-mono text-muted">(360,000,000)</td>
+      </tr>
+      <tr>
+        <td style="padding-left:24px;">Software Development</td>
+        <td class="text-right font-mono">(120,000,000)</td>
+        <td class="text-right font-mono text-muted">(96,000,000)</td>
+      </tr>
+      <tr style="background: rgba(239,68,68,0.06);">
+        <td class="font-bold text-red" style="padding-left:24px;">Net Cash from Investing</td>
+        <td class="text-right font-mono font-bold text-red">(600,000,000)</td>
+        <td class="text-right font-mono text-muted">(456,000,000)</td>
+      </tr>
+      <tr><td colspan="3" class="font-bold text-cyan">Financing Activities</td></tr>
+      <tr>
+        <td style="padding-left:24px;">Debt Proceeds</td>
+        <td class="text-right font-mono">240,000,000</td>
+        <td class="text-right font-mono text-muted">192,000,000</td>
+      </tr>
+      <tr>
+        <td style="padding-left:24px;">Debt Repayment</td>
+        <td class="text-right font-mono">(96,000,000)</td>
+        <td class="text-right font-mono text-muted">(72,000,000)</td>
+      </tr>
+      <tr style="background: rgba(0,112,186,0.06);">
+        <td class="font-bold" style="padding-left:24px;">Net Cash from Financing</td>
+        <td class="text-right font-mono font-bold">144,000,000</td>
+        <td class="text-right font-mono text-muted">120,000,000</td>
+      </tr>
+      <tr style="background: rgba(16,185,129,0.12);">
+        <td class="font-bold text-green" style="font-size:15px;">Net Change in Cash</td>
+        <td class="text-right font-mono font-bold text-green" style="font-size:15px;">148,000,000</td>
+        <td class="text-right font-mono text-muted">(40,800,000)</td>
+      </tr>
+      <tr>
+        <td>Opening Cash Balance</td>
+        <td class="text-right font-mono">312,000,000</td>
+        <td class="text-right font-mono text-muted">352,800,000</td>
+      </tr>
+      <tr style="background: rgba(16,185,129,0.08);">
+        <td class="font-bold text-green">Closing Cash Balance</td>
+        <td class="text-right font-mono font-bold text-green">460,000,000</td>
+        <td class="text-right font-mono text-muted">312,000,000</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ==================== ACT 3: ANALYSIS ==================== -->
+<div class="act-divider">
+  <div class="act-label">ACT 3</div>
+  <div class="act-title">Analysis Behind the Numbers</div>
+  <div class="act-subtitle">Ratios, margins, and health indicators — the numbers get judged, not just reported</div>
+</div>
+
+<div class="section">
+  <div class="section-title">Key Financial Ratios</div>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-label">Gross Margin</div>
+      <div class="card-value green">58.0%</div>
+      <div class="card-change up">+2.7pp from FY2025 (55.3%)</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Net Profit Margin</div>
+      <div class="card-value green">18.2%</div>
+      <div class="card-change up">+10.0pp from FY2025 (8.2%)</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Current Ratio</div>
+      <div class="card-value cyan">1.42x</div>
+      <div class="card-change up">+0.12x from FY2025 (1.28x)</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Debt-to-Equity</div>
+      <div class="card-value amber">0.34x</div>
+      <div class="card-change up">-0.02x from FY2025 (0.36x)</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Return on Equity (ROE)</div>
+      <div class="card-value green">20.4%</div>
+      <div class="card-change up">+13.6pp from FY2025 (6.8%)</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Return on Assets (ROA)</div>
+      <div class="card-value green">13.3%</div>
+      <div class="card-change up">+8.3pp from FY2025 (5.0%)</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Revenue per Plaza</div>
+      <div class="card-value cyan">MMK 400M</div>
+      <div class="card-change up">+41.8% YoY</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Cost per Transaction</div>
+      <div class="card-value green">MMK 1,347</div>
+      <div class="card-change up">-12.0% from FY2025 (1,531)</div>
+    </div>
+  </div>
+
+  <div class="chart-row">
+    <div class="chart-container">
+      <div class="chart-title">Profitability Trend (FY2023-FY2026)</div>
+      <canvas id="profitabilityTrend" height="220"></canvas>
+    </div>
+    <div class="chart-container">
+      <div class="chart-title">Liquidity & Leverage Ratios</div>
+      <canvas id="liquidityChart" height="220"></canvas>
+    </div>
+  </div>
+
+  <div class="section-title">Profitability Analysis</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Metric</th>
+        <th class="text-right">FY2026</th>
+        <th class="text-right">FY2025</th>
+        <th class="text-right">FY2024</th>
+        <th class="text-right">FY2023</th>
+        <th class="text-right">Trend</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="font-bold">Gross Margin</td>
+        <td class="text-right font-mono text-green">58.0%</td>
+        <td class="text-right font-mono">55.3%</td>
+        <td class="text-right font-mono text-muted">52.1%</td>
+        <td class="text-right font-mono text-muted">48.5%</td>
+        <td class="text-right text-green">Improving</td>
+      </tr>
+      <tr>
+        <td class="font-bold">Operating Margin</td>
+        <td class="text-right font-mono text-green">45.0%</td>
+        <td class="text-right font-mono">37.6%</td>
+        <td class="text-right font-mono text-muted">30.2%</td>
+        <td class="text-right font-mono text-muted">25.8%</td>
+        <td class="text-right text-green">Improving</td>
+      </tr>
+      <tr>
+        <td class="font-bold">Net Margin</td>
+        <td class="text-right font-mono text-green">18.2%</td>
+        <td class="text-right font-mono">8.2%</td>
+        <td class="text-right font-mono text-muted">5.1%</td>
+        <td class="text-right font-mono text-muted">2.3%</td>
+        <td class="text-right text-green">Improving</td>
+      </tr>
+      <tr>
+        <td class="font-bold">EBITDA Margin</td>
+        <td class="text-right font-mono text-green">54.0%</td>
+        <td class="text-right font-mono">48.9%</td>
+        <td class="text-right font-mono text-muted">42.3%</td>
+        <td class="text-right font-mono text-muted">37.1%</td>
+        <td class="text-right text-green">Improving</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">Liquidity & Working Capital</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Metric</th>
+        <th class="text-right">FY2026</th>
+        <th class="text-right">FY2025</th>
+        <th class="text-right">Industry Avg</th>
+        <th class="text-right">Assessment</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="font-bold">Current Ratio</td>
+        <td class="text-right font-mono text-green">1.42x</td>
+        <td class="text-right font-mono">1.28x</td>
+        <td class="text-right font-mono text-muted">1.20x</td>
+        <td class="text-right text-green">Healthy</td>
+      </tr>
+      <tr>
+        <td class="font-bold">Quick Ratio</td>
+        <td class="text-right font-mono text-green">1.25x</td>
+        <td class="text-right font-mono">1.08x</td>
+        <td class="text-right font-mono text-muted">1.00x</td>
+        <td class="text-right text-green">Healthy</td>
+      </tr>
+      <tr>
+        <td class="font-bold">Cash Ratio</td>
+        <td class="text-right font-mono text-green">0.98x</td>
+        <td class="text-right font-mono">0.81x</td>
+        <td class="text-right font-mono text-muted">0.50x</td>
+        <td class="text-right text-green">Strong</td>
+      </tr>
+      <tr>
+        <td class="font-bold">Days Sales Outstanding</td>
+        <td class="text-right font-mono text-green">27 days</td>
+        <td class="text-right font-mono">31 days</td>
+        <td class="text-right font-mono text-muted">35 days</td>
+        <td class="text-right text-green">Efficient</td>
+      </tr>
+      <tr>
+        <td class="font-bold">Working Capital</td>
+        <td class="text-right font-mono text-green">MMK 220M</td>
+        <td class="text-right font-mono text-muted">MMK 108M</td>
+        <td class="text-right font-mono text-muted">—</td>
+        <td class="text-right text-green">+103.7%</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">Leverage & Efficiency</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Metric</th>
+        <th class="text-right">FY2026</th>
+        <th class="text-right">FY2025</th>
+        <th class="text-right">Assessment</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="font-bold">Debt-to-Equity Ratio</td>
+        <td class="text-right font-mono text-green">0.34x</td>
+        <td class="text-right font-mono">0.36x</td>
+        <td class="text-right text-green">Low leverage, healthy</td>
+      </tr>
+      <tr>
+        <td class="font-bold">Interest Coverage Ratio</td>
+        <td class="text-right font-mono text-green">9.0x</td>
+        <td class="text-right font-mono">6.6x</td>
+        <td class="text-right text-green">Comfortable debt service</td>
+      </tr>
+      <tr>
+        <td class="font-bold">Asset Turnover</td>
+        <td class="text-right font-mono">0.73x</td>
+        <td class="text-right font-mono">0.68x</td>
+        <td class="text-right text-cyan">Improving efficiency</td>
+      </tr>
+      <tr>
+        <td class="font-bold">Revenue per Employee</td>
+        <td class="text-right font-mono text-cyan">MMK 120M</td>
+        <td class="text-right font-mono text-muted">MMK 94M</td>
+        <td class="text-right text-green">+27.7% productivity gain</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ==================== ACT 4: PERFORMANCE & ROAD AHEAD ==================== -->
+<div class="act-divider">
+  <div class="act-label">ACT 4</div>
+  <div class="act-title">Performance & the Road Ahead</div>
+  <div class="act-subtitle">Scorecard, results against plan, risks, and FY2027 guidance</div>
+</div>
+
+<div class="section">
+  <div class="section-title">FY2026 Scorecard — Actual vs Plan</div>
+  <table>
+    <thead>
+      <tr>
+        <th>KPI</th>
+        <th class="text-right">Target</th>
+        <th class="text-right">Actual</th>
+        <th class="text-right">Variance</th>
+        <th class="text-right">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="font-bold">Total Revenue</td>
+        <td class="text-right font-mono">MMK 2,200M</td>
+        <td class="text-right font-mono text-green">MMK 2,400M</td>
+        <td class="text-right font-mono text-green">+9.1%</td>
+        <td class="text-right"><span style="color:var(--accent-green);font-weight:700;">BEAT</span></td>
+      </tr>
+      <tr>
+        <td class="font-bold">Net Profit</td>
+        <td class="text-right font-mono">MMK 350M</td>
+        <td class="text-right font-mono text-green">MMK 436M</td>
+        <td class="text-right font-mono text-green">+24.6%</td>
+        <td class="text-right"><span style="color:var(--accent-green);font-weight:700;">BEAT</span></td>
+      </tr>
+      <tr>
+        <td class="font-bold">Active Plazas</td>
+        <td class="text-right font-mono">6</td>
+        <td class="text-right font-mono text-green">6</td>
+        <td class="text-right font-mono text-green">On target</td>
+        <td class="text-right"><span style="color:var(--accent-green);font-weight:700;">MET</span></td>
+      </tr>
+      <tr>
+        <td class="font-bold">Total Transactions</td>
+        <td class="text-right font-mono">1,200,000</td>
+        <td class="text-right font-mono text-green">1,247,000</td>
+        <td class="text-right font-mono text-green">+3.9%</td>
+        <td class="text-right"><span style="color:var(--accent-green);font-weight:700;">BEAT</span></td>
+      </tr>
+      <tr>
+        <td class="font-bold">RFID Adoption Rate</td>
+        <td class="text-right font-mono">75%</td>
+        <td class="text-right font-mono text-green">78%</td>
+        <td class="text-right font-mono text-green">+3pp</td>
+        <td class="text-right"><span style="color:var(--accent-green);font-weight:700;">BEAT</span></td>
+      </tr>
+      <tr>
+        <td class="font-bold">System Uptime</td>
+        <td class="text-right font-mono">99.5%</td>
+        <td class="text-right font-mono text-green">99.7%</td>
+        <td class="text-right font-mono text-green">+0.2pp</td>
+        <td class="text-right"><span style="color:var(--accent-green);font-weight:700;">BEAT</span></td>
+      </tr>
+      <tr>
+        <td class="font-bold">Customer Satisfaction</td>
+        <td class="text-right font-mono">4.0/5.0</td>
+        <td class="text-right font-mono text-amber">3.8/5.0</td>
+        <td class="text-right font-mono text-red">-0.2</td>
+        <td class="text-right"><span style="color:var(--accent-amber);font-weight:700;">MISS</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="chart-row">
+    <div class="chart-container">
+      <div class="chart-title">FY2027 Revenue Projection (MMK Millions)</div>
+      <canvas id="projectionChart" height="220"></canvas>
+    </div>
+    <div class="chart-container">
+      <div class="chart-title">Transaction Volume Growth</div>
+      <canvas id="transactionChart" height="220"></canvas>
+    </div>
+  </div>
+
+  <div class="section-title">Risk Register</div>
+  <div class="risk-grid">
+    <div class="risk-card high">
+      <div class="risk-title">Regulatory Change Risk</div>
+      <div class="risk-desc">Potential government tariff restructuring or new toll regulations could impact revenue per transaction by 10-15%.</div>
+      <div class="risk-tag high">HIGH</div>
+    </div>
+    <div class="risk-card high">
+      <div class="risk-title">Technology Obsolescence</div>
+      <div class="risk-desc">RFID reader hardware approaching end-of-life; replacement cycle required within 18 months for 40% of deployed units.</div>
+      <div class="risk-tag high">HIGH</div>
+    </div>
+    <div class="risk-card medium">
+      <div class="risk-title">Currency Fluctuation</div>
+      <div class="risk-desc">MMK/USD volatility affecting imported hardware costs; 5-8% cost increase exposure on foreign-denominated contracts.</div>
+      <div class="risk-tag medium">MEDIUM</div>
+    </div>
+    <div class="risk-card medium">
+      <div class="risk-title">Cybersecurity Threat</div>
+      <div class="risk-desc">Increasing sophistication of attacks on payment systems; requires continuous investment in security infrastructure.</div>
+      <div class="risk-tag medium">MEDIUM</div>
+    </div>
+    <div class="risk-card low">
+      <div class="risk-title">Talent Retention</div>
+      <div class="risk-desc">Key engineering staff retention at 92%; competitive market for DevOps and embedded systems talent.</div>
+      <div class="risk-tag low">LOW</div>
+    </div>
+    <div class="risk-card low">
+      <div class="risk-title">Weather & Force Majeure</div>
+      <div class="risk-desc">Monsoon season impact on physical infrastructure; 99.7% uptime maintained through redundancy measures.</div>
+      <div class="risk-tag low">LOW</div>
+    </div>
+  </div>
+
+  <div class="section-title">FY2027 Guidance & Outlook</div>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-label">Revenue Target</div>
+      <div class="card-value cyan">MMK 3.2B</div>
+      <div class="card-change up">+33.3% YoY growth</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Net Margin Target</div>
+      <div class="card-value green">22-25%</div>
+      <div class="card-change up">+4-7pp improvement</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Plaza Expansion</div>
+      <div class="card-value amber">+4 Plazas</div>
+      <div class="card-change up">10 total by FY2027</div>
+    </div>
+    <div class="card">
+      <div class="card-label">CAPEX Budget</div>
+      <div class="card-value purple">MMK 800M</div>
+      <div class="card-change up">Hardware + software</div>
+    </div>
+  </div>
+
+  <div class="section-title">Strategic Priorities FY2027</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Priority</th>
+        <th>Initiative</th>
+        <th class="text-right">Budget (MMK)</th>
+        <th class="text-right">Expected Impact</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="font-bold text-cyan">1</td>
+        <td>Plaza expansion to 10 locations (Mandalay corridor)</td>
+        <td class="text-right font-mono">360,000,000</td>
+        <td class="text-right text-green">+MMK 800M revenue</td>
+      </tr>
+      <tr>
+        <td class="font-bold text-cyan">2</td>
+        <td>ANPR AI upgrade — 98%+ plate recognition accuracy</td>
+        <td class="text-right font-mono">120,000,000</td>
+        <td class="text-right text-green">-30% violation review time</td>
+      </tr>
+      <tr>
+        <td class="font-bold text-cyan">3</td>
+        <td>Customer mobile app launch (iOS + Android)</td>
+        <td class="text-right font-mono">80,000,000</td>
+        <td class="text-right text-green">+25% digital adoption</td>
+      </tr>
+      <tr>
+        <td class="font-bold text-cyan">4</td>
+        <td>Enterprise fleet portal for logistics companies</td>
+        <td class="text-right font-mono">60,000,000</td>
+        <td class="text-right text-green">+50 enterprise accounts</td>
+      </tr>
+      <tr>
+        <td class="font-bold text-cyan">5</td>
+        <td>Security hardening — PCI DSS compliance</td>
+        <td class="text-right font-mono">40,000,000</td>
+        <td class="text-right text-green">Zero breach target</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ==================== FOOTER ==================== -->
+<div class="footer">
+  <p style="font-size:16px;font-weight:700;color:var(--text-main);margin-bottom:8px;">TollGate RFID Pass — Financial Report FY2026</p>
+  <p>Highway Toll Management System &middot; Confidential &middot; For Internal & Investor Use Only</p>
+  <p style="margin-top:8px;">Generated: September 2026 &middot; All figures in Myanmar Kyat (MMK)</p>
+</div>
+
+<!-- ==================== CHARTS ==================== -->
+<script>
+const chartDefaults = {
+  color: '#94a3b8',
+  borderColor: 'rgba(30,58,102,0.3)',
+};
+Chart.defaults.color = chartDefaults.color;
+Chart.defaults.borderColor = chartDefaults.borderColor;
+
+// Revenue Trend
+new Chart(document.getElementById('revenueTrend'), {
+  type: 'line',
+  data: {
+    labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    datasets: [{
+      label: 'FY2026',
+      data: [160,175,185,195,200,210,215,220,210,205,215,210],
+      borderColor: '#00d2ff',
+      backgroundColor: 'rgba(0,210,255,0.1)',
+      fill: true,
+      tension: 0.4,
+      pointRadius: 3,
+      borderWidth: 2,
+    },{
+      label: 'FY2025',
+      data: [110,118,125,130,135,140,148,155,145,140,152,144],
+      borderColor: '#64748b',
+      borderDash: [5,5],
+      tension: 0.4,
+      pointRadius: 2,
+      borderWidth: 1.5,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 16 } } },
+    scales: { y: { beginAtZero: false, grid: { color: 'rgba(30,58,102,0.2)' } }, x: { grid: { display: false } } }
+  }
+});
+
+// Plaza Revenue Pie
+new Chart(document.getElementById('plazaRevenue'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Yangon 0-Mile','Bago 39M','Phyu 115M','Naypyitaw 201M','Meiktila 285M','Mandalay 352M'],
+    datasets: [{
+      data: [22,18,15,20,12,13],
+      backgroundColor: ['#0070ba','#00d2ff','#10b981','#f59e0b','#8b5cf6','#ef4444'],
+      borderWidth: 0,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { position: 'right', labels: { padding: 12, usePointStyle: true, font: { size: 11 } } } },
+    cutout: '55%',
+  }
+});
+
+// Profitability Trend
+new Chart(document.getElementById('profitabilityTrend'), {
+  type: 'bar',
+  data: {
+    labels: ['FY2023','FY2024','FY2025','FY2026'],
+    datasets: [
+      { label: 'Gross Margin %', data: [48.5,52.1,55.3,58.0], backgroundColor: '#00d2ff', borderRadius: 4 },
+      { label: 'Operating Margin %', data: [25.8,30.2,37.6,45.0], backgroundColor: '#10b981', borderRadius: 4 },
+      { label: 'Net Margin %', data: [2.3,5.1,8.2,18.2], backgroundColor: '#f59e0b', borderRadius: 4 },
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 12 } } },
+    scales: { y: { beginAtZero: true, grid: { color: 'rgba(30,58,102,0.2)' }, ticks: { callback: v => v + '%' } }, x: { grid: { display: false } } }
+  }
+});
+
+// Liquidity Chart
+new Chart(document.getElementById('liquidityChart'), {
+  type: 'radar',
+  data: {
+    labels: ['Current Ratio','Quick Ratio','Cash Ratio','Interest Coverage','Debt/Equity (inv)'],
+    datasets: [{
+      label: 'FY2026',
+      data: [1.42,1.25,0.98,9.0,2.94],
+      borderColor: '#00d2ff',
+      backgroundColor: 'rgba(0,210,255,0.15)',
+      pointBackgroundColor: '#00d2ff',
+    },{
+      label: 'FY2025',
+      data: [1.28,1.08,0.81,6.6,2.78],
+      borderColor: '#64748b',
+      backgroundColor: 'rgba(100,116,139,0.1)',
+      pointBackgroundColor: '#64748b',
+      borderDash: [4,4],
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 12 } } },
+    scales: { r: { beginAtZero: true, grid: { color: 'rgba(30,58,102,0.3)' }, angleLines: { color: 'rgba(30,58,102,0.2)' }, pointLabels: { font: { size: 11 } } } }
+  }
+});
+
+// Projection Chart
+new Chart(document.getElementById('projectionChart'), {
+  type: 'bar',
+  data: {
+    labels: ['FY2023','FY2024','FY2025','FY2026','FY2027 (P)'],
+    datasets: [{
+      label: 'Revenue (MMK M)',
+      data: [960,1200,1692,2400,3200],
+      backgroundColor: ['#0070ba','#0070ba','#0070ba','#00d2ff','rgba(0,210,255,0.4)'],
+      borderColor: ['#0070ba','#0070ba','#0070ba','#00d2ff','#00d2ff'],
+      borderWidth: [0,0,0,0,2],
+      borderDash: [0,0,0,0,0],
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true, grid: { color: 'rgba(30,58,102,0.2)' }, ticks: { callback: v => 'MMK ' + v + 'M' } }, x: { grid: { display: false } } }
+  }
+});
+
+// Transaction Chart
+new Chart(document.getElementById('transactionChart'), {
+  type: 'line',
+  data: {
+    labels: ['FY2023','FY2024','FY2025','FY2026','FY2027 (P)'],
+    datasets: [{
+      label: 'Transactions (thousands)',
+      data: [520,740,980,1247,1800],
+      borderColor: '#10b981',
+      backgroundColor: 'rgba(16,185,129,0.1)',
+      fill: true,
+      tension: 0.4,
+      pointRadius: 5,
+      borderWidth: 2,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true, grid: { color: 'rgba(30,58,102,0.2)' }, ticks: { callback: v => v + 'K' } }, x: { grid: { display: false } } }
+  }
+});
+</script>
+
+</body>
+</html>
