@@ -53,6 +53,7 @@ A distributed, enterprise-grade highway toll management system with RFID + ANPR 
 | **Dahua Solution Presentation** | `80` | `http://<HOST>/presentation.html` | 14-slide executive deck + 3D interactive web portal |
 | **Customer Portal (PWA)** | `8080` | `http://<HOST>:8080` | Driver digital wallet, vehicle manager, virtual RFID pass |
 | **HQ Central Backend API** | `3000` | `http://<HOST>:3000` | Central REST API, OCR engine, settlement service, WebSockets |
+| **API Documentation** | `3000` | `http://<HOST>:3000/api-docs` | Swagger UI for API exploration |
 | **File Storage Server** | `5000` | `http://<HOST>:5000` | Vehicle photos, ANPR captures, violation proofs |
 | **Toll Simulator** | `80` | `http://<HOST>/simulator` | Live animated multi-lane canvas highway simulator |
 
@@ -60,45 +61,53 @@ A distributed, enterprise-grade highway toll management system with RFID + ANPR 
 
 ## Key Features
 
-### 1. 💰 Day-by-Day Revenue Transfer & Plaza Settlement Monitor
+### 1. Day-by-Day Revenue Transfer & Plaza Settlement Monitor
 - **Live Today's Revenue**: Continuous live accumulating revenue ticker per plaza and total system with pass count.
 - **Previous Day Total Revenue**: Yesterday's toll revenue total across all active highway plazas.
 - **Plaza Settlement Status**:
-  - 🟢 **`TRANSFERRED` (Green)**: Revenue confirmed and transferred to HQ bank account with Bank Name, Deposit Ref ID, and timestamp.
-  - 🔴 **`NEED TRANSFER` (Red Pulsing)**: Highlights plazas with pending daily transfers that require cashier settlement.
+  - `TRANSFERRED` (Green): Revenue confirmed and transferred to HQ bank account with Bank Name, Deposit Ref ID, and timestamp.
+  - `NEED TRANSFER` (Red Pulsing): Highlights plazas with pending daily transfers that require cashier settlement.
 - **Settlement Actions**:
-  - **1-Click Modal**: Select bank (*KBZ, CB, AYA, WavePay, Cash*), enter transaction reference ID, and confirm settlement.
-  - **Batch Settle**: Bulk approve all pending plazas for yesterday in a single click.
-  - **Historical Audit Table**: Filter and inspect settlement history day-by-day.
+  - 1-Click Modal: Select bank (*KBZ, CB, AYA, WavePay, Cash*), enter transaction reference ID, and confirm settlement.
+  - Batch Settle: Bulk approve all pending plazas for yesterday in a single click.
+  - Historical Audit Table: Filter and inspect settlement history day-by-day.
 
-### 2. 📽️ Dahua Highway Solution Presentation & 3D Digital Twin
+### 2. Dahua Highway Solution Presentation & 3D Digital Twin
 - **Dual-Mode Switcher**:
-  - **Slide Deck Mode**: 14-slide executive presentation with timer, fullscreen mode, slide drawer, and keyboard navigation.
-  - **Web Solution Portal Mode**: Scrollable enterprise layout matching Dahua's highway solution with sticky navigation tabs (*Overview*, *Scenario Aerial View*, *Challenges & Offers*, *System Topology*, *Product Recommendation*, *Field Deployment*).
-- **3D Isometric Scenario Digital Twin**:
-  - High-resolution 3D cutaway rendering of toll plaza solar canopy, mountain tunnel, and suspension bridge.
-  - Interactive floating Dahua pill badges (`(1) General Road`, `(2) Toll Plaza`, `(3) Bridge Gantry`, `(4) Tunnel System`).
-- **Industrial Edge Hardware Catalog**:
-  - Real industrial studio hardware photography for `DHI-ITC-RFID`, `DHI-ITC431` 4K ANPR Camera, `ITS-RADAR-79G` 79GHz Radar, and `DHI-EDGE-RPI` Industrial Gateway Box.
+  - Slide Deck Mode: 14-slide executive presentation with timer, fullscreen mode, slide drawer, and keyboard navigation.
+  - Web Solution Portal Mode: Scrollable enterprise layout with sticky navigation tabs.
+- **3D Isometric Scenario Digital Twin**: High-resolution 3D cutaway rendering of toll plaza, mountain tunnel, and suspension bridge.
 
-### 3. 🪪 Myanmar RTAD Wheel Tax AI Scanner & OCR
-- **Dual-Side Auto Recognition**: Scans both Front and Back of Myanmar RTAD (ကညန စာအုပ် / စမတ်ကတ်) registration cards.
-- **Auto-Extracts Key Fields**: License Plate (`4D-5918`), Model Year (`2009`), Make & Model (`Honda Civic FD3`), Color (`Gray`), Engine No (`LDA-1372845`), Chassis No (`FD3-1302842`), and Owner (`U NYI NYI MIN`).
-- **Chassis & VIN Decoder**: Automatically identifies vehicle make, model, and class (`SEDAN`, `SUV`, `TRUCK`, `BUS`, `MOTORCYCLE`).
+### 3. Myanmar RTAD Wheel Tax AI Scanner & OCR
+- **Dual-Side Auto Recognition**: Scans both Front and Back of Myanmar RTAD registration cards.
+- **Auto-Extracts Key Fields**: License Plate, Model Year, Make & Model, Color, Engine No, Chassis No, and Owner.
 - **1-Click Auto-Fill**: Available in Customer Portal (`My Vehicles`) and Admin Command Hub (`Vehicles`).
 
-### 4. 🚦 HQ Command Hub & Operator Console
-- **Real Interactive Geographic Highway Map (Leaflet)**: Visualizes the entire 352-mile Yangon – Mandalay Expressway on real OpenStreetMap / CartoDB / Satellite tile layers with pulsing GPS plaza nodes, real expressway route paths, live vehicle throughput, and lane health telemetry.
-- **Operator Quick Action Ribbon**: Shift tracking, live lane indicators, and barrier overrides (`Auto`, `Force Open`, `Lock Gate`).
-- **Instant Booth Dynamic QR Code**: Generates on-the-spot KBZPay / WavePay / MMQR codes for low-balance drivers at the barrier to clear transactions instantly.
-- **Peak-Hour Traffic Analytics**: Hourly vehicle throughput distribution charts with congestion thresholds.
+### 4. HQ Command Hub & Operator Console
+- **Real Interactive Geographic Highway Map (Leaflet)**: Visualizes the entire 352-mile Yangon - Mandalay Expressway.
+- **Operator Quick Action Ribbon**: Shift tracking, live lane indicators, and barrier overrides.
 - **Violation Workbench**: Review flagged ANPR mismatch events with visual snapshot proof.
 
-### 5. 📱 Customer Portal (Progressive Web App)
+### 5. Customer Portal (Progressive Web App)
 - **Installable PWA**: Works on iOS and Android home screens without app store downloads.
-- **Digital Toll Pass (Virtual RFID)**: Rotating optical QR code usable as a fallback if the windshield RFID tag is damaged.
-- **Low-Balance Auto Alert**: Dynamic warning banner with 1-click top-up when balance drops below K3,000.
-- **Prepaid Wallet & Receipts**: Instant balance top-up via KBZPay, WavePay, and MMQR with downloadable trip receipts.
+- **Digital Toll Pass (Virtual RFID)**: Rotating optical QR code usable as a fallback.
+- **Prepaid Wallet & Receipts**: Instant balance top-up via KBZPay, WavePay, and MMQR.
+
+---
+
+## Security & Performance
+
+### Security Features
+- **Rate Limiting**: Auth (10 req/15min), Global (100 req/min), Strict (5 req/hr)
+- **CORS**: Restricted to allowed origins via `CORS_ORIGINS` env var
+- **Helmet.js**: Content Security Policy enabled in production
+- **JWT**: Environment-configurable secret with Bearer token auth
+- **Validation**: Zod schemas with detailed error messages
+
+### Performance Optimizations
+- **Database Indexes**: 23 indexes on high-query columns across vehicles, accounts, toll_events, transactions, violations
+- **Docker Health Checks**: All services have health checks with dependency ordering
+- **Prisma Connection Pooling**: Automatic database connection management
 
 ---
 
@@ -117,7 +126,20 @@ docker compose up -d --build
 # Presentation Portal:  http://localhost:80/presentation.html
 # Customer Portal:      http://localhost:8080
 # Central API:          http://localhost:3000/api/health
+# API Documentation:    http://localhost:3000/api-docs
 ```
+
+---
+
+## Health Endpoints
+
+| Endpoint | Method | Auth | Description |
+|---|---|---|---|
+| `/api/health` | GET | No | Full health: DB status, latency, memory, CPU |
+| `/api/health/live` | GET | No | Liveness probe (always 200 if process alive) |
+| `/api/health/ready` | GET | No | Readiness probe (200 if DB connected) |
+| `/api/health/metrics` | GET | Yes | Detailed metrics: DB counts, storage, uptime |
+| `/api/health/backup` | GET | Yes | Full DB backup as JSON download |
 
 ---
 
@@ -131,6 +153,33 @@ docker compose up -d --build
 | **Auditor / Viewer** | `viewer@tollgate.com` | `password123` | Reports, revenue settlement & audit logs |
 | **Enterprise Customer** | `fleet@transportco.com` | `password123` | TransportCo Fleet management (8 vehicles) |
 | **Individual Driver** | `ko.min@personal.com` | `password123` | Customer PWA portal, digital wallet & pass |
+
+---
+
+## Remote Deployment (Kali Linux)
+
+```bash
+# SSH into server
+ssh nyimin@192.168.100.101  # password: 1512
+
+# Fix DNS
+echo 1512 | sudo -S sh -c 'echo nameserver 8.8.8.8 > /etc/resolv.conf'
+
+# Pull latest and rebuild
+cd ~/TollGate-RFID
+git pull origin master
+echo 1512 | sudo -S docker compose up -d --build
+
+# Verify all containers healthy
+docker ps --format 'table {{.Names}}\t{{.Status}}'
+
+# Run DB migrations
+echo 1512 | sudo -S docker exec tollgate-rfid-backend-1 sh -c \
+  'cd packages/backend && npx prisma migrate deploy'
+
+# Check health
+curl -s http://localhost:3000/api/health | python3 -m json.tool
+```
 
 ---
 

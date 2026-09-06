@@ -18,12 +18,12 @@
    - [Mobile PWA Installation](#mobile-pwa-installation)
    - [Digital Toll Pass (Virtual RFID QR)](#digital-toll-pass-virtual-rfid-qr)
    - [Prepaid Wallet & Dynamic Top-Up](#prepaid-wallet--dynamic-top-up)
-   - [One-Click Vehicle Registration via RTAD Card](#one-click-vehicle-registration-via-rtad-card)
+   - [One-Click Vehicle Registration via RTAD Card](#one-click-via-registration-via-rtad-card)
    - [Low Balance Alerts](#low-balance-alerts)
 4. [Toll Simulator (Canvas Multi-Lane Highway)](#toll-simulator-canvas-multi-lane-highway)
 5. [Plaza Edge Server (Offline-First Raspberry Pi)](#plaza-edge-server-offline-first-raspberry-pi)
-6. [Hardware & Reader Setup](#hardware--reader-setup)
-7. [Sync Engine & Network Fault Tolerance](#sync-engine--network-fault-tolerance)
+6. [API Reference](#api-reference)
+7. [Health & Monitoring](#health--monitoring)
 8. [Troubleshooting & FAQ](#troubleshooting--faq)
 
 ---
@@ -37,6 +37,7 @@ The system is deployed as a distributed stack with cloud HQ coordination and edg
 | **HQ Admin Command Hub** | `80` | `http://<SERVER_IP>` | Central telemetry, operator ribbon, highway map, reports |
 | **Customer Portal (PWA)** | `8080` | `http://<SERVER_IP>:8080` | Driver digital wallet, virtual RFID pass, trip history |
 | **Central Backend API** | `3000` | `http://<SERVER_IP>:3000` | REST API, WebSocket streams, OCR engine, payment webhooks |
+| **API Documentation** | `3000` | `http://<SERVER_IP>:3000/api-docs` | Swagger UI for API exploration |
 | **Storage Server** | `5000` | `http://<SERVER_IP>:5000` | ANPR captures, license plate snapshots, receipts |
 | **Toll Simulator** | `80` | `http://<SERVER_IP>/simulator` | Real-time animated canvas multi-lane simulation |
 | **Plaza Edge Server** | `4000` | `http://<PLAZA_IP>:4000` | Offline-first booth operation, serial RFID controller |
@@ -61,51 +62,34 @@ The system is deployed as a distributed stack with cloud HQ coordination and edg
 
 ### Operator Quick Actions Ribbon
 Located at the top of the Command Hub, the Operator Ribbon provides instant actions for booth cashiers and supervisors:
-1. **Shift Indicator**: Displays current shift status (e.g., `ACTIVE SHIFT #04 • Lane 01-A`).
-2. **Log Vehicle Entry**:
-   - Manually record a vehicle passing through the plaza.
-   - Automatically computes toll fee based on vehicle class (`SEDAN`, `SUV`, `VAN`, `BUS`, `TRUCK`).
-   - Instantly triggers the barrier clear animation.
-3. **Quick Tag/Plate Search**: Instant popover to inspect vehicle owner, registered class, and prepaid account balance without navigating away from the dashboard.
+1. **Shift Indicator**: Displays current shift status (e.g., `ACTIVE SHIFT #04 - Lane 01-A`).
+2. **Log Vehicle Entry**: Manually record a vehicle passing through the plaza.
+3. **Quick Tag/Plate Search**: Instant popover to inspect vehicle owner, registered class, and prepaid account balance.
 
 ---
 
 ### Real Interactive Geographic Highway Map (Leaflet)
-Click the **"Highway Map"** button on the Operator Ribbon or switch to **"🗺️ Real Map View"** on the Toll Plazas page to open the live GPS map:
-- **Leaflet & Multi-Layer Tiles**: Switch between Dark Mode tiles, Street Map (OpenStreetMap), and Satellite Imagery (Esri World Imagery).
-- **Corridor Coverage**: Maps 6 primary plazas spanning **352 miles** along Highway 1 with real geographic GPS coordinates:
-  - Yangon 0-Mile (`0MILE`, `17.0372° N, 96.1788° E`, 6 lanes)
-  - Bago Bypass (`BAGO39`, `17.3353° N, 96.4817° E`, 4 lanes)
-  - Phyu Rest Stop (`PHYU115`, `18.5284° N, 96.4385° E`, 4 lanes)
-  - Naypyitaw Southern Gate (`NPT201`, `19.7450° N, 96.1297° E`, 6 lanes)
-  - Meiktila Junction (`MEIK285`, `20.8762° N, 95.8611° E`, 4 lanes)
-  - Mandalay Gate (`MDY352`, `21.9750° N, 96.0836° E`, 6 lanes)
-- **Real-Time Telemetry & Controls**: Click any plaza marker to fly to its GPS coordinates, view active lane counts, hourly throughput, daily revenue, and RFID/ANPR camera health. Zoom in/out and route auto-fit controls are built in.
+Click the **"Highway Map"** button on the Operator Ribbon or switch to **"Real Map View"** on the Toll Plazas page to open the live GPS map:
+- **Leaflet & Multi-Layer Tiles**: Switch between Dark Mode tiles, Street Map (OpenStreetMap), and Satellite Imagery.
+- **Corridor Coverage**: Maps 6 primary plazas spanning **352 miles** along Highway 1 with real geographic GPS coordinates.
 
 ---
 
 ### Instant Booth Dynamic QR Payment
 When a driver reaches the toll gate with an unlinked RFID tag or insufficient prepaid balance:
 1. Click **"Instant Booth QR"** on the Operator Ribbon.
-2. Enter the license plate number (e.g., `4D-5918` or `7B-8899`) and select the vehicle class.
+2. Enter the license plate number and select the vehicle class.
 3. Present the generated dynamic **KBZPay / WavePay / MMQR** code to the driver.
 4. Once scanned and paid, the barrier automatically unlocks and raises.
 
 ---
 
 ### Myanmar RTAD Wheel Tax AI Scanner & OCR
-Booth operators and administrative staff can register customer vehicles in seconds by scanning physical Myanmar RTAD (Road Transport Administration Department / ကညန) registration cards:
+Booth operators and administrative staff can register customer vehicles in seconds by scanning physical Myanmar RTAD registration cards:
 1. Navigate to **Vehicles** in the sidebar.
-2. Click **"✨ Scan Document (AI)"** or open **"Add Vehicle"** ➔ **"Auto-Fill from RTAD Card"**.
+2. Click **"Scan Document (AI)"** or open **"Add Vehicle"** > **"Auto-Fill from RTAD Card"**.
 3. Upload or snap a photo of the card (supports both Front & Back sides).
-4. The system automatically reads and populates:
-   - **Plate Number** (e.g. `4D-5918` / `YGN 4D-5918`)
-   - **Model Year** (e.g. `2009`)
-   - **Make & Model** (e.g. `Honda Civic FD3`)
-   - **Vehicle Class** (`SEDAN`, `SUV`, `TRUCK`, `BUS`, `MOTORCYCLE`)
-   - **Color** (e.g. `Gray`)
-   - **Engine Number & Chassis Number** (`LDA-1372845`, `FD3-1302842`)
-   - **Registered Owner & Address** (`U NYI NYI MIN`)
+4. The system automatically reads and populates all vehicle fields.
 
 ---
 
@@ -116,24 +100,23 @@ Booth operators and administrative staff can register customer vehicles in secon
 - **Individual Driver**: `ko.min@personal.com` / `password123`
 
 ### Dark & Light Theme Switching
-- Drivers can toggle between dark and light themes at any time by clicking the **Sun / Moon** icon in the desktop header or mobile top-bar.
+- Drivers can toggle between dark and light themes at any time by clicking the **Sun / Moon** icon.
 
 ---
 
 ### Mobile PWA Installation
 The customer portal is a Progressive Web App (PWA) with full offline support:
-- **iOS (Safari)**: Tap Share → **"Add to Home Screen"**.
-- **Android (Chrome)**: Tap the 3 dots menu → **"Install App"**.
+- **iOS (Safari)**: Tap Share > **"Add to Home Screen"**.
+- **Android (Chrome)**: Tap the 3 dots menu > **"Install App"**.
 
 ---
 
 ### One-Click Vehicle Registration via RTAD Card
 Drivers can add new vehicles without typing long chassis or engine numbers:
 1. Log in to the Customer Portal.
-2. Go to **My Vehicles** ➔ Click **"✨ Scan Wheel Tax (AI)"**.
+2. Go to **My Vehicles** > Click **"Scan Wheel Tax (AI)"**.
 3. Snap a photo of the vehicle registration card.
 4. Review the auto-detected fields and tap **"Apply to Registration Form"**.
-5. The form is populated instantly and the card photo is attached for verification.
 
 ---
 
@@ -142,7 +125,6 @@ If a driver's physical windshield RFID sticker is damaged or not yet delivered:
 1. Tap **"Digital Pass"** on the mobile dashboard.
 2. The portal renders a high-contrast dynamic QR pass linked to the driver's registered vehicles.
 3. Hold the phone up to the optical reader at the toll booth barrier to validate and pass.
-4. Auto-rotates token timestamps for anti-cloning security.
 
 ---
 
@@ -168,12 +150,121 @@ Access the live simulation at `http://<SERVER_IP>/simulator`:
 ## 5. Plaza Edge Server (Raspberry Pi)
 
 Each toll plaza operates an edge Raspberry Pi running an offline-first SQLite database:
-- **Offline Resilience**: Even if the fiber/4G connection to drops, toll booths continue scanning RFID tags, logging transactions, and lifting barriers with zero latency (< 80ms).
+- **Offline Resilience**: Even if the fiber/4G connection drops, toll booths continue scanning RFID tags, logging transactions, and lifting barriers with zero latency (< 80ms).
 - **Auto Resync**: Once internet connectivity resumes, the local `SyncService` pushes all buffered events in FIFO batches to HQ.
 
 ---
 
-## 6. Troubleshooting & FAQ
+## 6. API Reference
+
+### Authentication
+```bash
+# Login
+POST /api/auth/login
+Content-Type: application/json
+{"email": "admin@tollgate.com", "password": "password123"}
+
+# Response
+{
+  "user": {"id": "...", "email": "admin@tollgate.com", "role": "ADMIN"},
+  "token": "eyJhbGciOiJIUzI1NiIs..."
+}
+
+# Use token in subsequent requests
+GET /api/vehicles
+Authorization: Bearer <token>
+```
+
+### Vehicles
+```bash
+# List vehicles with search/filter
+GET /api/vehicles?search=ABC&status=ACTIVE&vehicleClass=SEDAN&page=1&limit=50
+
+# Get single vehicle
+GET /api/vehicles/:id
+
+# Create vehicle
+POST /api/vehicles
+{"plateNumber": "4D-5918", "make": "Honda", "model": "Civic", "year": 2009, "vehicleClass": "SEDAN"}
+
+# Bind RFID tag
+POST /api/vehicles/:id/rfid
+{"tagUid": "E20034128901021200000001", "accountId": "..."}
+```
+
+### Health Check
+```bash
+# Full health status
+GET /api/health
+{"status": "healthy", "database": {"status": "connected", "latencyMs": 1}, ...}
+
+# Liveness probe
+GET /api/health/live
+{"status": "alive", "timestamp": "..."}
+
+# Readiness probe
+GET /api/health/ready
+{"status": "ready", "timestamp": "..."}
+```
+
+### Reports
+```bash
+# Revenue report
+GET /api/reports/revenue?startDate=2026-09-01&endDate=2026-09-06
+
+# Transaction history
+GET /api/reports/transactions?page=1&limit=50
+
+# Violation summary
+GET /api/reports/violations?status=PENDING
+```
+
+### Full API Documentation
+Visit `http://<SERVER_IP>:3000/api-docs` for interactive Swagger UI documentation.
+
+---
+
+## 7. Health & Monitoring
+
+### Container Health Status
+```bash
+# Check all containers
+docker ps --format 'table {{.Names}}\t{{.Status}}'
+
+# Expected output
+NAMES                             STATUS                    PORTS
+tollgate-rfid-customer-portal-1   Up (healthy)              0.0.0.0:8080->80/tcp
+tollgate-rfid-frontend-1          Up (healthy)              0.0.0.0:80->80/tcp
+tollgate-rfid-backend-1           Up (healthy)              0.0.0.0:3000->3000/tcp
+tollgate-rfid-db-1                Up (healthy)              0.0.0.0:5432->5432/tcp
+```
+
+### Health Endpoint Details
+| Endpoint | Response | Description |
+|---|---|---|
+| `GET /api/health` | `{"status": "healthy", "database": {"status": "connected", "latencyMs": 1}, ...}` | Full system health with DB latency, memory, CPU |
+| `GET /api/health/live` | `{"status": "alive"}` | Liveness probe - always 200 if process is running |
+| `GET /api/health/ready` | `{"status": "ready"}` | Readiness probe - 200 only if DB is connected |
+| `GET /api/health/metrics` | Detailed JSON | DB counts, memory usage, CPU load, storage size |
+
+### Monitoring Commands
+```bash
+# Quick health check
+curl -s http://localhost:3000/api/health | python3 -m json.tool
+
+# Watch container resources
+docker stats --format 'table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}'
+
+# View backend logs
+docker logs tollgate-rfid-backend-1 --tail 50 -f
+
+# Check database connectivity
+docker exec tollgate-rfid-db-1 pg_isready -U postgres
+```
+
+---
+
+## 8. Troubleshooting & FAQ
 
 ### Q: Why did a vehicle trigger an "Insufficient Balance" alert?
 > **A**: The vehicle's linked prepaid account has less than the toll rate for its class. The operator can click **"Instant Booth QR"** to accept immediate MMQR/KBZPay payment.
@@ -183,3 +274,26 @@ Each toll plaza operates an edge Raspberry Pi running an offline-first SQLite da
 
 ### Q: How do I restart the Docker containers on the server?
 > **A**: Run `docker compose up -d --build` on the server terminal (`192.168.100.101`).
+
+### Q: What does "Rate limit 429 error" mean?
+> **A**: Too many requests sent in a short period. Auth endpoints allow 10 requests per 15 minutes. Wait for the window to reset.
+
+### Q: How do I fix "CORS origin not allowed"?
+> **A**: The server only accepts requests from configured origins. Set the `CORS_ORIGINS` environment variable with comma-separated allowed origins, or add your origin to the `ALLOWED_ORIGINS` array in `app.ts`.
+
+### Q: How do I check if the database is healthy?
+> **A**: 
+> ```bash
+> curl -s http://localhost:3000/api/health/ready
+> # Returns {"status": "ready"} if DB is connected
+> # Returns {"status": "not ready"} with HTTP 503 if DB is down
+> ```
+
+### Q: How do I deploy database migrations?
+> **A**:
+> ```bash
+> docker exec tollgate-rfid-backend-1 sh -c 'cd packages/backend && npx prisma migrate deploy'
+> ```
+
+### Q: Where can I find API documentation?
+> **A**: Visit `http://<SERVER_IP>:3000/api-docs` for interactive Swagger UI, or `http://<SERVER_IP>:3000/api-docs.json` for the OpenAPI spec.

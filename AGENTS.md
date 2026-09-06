@@ -7,3 +7,134 @@
 - Work only within a confirmed task boundary.
 - Obtain a task's bounded context via `pitway task-status <id> --context`.
 <!-- pitway:managed:end -->
+
+---
+
+## Development Environment
+
+### Project Structure (Monorepo)
+```
+Highway-TollGate-MGMT-/
+├── packages/
+│   ├── backend/          # Express + TypeScript + Prisma
+│   ├── frontend/         # React + Vite (Admin Command Hub)
+│   ├── customer-portal/  # React + Vite (Driver PWA)
+│   ├── shared/           # Shared TypeScript types
+│   ├── simulator/        # Canvas toll highway simulator
+│   └── plaza-server/     # Raspberry Pi edge server (SQLite)
+├── scripts/              # Deployment scripts
+├── docker-compose.yml    # Full stack
+├── docker-compose.hq.yml # HQ + Storage stack
+└── ARCHITECTURE.md       # System architecture docs
+```
+
+### Build & Test Commands
+```bash
+# Build backend
+cd packages/backend && npm run build
+
+# Build frontend
+cd packages/frontend && npm run build
+
+# Build customer portal
+cd packages/customer-portal && npm run build
+
+# Run tests
+npm test --workspace=@tollgate/backend
+
+# Type check
+cd packages/backend && npx tsc --noEmit
+cd packages/frontend && npx tsc --noEmit
+
+# Generate Prisma client
+cd packages/backend && npx prisma generate
+
+# Create migration
+cd packages/backend && npx prisma migrate dev --name <migration_name>
+
+# Deploy migrations
+cd packages/backend && npx prisma migrate deploy
+```
+
+### Docker Commands
+```bash
+# Full stack build and launch
+docker compose up -d --build
+
+# Check container health
+docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
+
+# View backend logs
+docker logs tollgate-rfid-backend-1 --tail 50
+
+# Restart a single service
+docker compose restart backend
+
+# Rebuild a single service
+docker compose up -d --build backend
+```
+
+### Remote Server Deployment (Kali Linux)
+```bash
+# SSH into server
+ssh nyimin@192.168.100.101  # password: 1512
+
+# Fix DNS if resolution fails
+echo 1512 | sudo -S sh -c 'echo nameserver 8.8.8.8 > /etc/resolv.conf'
+
+# Pull latest and rebuild
+cd ~/TollGate-RFID
+git pull origin master
+echo 1512 | sudo -S docker compose up -d --build
+
+# Verify all containers healthy
+docker ps --format 'table {{.Names}}\t{{.Status}}'
+
+# Run DB migrations
+echo 1512 | sudo -S docker exec tollgate-rfid-backend-1 sh -c 'cd packages/backend && npx prisma migrate deploy'
+
+# Check health endpoints
+curl -s http://localhost:3000/api/health | python3 -m json.tool
+curl -s http://localhost:3000/api/health/live
+curl -s http://localhost:3000/api/health/ready
+```
+
+### Health Endpoints
+| Endpoint | Method | Auth | Description |
+|---|---|---|---|
+| `/api/health` | GET | No | Full health: DB status, latency, memory, CPU |
+| `/api/health/live` | GET | No | Liveness probe (always 200 if process alive) |
+| `/api/health/ready` | GET | No | Readiness probe (200 if DB connected) |
+| `/api/health/metrics` | GET | Yes | Detailed metrics: DB counts, storage, uptime |
+| `/api/health/detailed` | GET | Yes | Same as metrics (legacy alias) |
+| `/api/health/backup` | GET | Yes | Full DB backup as JSON download |
+
+### API Documentation
+- Swagger UI: `http://<HOST>:3000/api-docs`
+- OpenAPI JSON: `http://<HOST>:3000/api-docs.json`
+
+### Rate Limiting
+| Scope | Limit | Window | Effect |
+|---|---|---|---|
+| Auth (login/register) | 10 requests | 15 minutes | Returns 429 |
+| Global (all endpoints) | 100 requests | 1 minute | Returns 429 |
+| Strict (sensitive ops) | 5 requests | 1 hour | Returns 429 |
+
+### Code Conventions
+- **Backend**: TypeScript, Express, Prisma ORM, Zod validation
+- **Frontend**: React 18, TypeScript, Tailwind CSS, Vite
+- **Error format**: `{ success: false, error: string, code: string, details?: any }`
+- **Success format**: `{ success: true, data: any }` or direct payload
+- **Auth**: JWT Bearer token in Authorization header
+- **Validation**: Zod schemas in `packages/backend/src/validation/schemas.ts`
+- **Database indexes**: Defined in Prisma schema with `@@index` directive
+
+### Troubleshooting
+| Issue | Fix |
+|---|---|
+| DB connection refused | Check container health: `docker ps` |
+| Rate limit 429 error | Wait for window to reset or check `NODE_ENV=test` skips |
+| CORS error | Check `CORS_ORIGINS` env var or allowed origins in `app.ts` |
+| Prisma client outdated | Run `npx prisma generate` |
+| Migration not applied | Run `npx prisma migrate deploy` |
+| Frontend 404 on reload | Check nginx conf has SPA fallback (`try_files`) |
