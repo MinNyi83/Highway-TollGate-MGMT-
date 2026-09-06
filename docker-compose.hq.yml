@@ -1,6 +1,4 @@
 # Main Docker Compose for TollGate HQ + Storage
-version: '3.8'
-
 services:
   # PostgreSQL Database
   db:
@@ -17,6 +15,11 @@ services:
       - "5432:5432"
     networks:
       - tollgate-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   # Backend API (HQ Server)
   backend:
@@ -26,7 +29,8 @@ services:
     container_name: tollgate-backend
     restart: unless-stopped
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     ports:
       - "3000:3000"
     environment:
@@ -37,6 +41,12 @@ services:
       PORT: "3000"
     networks:
       - tollgate-net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
 
   # Admin Portal (Frontend)
   frontend:
@@ -46,11 +56,18 @@ services:
     container_name: tollgate-frontend
     restart: unless-stopped
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     ports:
       - "80:80"
     networks:
       - tollgate-net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80/ || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
 
   # Customer Portal
   customer-portal:
@@ -60,11 +77,18 @@ services:
     container_name: tollgate-customer-portal
     restart: unless-stopped
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     ports:
       - "8080:80"
     networks:
       - tollgate-net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80/ || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
 
   # Storage Server
   storage:
@@ -73,6 +97,9 @@ services:
       dockerfile: Dockerfile
     container_name: tollgate-storage
     restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
     ports:
       - "5000:5000"
     environment:
@@ -82,6 +109,12 @@ services:
       - storage-data:/app/uploads
     networks:
       - tollgate-net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5000/health || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
 
   # Redis for caching/queues
   redis:
@@ -94,6 +127,11 @@ services:
       - redis-data:/data
     networks:
       - tollgate-net
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
 volumes:
   pgdata:

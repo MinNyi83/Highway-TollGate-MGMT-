@@ -26,7 +26,6 @@ services:
       JWT_SECRET: docker-dev-secret-key
       JWT_EXPIRES_IN: 24h
       NODE_ENV: development
-      # Payment Gateway Configuration (mock mode when empty)
       KBZ_PAY_MERCHANT_ID: ${KBZ_PAY_MERCHANT_ID:-}
       KBZ_PAY_APP_ID: ${KBZ_PAY_APP_ID:-}
       KBZ_PAY_SECRET_KEY: ${KBZ_PAY_SECRET_KEY:-}
@@ -46,6 +45,12 @@ services:
         condition: service_healthy
     volumes:
       - uploads:/app/uploads
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
 
   frontend:
     build:
@@ -54,7 +59,14 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80/ || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
 
   customer-portal:
     build:
@@ -63,7 +75,14 @@ services:
     ports:
       - "8080:80"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80/ || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
 
   simulator:
     build:
@@ -72,7 +91,8 @@ services:
     environment:
       API_URL: http://backend:3000
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     profiles:
       - tools
 

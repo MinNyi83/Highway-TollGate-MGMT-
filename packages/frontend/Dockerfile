@@ -14,6 +14,7 @@ RUN cd packages/shared && npm run build
 RUN cd packages/frontend && npm run build
 
 FROM nginx:alpine AS runtime
+RUN apk add --no-cache curl
 COPY --from=build /app/packages/frontend/dist /usr/share/nginx/html
 COPY packages/frontend/nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80

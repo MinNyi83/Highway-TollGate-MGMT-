@@ -30,12 +30,64 @@ export interface BindRfidInput {
   accountId: string;
 }
 
-export async function getVehicles() {
-  return prisma.vehicle.findMany({
-    include: {
-      rfidTags: true,
+export interface VehicleSearchFilters {
+  search?: string;
+  status?: VehicleStatus;
+  vehicleClass?: VehicleClass;
+  approvalStatus?: ApprovalStatus;
+  page?: number;
+  limit?: number;
+}
+
+export async function getVehicles(filters?: VehicleSearchFilters) {
+  const where: any = {};
+
+  if (filters?.search) {
+    where.OR = [
+      { plateNumber: { contains: filters.search, mode: 'insensitive' } },
+      { make: { contains: filters.search, mode: 'insensitive' } },
+      { model: { contains: filters.search, mode: 'insensitive' } },
+    ];
+  }
+
+  if (filters?.status) {
+    where.status = filters.status;
+  }
+
+  if (filters?.vehicleClass) {
+    where.vehicleClass = filters.vehicleClass;
+  }
+
+  if (filters?.approvalStatus) {
+    where.approvalStatus = filters.approvalStatus;
+  }
+
+  const page = filters?.page || 1;
+  const limit = filters?.limit || 50;
+  const skip = (page - 1) * limit;
+
+  const [vehicles, total] = await Promise.all([
+    prisma.vehicle.findMany({
+      where,
+      include: {
+        rfidTags: true,
+      },
+      orderBy: { createdAt: 'desc' },
+      skip,
+      take: limit,
+    }),
+    prisma.vehicle.count({ where }),
+  ]);
+
+  return {
+    vehicles,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
     },
-  });
+  };
 }
 
 export async function getVehicleById(id: string) {
@@ -44,6 +96,18 @@ export async function getVehicleById(id: string) {
     include: {
       rfidTags: true,
     },
+  });
+}
+
+export async function searchVehiclesByPlate(plateNumber: string) {
+  return prisma.vehicle.findMany({
+    where: {
+      plateNumber: { contains: plateNumber, mode: 'insensitive' },
+    },
+    include: {
+      rfidTags: true,
+    },
+    take: 10,
   });
 }
 

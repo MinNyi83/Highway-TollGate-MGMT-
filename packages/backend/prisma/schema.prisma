@@ -168,6 +168,9 @@ model Account {
   loyaltyPoints LoyaltyPoints[]
 
   @@map("accounts")
+  @@index([userId])
+  @@index([status])
+  @@index([customerType])
 }
 
 model SMSLog {
@@ -209,6 +212,11 @@ model Vehicle {
   violations     Violation[]
 
   @@map("vehicles")
+  @@index([plateNumber])
+  @@index([status])
+  @@index([approvalStatus])
+  @@index([vehicleClass])
+  @@index([createdAt])
 }
 
 model RFIDTag {
@@ -282,6 +290,11 @@ model TollEvent {
   photos      VehiclePhoto[]
 
   @@map("toll_events")
+  @@index([vehicleId])
+  @@index([plazaId])
+  @@index([entryTime])
+  @@index([status])
+  @@index([anprPlate])
 }
 
 model Transaction {
@@ -299,6 +312,11 @@ model Transaction {
   event         TollEvent?        @relation(fields: [eventId], references: [id])
 
   @@map("transactions")
+  @@index([accountId])
+  @@index([eventId])
+  @@index([status])
+  @@index([type])
+  @@index([createdAt])
 }
 
 model Violation {
@@ -316,6 +334,11 @@ model Violation {
   event         TollEvent       @relation(fields: [eventId], references: [id])
 
   @@map("violations")
+  @@index([vehicleId])
+  @@index([eventId])
+  @@index([status])
+  @@index([violationType])
+  @@index([createdAt])
 }
 
 model Notification {

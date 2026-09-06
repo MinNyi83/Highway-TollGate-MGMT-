@@ -27,16 +27,43 @@ import ocrRoutes from './modules/ocr/ocr.routes';
 import { setupSwagger } from './config/swagger';
 import { logger } from './middleware/logger';
 import { errorHandler } from './middleware/errorHandler';
-import { authLimiter } from './middleware/rateLimiter';
+import { authLimiter, globalLimiter } from './middleware/rateLimiter';
 
 dotenv.config();
 
 const app = express();
 
+const ALLOWED_ORIGINS = process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(',')
+  : [
+      'http://localhost:80',
+      'http://localhost:3000',
+      'http://localhost:8080',
+      'http://localhost:5173',
+      'http://192.168.100.101',
+      'http://192.168.100.101:8080',
+    ];
+
 app.use(logger);
-app.use(cors());
-app.use(helmet());
-app.use(express.json());
+app.use(helmet({
+  contentSecurityPolicy: process.env.NODE_ENV === 'production' ? undefined : false,
+  crossOriginEmbedderPolicy: false,
+}));
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  maxAge: 86400,
+}));
+app.use(express.json({ limit: '10mb' }));
+app.use(globalLimiter);
 
 setupSwagger(app);
 

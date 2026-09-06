@@ -10,6 +10,7 @@ import {
   getPendingApprovals,
   approveVehicle,
   rejectVehicle,
+  searchVehiclesByPlate,
 } from './vehicles.service';
 import { authMiddleware } from '../../middleware/auth';
 import { uploadVehiclePhotos, uploadSingle } from '../../middleware/upload';
@@ -19,7 +20,29 @@ const router = Router();
 
 router.get('/', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const vehicles = await getVehicles();
+    const { search, status, vehicleClass, approvalStatus, page, limit } = req.query;
+    const result = await getVehicles({
+      search: search as string,
+      status: status as any,
+      vehicleClass: vehicleClass as any,
+      approvalStatus: approvalStatus as any,
+      page: page ? parseInt(page as string) : 1,
+      limit: limit ? parseInt(limit as string) : 50,
+    });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.get('/search', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { q } = req.query;
+    if (!q) {
+      res.status(400).json({ error: 'Search query is required' });
+      return;
+    }
+    const vehicles = await searchVehiclesByPlate(q as string);
     res.json(vehicles);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
@@ -184,7 +207,6 @@ router.post('/import/csv', authMiddleware, (req: Request, res: Response) => {
         }
       }
 
-      // Clean up uploaded file
       require('fs').unlinkSync(req.file.path);
 
       res.json({ imported, errors });
