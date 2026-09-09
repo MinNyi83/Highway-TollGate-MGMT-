@@ -119,21 +119,7 @@ async function main() {
     },
   });
 
-  // Create accounts for financial staff (customer database)
-  for (const user of [finAdmin, finManager, finViewer]) {
-    await customerPrisma.account.upsert({
-      where: { accountNumber: `FIN-${user.role}-${user.id.slice(0, 8)}` },
-      update: {},
-      create: {
-        userId: user.id,
-        accountNumber: `FIN-${user.role}-${user.id.slice(0, 8)}`,
-        customerType: 'INDIVIDUAL',
-        balance: 0,
-        creditLimit: 0,
-        status: 'ACTIVE',
-      },
-    });
-  }
+  // Financial staff don't need customer accounts — they only need user login credentials
   console.log(`  ✅ 3 financial staff accounts created`);
 
   // ============================================================================
