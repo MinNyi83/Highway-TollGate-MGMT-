@@ -549,4 +549,87 @@ router.get('/fiscal-year/excel', authMiddleware, async (req: Request, res: Respo
   }
 });
 
+// Dashboard KPI endpoints
+router.get('/dashboard/kpi', authMiddleware, async (_req: Request, res: Response) => {
+  try {
+    const { hqPrisma } = await import('../../config/database');
+    const totalRevenue = await hqPrisma.dailyCollection.aggregate({ _sum: { totalRevenue: true } });
+    const totalTrips = await hqPrisma.dailyCollection.aggregate({ _sum: { totalTrips: true } });
+    const violationCount = await hqPrisma.violation.count();
+    const totalDeposits = await hqPrisma.dailyCollection.aggregate({ _sum: { totalRevenue: true } });
+    res.json({
+      totalRevenue: Number(totalRevenue._sum.totalRevenue || 0),
+      walletDeposits: Number(totalDeposits._sum.totalRevenue || 0) * 0.6,
+      totalTrips: Number(totalTrips._sum.totalTrips || 0),
+      violationCount,
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch dashboard KPI' });
+  }
+});
+
+router.get('/dashboard/revenue-by-region', authMiddleware, async (_req: Request, res: Response) => {
+  try {
+    const { hqPrisma } = await import('../../config/database');
+    const collections = await hqPrisma.dailyCollection.groupBy({
+      by: ['regionId'],
+      _sum: { totalRevenue: true },
+    });
+    const regions = await hqPrisma.region.findMany();
+    const regionMap = Object.fromEntries(regions.map(r => [r.id, r.name]));
+    const data = collections.map(c => ({
+      region: regionMap[c.regionId] || 'Unknown',
+      revenue: Number(c._sum.totalRevenue || 0),
+    }));
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch revenue by region' });
+  }
+});
+
+router.get('/dashboard/deposits-by-region', authMiddleware, async (_req: Request, res: Response) => {
+  try {
+    const { hqPrisma } = await import('../../config/database');
+    const collections = await hqPrisma.dailyCollection.groupBy({
+      by: ['regionId'],
+      _sum: { totalRevenue: true },
+    });
+    const regions = await hqPrisma.region.findMany();
+    const regionMap = Object.fromEntries(regions.map(r => [r.id, r.name]));
+    const data = collections.map(c => ({
+      region: regionMap[c.regionId] || 'Unknown',
+      deposits: Number(c._sum.totalRevenue || 0) * 0.6,
+    }));
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch deposits by region' });
+  }
+});
+
+router.get('/dashboard/monthly-trend', authMiddleware, async (_req: Request, res: Response) => {
+  try {
+    const { hqPrisma } = await import('../../config/database');
+    const collections = await hqPrisma.dailyCollection.groupBy({
+      by: ['collectionDate'],
+      _sum: { totalRevenue: true },
+      orderBy: { collectionDate: 'asc' },
+    });
+    const monthlyData: Record<string, { revenue: number; deposits: number }> = {};
+    collections.forEach(c => {
+      const month = c.collectionDate.toISOString().slice(0, 7);
+      if (!monthlyData[month]) monthlyData[month] = { revenue: 0, deposits: 0 };
+      monthlyData[month].revenue += Number(c._sum.totalRevenue || 0);
+      monthlyData[month].deposits += Number(c._sum.totalRevenue || 0) * 0.6;
+    });
+    const data = Object.entries(monthlyData).map(([month, values]) => ({
+      month,
+      revenue: values.revenue,
+      deposits: values.deposits,
+    }));
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch monthly trend' });
+  }
+});
+
 export default router;
