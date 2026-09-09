@@ -1040,6 +1040,132 @@ router.get('/customer-spending', authMiddleware, async (req: Request, res: Respo
   }
 });
 
+// Revenue by Payment Method
+router.get('/revenue-by-payment', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { hqPrisma } = await import('../../config/database');
+    const { startDate, endDate } = req.query;
+
+    const start = startDate ? new Date(startDate as string) : new Date(new Date().setMonth(new Date().getMonth() - 1));
+    const end = endDate ? new Date(endDate as string) : new Date();
+
+    const transactions = await hqPrisma.transaction.findMany({
+      where: { createdAt: { gte: start, lte: end } },
+      include: { event: true },
+    });
+
+    const byMethod = new Map<string, { count: number; revenue: number }>();
+    for (const t of transactions) {
+      const method = t.type || 'UNKNOWN';
+      if (!byMethod.has(method)) byMethod.set(method, { count: 0, revenue: 0 });
+      const entry = byMethod.get(method)!;
+      entry.count++;
+      entry.revenue += Number(t.amount || 0);
+    }
+
+    const totalRevenue = transactions.reduce((sum, t) => sum + Number(t.amount || 0), 0);
+    const result = Array.from(byMethod.entries())
+      .map(([method, data]) => ({
+        method,
+        count: data.count,
+        revenue: data.revenue,
+        percentage: totalRevenue > 0 ? ((data.revenue / totalRevenue) * 100).toFixed(1) : '0',
+      }))
+      .sort((a, b) => b.revenue - a.revenue);
+
+    res.json({ methods: result, totalRevenue, totalTransactions: transactions.length });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch revenue by payment method' });
+  }
+});
+
+// Customer Loyalty Analytics
+router.get('/loyalty-analytics', authMiddleware, async (_req: Request, res: Response) => {
+  try {
+    const { hqPrisma } = await import('../../config/database');
+
+    const loyaltyPoints = await hqPrisma.loyaltyPoints.findMany({
+      select: { id: true, points: true, accountId: true, createdAt: true },
+    });
+
+    const totalPoints = loyaltyPoints.reduce((sum, l) => sum + (l.points || 0), 0);
+    const avgPoints = loyaltyPoints.length > 0 ? totalPoints / loyaltyPoints.length : 0;
+
+    const byAccount = new Map<string, number>();
+    for (const l of loyaltyPoints) {
+      byAccount.set(l.accountId, (byAccount.get(l.accountId) || 0) + (l.points || 0));
+    }
+
+    const topAccounts = Array.from(byAccount.entries())
+      .map(([accountId, points]) => ({ accountId, points }))
+      .sort((a, b) => b.points - a.points)
+      .slice(0, 10);
+
+    res.json({
+      summary: {
+        totalAccounts: byAccount.size,
+        totalPoints,
+        avgPoints,
+      },
+      topAccounts,
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch loyalty analytics' });
+  }
+});
+
+// Financial Reports Generator
+router.get('/reports/summary', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { hqPrisma } = await import('../../config/database');
+    const { startDate, endDate, regionId } = req.query;
+
+    const start = startDate ? new Date(startDate as string) : new Date(new Date().setMonth(new Date().getMonth() - 1));
+    const end = endDate ? new Date(endDate as string) : new Date();
+
+    const where: any = { entryTime: { gte: start, lte: end } };
+    if (regionId) {
+      where.plaza = { regionId: regionId as string };
+    }
+
+    const [events, violations, transactions] = await Promise.all([
+      hqPrisma.tollEvent.findMany({ where, include: { plaza: true } }),
+      hqPrisma.violation.findMany({ where: { createdAt: { gte: start, lte: end } } }),
+      hqPrisma.transaction.findMany({ where: { createdAt: { gte: start, lte: end } } }),
+    ]);
+
+    const totalRevenue = events.reduce((sum, e) => sum + Number(e.amount || 0), 0);
+    const totalFines = violations.reduce((sum, v) => sum + Number(v.fineAmount || 0), 0);
+    const totalTransactions = transactions.length;
+
+    const byRegion = new Map<string, { trips: number; revenue: number }>();
+    for (const event of events) {
+      const region = event.plaza?.name || 'Unknown';
+      if (!byRegion.has(region)) byRegion.set(region, { trips: 0, revenue: 0 });
+      const entry = byRegion.get(region)!;
+      entry.trips++;
+      entry.revenue += Number(event.amount || 0);
+    }
+
+    res.json({
+      period: { start, end },
+      summary: {
+        totalRevenue,
+        totalFines,
+        totalTransactions,
+        totalTrips: events.length,
+      },
+      byRegion: Array.from(byRegion.entries()).map(([region, data]) => ({
+        region,
+        trips: data.trips,
+        revenue: data.revenue,
+      })),
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to generate financial report' });
+  }
+});
+
 // Financial Alerts
 router.get('/alerts', authMiddleware, async (_req: Request, res: Response) => {
   try {

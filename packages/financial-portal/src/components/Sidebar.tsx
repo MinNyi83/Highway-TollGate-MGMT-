@@ -19,6 +19,8 @@ import {
   Search,
   GitBranch,
   CreditCard,
+  Star,
+  FileBarChart,
 } from 'lucide-react';
 import { useLanguage } from '../i18n';
 
@@ -43,6 +45,9 @@ const navItems = [
   { to: '/wallet-analytics', icon: Wallet, label: 'Wallet Analytics', labelMyanmar: 'ပိုက်ဆံအိတ် ခွဲခြမ်းစိတ်ဖြာ' },
   { to: '/revenue-by-vehicle', icon: Car, label: 'Revenue by Vehicle', labelMyanmar: 'ယာဉ်အလိုက် ဝင်ငွေ' },
   { to: '/customer-spending', icon: CreditCard, label: 'Customer Spending', labelMyanmar: 'ဖောက်သည် သုံးစွဲမှု' },
+  { to: '/revenue-by-payment', icon: CreditCard, label: 'Revenue by Payment', labelMyanmar: 'ငွေပေးချေမှု အလိုက် ဝင်ငွေ' },
+  { to: '/loyalty-analytics', icon: Star, label: 'Loyalty Analytics', labelMyanmar: 'သစာရှိမှု ခွဲခြမ်းစိတ်ဖြာ' },
+  { to: '/reports', icon: FileBarChart, label: 'Financial Reports', labelMyanmar: 'ဘဏ္ဍာရေး အစီရင်ခံစာ' },
   { to: '/audit-log', icon: Shield, label: 'Audit Trail', labelMyanmar: 'စစ်ဆေးမှု မှတ်တမ်း' },
 ];
 

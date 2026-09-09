@@ -25,6 +25,9 @@ import SettlementPipeline from './pages/SettlementPipeline';
 import WalletAnalytics from './pages/WalletAnalytics';
 import RevenueByVehicle from './pages/RevenueByVehicle';
 import CustomerSpending from './pages/CustomerSpending';
+import RevenueByPayment from './pages/RevenueByPayment';
+import LoyaltyAnalytics from './pages/LoyaltyAnalytics';
+import FinancialReports from './pages/FinancialReports';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -69,6 +72,9 @@ function App() {
                       <Route path="/wallet-analytics" element={<WalletAnalytics />} />
                       <Route path="/revenue-by-vehicle" element={<RevenueByVehicle />} />
                       <Route path="/customer-spending" element={<CustomerSpending />} />
+                      <Route path="/revenue-by-payment" element={<RevenueByPayment />} />
+                      <Route path="/loyalty-analytics" element={<LoyaltyAnalytics />} />
+                      <Route path="/reports" element={<FinancialReports />} />
                       <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                   </Layout>
