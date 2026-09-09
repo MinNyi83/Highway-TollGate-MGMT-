@@ -201,3 +201,5 @@ curl -s http://localhost:3000/api/health/ready
 | Migration not applied | Run `npx prisma migrate deploy` |
 | Frontend 404 on reload | Check nginx conf has SPA fallback (`try_files`) |
 | Presentation not updated | Rebuild frontend: `docker compose up -d --build frontend` |
+| Financial portal "Login failed" | API returns `{user, token}` directly, use `res.data` not `res.data.data` |
+| Financial portal rate limited | Backend restart clears in-memory rate limiter: `docker restart tollgate-rfid-backend-1` |

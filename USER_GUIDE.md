@@ -379,3 +379,6 @@ docker exec tollgate-rfid-db-1 pg_isready -U postgres
 
 ### Q: How many slides are in the presentation?
 > **A**: 17 slides covering: Title & System Overview, Monorepo Structure, Database Architecture, Challenges, Solution Pillars, System Topology, Myanmar RTAD OCR, Dual Verification, Offline-First Sync, Customer PWA, HQ Command Hub, Highway Simulator, Hardware Matrix, Financial Portal, Docker Deployment, API Reference, and Conclusion.
+
+### Q: Financial portal shows "Login failed" but credentials are correct?
+> **A**: The backend may be rate-limited from too many login attempts. Restart the backend: `docker restart tollgate-rfid-backend-1`. The rate limiter resets on restart.

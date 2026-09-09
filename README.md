@@ -163,32 +163,5 @@ docker compose up -d --build
 
 ---
 
-## Remote Deployment (Kali Linux)
-
-```bash
-# SSH into server
-ssh nyimin@192.168.100.101  # password: 1512
-
-# Fix DNS
-echo 1512 | sudo -S sh -c 'echo nameserver 8.8.8.8 > /etc/resolv.conf'
-
-# Pull latest and rebuild
-cd ~/TollGate-RFID
-git pull origin master
-echo 1512 | sudo -S docker compose up -d --build
-
-# Verify all containers healthy
-docker ps --format 'table {{.Names}}\t{{.Status}}'
-
-# Run DB migrations
-echo 1512 | sudo -S docker exec tollgate-rfid-backend-1 sh -c \
-  'cd packages/backend && npx prisma migrate deploy'
-
-# Check health
-curl -s http://localhost:3000/api/health | python3 -m json.tool
-```
-
----
-
 ## License
 MIT License. Developed for Highway Infrastructure & Automated Tolling Systems.

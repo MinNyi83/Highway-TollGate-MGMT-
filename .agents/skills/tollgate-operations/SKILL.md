@@ -396,3 +396,5 @@ cd packages/frontend && npx tsc --noEmit
 | DNS resolution fails on server | Missing nameserver | `echo 1512 | sudo -S sh -c 'echo nameserver 8.8.8.8 > /etc/resolv.conf'` |
 | Customer login fails | Wrong database client | Ensure auth routes use `customerPrisma` not `hqPrisma` |
 | Cross-database query fails | Using wrong Prisma client | Import correct client: `hqPrisma` for HQ, `customerPrisma` for customer |
+| Financial portal "Login failed" | Response parsing mismatch | API returns `{user, token}` directly; use `res.data` not `res.data.data` |
+| Financial portal rate limited | In-memory rate limiter full | Restart backend: `docker restart tollgate-rfid-backend-1` |
