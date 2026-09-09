@@ -19,11 +19,12 @@ Highway-TollGate-MGMT-/
 │   ├── backend/          # Express + TypeScript + Prisma (multi-DB)
 │   ├── frontend/         # React + Vite (Admin Command Hub)
 │   ├── customer-portal/  # React + Vite (Driver PWA)
+│   ├── financial-portal/ # React + Vite (Financial System) 🆕
 │   ├── shared/           # Shared TypeScript types
 │   ├── simulator/        # Canvas toll highway simulator
 │   └── plaza-server/     # Raspberry Pi edge server (PostgreSQL)
 ├── scripts/              # Deployment scripts
-├── docker-compose.yml    # Full stack (3 databases)
+├── docker-compose.yml    # Full stack (3 databases + 4 frontends)
 ├── docker-compose.hq.yml # HQ + Storage stack
 └── ARCHITECTURE.md       # System architecture docs
 ```
@@ -47,7 +48,7 @@ Highway-TollGate-MGMT-/
 
 | Database | Port | Tables | Purpose |
 |----------|------|--------|---------|
-| **HQ** (`tollgate`) | 5432 | vehicles, toll_plazas, toll_rates, toll_events, violations, device_status, audit_logs, vehicle_photos, tenants | Core toll operations |
+| **HQ** (`tollgate`) | 5432 | vehicles, toll_plazas, toll_rates, toll_events, violations, device_status, audit_logs, vehicle_photos, tenants, regions, daily_collections, monthly_reconciliations, revenue_transfers, official_receipts, financial_audit_logs | Core toll operations + Financial system |
 | **Customer** (`tollgate_customer`) | 5433 | users, accounts, rfid_tags, notifications, sms_logs, promo_codes, loyalty_points, webhooks | Customer accounts & wallets |
 | **Plaza** (`tollgate_plaza`) | 5434 | plaza_config, sync_queue, sync_status, local_toll_events, device_config | Plaza sync & local events |
 
@@ -152,6 +153,20 @@ curl -s http://localhost:3000/api/health/ready
 | `/api/health/metrics` | GET | Yes | Detailed metrics: DB counts, storage, uptime |
 | `/api/health/detailed` | GET | Yes | Same as metrics (legacy alias) |
 | `/api/health/backup` | GET | Yes | Full DB backup as JSON download |
+
+### Financial System Endpoints
+| Endpoint | Method | Auth | Description |
+|---|---|---|---|
+| `/api/financial/regions` | GET | Yes | List all Myanmar regions |
+| `/api/financial/daily-collection` | GET | Yes | Daily collection statements |
+| `/api/financial/revenue/by-region` | GET | Yes | Toll revenue by region |
+| `/api/financial/topup/by-region` | GET | Yes | Wallet deposits by region |
+| `/api/financial/vehicles/by-region` | GET | Yes | Vehicle registration by region |
+| `/api/financial/toll-usage/:plazaId` | GET | Yes | Per-plaza pass-through volume |
+| `/api/financial/settlement` | GET | Yes | Revenue remittance list |
+| `/api/financial/reconciliation` | GET | Yes | Monthly financial reconciliation |
+| `/api/financial/receipts` | GET | Yes | Official receipts |
+| `/api/financial/fiscal-year/summary` | GET | Yes | Fiscal year report |
 
 ### API Documentation
 - Swagger UI: `http://<HOST>:3000/api-docs`

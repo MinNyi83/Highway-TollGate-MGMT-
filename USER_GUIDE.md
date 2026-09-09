@@ -36,6 +36,7 @@ The system is deployed as a distributed stack with cloud HQ coordination and edg
 |---|---|---|---|
 | **HQ Admin Command Hub** | `80` | `http://<SERVER_IP>` | Central telemetry, operator ribbon, highway map, reports |
 | **Customer Portal (PWA)** | `8080` | `http://<SERVER_IP>:8080` | Driver digital wallet, virtual RFID pass, trip history |
+| **Financial Portal** 🆕 | `8081` | `http://<SERVER_IP>:8081` | Ministry reporting, revenue tracking, reconciliation |
 | **Central Backend API** | `3000` | `http://<SERVER_IP>:3000` | REST API, WebSocket streams, OCR engine, payment webhooks |
 | **API Documentation** | `3000` | `http://<SERVER_IP>:3000/api-docs` | Swagger UI for API exploration |
 | **Storage Server** | `5000` | `http://<SERVER_IP>:5000` | ANPR captures, license plate snapshots, receipts |
@@ -135,7 +136,76 @@ If a driver's physical windshield RFID sticker is damaged or not yet delivered:
 
 ---
 
-## 4. Toll Simulator (Canvas Multi-Lane Highway)
+## 4. Financial Portal (Port 8081) 🆕
+
+### Default Financial Logins
+- **Financial Admin**: `fin.admin@tollgate.com` / `password123`
+- **Financial Manager**: `fin.manager@tollgate.com` / `password123`
+- **Financial Viewer**: `fin.viewer@tollgate.com` / `password123`
+
+### Financial Portal Pages
+
+#### Dashboard
+- **KPI Cards**: Total toll revenue, total wallet deposits, active vehicles, total plazas, total regions
+- **Revenue Trend Chart**: Daily revenue and deposit trends
+- **Regional Comparison**: Revenue breakdown by 15 Myanmar regions
+
+#### Daily Collection Statement
+- Per-plaza daily toll revenue breakdown
+- Filter by plaza, date range, and region
+- Excel export for accounting reconciliation
+
+#### Toll Revenue by Region
+- Revenue breakdown across 15 administrative regions
+- Daily revenue trends per region
+- Excel export by region
+
+#### Wallet Deposits by Region
+- Customer wallet top-up amounts by region
+- **Important**: These are customer liabilities, NOT company revenue
+- Excel export by region
+
+#### Vehicle Registration by Region
+- Vehicle counts and class distribution by region
+- Vehicle registration trends
+
+#### Pass-Through Volume by Plaza
+- Vehicle count per plaza
+- RFID vs manual entry percentage
+- Peak hour distribution
+
+#### Revenue Remittance
+- Plaza → Treasury transfer tracking
+- Settlement status (TRANSFERRED / NEEDS TRANSFER)
+- Batch confirmation workflow
+
+#### Financial Reconciliation
+- Monthly reconciliation with approval workflow
+- Submit → Approve/Reject flow
+- Status tracking: DRAFT → PENDING → APPROVED/REJECTED
+
+#### Official Receipts
+- PDF receipt generation for revenue transfers
+- Receipt status tracking (PENDING → APPROVED → ISSUED)
+
+#### Fiscal Year Report
+- Annual revenue summary by fiscal year (April–March)
+- Quarterly breakdown (Q1=Apr-Jun, Q2=Jul-Sep, Q3=Oct-Dec, Q4=Jan-Mar)
+- Executive summary with total revenue, remittances, reconciliation status
+
+### Financial Terminology
+| Term | Meaning |
+|---|---|
+| **Toll Revenue** | Actual charges deducted at plaza (COMPANY INCOME) |
+| **Wallet Deposits** | Customer loaded money (COMPANY LIABILITY - NOT revenue) |
+| **Revenue Remittance** | Plaza → Treasury transfer |
+| **Daily Collection Statement** | Per-plaza daily toll earnings |
+| **Financial Reconciliation** | Monthly approval workflow |
+| **Fiscal Year** | April–March (Q1=Apr-Jun, Q2=Jul-Sep, Q3=Oct-Dec, Q4=Jan-Mar) |
+
+---
+
+## 5. Toll Simulator (Canvas Multi-Lane Highway)
 
 Access the live simulation at `http://<SERVER_IP>/simulator`:
 - **Highway Layout**: 4 lanes (2 Northbound, 2 Southbound) with plaza booths and median dividers.
@@ -297,3 +367,9 @@ docker exec tollgate-rfid-db-1 pg_isready -U postgres
 
 ### Q: Where can I find API documentation?
 > **A**: Visit `http://<SERVER_IP>:3000/api-docs` for interactive Swagger UI, or `http://<SERVER_IP>:3000/api-docs.json` for the OpenAPI spec.
+
+### Q: How do I access the Financial Portal?
+> **A**: Visit `http://<SERVER_IP>:8081` and login with financial staff credentials. Financial Admin has full access, Financial Manager can approve reconciliations, Financial Viewer has read-only access.
+
+### Q: What's the difference between Toll Revenue and Wallet Deposits?
+> **A**: **Toll Revenue** is actual money earned from toll charges (DEBIT transactions). **Wallet Deposits** are customer loaded money (TOPUP transactions) - this is a company LIABILITY, not revenue.

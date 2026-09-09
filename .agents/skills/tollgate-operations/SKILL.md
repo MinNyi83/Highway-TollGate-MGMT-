@@ -15,23 +15,24 @@ This skill provides step-by-step procedures, standard operating instructions, an
 ┌─────────────────────────────────────────────────────────────────┐
 │                      CENTRAL HQ CLOUD                           │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐  │
-│  │ Admin Hub    │  │ Customer PWA │  │ HQ Database          │  │
-│  │ (Port 80)    │  │ (Port 8080)  │  │ PostgreSQL :5432     │  │
-│  └──────┬───────┘  └──────┬───────┘  │ vehicles, events,    │  │
-│         │                  │          │ violations, plazas   │  │
-│  ┌──────┴──────────────────┴──────────┴──────────┬───────────┐  │
-│  │              HQ Backend API (Port 3000)        │           │  │
-│  │  ┌─────────────┐  ┌──────────────┐  ┌────────┴────────┐  │  │
-│  │  │  hqPrisma   │  │customerPrisma│  │  plazaPrisma    │  │  │
-│  │  └──────┬──────┘  └──────┬───────┘  └───────┬─────────┘  │  │
+│  │ Admin Hub    │  │ Customer PWA │  │ Financial Portal 🆕  │  │
+│  │ (Port 80)    │  │ (Port 8080)  │  │ (Port 8081)          │  │
+│  └──────┬───────┘  └──────┬───────┘  └────────────┬─────────┘  │
+│         │                  │                       │             │
+│  ┌──────┴──────────────────┴───────────────────────┴──────────┐  │
+│  │              HQ Backend API (Port 3000)                    │  │
+│  │  ┌─────────────┐  ┌──────────────┐  ┌──────────────────┐  │  │
+│  │  │  hqPrisma   │  │customerPrisma│  │financialPrisma   │  │  │
+│  │  └──────┬──────┘  └──────┬───────┘  └───────┬──────────┘  │  │
 │  └─────────┼────────────────┼───────────────────┼────────────┘  │
 │            │                │                   │               │
 │  ┌─────────▼──────┐  ┌─────▼────────┐  ┌──────▼───────────┐  │
-│  │  HQ DB (:5432) │  │Customer DB   │  │ Plaza DB         │  │
-│  │  tollgate       │  │(:5433)       │  │ (:5434)          │  │
-│  │                 │  │tollgate_     │  │ tollgate_plaza    │  │
-│  │                 │  │customer      │  │                   │  │
-│  └────────────────┘  └──────────────┘  └───────────────────┘  │
+│  │  HQ DB (:5432) │  │Customer DB   │  │ HQ DB (:5432)    │  │
+│  │  tollgate       │  │(:5433)       │  │ (financial tbls) │  │
+│  │  vehicles,      │  │tollgate_     │  │ regions,         │  │
+│  │  events, plazas │  │customer      │  │ collections,     │  │
+│  └────────────────┘  └──────────────┘  │ receipts         │  │
+│                                         └──────────────────┘  │
 └───────────────────────────┬─────────────────────────────────────┘
                             │ Internet / VPN / 4G
         ┌───────────────────┼───────────────────┐
@@ -103,6 +104,10 @@ echo 1512 | sudo -S docker exec tollgate-rfid-backend-1 sh -c \
 # Push schema to Plaza database (no migration)
 echo 1512 | sudo -S docker exec tollgate-rfid-backend-1 sh -c \
   'cd packages/backend && DATABASE_URL=postgresql://postgres:postgres@plaza-db:5432/tollgate_plaza npx prisma db push --schema=prisma/schema.plaza.prisma --accept-data-loss'
+
+# Seed Financial data (15 regions + financial staff + sample data)
+echo 1512 | sudo -S docker exec tollgate-rfid-backend-1 sh -c \
+  'cd packages/backend && npx tsx prisma/seeds/financial-seed.ts'
 ```
 
 ---
@@ -117,6 +122,19 @@ echo 1512 | sudo -S docker exec tollgate-rfid-backend-1 sh -c \
 | **Auditor / Viewer** | `viewer@tollgate.com` | `password123` | Reports, audit logs & financial inspection |
 | **Enterprise Customer** | `fleet@transportco.com` | `password123` | TransportCo Fleet management (8 vehicles) |
 | **Individual Driver** | `ko.min@personal.com` | `password123` | Customer PWA portal, digital wallet & pass |
+| **Financial Admin** | `fin.admin@tollgate.com` | `password123` | Financial Portal admin access |
+| **Financial Manager** | `fin.manager@tollgate.com` | `password123` | Financial Portal approval workflow |
+| **Financial Viewer** | `fin.viewer@tollgate.com` | `password123` | Financial Portal read-only access |
+
+### Financial Terminology
+| Term | Meaning |
+|---|---|
+| **Toll Revenue** | Actual charges deducted at plaza (COMPANY INCOME) |
+| **Wallet Deposits** | Customer loaded money (COMPANY LIABILITY - NOT revenue) |
+| **Revenue Remittance** | Plaza → Treasury transfer |
+| **Daily Collection Statement** | Per-plaza daily toll earnings |
+| **Financial Reconciliation** | Monthly approval workflow |
+| **Fiscal Year** | April–March (Q1=Apr-Jun, Q2=Jul-Sep, Q3=Oct-Dec, Q4=Jan-Mar) |
 
 ---
 
@@ -280,6 +298,22 @@ GET /api/reports/violations
 POST /api/customer/login
 GET /api/customer/dashboard
 POST /api/customer/topup
+
+# Financial System (Port 8081)
+GET /api/financial/regions
+GET /api/financial/daily-collection
+GET /api/financial/revenue/by-region
+GET /api/financial/topup/by-region
+GET /api/financial/vehicles/by-region
+GET /api/financial/toll-usage/:plazaId
+GET /api/financial/settlement
+GET /api/financial/reconciliation
+POST /api/financial/reconciliation/:id/approve
+POST /api/financial/reconciliation/:id/reject
+GET /api/financial/receipts
+POST /api/financial/receipts/generate
+GET /api/financial/fiscal-year/summary
+GET /api/financial/export/:type
 ```
 
 ---
@@ -311,6 +345,15 @@ POST /api/customer/topup
 ### Dual-Theme Adaptive UI (Dark / Light Mode)
 - **Header Sun/Moon Toggle**: Available on both Admin Command Hub and Customer Portal.
 - **Persistent Preferences**: Theme state persisted to `localStorage`.
+
+### Financial Portal (Port 8081) 🆕
+- **Standalone Frontend**: React + Vite + Tailwind, separate from other portals.
+- **10 Financial Pages**: Dashboard, Daily Collection Statement, Toll Revenue by Region, Wallet Deposits by Region, Vehicle Registration, Pass-Through Volume, Revenue Remittance, Financial Reconciliation, Official Receipts, Fiscal Year Report.
+- **Myanmar/English Toggle**: i18n support with correct financial terminology.
+- **Excel Export**: All pages support Excel export via SheetJS.
+- **Approval Workflow**: Monthly reconciliation with Submit → Approve/Reject flow.
+- **Copyright Protection**: Watermarks, footer, login watermarks, meta tags.
+- **20+ Backend Endpoints**: Under `/api/financial/*` using `financialPrisma` client.
 
 ---
 
