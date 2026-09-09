@@ -2,10 +2,12 @@
 schema_version: 1
 id: M007
 title: Financial System Enhancement - 24 Pages & 22 API Endpoints
-status: draft
+status: completed
 requirement: R000
-confirmed_at: 2026-09-10T00:21:00Z
-verification_approved_hash: sha256:0000000000000000000000000000000000000000000000000000000000000000
+confirmed_at: 2026-09-09T17:55:52Z
+verification_approved_hash: sha256:39e63e142cdbbc18eb73b471d6c771d3189798614cac348ca1ed3c73d4355d1c
+base_branch: master
+base_revision: 0c5a9655faa05dfd96f0f35bc8e3eeb56c139975
 acceptance_criteria:
   - id: AC001
     text: All 22 financial API endpoints return 200
@@ -19,17 +21,19 @@ verification:
   - id: CT001
     criterion: AC001
     type: command
-    command: "curl -s -o /dev/null -w '%{http_code}' http://localhost:3000/api/financial/regions | grep -q 200"
+    command: curl -s -o /dev/null -w '%{http_code}'
+      http://localhost:3000/api/financial/regions | grep -q 200
   - id: CT002
     criterion: AC002
     type: command
-    command: "curl -s -o /dev/null -w '%{http_code}' http://localhost:8081 | grep -q 200"
+    command: curl -s -o /dev/null -w '%{http_code}' http://localhost:8081 | grep -q 200
   - id: CT003
     criterion: AC003
     type: command
-    command: "curl -s -X POST http://localhost:3000/api/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"fin.admin@tollgate.com\",\"password\":\"password123\"}' | grep -q token"
-base_branch: master
-base_revision: 85681bc
+    command: "curl -s -X POST http://localhost:3000/api/auth/login -H 'Content-Type:
+      application/json' -d
+      '{\"email\":\"fin.admin@tollgate.com\",\"password\":\"password123\"}' |
+      grep -q token"
 ---
 
 ## Objective
