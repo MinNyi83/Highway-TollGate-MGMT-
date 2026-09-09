@@ -11,6 +11,7 @@ import { formatMMK, formatDate } from '../utils/format';
 import { useLanguage } from '../i18n';
 import en from '../i18n/en';
 import my from '../i18n/my';
+import FinancialAlerts from '../components/FinancialAlerts';
 import api from '../api/client';
 
 const COLORS = ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899'];
@@ -88,6 +89,8 @@ export default function Dashboard() {
           subtitle={t('financial.settlementStatus')}
         />
       </div>
+
+      <FinancialAlerts />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="glass-card rounded-xl p-6 lg:col-span-2">

@@ -12,6 +12,9 @@ import {
   Calendar,
   Shield,
   BarChart3,
+  MapPin,
+  AlertTriangle,
+  TrendingUp,
 } from 'lucide-react';
 import { useLanguage } from '../i18n';
 
@@ -27,6 +30,9 @@ const navItems = [
   { to: '/receipts', icon: Receipt, label: 'Official Receipts', labelMyanmar: 'တရားဝင်ပြေစာ' },
   { to: '/fiscal-year', icon: Calendar, label: 'Fiscal Year Report', labelMyanmar: 'ဘဏ္ဍာနှစ် အစီရင်ခံစာ' },
   { to: '/comparison', icon: BarChart3, label: 'Comparison Report', labelMyanmar: 'နှိုင်းယှဉ်မှု အစီရင်ခံစာ' },
+  { to: '/plaza-performance', icon: MapPin, label: 'Plaza Performance', labelMyanmar: 'ဂိတ်ရုံး စွမ်းဆောင်ရည်' },
+  { to: '/violations', icon: AlertTriangle, label: 'Violation Analytics', labelMyanmar: 'ဖောက်ဖျက်မှု ခွဲခြမ်းစိတ်ဖြာ' },
+  { to: '/forecast', icon: TrendingUp, label: 'Revenue Forecast', labelMyanmar: 'ဝင်ငွေ ခန့်မှန်းချက်' },
   { to: '/audit-log', icon: Shield, label: 'Audit Trail', labelMyanmar: 'စစ်ဆေးမှု မှတ်တမ်း' },
 ];
 

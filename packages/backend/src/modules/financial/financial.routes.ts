@@ -613,6 +613,216 @@ router.get('/comparison', authMiddleware, async (_req: Request, res: Response) =
   }
 });
 
+// Plaza Performance Comparison
+router.get('/plaza-performance', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { hqPrisma } = await import('../../config/database');
+    const { startDate, endDate } = req.query;
+    
+    const start = startDate ? new Date(startDate as string) : new Date(new Date().setMonth(new Date().getMonth() - 1));
+    const end = endDate ? new Date(endDate as string) : new Date();
+
+    const events = await (hqPrisma.tollEvent as any).groupBy({
+      by: ['plazaId'],
+      where: { entryTime: { gte: start, lte: end } },
+      _count: { id: true },
+      _sum: { amount: true },
+      orderBy: { _sum: { amount: 'desc' } },
+    });
+
+    const plazas = await hqPrisma.tollPlaza.findMany({
+      select: { id: true, name: true, mileMarker: true },
+    });
+
+    const plazaMap = Object.fromEntries(plazas.map(p => [p.id, p]));
+
+    const performance = events.map(e => ({
+      plazaId: e.plazaId,
+      plazaName: plazaMap[e.plazaId]?.name || 'Unknown',
+      mileMarker: plazaMap[e.plazaId]?.mileMarker || 0,
+      totalTrips: e._count.id,
+      totalRevenue: Number(e._sum.amount || 0),
+      avgPerTrip: e._count.id > 0 ? Number(e._sum.amount || 0) / e._count.id : 0,
+    }));
+
+    res.json(performance);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch plaza performance' });
+  }
+});
+
+// Violation Analytics
+router.get('/violations', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { hqPrisma } = await import('../../config/database');
+    const { startDate, endDate } = req.query;
+    
+    const start = startDate ? new Date(startDate as string) : new Date(new Date().setMonth(new Date().getMonth() - 1));
+    const end = endDate ? new Date(endDate as string) : new Date();
+
+    const violations = await hqPrisma.violation.findMany({
+      where: { createdAt: { gte: start, lte: end } },
+      include: { event: { include: { plaza: { include: { region: true } } } } },
+    });
+
+    const byTypeMap = new Map<string, { count: number; totalFine: number }>();
+    const byRegionMap = new Map<string, { count: number; totalFine: number }>();
+
+    for (const v of violations) {
+      const type = v.violationType;
+      const regionName = v.event?.plaza?.region?.name || 'Unknown';
+      const fine = Number(v.fineAmount);
+
+      if (!byTypeMap.has(type)) byTypeMap.set(type, { count: 0, totalFine: 0 });
+      const typeEntry = byTypeMap.get(type)!;
+      typeEntry.count++;
+      typeEntry.totalFine += fine;
+
+      if (!byRegionMap.has(regionName)) byRegionMap.set(regionName, { count: 0, totalFine: 0 });
+      const regionEntry = byRegionMap.get(regionName)!;
+      regionEntry.count++;
+      regionEntry.totalFine += fine;
+    }
+
+    const totalViolations = violations.length;
+    const totalFines = violations.reduce((sum, v) => sum + Number(v.fineAmount), 0);
+
+    res.json({
+      summary: { totalViolations, totalFines },
+      byType: Array.from(byTypeMap.entries()).map(([type, data]) => ({
+        type,
+        count: data.count,
+        totalFine: data.totalFine,
+        percentage: totalViolations > 0 ? ((data.count / totalViolations) * 100).toFixed(1) : '0',
+      })).sort((a, b) => b.count - a.count),
+      byRegion: Array.from(byRegionMap.entries()).map(([regionName, data]) => ({
+        regionName,
+        count: data.count,
+        totalFine: data.totalFine,
+      })).sort((a, b) => b.count - a.count),
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch violation analytics' });
+  }
+});
+
+// Revenue Forecast (simple linear projection)
+router.get('/forecast', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { hqPrisma } = await import('../../config/database');
+    const months = parseInt(req.query.months as string) || 6;
+
+    const historical = await hqPrisma.monthlyReconciliation.findMany({
+      orderBy: [{ fiscalYear: 'asc' }, { month: 'asc' }],
+      take: 24,
+    });
+
+    if (historical.length < 2) {
+      res.json({ forecast: [], historical: [] });
+      return;
+    }
+
+    const values = historical.map(h => Number(h.totalRevenue));
+    const n = values.length;
+    const avg = values.reduce((a, b) => a + b, 0) / n;
+    const trend = (values[n - 1] - values[0]) / n;
+
+    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const lastDate = historical[historical.length - 1];
+    let forecastMonth = lastDate.month;
+    let forecastYear = lastDate.fiscalYear;
+
+    const forecast = [];
+    for (let i = 1; i <= months; i++) {
+      forecastMonth++;
+      if (forecastMonth > 12) { forecastMonth = 1; forecastYear++; }
+      forecast.push({
+        month: monthNames[forecastMonth - 1],
+        year: forecastYear,
+        projected: Math.max(0, Math.round(avg + trend * (n + i))),
+        confidence: Math.max(50, 95 - i * 8),
+      });
+    }
+
+    res.json({
+      forecast,
+      historical: historical.map(h => ({
+        month: monthNames[h.month - 1],
+        year: h.fiscalYear,
+        actual: Number(h.totalRevenue),
+      })),
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to generate forecast' });
+  }
+});
+
+// Financial Alerts
+router.get('/alerts', authMiddleware, async (_req: Request, res: Response) => {
+  try {
+    const { hqPrisma } = await import('../../config/database');
+    const alerts = [];
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    const todayEvents = await hqPrisma.tollEvent.count({
+      where: { entryTime: { gte: today } },
+    });
+    const yesterdayEvents = await hqPrisma.tollEvent.count({
+      where: { entryTime: { gte: yesterday, lt: today } },
+    });
+
+    if (yesterdayEvents > 0) {
+      const change = ((todayEvents - yesterdayEvents) / yesterdayEvents * 100).toFixed(1);
+      if (Number(change) < -20) {
+        alerts.push({ level: 'warning', message: `Traffic dropped ${change}% from yesterday`, metric: todayEvents, baseline: yesterdayEvents });
+      }
+    }
+
+    const todayRevenue = await hqPrisma.tollEvent.aggregate({
+      where: { entryTime: { gte: today }, amount: { gt: 0 } },
+      _sum: { amount: true },
+    });
+    const yesterdayRevenue = await hqPrisma.tollEvent.aggregate({
+      where: { entryTime: { gte: yesterday, lt: today }, amount: { gt: 0 } },
+      _sum: { amount: true },
+    });
+
+    const todayRev = Number(todayRevenue._sum.amount || 0);
+    const yesterdayRev = Number(yesterdayRevenue._sum.amount || 0);
+    if (yesterdayRev > 0) {
+      const revChange = ((todayRev - yesterdayRev) / yesterdayRev * 100).toFixed(1);
+      if (Number(revChange) < -20) {
+        alerts.push({ level: 'danger', message: `Revenue dropped ${revChange}% from yesterday`, metric: todayRev, baseline: yesterdayRev });
+      }
+      if (Number(revChange) > 20) {
+        alerts.push({ level: 'success', message: `Revenue up ${revChange}% from yesterday`, metric: todayRev, baseline: yesterdayRev });
+      }
+    }
+
+    const unsettled = await hqPrisma.revenueTransfer.count({
+      where: { status: 'PENDING' },
+    });
+    if (unsettled > 5) {
+      alerts.push({ level: 'warning', message: `${unsettled} unsettled transfers pending`, metric: unsettled });
+    }
+
+    const unapproved = await hqPrisma.monthlyReconciliation.count({
+      where: { status: 'SUBMITTED' },
+    });
+    if (unapproved > 3) {
+      alerts.push({ level: 'info', message: `${unapproved} reconciliations awaiting approval`, metric: unapproved });
+    }
+
+    res.json(alerts);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch alerts' });
+  }
+});
+
 // Dashboard KPI endpoints
 router.get('/plazas', authMiddleware, async (_req: Request, res: Response) => {
   try {

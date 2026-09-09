@@ -16,6 +16,9 @@ import OfficialReceipts from './pages/OfficialReceipts';
 import FiscalYearReport from './pages/FiscalYearReport';
 import AuditLog from './pages/AuditLog';
 import ComparisonReport from './pages/ComparisonReport';
+import PlazaPerformance from './pages/PlazaPerformance';
+import ViolationAnalytics from './pages/ViolationAnalytics';
+import RevenueForecast from './pages/RevenueForecast';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -51,6 +54,9 @@ function App() {
                       <Route path="/fiscal-year" element={<FiscalYearReport />} />
                       <Route path="/audit-log" element={<AuditLog />} />
                       <Route path="/comparison" element={<ComparisonReport />} />
+                      <Route path="/plaza-performance" element={<PlazaPerformance />} />
+                      <Route path="/violations" element={<ViolationAnalytics />} />
+                      <Route path="/forecast" element={<RevenueForecast />} />
                       <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                   </Layout>
