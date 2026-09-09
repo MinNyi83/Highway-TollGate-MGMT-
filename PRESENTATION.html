@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Intelligent Highway Traffic & Automated Toll Collection Solution | Dahua-Inspired Enterprise Presentation</title>
+<title>Highway TollGate RFID Pass | Complete System Presentation</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -11,7 +11,6 @@
 :root {
   --primary: #0070ba;
   --primary-glow: #0088ff;
-  --primary-dark: #004d80;
   --accent-cyan: #00d2ff;
   --accent-green: #10b981;
   --accent-amber: #f59e0b;
@@ -26,2329 +25,995 @@
   --text-main: #f1f5f9;
   --text-muted: #94a3b8;
   --text-dim: #64748b;
-  --header-height: 64px;
-  --tab-height: 48px;
 }
-
 * { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg-dark); color: var(--text-main); overflow-x: hidden; }
+
+.top-header { position: fixed; top: 0; left: 0; right: 0; height: 56px; background: rgba(6,13,26,0.95); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 1000; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-badge { background: linear-gradient(135deg, #0070ba, #00d2ff); color: white; font-weight: 800; font-size: 13px; padding: 5px 10px; border-radius: 6px; }
+.brand-text { font-size: 14px; font-weight: 700; color: #fff; }
+.brand-sub { font-size: 10px; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 1px; }
+.header-actions { display: flex; gap: 8px; }
+.mode-btn { border: none; background: transparent; color: var(--text-muted); font-family: inherit; font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+.mode-btn.active { background: var(--primary); color: white; }
+.header-btn { background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); color: var(--text-main); padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
+.header-btn:hover { background: rgba(0,112,186,0.2); }
+.header-btn.primary { background: linear-gradient(135deg, #0070ba, #005691); border-color: #0088ff; color: #fff; }
+
+.deck { display: flex; flex-direction: column; height: 100vh; padding-top: 56px; }
+.slide { display: none; width: 100%; height: calc(100vh - 56px - 52px); padding: 24px 48px; flex-direction: column; justify-content: center; animation: fadeIn 0.3s ease; overflow-y: auto; }
+.slide.active { display: flex; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; background: rgba(0,112,186,0.15); color: var(--accent-cyan); border: 1px solid rgba(0,210,255,0.3); }
+.badge.green { background: rgba(16,185,129,0.15); color: #10b981; border-color: rgba(16,185,129,0.3); }
+.badge.amber { background: rgba(245,158,11,0.15); color: #f59e0b; border-color: rgba(245,158,11,0.3); }
+.badge.purple { background: rgba(139,92,246,0.15); color: #c084fc; border-color: rgba(139,92,246,0.3); }
+.badge.red { background: rgba(239,68,68,0.15); color: #ef4444; border-color: rgba(239,68,68,0.3); }
+
+h1.hero { font-size: 40px; font-weight: 800; line-height: 1.15; margin-bottom: 12px; background: linear-gradient(135deg, #fff, #93c5fd); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+h2.section { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+h2.section::before { content: ''; width: 4px; height: 22px; background: linear-gradient(to bottom, var(--accent-cyan), var(--primary)); border-radius: 2px; }
+.desc { font-size: 15px; color: var(--text-muted); max-width: 800px; margin-bottom: 24px; line-height: 1.6; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+
+.card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 18px; transition: all 0.2s; }
+.card:hover { transform: translateY(-2px); border-color: var(--border-bright); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+.card h3 { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+.card p { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; }
+.card-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 10px; background: rgba(0,112,186,0.15); border: 1px solid rgba(0,210,255,0.2); }
+.card-icon.green { background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.3); }
+.card-icon.amber { background: rgba(245,158,11,0.15); border-color: rgba(245,158,11,0.3); }
+.card-icon.purple { background: rgba(139,92,246,0.15); border-color: rgba(139,92,246,0.3); }
+.card-icon.red { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.3); }
+
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; background: linear-gradient(135deg, rgba(0,112,186,0.12), rgba(0,210,255,0.05)); border: 1px solid rgba(0,210,255,0.25); border-radius: 10px; padding: 20px; margin-bottom: 24px; }
+.stat { text-align: center; border-right: 1px solid rgba(255,255,255,0.08); }
+.stat:last-child { border-right: none; }
+.stat-num { font-size: 32px; font-weight: 800; font-family: 'JetBrains Mono', monospace; background: linear-gradient(135deg, #fff, var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.stat-label { font-size: 11px; color: var(--text-muted); font-weight: 600; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+.topology { display: flex; flex-direction: column; gap: 10px; }
+.topo-layer { display: grid; grid-template-columns: 180px 1fr; gap: 12px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px 16px; align-items: center; }
+.topo-tag { font-size: 12px; font-weight: 700; color: #fff; }
+.topo-items { display: flex; gap: 8px; flex-wrap: wrap; }
+.topo-node { background: var(--bg-card); border: 1px solid var(--border-bright); border-radius: 6px; padding: 6px 10px; font-size: 11px; font-weight: 600; color: var(--text-main); }
+.topo-node.accent { background: rgba(0,112,186,0.2); border-color: var(--accent-cyan); color: #fff; }
+.topo-node.green { background: rgba(16,185,129,0.2); border-color: var(--accent-green); color: #fff; }
+.topo-node.amber { background: rgba(245,158,11,0.2); border-color: var(--accent-amber); color: #fff; }
+
+.spec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.spec { background: rgba(6,13,26,0.6); border: 1px solid var(--border-subtle); padding: 8px; border-radius: 6px; }
+.spec-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; font-weight: 600; }
+.spec-value { font-size: 13px; color: var(--accent-cyan); font-weight: 700; margin-top: 2px; }
+
+.list { list-style: none; margin: 8px 0; }
+.list li { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+.list li::before { content: '✓'; color: var(--accent-green); font-weight: bold; }
+
+.code-block { background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #a5f3fc; margin-top: 12px; }
+
+.footer { position: fixed; bottom: 0; left: 0; right: 0; height: 52px; background: rgba(6,13,26,0.95); backdrop-filter: blur(12px); border-top: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 1000; }
+.progress-track { position: absolute; top: 0; left: 0; height: 3px; background: rgba(255,255,255,0.1); width: 100%; }
+.progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent-cyan)); transition: width 0.3s; }
+.nav-btn { background: var(--bg-card); border: 1px solid var(--border-subtle); color: white; padding: 5px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
+.nav-btn:hover:not(:disabled) { background: var(--primary); }
+.nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.slide-counter { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-muted); }
+.slide-counter strong { color: var(--accent-cyan); }
 
-body {
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: var(--bg-dark);
-  color: var(--text-main);
-  line-height: 1.5;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* ================= TOP NAVIGATION BAR (DAHUA CORPORATE STYLE) ================= */
-.top-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: var(--header-height);
-  background: rgba(6, 13, 26, 0.92);
-  backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--border-subtle);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 32px;
-  z-index: 1000;
-}
-
-.brand-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.brand-logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-}
-
-.logo-badge {
-  background: linear-gradient(135deg, #0070ba, #00d2ff);
-  color: white;
-  font-weight: 800;
-  font-size: 14px;
-  letter-spacing: 1px;
-  padding: 6px 12px;
-  border-radius: 6px;
-  box-shadow: 0 0 15px rgba(0, 112, 186, 0.4);
-}
-
-.brand-text-block {
-  display: flex;
-  flex-direction: column;
-}
-
-.brand-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: #ffffff;
-  letter-spacing: -0.2px;
-}
-
-.brand-subtitle {
-  font-size: 11px;
-  color: var(--accent-cyan);
-  font-weight: 500;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.view-mode-toggle {
-  display: flex;
-  background: rgba(17, 34, 64, 0.8);
-  border: 1px solid var(--border-subtle);
-  border-radius: 8px;
-  padding: 3px;
-}
-
-.mode-btn {
-  border: none;
-  background: transparent;
-  color: var(--text-muted);
-  font-family: inherit;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 6px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.2s ease;
-}
-
-.mode-btn.active {
-  background: var(--primary);
-  color: white;
-  box-shadow: 0 2px 8px rgba(0, 112, 186, 0.4);
-}
-
-.header-btn {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-main);
-  padding: 7px 14px;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.2s;
-}
-
-.header-btn:hover {
-  background: rgba(0, 112, 186, 0.2);
-  border-color: var(--accent-cyan);
-  color: white;
-}
-
-.header-btn.primary {
-  background: linear-gradient(135deg, #0070ba, #005691);
-  border-color: #0088ff;
-  color: #fff;
-}
-
-.header-btn.primary:hover {
-  box-shadow: 0 0 16px rgba(0, 136, 255, 0.5);
-}
-
-/* ================= SLIDE DECK MODE ================= */
-.deck-container {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  width: 100vw;
-  padding-top: var(--header-height);
-  position: relative;
-  background: radial-gradient(circle at 50% 20%, #11264a 0%, #060d1a 75%);
-  overflow: hidden;
-}
-
-.slide {
-  display: none;
-  width: 100%;
-  height: calc(100vh - var(--header-height) - 60px);
-  padding: 30px 60px;
-  flex-direction: column;
-  justify-content: center;
-  position: relative;
-  animation: slideFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-  overflow-y: auto;
-}
-
-.slide.active {
-  display: flex;
-}
-
-@keyframes slideFadeIn {
-  from { opacity: 0; transform: translateY(12px) scale(0.99); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-/* ================= WEB SOLUTION PORTAL MODE ================= */
-.portal-container {
-  display: none;
-  padding-top: var(--header-height);
-  min-height: 100vh;
-  background: #060d1a;
-}
-
-.portal-container.active {
-  display: block;
-}
-
-.sticky-subnav {
-  position: sticky;
-  top: var(--header-height);
-  background: rgba(12, 24, 43, 0.95);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border-subtle);
-  z-index: 900;
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  padding: 8px 16px;
-  overflow-x: auto;
-}
-
-.subnav-link {
-  color: var(--text-muted);
-  text-decoration: none;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 8px 16px;
-  border-radius: 6px;
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-
-.subnav-link:hover, .subnav-link.active {
-  color: #ffffff;
-  background: rgba(0, 112, 186, 0.25);
-  border-bottom: 2px solid var(--accent-cyan);
-}
-
-.portal-section {
-  padding: 70px 48px;
-  max-width: 1380px;
-  margin: 0 auto;
-  border-bottom: 1px solid rgba(30, 58, 102, 0.4);
-}
-
-/* ================= TYPOGRAPHY & HEADINGS ================= */
-.badge-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 12px;
-  background: rgba(0, 112, 186, 0.15);
-  color: var(--accent-cyan);
-  border: 1px solid rgba(0, 210, 255, 0.3);
-}
-
-.badge-tag.green { background: rgba(16, 185, 129, 0.15); color: #10b981; border-color: rgba(16, 185, 129, 0.3); }
-.badge-tag.amber { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border-color: rgba(245, 158, 11, 0.3); }
-.badge-tag.purple { background: rgba(139, 92, 246, 0.15); color: #c084fc; border-color: rgba(139, 92, 246, 0.3); }
-.badge-tag.red { background: rgba(239, 68, 68, 0.15); color: #ef4444; border-color: rgba(239, 68, 68, 0.3); }
-
-h1.hero-title {
-  font-size: 44px;
-  font-weight: 800;
-  line-height: 1.15;
-  margin-bottom: 16px;
-  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #93c5fd 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-h2.section-title {
-  font-size: 30px;
-  font-weight: 700;
-  color: #ffffff;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-h2.section-title::before {
-  content: '';
-  width: 4px;
-  height: 24px;
-  background: linear-gradient(to bottom, var(--accent-cyan), var(--primary));
-  border-radius: 2px;
-}
-
-.section-desc {
-  font-size: 16px;
-  color: var(--text-muted);
-  max-width: 820px;
-  margin-bottom: 28px;
-}
-
-/* ================= GRIDS & CARDS ================= */
-.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
-.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
-
-.dahua-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: 12px;
-  padding: 22px;
-  transition: all 0.25s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.dahua-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(0, 210, 255, 0.4), transparent);
-  opacity: 0;
-  transition: opacity 0.25s;
-}
-
-.dahua-card:hover {
-  transform: translateY(-3px);
-  border-color: var(--border-bright);
-  background: var(--bg-card-hover);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4);
-}
-
-.dahua-card:hover::before {
-  opacity: 1;
-}
-
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.card-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 10px;
-  background: rgba(0, 112, 186, 0.15);
-  border: 1px solid rgba(0, 210, 255, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  color: var(--accent-cyan);
-}
-
-.card-icon.green { background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.3); color: #10b981; }
-.card-icon.amber { background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.3); color: #f59e0b; }
-.card-icon.purple { background: rgba(139, 92, 246, 0.15); border-color: rgba(139, 92, 246, 0.3); color: #c084fc; }
-.card-icon.red { background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); color: #ef4444; }
-
-.dahua-card h3 {
-  font-size: 17px;
-  font-weight: 700;
-  color: #ffffff;
-  margin-bottom: 8px;
-}
-
-.dahua-card p {
-  font-size: 13.5px;
-  color: var(--text-muted);
-  line-height: 1.55;
-}
-
-/* ================= INTERACTIVE SCENARIO AERIAL VIEW ================= */
-.scenario-container {
-  display: grid;
-  grid-template-columns: 1.4fr 1fr;
-  gap: 24px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: 14px;
-  padding: 24px;
-}
-
-.map-view-box {
-  position: relative;
-  background: #060d1a;
-  border: 1px solid var(--border-bright);
-  border-radius: 12px;
-  min-height: 400px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-}
-
-.map-graphic {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  min-height: 390px;
-  background: url('images/scenario_aerial_3d.jpg') center/cover no-repeat;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.map-graphic::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(6, 13, 26, 0.1) 0%, rgba(6, 13, 26, 0.3) 100%);
-  pointer-events: none;
-}
-
-/* Dahua Pill Badges for 3D Isometric View */
-.dahua-pill-badge {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
-  border-radius: 30px;
-  font-size: 13px;
-  font-weight: 700;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55), 0 0 12px rgba(0, 210, 255, 0.2);
-  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  z-index: 20;
-  border: 2px solid transparent;
-}
-
-.dahua-pill-badge:hover {
-  transform: translate(-50%, -50%) scale(1.08);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7), 0 0 18px rgba(0, 210, 255, 0.5);
-}
-
-.dahua-pill-badge.green-pill {
-  background: rgba(80, 130, 75, 0.92);
-  color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.4);
-}
-
-.dahua-pill-badge.white-pill {
-  background: rgba(255, 255, 255, 0.95);
-  color: #0f172a;
-  border-color: rgba(16, 185, 129, 0.6);
-}
-
-.dahua-pill-badge.blue-pill {
-  background: rgba(0, 112, 186, 0.92);
-  color: #ffffff;
-  border-color: rgba(0, 210, 255, 0.6);
-}
-
-.dahua-pill-badge.active {
-  border-color: #00d2ff;
-  box-shadow: 0 0 25px rgba(0, 210, 255, 0.8);
-  transform: translate(-50%, -50%) scale(1.1);
-}
-
-.pill-num {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  font-weight: 800;
-}
-
-.green-pill .pill-num { background: #ffffff; color: #3d6338; }
-.white-pill .pill-num { background: #50824b; color: #ffffff; }
-.blue-pill .pill-num { background: #ffffff; color: #005691; }
-
-/* Highway Road Track in SVG */
-.highway-svg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.hotspot-pin {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  z-index: 10;
-}
-
-.pin-node {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--primary);
-  border: 2px solid #ffffff;
-  color: white;
-  font-size: 12px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 0 15px rgba(0, 136, 255, 0.8);
-  position: relative;
-}
-
-.pin-pulse {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  border: 2px solid var(--accent-cyan);
-  animation: pinPulse 2s infinite ease-out;
-}
-
-@keyframes pinPulse {
-  0% { transform: scale(1); opacity: 1; }
-  100% { transform: scale(2.2); opacity: 0; }
-}
-
-.hotspot-pin.active .pin-node {
-  background: #10b981;
-  border-color: #ffffff;
-  box-shadow: 0 0 20px rgba(16, 185, 129, 0.9);
-  transform: scale(1.15);
-}
-
-.pin-label {
-  margin-top: 6px;
-  background: rgba(6, 13, 26, 0.85);
-  backdrop-filter: blur(6px);
-  border: 1px solid var(--border-subtle);
-  color: #ffffff;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 4px;
-  white-space: nowrap;
-}
-
-.scenario-detail-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-bright);
-  border-radius: 12px;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.scenario-detail-header {
-  border-bottom: 1px solid var(--border-subtle);
-  padding-bottom: 16px;
-  margin-bottom: 16px;
-}
-
-.scenario-detail-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.scenario-specs-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 16px;
-}
-
-.spec-chip {
-  background: rgba(6, 13, 26, 0.6);
-  border: 1px solid var(--border-subtle);
-  padding: 10px;
-  border-radius: 8px;
-}
-
-.spec-chip-label {
-  font-size: 11px;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  font-weight: 600;
-}
-
-.spec-chip-value {
-  font-size: 14px;
-  color: var(--accent-cyan);
-  font-weight: 700;
-  margin-top: 2px;
-}
-
-/* ================= PRODUCT RECOMMENDATION CARDS (DAHUA CATALOG STYLE) ================= */
-.product-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: 12px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  transition: all 0.25s;
-  position: relative;
-}
-
-.product-card:hover {
-  border-color: var(--accent-cyan);
-  transform: translateY(-4px);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
-}
-
-.product-img-box {
-  background: radial-gradient(circle, #1a2f4c 0%, #0c182b 80%);
-  border-radius: 8px;
-  height: 145px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  position: relative;
-  overflow: hidden;
-}
-
-.product-real-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.35s ease;
-}
-
-.product-card:hover .product-real-img {
-  transform: scale(1.07);
-}
-
-.product-model-badge {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background: rgba(0, 112, 186, 0.85);
-  color: white;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  font-weight: 600;
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
-.product-card h4 {
-  font-size: 15px;
-  font-weight: 700;
-  color: #fff;
-  margin-bottom: 4px;
-}
-
-.product-series {
-  font-size: 11px;
-  color: var(--accent-cyan);
-  font-weight: 600;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-
-.product-features-list {
-  list-style: none;
-  margin: 10px 0 16px 0;
-}
-
-.product-features-list li {
-  font-size: 12px;
-  color: var(--text-muted);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 4px;
-}
-
-.product-features-list li::before {
-  content: '✓';
-  color: var(--accent-green);
-  font-weight: bold;
-}
-
-/* ================= SYSTEM TOPOLOGY LAYERED ================= */
-.topology-flow {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  position: relative;
-}
-
-.topology-layer {
-  display: grid;
-  grid-template-columns: 200px 1fr;
-  gap: 16px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: 10px;
-  padding: 16px 20px;
-  align-items: center;
-}
-
-.topology-layer-tag {
-  font-size: 13px;
-  font-weight: 700;
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.topology-layer-items {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.topo-node {
-  background: var(--bg-card);
-  border: 1px solid var(--border-bright);
-  border-radius: 8px;
-  padding: 8px 14px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-main);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.topo-node.accent {
-  background: rgba(0, 112, 186, 0.2);
-  border-color: var(--accent-cyan);
-  color: #fff;
-}
-
-.topo-node.green {
-  background: rgba(16, 185, 129, 0.2);
-  border-color: var(--accent-green);
-  color: #fff;
-}
-
-.topo-node.amber {
-  background: rgba(245, 158, 11, 0.2);
-  border-color: var(--accent-amber);
-  color: #fff;
-}
-
-/* ================= STATS COUNTER BAR ================= */
-.stats-banner {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  background: linear-gradient(135deg, rgba(0, 112, 186, 0.12), rgba(0, 210, 255, 0.05));
-  border: 1px solid rgba(0, 210, 255, 0.25);
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 28px;
-}
-
-.stat-item {
-  text-align: center;
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 0 12px;
-}
-
-.stat-item:last-child {
-  border-right: none;
-}
-
-.stat-num {
-  font-size: 36px;
-  font-weight: 800;
-  font-family: 'JetBrains Mono', monospace;
-  background: linear-gradient(135deg, #ffffff, var(--accent-cyan));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.stat-label {
-  font-size: 12px;
-  color: var(--text-muted);
-  font-weight: 600;
-  margin-top: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* ================= LIVE SIMULATOR MINI CONTAINER ================= */
-.sim-embed-card {
-  background: #040810;
-  border: 1px solid var(--border-bright);
-  border-radius: 12px;
-  padding: 16px;
-  position: relative;
-  overflow: hidden;
-}
-
-.sim-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.sim-canvas-wrapper {
-  width: 100%;
-  height: 220px;
-  background: #060e1c;
-  border-radius: 8px;
-  position: relative;
-  overflow: hidden;
-}
-
-canvas#tollCanvas {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-/* ================= SLIDE DECK BOTTOM CONTROLS ================= */
-.deck-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 56px;
-  background: rgba(6, 13, 26, 0.95);
-  backdrop-filter: blur(12px);
-  border-top: 1px solid var(--border-subtle);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 32px;
-  z-index: 1000;
-}
-
-.progress-track {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 3px;
-  background: rgba(255, 255, 255, 0.1);
-  width: 100%;
-}
-
-.progress-bar {
-  height: 100%;
-  background: linear-gradient(90deg, var(--primary), var(--accent-cyan));
-  width: 8%;
-  transition: width 0.3s ease;
-}
-
-.nav-buttons {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.nav-btn {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  color: white;
-  padding: 6px 16px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.nav-btn:hover:not(:disabled) {
-  background: var(--primary);
-  border-color: var(--accent-cyan);
-}
-
-.nav-btn:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-}
-
-.slide-counter {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  color: var(--text-muted);
-}
-
-.slide-counter strong {
-  color: var(--accent-cyan);
-}
-
-/* ================= SLIDE THUMBNAIL DRAWER ================= */
-.drawer-toggle-btn {
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-}
-
-.drawer-toggle-btn:hover { color: #fff; }
-
-.slide-drawer {
-  position: fixed;
-  bottom: 56px;
-  left: 0;
-  right: 0;
-  height: 140px;
-  background: rgba(12, 24, 43, 0.98);
-  border-top: 1px solid var(--border-bright);
-  display: none;
-  align-items: center;
-  gap: 12px;
-  padding: 0 24px;
-  overflow-x: auto;
-  z-index: 1001;
-  animation: drawerSlideUp 0.2s ease-out;
-}
-
-.slide-drawer.open {
-  display: flex;
-}
-
-@keyframes drawerSlideUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
-}
-
-.thumb-card {
-  min-width: 140px;
-  height: 90px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: 6px;
-  padding: 8px;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: all 0.2s;
-}
-
-.thumb-card:hover, .thumb-card.active {
-  border-color: var(--accent-cyan);
-  background: var(--bg-card-hover);
-  transform: scale(1.04);
-}
-
-.thumb-num {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--accent-cyan);
-  font-family: 'JetBrains Mono', monospace;
-}
-
-.thumb-title {
-  font-size: 11px;
-  font-weight: 600;
-  color: #fff;
-  line-height: 1.2;
-}
-
-/* ================= RESPONSIVE ================= */
 @media (max-width: 1024px) {
-  .grid-4 { grid-template-columns: repeat(2, 1fr); }
-  .grid-3 { grid-template-columns: repeat(1, 1fr); }
+  .grid-4, .grid-5 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: 1fr; }
   .grid-2 { grid-template-columns: 1fr; }
-  .scenario-container { grid-template-columns: 1fr; }
-  .slide { padding: 20px 24px; }
-  h1.hero-title { font-size: 32px; }
+  .slide { padding: 16px 20px; }
+  h1.hero { font-size: 28px; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
 }
 </style>
 </head>
 <body>
 
-<!-- ================= TOP HEADER BAR ================= -->
 <header class="top-header">
-  <div class="brand-wrapper">
-    <a href="#" class="brand-logo" onclick="switchViewMode('portal'); return false;">
-      <div class="logo-badge">DAHUA · ITS</div>
-      <div class="brand-text-block">
-        <span class="brand-title">Highway Intelligent Toll & Traffic Management</span>
-        <span class="brand-subtitle">RFID + ANPR Dual-Verification System</span>
-      </div>
-    </a>
-  </div>
-
-  <div class="header-actions">
-    <!-- View Switcher: Slide Deck vs Dahua Web Solution Portal -->
-    <div class="view-mode-toggle">
-      <button class="mode-btn active" id="btnDeckMode" onclick="switchViewMode('deck')">
-        <span>📽️ Slide Deck</span>
-      </button>
-      <button class="mode-btn" id="btnPortalMode" onclick="switchViewMode('portal')">
-        <span>🌐 Solution Portal</span>
-      </button>
+  <div class="brand">
+    <div class="brand-badge">TOLLGATE</div>
+    <div>
+      <div class="brand-text">Highway TollGate RFID Pass</div>
+      <div class="brand-sub">Complete System Presentation</div>
     </div>
-
-    <button class="header-btn" onclick="toggleFullScreen()" title="Toggle Fullscreen (F)">
-      <span>⛶ Fullscreen</span>
-    </button>
-    <a href="http://localhost:80" target="_blank" class="header-btn primary">
-      <span>🚀 Launch HQ Hub</span>
-    </a>
+  </div>
+  <div class="header-actions">
+    <button class="header-btn" onclick="toggleFullScreen()">⛶ Fullscreen</button>
+    <a href="http://192.168.100.101:3000" target="_blank" class="header-btn primary">🚀 Launch System</a>
   </div>
 </header>
 
-<!-- ========================================================================= -->
-<!-- MODE 1: INTERACTIVE PRESENTATION SLIDE DECK (14 COMPREHENSIVE SLIDES)     -->
-<!-- ========================================================================= -->
-<main class="deck-container" id="deckContainer">
+<main class="deck" id="deck">
 
-  <!-- SLIDE 1: Title & Solution Overview -->
+  <!-- SLIDE 1: Title & System Overview -->
   <section class="slide active" id="slide-1">
-    <div style="max-width: 980px; margin: 0 auto; text-align: center;">
-      <div class="badge-tag">ENTERPRISE HIGHWAY SOLUTION · DAHUA ITS ARCHITECTURE</div>
-      <h1 class="hero-title">Next-Generation Highway Intelligent Traffic & Automated Toll Management System</h1>
-      <p class="section-desc" style="margin: 0 auto 32px auto;">
-        An ultra-reliable, offline-first intelligent highway ecosystem integrating <strong>Ultra-High Frequency RFID</strong>, <strong>AI-Powered ANPR Optical Cross-Matching</strong>, <strong>Edge Computing Gateways</strong>, and <strong>Myanmar RTAD Wheel Tax AI Document OCR</strong>.
+    <div style="max-width: 960px; margin: 0 auto; text-align: center;">
+      <div class="badge">COMPLETE HIGHWAY TOLL MANAGEMENT SYSTEM</div>
+      <h1 class="hero">Highway TollGate RFID Pass<br>Intelligent Traffic & Automated Toll Collection</h1>
+      <p class="desc" style="margin: 0 auto 24px auto;">
+        A full-stack, production-deployed intelligent highway ecosystem integrating <strong>UHF RFID</strong>, <strong>AI ANPR</strong>, <strong>Edge Computing</strong>, <strong>Myanmar RTAD OCR</strong>, <strong>3 Separate Databases</strong>, <strong>4 Frontend Portals</strong>, and <strong>Financial Ministry Reporting</strong>.
       </p>
 
-      <div class="stats-banner">
-        <div class="stat-item">
-          <div class="stat-num">99.8%</div>
-          <div class="stat-label">ANPR + RFID Accuracy</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num">&lt; 150ms</div>
-          <div class="stat-label">Edge Barrier Decision</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num">100%</div>
-          <div class="stat-label">Offline-First Uptime</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num">0%</div>
-          <div class="stat-label">Revenue Leakage</div>
-        </div>
+      <div class="stats">
+        <div class="stat"><div class="stat-num">99.8%</div><div class="stat-label">RFID + ANPR Accuracy</div></div>
+        <div class="stat"><div class="stat-num">&lt;150ms</div><div class="stat-label">Edge Barrier Decision</div></div>
+        <div class="stat"><div class="stat-num">3</div><div class="stat-label">PostgreSQL Databases</div></div>
+        <div class="stat"><div class="stat-num">4</div><div class="stat-label">Frontend Portals</div></div>
       </div>
 
-      <div style="display: flex; justify-content: center; gap: 14px; margin-top: 20px;">
-        <button class="header-btn primary" onclick="nextSlide()" style="padding: 10px 24px; font-size: 14px;">
-          Start Presentation →
-        </button>
-        <button class="header-btn" onclick="switchViewMode('portal');" style="padding: 10px 24px; font-size: 14px;">
-          Browse Solution Catalog 🌐
-        </button>
+      <div class="stats" style="background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(16,185,129,0.05)); border-color: rgba(16,185,129,0.25);">
+        <div class="stat"><div class="stat-num">8</div><div class="stat-label">Docker Containers</div></div>
+        <div class="stat"><div class="stat-num">15</div><div class="stat-label">Myanmar Regions</div></div>
+        <div class="stat"><div class="stat-num">20+</div><div class="stat-label">Financial API Endpoints</div></div>
+        <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Offline-First Uptime</div></div>
+      </div>
+
+      <div style="display: flex; justify-content: center; gap: 12px; margin-top: 16px;">
+        <button class="header-btn primary" onclick="nextSlide()" style="padding: 10px 24px; font-size: 14px;">Start Presentation →</button>
       </div>
     </div>
   </section>
 
-  <!-- SLIDE 2: Scenario Aerial View (Interactive Highway Map) -->
+  <!-- SLIDE 2: Project Structure & Architecture -->
   <section class="slide" id="slide-2">
     <div>
-      <div class="badge-tag green">SCENARIO AERIAL VIEW · GIS GEOGRAPHIC MAPPING</div>
-      <h2 class="section-title">Highway Corridor & Toll Plaza Topology</h2>
-      <p class="section-desc">Interactive geographical network spanning 352 Miles (Yangon – Mandalay Corridor) with distributed edge plazas and central HQ intelligence.</p>
+      <div class="badge green">PROJECT ARCHITECTURE · MONOREPO</div>
+      <h2 class="section">Monorepo Structure & Technology Stack</h2>
+      <p class="desc">Enterprise-grade monorepo with 7 packages, 3 databases, and 4 frontend applications.</p>
 
-      <div class="scenario-container">
-        <!-- Interactive 3D Isometric Map Box (Dahua Style) -->
-        <div class="map-view-box">
-          <div class="map-graphic">
-            <!-- Dahua Pill Pin 1: Toll Plaza -->
-            <div class="dahua-pill-badge white-pill active" id="pill-0" style="top: 60%; left: 48%;" onclick="selectHotspot(0)">
-              <div class="pill-num">2</div>
-              <span>Toll Plaza</span>
-            </div>
-
-            <!-- Dahua Pill Pin 2: General Road -->
-            <div class="dahua-pill-badge green-pill" id="pill-1" style="top: 48%; left: 34%;" onclick="selectHotspot(1)">
-              <div class="pill-num">1</div>
-              <span>General Road</span>
-            </div>
-
-            <!-- Dahua Pill Pin 3: Suspension Bridge Gantry -->
-            <div class="dahua-pill-badge blue-pill" id="pill-2" style="top: 36%; left: 76%;" onclick="selectHotspot(2)">
-              <div class="pill-num">3</div>
-              <span>Bridge Gantry</span>
-            </div>
-
-            <!-- Dahua Pill Pin 4: Mountain Tunnel Entrance -->
-            <div class="dahua-pill-badge blue-pill" id="pill-3" style="top: 40%; left: 18%;" onclick="selectHotspot(3)">
-              <div class="pill-num">4</div>
-              <span>Tunnel System</span>
-            </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>📁 Package Structure</h3>
+          <div class="code-block">
+packages/<br>
+├── backend/          # Express + TypeScript + Prisma<br>
+├── frontend/         # React + Vite (Admin Hub)<br>
+├── customer-portal/  # React + Vite (Driver PWA)<br>
+├── financial-portal/ # React + Vite (Financial)<br>
+├── shared/           # Shared TypeScript types<br>
+├── simulator/        # Canvas highway simulator<br>
+└── plaza-server/     # Raspberry Pi edge server
           </div>
         </div>
+        <div class="card">
+          <h3>🛠️ Technology Stack</h3>
+          <ul class="list">
+            <li>React 18 + TypeScript + Vite</li>
+            <li>Express.js + Prisma ORM</li>
+            <li>PostgreSQL (3 separate databases)</li>
+            <li>Docker Compose (8 containers)</li>
+            <li>Zod validation schemas</li>
+            <li>JWT authentication</li>
+            <li>SheetJS Excel export</li>
+            <li>Myanmar/English i18n</li>
+          </ul>
+        </div>
+      </div>
 
-        <!-- Hotspot Detail Card -->
-        <div class="scenario-detail-card">
-          <div class="scenario-detail-header">
-            <div class="badge-tag" id="hotspotBadge">ENTRY/EXIT MULTI-LANE GATEWAY</div>
-            <div class="scenario-detail-title" id="hotspotTitle">0-Mile Express Toll Plaza</div>
-            <p id="hotspotDesc" style="font-size: 13px; color: var(--text-muted); margin-top: 8px;">
-              Primary expressway entry equipped with high-gain UHF RFID readers, 4K Starlight ANPR cameras, 79GHz safety barrier radars, and automated payment kiosks.
-            </p>
-          </div>
-
-          <div class="scenario-specs-grid">
-            <div class="spec-chip">
-              <div class="spec-chip-label">Lanes Deployed</div>
-              <div class="spec-chip-value" id="hotspotLanes">4 Lanes (2 UP / 2 DN)</div>
-            </div>
-            <div class="spec-chip">
-              <div class="spec-chip-label">Verification Rate</div>
-              <div class="spec-chip-value" id="hotspotRate">&lt; 100ms per vehicle</div>
-            </div>
-            <div class="spec-chip">
-              <div class="spec-chip-label">Edge Hardware</div>
-              <div class="spec-chip-value" id="hotspotHw">RPi 4 + Serial UHF RFID</div>
-            </div>
-            <div class="spec-chip">
-              <div class="spec-chip-label">Local Storage</div>
-              <div class="spec-chip-value" id="hotspotDb">SQLite + Zero-Loss Queue</div>
-            </div>
-          </div>
+      <div class="grid-3" style="margin-top: 16px;">
+        <div class="card" style="border-color: rgba(0,210,255,0.4);">
+          <h3 style="color: var(--accent-cyan);">Port 80</h3>
+          <p>HQ Admin Command Hub</p>
+        </div>
+        <div class="card" style="border-color: rgba(16,185,129,0.4);">
+          <h3 style="color: var(--accent-green);">Port 8080</h3>
+          <p>Customer Portal PWA</p>
+        </div>
+        <div class="card" style="border-color: rgba(139,92,246,0.4);">
+          <h3 style="color: var(--accent-purple);">Port 8081</h3>
+          <p>Financial Portal</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- SLIDE 3: Key Challenges & Pain Points -->
+  <!-- SLIDE 3: Database Architecture -->
   <section class="slide" id="slide-3">
     <div>
-      <div class="badge-tag red">INDUSTRY CHALLENGES · PAIN POINTS</div>
-      <h2 class="section-title">Operational Hurdles in Conventional Highway Tolling</h2>
-      <p class="section-desc">Why traditional manual booths and cloud-only systems fail on high-volume expressway networks.</p>
+      <div class="badge purple">DATABASE ARCHITECTURE · 3 SEPARATE DBs</div>
+      <h2 class="section">Multi-Database Architecture</h2>
+      <p class="desc">Three isolated PostgreSQL databases with dedicated Prisma clients for data separation and security.</p>
 
       <div class="grid-3">
-        <div class="dahua-card">
-          <div class="card-header">
-            <div class="card-icon red">⏱️</div>
-            <span class="badge-tag red">BOTTLENECK</span>
-          </div>
-          <h3>Severe Toll Congestion</h3>
-          <p>Manual cash collection takes 15–30 seconds per vehicle, resulting in mile-long queues during holidays, wasted commuter time, and excessive fuel burn.</p>
+        <div class="card" style="border-top: 3px solid var(--accent-cyan);">
+          <h3 style="color: var(--accent-cyan);">🐘 HQ Database (:5432)</h3>
+          <p style="font-size: 11px; color: var(--accent-cyan); margin-bottom: 8px;">tollgate</p>
+          <ul class="list">
+            <li>vehicles, toll_plazas, toll_rates</li>
+            <li>toll_events, transactions</li>
+            <li>violations, device_status</li>
+            <li>audit_logs, vehicle_photos</li>
+            <li>regions, daily_collections</li>
+            <li>monthly_reconciliations</li>
+            <li>revenue_transfers</li>
+            <li>official_receipts</li>
+          </ul>
         </div>
+        <div class="card" style="border-top: 3px solid var(--accent-green);">
+          <h3 style="color: var(--accent-green);">👤 Customer DB (:5433)</h3>
+          <p style="font-size: 11px; color: var(--accent-green); margin-bottom: 8px;">tollgate_customer</p>
+          <ul class="list">
+            <li>users, accounts</li>
+            <li>rfid_tags</li>
+            <li>notifications</li>
+            <li>sms_logs</li>
+            <li>promo_codes</li>
+            <li>loyalty_points</li>
+            <li>webhooks</li>
+          </ul>
+        </div>
+        <div class="card" style="border-top: 3px solid var(--accent-amber);">
+          <h3 style="color: var(--accent-amber);">🏪 Plaza DB (:5434)</h3>
+          <p style="font-size: 11px; color: var(--accent-amber); margin-bottom: 8px;">tollgate_plaza</p>
+          <ul class="list">
+            <li>plaza_config</li>
+            <li>sync_queue</li>
+            <li>sync_status</li>
+            <li>local_toll_events</li>
+            <li>device_config</li>
+          </ul>
+        </div>
+      </div>
 
-        <div class="dahua-card">
-          <div class="card-header">
-            <div class="card-icon red">💸</div>
-            <span class="badge-tag red">LOSS</span>
-          </div>
-          <h3>Revenue Leakage & Fraud</h3>
-          <p>Cash slippage, vehicle class misclassification (charging an SUV rate for a heavy truck), and unregistered cloned license plates cause up to 12% revenue loss.</p>
-        </div>
-
-        <div class="dahua-card">
-          <div class="card-header">
-            <div class="card-icon red">🔌</div>
-            <span class="badge-tag red">DOWNTIME</span>
-          </div>
-          <h3>Remote Plaza Network Outages</h3>
-          <p>Remote highway sections frequently suffer fiber cuts or cellular signal drops. Cloud-dependent systems freeze the barrier gates, causing expressway gridlock.</p>
-        </div>
+      <div class="code-block" style="margin-top: 16px;">
+import { hqPrisma } from '../../config/database';      // HQ: vehicles, events, financial<br>
+import { customerPrisma } from '../../config/database'; // Customer: users, accounts, wallets<br>
+import { plazaPrisma } from '../../config/database';    // Plaza: sync, config, local events
       </div>
     </div>
   </section>
 
-  <!-- SLIDE 4: What We Offer (Core Solution Pillars) -->
+  <!-- SLIDE 4: Challenges & Pain Points -->
   <section class="slide" id="slide-4">
     <div>
-      <div class="badge-tag green">WHAT WE OFFER · CORE INNOVATIONS</div>
-      <h2 class="section-title">The Dahua-Grade Integrated Toll Solution</h2>
-      <p class="section-desc">A unified architecture combining high-speed automated capture, local edge independence, and central cloud analytics.</p>
+      <div class="badge red">INDUSTRY CHALLENGES · PAIN POINTS</div>
+      <h2 class="section">Operational Hurdles in Conventional Highway Tolling</h2>
+      <p class="desc">Why traditional manual systems fail on high-volume expressway networks.</p>
 
-      <div class="grid-4">
-        <div class="dahua-card">
-          <div class="card-header">
-            <div class="card-icon green">⚡</div>
-          </div>
-          <h3>Dual RFID + ANPR</h3>
-          <p>Cross-references UHF RFID windshield tag ID against real-time AI optical license plate recognition to eliminate tag swapping fraud.</p>
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon red">⏱️</div>
+          <h3>Severe Toll Congestion</h3>
+          <p>Manual cash collection takes 15-30 seconds per vehicle, causing mile-long queues during holidays and excessive fuel burn.</p>
         </div>
-
-        <div class="dahua-card">
-          <div class="card-header">
-            <div class="card-icon green">🛡️</div>
-          </div>
-          <h3>100% Offline-First Edge</h3>
-          <p>Plaza Raspberry Pi edge servers process tolls in &lt;100ms via local SQLite, automatically queuing delta sync for when cloud connectivity returns.</p>
+        <div class="card">
+          <div class="card-icon red">💸</div>
+          <h3>Revenue Leakage & Fraud</h3>
+          <p>Cash slippage, vehicle misclassification, and cloned plates cause up to 12% revenue loss annually.</p>
         </div>
-
-        <div class="dahua-card">
-          <div class="card-header">
-            <div class="card-icon green">🪪</div>
-          </div>
-          <h3>Myanmar RTAD AI OCR</h3>
-          <p>Built-in AI model scans both sides of Myanmar RTAD Vehicle Registration Smart Cards, auto-extracting plate, chassis, engine, and owner in 1 second.</p>
+        <div class="card">
+          <div class="card-icon red">🔌</div>
+          <h3>Network Outages</h3>
+          <p>Remote plazas suffer fiber cuts. Cloud-dependent systems freeze barriers, causing expressway gridlock.</p>
         </div>
-
-        <div class="dahua-card">
-          <div class="card-header">
-            <div class="card-icon green">💳</div>
-          </div>
-          <h3>Multi-Rail E-Payment</h3>
-          <p>Native integration for KBZPay, WavePay, MMQR Dynamic QR Codes, and Driver Customer Portal PWA with Instant Top-Up.</p>
+        <div class="card">
+          <div class="card-icon red">📝</div>
+          <h3>Manual Registration</h3>
+          <p>Long paper forms for vehicle onboarding, human typo errors, and inability to verify VIN/chassis authenticity.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon red">🔍</div>
+          <h3>No Real-Time Visibility</h3>
+          <p>Operators lack live corridor telemetry, making incident response and traffic management reactive.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon red">📊</div>
+          <h3>Financial Reporting Gaps</h3>
+          <p>No standardized government ministry reporting, manual Excel reconciliation, and no audit trail for revenue transfers.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- SLIDE 5: End-to-End System Topology -->
+  <!-- SLIDE 5: What We Offer -->
   <section class="slide" id="slide-5">
     <div>
-      <div class="badge-tag purple">SYSTEM ARCHITECTURE · 5-TIER TOPOLOGY</div>
-      <h2 class="section-title">Distributed 5-Tier Highway Architecture</h2>
-      <p class="section-desc">From front-end physical highway sensors to central cloud intelligence and mobile driver applications.</p>
-
-      <div class="topology-flow">
-        <div class="topology-layer">
-          <div class="topology-layer-tag">1. Front-End Sensing</div>
-          <div class="topology-layer-items">
-            <div class="topo-node accent">📡 UHF RFID 915MHz Reader</div>
-            <div class="topo-node accent">📷 4K ANPR Starlight Camera</div>
-            <div class="topo-node accent">📻 79GHz Anti-Smash Radar</div>
-            <div class="topo-node">🚦 Automated Barrier Gate</div>
-          </div>
-        </div>
-
-        <div class="topology-layer">
-          <div class="topology-layer-tag">2. Plaza Edge Tier</div>
-          <div class="topology-layer-items">
-            <div class="topo-node green">🥧 Raspberry Pi 4 Edge Gateway</div>
-            <div class="topo-node green">🗄️ Local SQLite Fast Cache</div>
-            <div class="topo-node green">⚡ Sub-100ms Decision Engine</div>
-            <div class="topo-node">🖥️ Booth Operator Panel (Port 4000)</div>
-          </div>
-        </div>
-
-        <div class="topology-layer">
-          <div class="topology-layer-tag">3. Transmission & Sync</div>
-          <div class="topology-layer-items">
-            <div class="topo-node amber">🔒 Secure WireGuard / IPsec VPN</div>
-            <div class="topo-node amber">🔄 Queue-Based Delta Sync</div>
-            <div class="topo-node amber">📡 WebSocket Telemetry Stream</div>
-          </div>
-        </div>
-
-        <div class="topology-layer">
-          <div class="topology-layer-tag">4. Central Cloud HQ</div>
-          <div class="topology-layer-items">
-            <div class="topo-node accent">🐘 PostgreSQL Master DB</div>
-            <div class="topo-node accent">⚙️ Express HQ Core Engine</div>
-            <div class="topo-node accent">🪪 RTAD OCR Processing Node</div>
-            <div class="topo-node">📦 Storage Server (Port 5000)</div>
-          </div>
-        </div>
-
-        <div class="topology-layer">
-          <div class="topology-layer-tag">5. Applications</div>
-          <div class="topology-layer-items">
-            <div class="topo-node">🌐 HQ Command Hub (Port 80)</div>
-            <div class="topo-node">📱 Customer PWA (Port 8080)</div>
-            <div class="topo-node">🚗 Highway 2D Simulator</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SLIDE 6: Myanmar RTAD AI OCR Document Scanner -->
-  <section class="slide" id="slide-6">
-    <div>
-      <div class="badge-tag amber">AI INNOVATION · MYANMAR LOCALIZATION</div>
-      <h2 class="section-title">Myanmar RTAD Wheel Tax AI Document Scanner</h2>
-      <p class="section-desc">Automated onboarding and validation of official Myanmar Road Transport Administration Department (ကညန) registration cards.</p>
-
-      <div class="grid-2">
-        <div class="dahua-card">
-          <div class="card-header">
-            <div class="card-icon amber">🪪</div>
-            <span class="badge-tag amber">DUAL-SIDE RECOGNITION</span>
-          </div>
-          <h3>Zero-Manual Onboarding</h3>
-          <p>Drivers or booth operators snap a photo of the RTAD card (front & back). The server-side computer vision model extracts and normalizes all vehicle data in real time.</p>
-          
-          <div style="margin-top: 16px; background: rgba(0, 0, 0, 0.4); padding: 12px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: #a5f3fc;">
-            <div>> License Plate: <span style="color:#fff">4D-5918 (YGN)</span></div>
-            <div>> Vehicle Model: <span style="color:#fff">Honda Civic FD3 (2009)</span></div>
-            <div>> Engine Number: <span style="color:#fff">LDA-1372845</span></div>
-            <div>> Chassis (VIN): <span style="color:#fff">FD3-1302842</span></div>
-            <div>> Class Mapped:  <span style="color:#10b981">SEDAN (K 1,000 Standard Rate)</span></div>
-            <div>> Owner Name:    <span style="color:#fff">U NYI NYI MIN</span></div>
-          </div>
-        </div>
-
-        <div class="dahua-card">
-          <div class="card-header">
-            <div class="card-icon green">🛡️</div>
-            <span class="badge-tag green">FRAUD PREVENTION</span>
-          </div>
-          <h3>Chassis & VIN Cross-Verification</h3>
-          <p>By mapping the physical chassis and engine serial numbers to the RFID Tag ID, the system permanently prevents stolen plates or tag-swapping between trucks and cars.</p>
-          <ul class="product-features-list" style="margin-top: 16px;">
-            <li>Prevents under-classification toll evasion</li>
-            <li>Eliminates human typo errors at registration</li>
-            <li>Instant 1-click auto-fill across Admin & Customer portals</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SLIDE 7: Dual Verification & Anti-Fraud Engine -->
-  <section class="slide" id="slide-7">
-    <div>
-      <div class="badge-tag red">SECURITY & COMPLIANCE · FRAUD DETECTION</div>
-      <h2 class="section-title">Dual RFID + ANPR Optical Cross-Matching</h2>
-      <p class="section-desc">How our two-stage optical and radio verification ensures 100% audit integrity at every toll plaza lane.</p>
-
-      <div class="grid-3">
-        <div class="dahua-card">
-          <div class="card-header"><div class="card-icon">1️⃣</div></div>
-          <h3>Tag Interrogation</h3>
-          <p>UHF RFID antenna reads the vehicle's EPC Gen2 windshield tag at up to 10 meters distance as it approaches the lane at 30–60 km/h.</p>
-        </div>
-
-        <div class="dahua-card">
-          <div class="card-header"><div class="card-icon">2️⃣</div></div>
-          <h3>AI Optical ANPR</h3>
-          <p>High-resolution Starlight camera captures plate image, performs deep learning character segmentation, and recognizes Myanmar script & alphanumeric plate codes.</p>
-        </div>
-
-        <div class="dahua-card">
-          <div class="card-header"><div class="card-icon green">3️⃣</div></div>
-          <h3>Cross-Match Check</h3>
-          <p>Edge engine matches Tag ID with Plate number. If valid, toll is deducted and barrier raises in &lt;100ms. If mismatched, a Violation Alert is logged with camera snapshots.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SLIDE 8: Offline-First Edge Synchronization -->
-  <section class="slide" id="slide-8">
-    <div>
-      <div class="badge-tag green">RESILIENCE · OFFLINE-FIRST ARCHITECTURE</div>
-      <h2 class="section-title">Zero-Downtime Edge Plaza Synchronization</h2>
-      <p class="section-desc">Engineered for real-world highway conditions where network infrastructure is intermittently severed.</p>
-
-      <div class="grid-2">
-        <div class="dahua-card">
-          <h3>Plaza → HQ Push (Upstream)</h3>
-          <p>Transactions, lane passages, and violation evidence photos are stored in local SQLite. The background sync worker automatically flushes pending queues with exponential backoff.</p>
-          <div style="background: rgba(6, 13, 26, 0.7); border: 1px solid var(--border-subtle); padding: 12px; border-radius: 8px; margin-top: 12px; font-family: 'JetBrains Mono', monospace; font-size: 12px;">
-            <div style="color:#10b981;">● SYNC QUEUE: ACTIVE</div>
-            <div>Pending: 0 | Flushed: 14,820 | Retry Fail: 0</div>
-            <div>Sync Frequency: Every 30 seconds</div>
-          </div>
-        </div>
-
-        <div class="dahua-card">
-          <h3>HQ → Plaza Pull (Downstream)</h3>
-          <p>Newly approved vehicle registrations, updated toll tariffs, and blacklisted stolen vehicle tags are broadcasted downstream to keep local plaza SQLite caches up to date.</p>
-          <div style="background: rgba(6, 13, 26, 0.7); border: 1px solid var(--border-subtle); padding: 12px; border-radius: 8px; margin-top: 12px; font-family: 'JetBrains Mono', monospace; font-size: 12px;">
-            <div style="color:#00d2ff;">● BLACKLIST CACHE: SYNCHRONIZED</div>
-            <div>Vehicles Cached: 8,450 | Delta Poll: 60s</div>
-            <div>Conflict Resolution: LWW (Last-Write-Wins)</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SLIDE 9: Customer Portal PWA & Virtual RFID -->
-  <section class="slide" id="slide-9">
-    <div>
-      <div class="badge-tag purple">DRIVER EXPERIENCE · PROGRESSIVE WEB APP</div>
-      <h2 class="section-title">Customer Portal PWA & Virtual RFID Pass</h2>
-      <p class="section-desc">Frictionless digital wallet and optical fallback pass installable on iOS & Android devices without app stores.</p>
-
-      <div class="grid-3">
-        <div class="dahua-card">
-          <div class="card-header"><div class="card-icon purple">📱</div></div>
-          <h3>Installable Mobile PWA</h3>
-          <p>Works offline and installs to home screen via 1 tap. Complete vehicle management, balance monitoring, and trip receipt history.</p>
-        </div>
-
-        <div class="dahua-card">
-          <div class="card-header"><div class="card-icon purple">🔲</div></div>
-          <h3>Virtual RFID Optical Pass</h3>
-          <p>Rotating secure QR code serves as an instant fallback pass if a driver's windshield RFID tag is scratched or damaged.</p>
-        </div>
-
-        <div class="dahua-card">
-          <div class="card-header"><div class="card-icon purple">💳</div></div>
-          <h3>Instant E-Wallet Top-Up</h3>
-          <p>One-click balance replenishment via KBZPay, WavePay, MMQR, and bank transfer with automated low-balance threshold warnings.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SLIDE 10: HQ Command Hub & Operator Console -->
-  <section class="slide" id="slide-10">
-    <div>
-      <div class="badge-tag accent">COMMAND & CONTROL · CENTRAL MANAGEMENT</div>
-      <h2 class="section-title">Central HQ Command Hub & GIS Map Console</h2>
-      <p class="section-desc">Unified administrative control center for real-time corridor monitoring, operator shift control, and auditing.</p>
-
-      <div class="grid-3">
-        <div class="dahua-card">
-          <div class="card-header"><div class="card-icon">🗺️</div></div>
-          <h3>Interactive GIS Map (Leaflet)</h3>
-          <p>Visualizes all 352 miles of highway with live telemetry markers, vehicle traffic throughput density, and plaza connection health.</p>
-        </div>
-
-        <div class="dahua-card">
-          <div class="card-header"><div class="card-icon">⚡</div></div>
-          <h3>Operator Quick Action Ribbon</h3>
-          <p>Instant lane shift tracking, barrier override controls (Auto, Force Open, Lock Gate), and emergency dispatch alerts.</p>
-        </div>
-
-        <div class="dahua-card">
-          <div class="card-header"><div class="card-icon">📊</div></div>
-          <h3>Analytics & Violation Audit</h3>
-          <p>Hourly traffic distribution, revenue breakdown by vehicle class, and forensic review workbench for flagged ANPR mismatch events.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SLIDE 11: Real-Time Animated Toll Simulator -->
-  <section class="slide" id="slide-11">
-    <div>
-      <div class="badge-tag green">LIVE SIMULATION · VISUAL DEMO</div>
-      <h2 class="section-title">Real-Time Highway Multi-Lane Simulator</h2>
-      <p class="section-desc">Simulating vehicle dynamics, RFID interrogations, dynamic barrier triggers, and violation scenarios on a 4-lane highway canvas.</p>
-
-      <div class="sim-embed-card">
-        <div class="sim-header">
-          <div>
-            <span style="font-size: 13px; font-weight: 700; color: #fff;">Interactive 4-Lane Simulation Preview</span>
-            <span style="font-size: 11px; color: var(--accent-cyan); margin-left: 8px;">● ENGINE RUNNING</span>
-          </div>
-          <div style="display: flex; gap: 8px;">
-            <button class="header-btn" onclick="toggleSimSpeed()">Toggle Speed</button>
-            <button class="header-btn primary" onclick="addSimCar()">+ Spawn Vehicle</button>
-          </div>
-        </div>
-
-        <div class="sim-canvas-wrapper">
-          <canvas id="tollCanvas"></canvas>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SLIDE 12: Dahua-Grade Hardware Product Matrix -->
-  <section class="slide" id="slide-12">
-    <div>
-      <div class="badge-tag">PRODUCT MATRIX · FIELD HARDWARE</div>
-      <h2 class="section-title">Industrial Edge Hardware & Sensor Catalog</h2>
-      <p class="section-desc">Ruggedized field appliances designed for continuous 24/7 highway environmental exposure.</p>
+      <div class="badge green">CORE SOLUTION PILLARS</div>
+      <h2 class="section">The Complete TollGate Solution</h2>
+      <p class="desc">A unified architecture with 8 core innovations solving every identified pain point.</p>
 
       <div class="grid-4">
-        <div class="product-card">
-          <div class="product-img-box">
-            <div class="product-model-badge">DHI-ITC-RFID</div>
-            <img src="images/hardware/rfid_reader.jpg" class="product-real-img" alt="UHF RFID Interrogator">
+        <div class="card">
+          <div class="card-icon green">⚡</div>
+          <h3>Dual RFID + ANPR</h3>
+          <p>Cross-references UHF RFID tag ID against AI optical plate recognition to eliminate tag swapping fraud.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon green">🛡️</div>
+          <h3>100% Offline-First</h3>
+          <p>Plaza edge servers process tolls in &lt;100ms via local SQLite with automatic delta sync.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon green">🪪</div>
+          <h3>Myanmar RTAD OCR</h3>
+          <p>AI scans both sides of RTAD cards, auto-extracting plate, chassis, engine, and owner data.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon green">💳</div>
+          <h3>Multi-Rail E-Payment</h3>
+          <p>KBZPay, WavePay, MMQR integration with customer PWA wallet and instant top-up.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon green">📊</div>
+          <h3>Financial Portal</h3>
+          <p>10 financial reports with Myanmar/English toggle, Excel export, and approval workflows.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon green">🗺️</div>
+          <h3>GIS Highway Map</h3>
+          <p>Interactive Leaflet map with 352 miles of Highway 1, live telemetry, and 15 regions.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon green">📱</div>
+          <h3>Customer PWA</h3>
+          <p>Installable Progressive Web App with digital wallet, virtual RFID pass, and trip history.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon green">🖥️</div>
+          <h3>Admin Command Hub</h3>
+          <p>Central control center with operator ribbon, barrier controls, and violation audit.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 6: System Topology -->
+  <section class="slide" id="slide-6">
+    <div>
+      <div class="badge purple">SYSTEM TOPOLOGY · 5-TIER ARCHITECTURE</div>
+      <h2 class="section">Distributed 5-Tier Highway Architecture</h2>
+      <p class="desc">From physical highway sensors to central cloud intelligence and mobile applications.</p>
+
+      <div class="topology">
+        <div class="topo-layer">
+          <div class="topo-tag">1. Front-End Sensing</div>
+          <div class="topo-items">
+            <div class="topo-node accent">📡 UHF RFID 915MHz</div>
+            <div class="topo-node accent">📷 4K ANPR Camera</div>
+            <div class="topo-node accent">📻 79GHz Radar</div>
+            <div class="topo-node">🚦 Auto Barrier</div>
           </div>
-          <h4>Ultra-High Frequency RFID</h4>
-          <div class="product-series">860-960 MHz EPC Gen2</div>
-          <ul class="product-features-list">
-            <li>12 dBi Circular Polarized</li>
-            <li>Up to 12m Read Range</li>
-            <li>IP67 Waterproof Casing</li>
+        </div>
+        <div class="topo-layer">
+          <div class="topo-tag">2. Plaza Edge Tier</div>
+          <div class="topo-items">
+            <div class="topo-node green">🥧 RPi 4 Gateway</div>
+            <div class="topo-node green">🗄️ SQLite Cache</div>
+            <div class="topo-node green">⚡ &lt;100ms Engine</div>
+            <div class="topo-node">🖥️ Booth Panel :4000</div>
+          </div>
+        </div>
+        <div class="topo-layer">
+          <div class="topo-tag">3. Transmission</div>
+          <div class="topo-items">
+            <div class="topo-node amber">🔒 WireGuard VPN</div>
+            <div class="topo-node amber">🔄 Delta Sync</div>
+            <div class="topo-node amber">📡 WebSocket</div>
+          </div>
+        </div>
+        <div class="topo-layer">
+          <div class="topo-tag">4. Central Cloud HQ</div>
+          <div class="topo-items">
+            <div class="topo-node accent">🐘 PostgreSQL x3</div>
+            <div class="topo-node accent">⚙️ Express API :3000</div>
+            <div class="topo-node accent">🪪 RTAD OCR</div>
+            <div class="topo-node">📦 Storage :5000</div>
+          </div>
+        </div>
+        <div class="topo-layer">
+          <div class="topo-tag">5. Applications</div>
+          <div class="topo-items">
+            <div class="topo-node">🌐 Admin Hub :80</div>
+            <div class="topo-node">📱 Customer PWA :8080</div>
+            <div class="topo-node">💰 Financial :8081</div>
+            <div class="topo-node">🚗 Simulator</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 7: Myanmar RTAD OCR -->
+  <section class="slide" id="slide-7">
+    <div>
+      <div class="badge amber">AI INNOVATION · MYANMAR LOCALIZATION</div>
+      <h2 class="section">Myanmar RTAD Wheel Tax AI Document Scanner</h2>
+      <p class="desc">Automated onboarding of official Myanmar Road Transport Administration Department (ကညန) registration cards.</p>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-icon amber">🪪</div>
+          <span class="badge amber">DUAL-SIDE RECOGNITION</span>
+          <h3 style="margin-top: 8px;">Zero-Manual Onboarding</h3>
+          <p>Drivers snap a photo of the RTAD card (front & back). The server-side CV model extracts all vehicle data in real time.</p>
+          <div class="code-block">
+> License Plate: <span style="color:#fff">4D-5918 (YGN)</span><br>
+> Vehicle Model: <span style="color:#fff">Honda Civic FD3 (2009)</span><br>
+> Engine Number: <span style="color:#fff">LDA-1372845</span><br>
+> Chassis (VIN): <span style="color:#fff">FD3-1302842</span><br>
+> Class Mapped:  <span style="color:#10b981">SEDAN (K 1,000)</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-icon green">🛡️</div>
+          <span class="badge green">FRAUD PREVENTION</span>
+          <h3 style="margin-top: 8px;">VIN & Chassis Cross-Verification</h3>
+          <p>By mapping physical chassis/engine serial numbers to RFID Tag ID, the system prevents stolen plates or tag-swapping.</p>
+          <ul class="list" style="margin-top: 12px;">
+            <li>Prevents under-classification toll evasion</li>
+            <li>Eliminates human typo errors at registration</li>
+            <li>Instant 1-click auto-fill across portals</li>
+            <li>Supports both Front & Back card scanning</li>
+            <li>Automatic vehicle class assignment</li>
           </ul>
         </div>
+      </div>
+    </div>
+  </section>
 
-        <div class="product-card">
-          <div class="product-img-box">
-            <div class="product-model-badge">DHI-ITC431</div>
-            <img src="images/hardware/anpr_camera.jpg" class="product-real-img" alt="4K AI ANPR Camera">
+  <!-- SLIDE 8: Dual Verification -->
+  <section class="slide" id="slide-8">
+    <div>
+      <div class="badge red">SECURITY · FRAUD DETECTION</div>
+      <h2 class="section">Dual RFID + ANPR Cross-Matching</h2>
+      <p class="desc">Two-stage optical and radio verification ensures 100% audit integrity at every toll plaza lane.</p>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon">1️⃣</div>
+          <h3>Tag Interrogation</h3>
+          <p>UHF RFID antenna reads the vehicle's EPC Gen2 windshield tag at up to 10 meters at 30-60 km/h.</p>
+          <div class="spec-grid">
+            <div class="spec"><div class="spec-label">Frequency</div><div class="spec-value">915 MHz</div></div>
+            <div class="spec"><div class="spec-label">Range</div><div class="spec-value">12m max</div></div>
           </div>
-          <h4>4K AI ANPR Camera</h4>
-          <div class="product-series">Starlight LPR Deep Learning</div>
-          <ul class="product-features-list">
+        </div>
+        <div class="card">
+          <div class="card-icon">2️⃣</div>
+          <h3>AI Optical ANPR</h3>
+          <p>4K Starlight camera captures plate image, performs deep learning character segmentation for Myanmar script.</p>
+          <div class="spec-grid">
+            <div class="spec"><div class="spec-label">Resolution</div><div class="spec-value">4K Starlight</div></div>
+            <div class="spec"><div class="spec-label">Speed</div><div class="spec-value">120 km/h</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-icon green">3️⃣</div>
+          <h3>Cross-Match Check</h3>
+          <p>Edge engine matches Tag ID with Plate. Valid = toll deducted + barrier raises in &lt;100ms. Mismatch = Violation logged.</p>
+          <div class="spec-grid">
+            <div class="spec"><div class="spec-label">Decision</div><div class="spec-value">&lt;100ms</div></div>
+            <div class="spec"><div class="spec-label">Accuracy</div><div class="spec-value">99.8%</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 9: Offline-First Sync -->
+  <section class="slide" id="slide-9">
+    <div>
+      <div class="badge green">RESILIENCE · OFFLINE-FIRST</div>
+      <h2 class="section">Zero-Downtime Edge Plaza Synchronization</h2>
+      <p class="desc">Engineered for real-world highway conditions where network infrastructure is intermittently severed.</p>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Plaza → HQ Push (Upstream)</h3>
+          <p>Transactions, lane passages, and violation evidence photos stored in local SQLite. Background sync worker flushes pending queues with exponential backoff.</p>
+          <div class="code-block">
+<span style="color:#10b981;">● SYNC QUEUE: ACTIVE</span><br>
+Pending: 0 | Flushed: 14,820 | Retry Fail: 0<br>
+Sync Frequency: Every 30 seconds
+          </div>
+        </div>
+        <div class="card">
+          <h3>HQ → Plaza Pull (Downstream)</h3>
+          <p>Newly approved vehicles, updated toll tariffs, and blacklisted stolen vehicle tags broadcasted downstream to keep local caches current.</p>
+          <div class="code-block">
+<span style="color:#00d2ff;">● BLACKLIST CACHE: SYNCHRONIZED</span><br>
+Vehicles Cached: 8,450 | Delta Poll: 60s<br>
+Conflict Resolution: LWW (Last-Write-Wins)
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-3" style="margin-top: 16px;">
+        <div class="card" style="text-align: center;">
+          <div class="stat-num" style="font-size: 24px;">0</div>
+          <div class="stat-label">Data Loss Events</div>
+        </div>
+        <div class="card" style="text-align: center;">
+          <div class="stat-num" style="font-size: 24px;">&lt;80ms</div>
+          <div class="stat-label">Local Decision Time</div>
+        </div>
+        <div class="card" style="text-align: center;">
+          <div class="stat-num" style="font-size: 24px;">100%</div>
+          <div class="stat-label">Offline Uptime</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 10: Customer Portal PWA -->
+  <section class="slide" id="slide-10">
+    <div>
+      <div class="badge purple">DRIVER EXPERIENCE · PWA</div>
+      <h2 class="section">Customer Portal & Progressive Web App</h2>
+      <p class="desc">Frictionless digital wallet and optical fallback pass installable on iOS & Android without app stores.</p>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon purple">📱</div>
+          <h3>Installable Mobile PWA</h3>
+          <p>Works offline, installs to home screen. Complete vehicle management, balance monitoring, and trip receipt history.</p>
+          <ul class="list">
+            <li>iOS Safari: Share → Add to Home</li>
+            <li>Android Chrome: Menu → Install</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-icon purple">🔲</div>
+          <h3>Virtual RFID Optical Pass</h3>
+          <p>Rotating secure QR code serves as instant fallback if windshield RFID tag is damaged or not delivered.</p>
+          <ul class="list">
+            <li>Dynamic QR regeneration</li>
+            <li>Optical reader compatible</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-icon purple">💳</div>
+          <h3>Instant E-Wallet Top-Up</h3>
+          <p>One-click balance replenishment via KBZPay, WavePay, MMQR with automated low-balance warnings.</p>
+          <ul class="list">
+            <li>Low balance alert at K3,000</li>
+            <li>Downloadable PDF receipts</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top: 16px;">
+        <div class="card">
+          <h3>Default Customer Logins</h3>
+          <div class="code-block">
+Enterprise: fleet@transportco.com / password123<br>
+Individual: ko.min@personal.com / password123
+          </div>
+        </div>
+        <div class="card">
+          <h3>Features</h3>
+          <ul class="list">
+            <li>Dark/Light theme toggle</li>
+            <li>Myanmar RTAD card scan</li>
+            <li>Trip history & receipts</li>
+            <li>Vehicle registration</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 11: HQ Command Hub -->
+  <section class="slide" id="slide-11">
+    <div>
+      <div class="badge">COMMAND & CONTROL · HQ</div>
+      <h2 class="section">Central HQ Command Hub</h2>
+      <p class="desc">Unified administrative control center for real-time corridor monitoring, operator shift control, and auditing.</p>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon">🗺️</div>
+          <h3>Interactive GIS Map</h3>
+          <p>Leaflet map visualizes all 352 miles with live telemetry markers, traffic density, and plaza health status.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">⚡</div>
+          <h3>Operator Quick Actions</h3>
+          <p>Instant lane shift tracking, barrier override controls (Auto, Force Open, Lock Gate), and emergency dispatch.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📊</div>
+          <h3>Analytics Dashboard</h3>
+          <p>Hourly traffic distribution, revenue breakdown by vehicle class, and violation audit workbench.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🚗</div>
+          <h3>Vehicle Management</h3>
+          <p>Search, filter, approve vehicles. AI-powered RTAD card scanning for instant registration.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">⚠️</div>
+          <h3>Violation Workbench</h3>
+          <p>ANPR mismatch events with camera snapshots, forensic review, and resolution workflow.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔐</div>
+          <h3>Role-Based Access</h3>
+          <p>Admin, Manager, Operator, Viewer roles with JWT authentication and audit logging.</p>
+        </div>
+      </div>
+
+      <div class="code-block" style="margin-top: 16px;">
+Default Logins: admin@tollgate.com | manager@tollgate.com | operator1@tollgate.com | viewer@tollgate.com<br>
+Password (all): password123
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 12: Highway Simulator -->
+  <section class="slide" id="slide-12">
+    <div>
+      <div class="badge green">LIVE SIMULATION · CANVAS</div>
+      <h2 class="section">Real-Time Highway Multi-Lane Simulator</h2>
+      <p class="desc">Animated canvas simulation of vehicle dynamics, RFID interrogations, barrier triggers, and violation scenarios.</p>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Simulation Features</h3>
+          <ul class="list">
+            <li>4 lanes (2 Northbound, 2 Southbound)</li>
+            <li>Sedans, SUVs, Trucks, Buses</li>
+            <li>RFID detection glow effects</li>
+            <li>Barrier lift animation</li>
+            <li>Violation flash alerts</li>
+            <li>Adjustable simulation speed</li>
+            <li>Vehicle spawn controls</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Visual Effects</h3>
+          <ul class="list">
+            <li><span style="color: #f59e0b;">●</span> Yellow glow: RFID wave detected</li>
+            <li><span style="color: #10b981;">●</span> Green pulse: Payment successful</li>
+            <li><span style="color: #ef4444;">●</span> Red flash: Violation triggered</li>
+            <li><span style="color: #00d2ff;">●</span> Blue: Vehicle approaching</li>
+          </ul>
+          <div class="spec-grid" style="margin-top: 12px;">
+            <div class="spec"><div class="spec-label">URL</div><div class="spec-value">/simulator</div></div>
+            <div class="spec"><div class="spec-label">Engine</div><div class="spec-value">Canvas 2D</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 13: Hardware Matrix -->
+  <section class="slide" id="slide-13">
+    <div>
+      <div class="badge">HARDWARE · EDGE APPLIANCES</div>
+      <h2 class="section">Industrial Edge Hardware & Sensor Catalog</h2>
+      <p class="desc">Ruggedized field appliances designed for continuous 24/7 highway environmental exposure.</p>
+
+      <div class="grid-4">
+        <div class="card">
+          <div class="card-icon">📡</div>
+          <h3>UHF RFID Reader</h3>
+          <p style="font-size: 10px; color: var(--accent-cyan);">860-960 MHz EPC Gen2</p>
+          <ul class="list">
+            <li>12 dBi Circular Polarized</li>
+            <li>12m Read Range</li>
+            <li>IP67 Waterproof</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-icon">📷</div>
+          <h3>4K ANPR Camera</h3>
+          <p style="font-size: 10px; color: var(--accent-cyan);">Starlight LPR Deep Learning</p>
+          <ul class="list">
             <li>Myanmar Script OCR</li>
-            <li>Speed Capture up to 120km/h</li>
+            <li>120km/h Capture</li>
             <li>Motorized 10-50mm Lens</li>
           </ul>
         </div>
-
-        <div class="product-card">
-          <div class="product-img-box">
-            <div class="product-model-badge">ITS-RADAR-79G</div>
-            <img src="images/hardware/barrier_radar.jpg" class="product-real-img" alt="79 GHz Barrier Radar">
-          </div>
-          <h4>79 GHz Barrier Radar</h4>
-          <div class="product-series">Anti-Smash Millimeter Wave</div>
-          <ul class="product-features-list">
-            <li>High Pedestrian & Vehicle Dist.</li>
+        <div class="card">
+          <div class="card-icon">📻</div>
+          <h3>79GHz Barrier Radar</h3>
+          <p style="font-size: 10px; color: var(--accent-cyan);">Anti-Smash Millimeter Wave</p>
+          <ul class="list">
+            <li>Vehicle/Pedestrian Dist.</li>
             <li>Replaces In-Ground Loops</li>
-            <li>0.1m Trigger Accuracy</li>
+            <li>0.1m Accuracy</li>
           </ul>
         </div>
-
-        <div class="product-card">
-          <div class="product-img-box">
-            <div class="product-model-badge">DHI-EDGE-RPI</div>
-            <img src="images/hardware/edge_gateway.jpg" class="product-real-img" alt="Industrial Edge Gateway">
-          </div>
-          <h4>Industrial Edge Gateway</h4>
-          <div class="product-series">Quad-Core Linux / SQLite</div>
-          <ul class="product-features-list">
-            <li>Sub-100ms Gate Response</li>
-            <li>Dual LAN + RS485 Serial</li>
-            <li>DIN-Rail Mounting + UPS</li>
+        <div class="card">
+          <div class="card-icon">🥧</div>
+          <h3>RPi Edge Gateway</h3>
+          <p style="font-size: 10px; color: var(--accent-cyan);">Quad-Core Linux / SQLite</p>
+          <ul class="list">
+            <li>&lt;100ms Response</li>
+            <li>Dual LAN + RS485</li>
+            <li>DIN-Rail + UPS</li>
           </ul>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- SLIDE 13: Deployment & Field Architecture -->
-  <section class="slide" id="slide-13">
-    <div>
-      <div class="badge-tag green">DEPLOYMENT · ZERO-TOUCH AUTOMATION</div>
-      <h2 class="section-title">Rapid Containerized Deployment</h2>
-      <p class="section-desc">1-Command provisioning for both cloud HQ instances and edge Raspberry Pi plaza gateways.</p>
-
-      <div class="grid-2">
-        <div class="dahua-card">
-          <div class="card-header">
-            <h3>Central HQ Stack (Docker Compose)</h3>
-            <span class="badge-tag green">CLOUD READY</span>
-          </div>
-          <div style="background: rgba(0, 0, 0, 0.4); padding: 12px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: #cbd5e1; margin-top: 10px;">
-            <div style="color: #64748b;"># 1-Command HQ Cluster Launch</div>
-            <div>chmod +x scripts/deploy-hq.sh</div>
-            <div>./scripts/deploy-hq.sh</div>
-            <div style="margin-top: 8px; color: #10b981;">✓ HQ Admin Dashboard (Port 80)</div>
-            <div style="color: #10b981;">✓ Customer Portal PWA (Port 8080)</div>
-            <div style="color: #10b981;">✓ Express HQ Core API (Port 3000)</div>
-            <div style="color: #10b981;">✓ Storage Server & ANPR Vault (Port 5000)</div>
-          </div>
-        </div>
-
-        <div class="dahua-card">
-          <div class="card-header">
-            <h3>Plaza Edge Server (Raspberry Pi)</h3>
-            <span class="badge-tag">EDGE APPLIANCE</span>
-          </div>
-          <div style="background: rgba(0, 0, 0, 0.4); padding: 12px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: #cbd5e1; margin-top: 10px;">
-            <div style="color: #64748b;"># Automated Plaza Initialization</div>
-            <div>./scripts/deploy-plaza.sh \</div>
-            <div>  plaza-001 "0-Mile Plaza" "0MILE" \</div>
-            <div>  "http://hq.expressway.gov.mm:3000" "token123"</div>
-            <div style="margin-top: 8px; color: #00d2ff;">✓ Local SQLite Cache Provisioned</div>
-            <div style="color: #00d2ff;">✓ Serial RFID Scanner Auto-Bound</div>
-            <div style="color: #00d2ff;">✓ Sync Engine Daemon Running</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SLIDE 14: Financial Portal & Government Reporting -->
+  <!-- SLIDE 14: Financial Portal -->
   <section class="slide" id="slide-14">
     <div>
-      <div class="badge-tag green">FINANCIAL SYSTEM · GOVERNMENT REPORTING</div>
-      <h2 class="section-title">Financial Portal & Ministry Reporting System</h2>
-      <p class="section-desc">Government ministry-compliant financial reporting with Myanmar/English language support, Excel exports, and approval workflows for revenue remittance and reconciliation.</p>
+      <div class="badge green">FINANCIAL SYSTEM · MINISTRY REPORTING</div>
+      <h2 class="section">Financial Portal & Government Reporting</h2>
+      <p class="desc">Standalone financial reporting system with Myanmar/English language support, Excel exports, and approval workflows.</p>
 
       <div class="grid-3">
-        <div class="dahua-card">
-          <div class="card-header"><div class="card-icon green">📊</div></div>
+        <div class="card">
           <h3>10 Financial Reports</h3>
-          <p>Daily Collection Statement, Toll Revenue by Region, Wallet Deposits, Vehicle Registration, Pass-Through Volume, Revenue Remittance, Financial Reconciliation, Official Receipts, Fiscal Year Report.</p>
+          <ul class="list">
+            <li>Daily Collection Statement</li>
+            <li>Toll Revenue by Region</li>
+            <li>Wallet Deposits by Region</li>
+            <li>Vehicle Registration</li>
+            <li>Pass-Through Volume</li>
+            <li>Revenue Remittance</li>
+            <li>Monthly Reconciliation</li>
+            <li>Official Receipts</li>
+            <li>Fiscal Year Report</li>
+          </ul>
         </div>
-
-        <div class="dahua-card">
-          <div class="card-header"><div class="card-icon green">🇲🇲</div></div>
-          <h3>Myanmar/English Toggle</h3>
-          <p>Full i18n support with correct financial terminology. Revenue = toll charges (income), Deposits = customer liabilities (not revenue). Fiscal year April–March.</p>
+        <div class="card">
+          <h3>System Features</h3>
+          <ul class="list">
+            <li>Myanmar/English language toggle</li>
+            <li>Excel export on all pages</li>
+            <li>Approval workflow (Submit → Approve)</li>
+            <li>Role-based access (3 roles)</li>
+            <li>Copyright watermarks</li>
+            <li>20+ REST API endpoints</li>
+            <li>Correct financial terminology</li>
+          </ul>
         </div>
-
-        <div class="dahua-card">
-          <div class="card-header"><div class="card-icon green">✅</div></div>
-          <h3>Approval Workflow</h3>
-          <p>Monthly reconciliation with Submit → Approve/Reject flow. Role-based access: Financial Admin, Manager, Viewer. Official receipt generation.</p>
+        <div class="card">
+          <h3>Financial Terminology</h3>
+          <div class="spec-grid">
+            <div class="spec"><div class="spec-label">Revenue</div><div class="spec-value">Toll charges (INCOME)</div></div>
+            <div class="spec"><div class="spec-label">Deposits</div><div class="spec-value">Customer liabilities</div></div>
+            <div class="spec"><div class="spec-label">Fiscal Year</div><div class="spec-value">April – March</div></div>
+            <div class="spec"><div class="spec-label">Regions</div><div class="spec-value">15 Myanmar</div></div>
+          </div>
+          <div class="code-block" style="margin-top: 8px;">
+Login: fin.admin@tollgate.com<br>
+Password: password123<br>
+URL: :8081
+          </div>
         </div>
-      </div>
-
-      <div style="background: rgba(6, 13, 26, 0.7); border: 1px solid var(--border-subtle); padding: 16px; border-radius: 10px; margin-top: 20px; font-family: 'JetBrains Mono', monospace; font-size: 12px;">
-        <div style="color: #10b981; margin-bottom: 8px;">● FINANCIAL PORTAL: http://192.168.100.101:8081</div>
-        <div style="color: #cbd5e1;">15 Myanmar Regions · 20+ API Endpoints · Excel Export · Copyright Watermarks</div>
-        <div style="color: #cbd5e1;">Login: fin.admin@tollgate.com / password123</div>
       </div>
     </div>
   </section>
 
-  <!-- SLIDE 15: Conclusion & Q&A -->
+  <!-- SLIDE 15: Deployment & Docker -->
   <section class="slide" id="slide-15">
+    <div>
+      <div class="badge green">DEPLOYMENT · DOCKER</div>
+      <h2 class="section">Containerized Production Deployment</h2>
+      <p class="desc">8 Docker containers running on Kali Linux with health checks and automatic restarts.</p>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Docker Containers</h3>
+          <div class="code-block">
+tollgate-rfid-backend-1      :3000  ✅<br>
+tollgate-rfid-frontend-1     :80    ✅<br>
+tollgate-rfid-customer-portal-1 :8080 ✅<br>
+tollgate-rfid-financial-portal-1 :8081 ✅<br>
+tollgate-rfid-db-1           :5432  ✅<br>
+tollgate-rfid-customer-db-1  :5433  ✅<br>
+tollgate-rfid-plaza-db-1     :5434  ✅<br>
+portainer                    :9000  ✅
+          </div>
+        </div>
+        <div class="card">
+          <h3>Deployment Commands</h3>
+          <div class="code-block">
+# Full stack build and launch<br>
+docker compose up -d --build<br><br>
+# Check container health<br>
+docker ps --format 'table {{.Names}}\t{{.Status}}'<br><br>
+# View backend logs<br>
+docker logs tollgate-rfid-backend-1 --tail 50<br><br>
+# Run DB migrations<br>
+docker exec tollgate-rfid-backend-1 sh -c \<br>
+  'cd packages/backend && npx prisma migrate deploy'
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-3" style="margin-top: 16px;">
+        <div class="card" style="text-align: center;">
+          <div class="stat-num" style="font-size: 20px;">192.168.100.101</div>
+          <div class="stat-label">Server IP</div>
+        </div>
+        <div class="card" style="text-align: center;">
+          <div class="stat-num" style="font-size: 20px;">nyimin / 1512</div>
+          <div class="stat-label">SSH Credentials</div>
+        </div>
+        <div class="card" style="text-align: center;">
+          <div class="stat-num" style="font-size: 20px;">~/TollGate-RFID</div>
+          <div class="stat-label">Project Directory</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 16: API & Health Endpoints -->
+  <section class="slide" id="slide-16">
+    <div>
+      <div class="badge">API REFERENCE · HEALTH</div>
+      <h2 class="section">REST API & Health Monitoring</h2>
+      <p class="desc">Comprehensive API with 50+ endpoints, Swagger documentation, and health monitoring.</p>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Health Endpoints</h3>
+          <div class="code-block">
+GET /api/health         → Full health (no auth)<br>
+GET /api/health/live    → Liveness probe<br>
+GET /api/health/ready   → Readiness probe<br>
+GET /api/health/metrics → Detailed metrics (auth)<br>
+GET /api/health/backup  → DB backup JSON (auth)
+          </div>
+        </div>
+        <div class="card">
+          <h3>Authentication</h3>
+          <div class="code-block">
+POST /api/auth/login    → Get JWT token<br>
+POST /api/auth/register → Create account<br>
+Authorization: Bearer &lt;token&gt;
+          </div>
+        </div>
+        <div class="card">
+          <h3>Core API Endpoints</h3>
+          <div class="code-block">
+GET/POST /api/vehicles<br>
+GET/POST /api/toll-events<br>
+GET/POST /api/transactions<br>
+GET/POST /api/violations<br>
+GET /api/reports/revenue
+          </div>
+        </div>
+        <div class="card">
+          <h3>Financial API</h3>
+          <div class="code-block">
+GET /api/financial/regions<br>
+GET /api/financial/daily-collection<br>
+GET /api/financial/revenue/by-region<br>
+GET /api/financial/settlement<br>
+GET /api/financial/reconciliation
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top: 16px;">
+        <div class="card">
+          <h3>Rate Limiting</h3>
+          <div class="spec-grid">
+            <div class="spec"><div class="spec-label">Auth</div><div class="spec-value">10 req / 15 min</div></div>
+            <div class="spec"><div class="spec-label">Global</div><div class="spec-value">100 req / 1 min</div></div>
+            <div class="spec"><div class="spec-label">Strict</div><div class="spec-value">5 req / 1 hour</div></div>
+            <div class="spec"><div class="spec-label">Swagger</div><div class="spec-value">/api-docs</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Security Features</h3>
+          <ul class="list">
+            <li>Helmet.js CSP in production</li>
+            <li>CORS restricted origins</li>
+            <li>JWT with configurable secret</li>
+            <li>Zod validation schemas</li>
+            <li>23 database indexes</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 17: Conclusion -->
+  <section class="slide" id="slide-17">
     <div style="max-width: 880px; margin: 0 auto; text-align: center;">
-      <div style="font-size: 54px; margin-bottom: 16px;">🛣️</div>
-      <div class="badge-tag green">TRANSFORMING HIGHWAY MOBILITY</div>
-      <h1 class="hero-title" style="font-size: 40px;">Empowering Intelligent, Safe & Automated Expressway Tolling</h1>
-      <p class="section-desc" style="margin: 0 auto 32px auto;">
-        Combining edge resilience, AI computer vision, and real-time cloud management to deliver a frictionless transit experience for millions of commuters.
+      <div style="font-size: 48px; margin-bottom: 12px;">🛣️</div>
+      <div class="badge green">COMPLETE SYSTEM SUMMARY</div>
+      <h1 class="hero" style="font-size: 36px;">Highway TollGate RFID Pass</h1>
+      <p class="desc" style="margin: 0 auto 24px auto;">
+        A production-deployed, full-stack intelligent highway toll management system with edge resilience, AI vision, financial reporting, and 4 frontend portals.
       </p>
 
-      <div class="grid-3" style="margin-bottom: 32px; text-align: left;">
-        <div class="dahua-card">
-          <h3>GitHub Repository</h3>
-          <p style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent-cyan);">
-            MinNyi83/Highway-TollGate-MGMT-
-          </p>
+      <div class="grid-4" style="margin-bottom: 24px; text-align: left;">
+        <div class="card">
+          <h3>7 Packages</h3>
+          <p>backend, frontend, customer-portal, financial-portal, shared, simulator, plaza-server</p>
         </div>
-        <div class="dahua-card">
-          <h3>Technology Core</h3>
-          <p style="font-size: 12px; color: var(--text-muted);">
-            React 18 · TypeScript · Prisma · PostgreSQL · SQLite · Docker
-          </p>
+        <div class="card">
+          <h3>3 Databases</h3>
+          <p>HQ, Customer, Plaza - isolated PostgreSQL instances with dedicated Prisma clients</p>
         </div>
-        <div class="dahua-card">
-          <h3>Live Demo URLs</h3>
-          <p style="font-size: 12px; color: var(--text-muted);">
-            Admin: :80 | Driver: :8080 | Financial: :8081
-          </p>
+        <div class="card">
+          <h3>4 Portals</h3>
+          <p>Admin Hub, Customer PWA, Financial Portal, Highway Simulator</p>
+        </div>
+        <div class="card">
+          <h3>8 Containers</h3>
+          <p>Docker Compose with health checks, auto-restart, and Portainer management</p>
+        </div>
+      </div>
+
+      <div class="grid-3" style="margin-bottom: 24px; text-align: left;">
+        <div class="card">
+          <h3>GitHub</h3>
+          <p style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent-cyan);">MinNyi83/Highway-TollGate-MGMT-</p>
+        </div>
+        <div class="card">
+          <h3>Live Demo</h3>
+          <p style="font-size: 11px;">Admin: :80 | Driver: :8080 | Financial: :8081</p>
+        </div>
+        <div class="card">
+          <h3>Server</h3>
+          <p style="font-size: 11px;">192.168.100.101 | Kali Linux | Docker</p>
         </div>
       </div>
 
       <div style="display: flex; justify-content: center; gap: 12px;">
-        <button class="header-btn primary" onclick="showSlide(0)">Replay Presentation ↺</button>
-        <button class="header-btn" onclick="switchViewMode('portal')">Explore Solution Portal 🌐</button>
+        <button class="header-btn primary" onclick="showSlide(0)">↺ Replay</button>
+        <a href="http://192.168.100.101:8081" target="_blank" class="header-btn">💰 Financial Portal</a>
+        <a href="http://192.168.100.101:8080" target="_blank" class="header-btn">📱 Customer Portal</a>
+        <a href="http://192.168.100.101:3000/api-docs" target="_blank" class="header-btn">📖 API Docs</a>
       </div>
     </div>
   </section>
 
 </main>
 
-<!-- ========================================================================= -->
-<!-- MODE 2: DAHUA WEB SOLUTION PORTAL (SCROLLABLE ENTERPRISE SHOWCASE)         -->
-<!-- ========================================================================= -->
-<div class="portal-container" id="portalContainer">
-
-  <!-- Sticky Subnav (Dahua Style) -->
-  <nav class="sticky-subnav">
-    <a href="#portalOverview" class="subnav-link active">Overview</a>
-    <a href="#portalScenario" class="subnav-link">Scenario Aerial View</a>
-    <a href="#portalChallenges" class="subnav-link">Challenges & Offers</a>
-    <a href="#portalTopology" class="subnav-link">System Topology</a>
-    <a href="#portalProducts" class="subnav-link">Product Recommendation</a>
-    <a href="#portalFinancial" class="subnav-link">Financial System</a>
-    <a href="#portalDeployment" class="subnav-link">Field Deployment</a>
-  </nav>
-
-  <!-- Section 1: Overview -->
-  <section class="portal-section" id="portalOverview">
-    <div class="badge-tag">DAHUA INTELLIGENT TRAFFIC MANAGEMENT</div>
-    <h2 class="section-title">Highway Intelligent Toll & Traffic Management Solution</h2>
-    <p class="section-desc">
-      Focus on expressway transportation safety, throughput efficiency, and revenue security. Provides an end-to-end ecosystem integrating high-speed RFID sensing, 4K ANPR optical plate recognition, Myanmar RTAD AI document scanning, and offline-first edge gateways.
-    </p>
-
-    <div class="stats-banner">
-      <div class="stat-item">
-        <div class="stat-num">99.8%</div>
-        <div class="stat-label">Identification Rate</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-num">5x</div>
-        <div class="stat-label">Lane Throughput Speed</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-num">100%</div>
-        <div class="stat-label">Offline Edge Resilience</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-num">352 M</div>
-        <div class="stat-label">Expressway Coverage</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Section 2: Scenario Aerial View -->
-  <section class="portal-section" id="portalScenario">
-    <div class="badge-tag green">SCENARIO AERIAL VIEW</div>
-    <h2 class="section-title">Corridor GIS & Plaza Hotspots</h2>
-    <p class="section-desc">Interactive geographical map spanning entry plazas, midpoint axle/weigh gantries, and central cloud headquarters.</p>
-
-    <div class="scenario-container">
-      <div class="map-view-box">
-        <div class="map-graphic">
-          <div class="dahua-pill-badge white-pill active" style="top: 60%; left: 48%;" onclick="selectHotspot(0)">
-            <div class="pill-num">2</div>
-            <span>Toll Plaza</span>
-          </div>
-          <div class="dahua-pill-badge green-pill" style="top: 48%; left: 34%;" onclick="selectHotspot(1)">
-            <div class="pill-num">1</div>
-            <span>General Road</span>
-          </div>
-          <div class="dahua-pill-badge blue-pill" style="top: 36%; left: 76%;" onclick="selectHotspot(2)">
-            <div class="pill-num">3</div>
-            <span>Bridge Gantry</span>
-          </div>
-          <div class="dahua-pill-badge blue-pill" style="top: 40%; left: 18%;" onclick="selectHotspot(3)">
-            <div class="pill-num">4</div>
-            <span>Tunnel System</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="scenario-detail-card">
-        <div class="scenario-detail-header">
-          <div class="badge-tag">DISTRIBUTED PLAZA ARCHITECTURE</div>
-          <div class="scenario-detail-title">Multi-Plaza Highway Deployment</div>
-          <p style="font-size: 13.5px; color: var(--text-muted); margin-top: 8px;">
-            Every toll plaza operates as an autonomous edge computing cluster with local SQLite database caching, local serial RFID reader interfaces, and automatic background queue synchronization.
-          </p>
-        </div>
-        <div class="grid-2" style="margin-top: 16px;">
-          <div class="spec-chip">
-            <div class="spec-chip-label">High-Speed RFID</div>
-            <div class="spec-chip-value">UHF EPC Gen2 915MHz</div>
-          </div>
-          <div class="spec-chip">
-            <div class="spec-chip-label">Optical Capture</div>
-            <div class="spec-chip-value">4K Starlight ANPR</div>
-          </div>
-          <div class="spec-chip">
-            <div class="spec-chip-label">Barrier Safety</div>
-            <div class="spec-chip-value">79GHz Radar Trigger</div>
-          </div>
-          <div class="spec-chip">
-            <div class="spec-chip-label">Failover Mode</div>
-            <div class="spec-chip-value">100% Offline Queuing</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Section 3: Challenges & What We Offer -->
-  <section class="portal-section" id="portalChallenges">
-    <div class="badge-tag red">CHALLENGES & WHAT WE OFFER</div>
-    <h2 class="section-title">Comparative Solution Matrix</h2>
-    <p class="section-desc">How our intelligent toll management system resolves key operational bottlenecks.</p>
-
-    <div class="grid-2">
-      <!-- Toll Plaza Scenario -->
-      <div class="dahua-card">
-        <h3 style="color: var(--accent-cyan); font-size: 18px; margin-bottom: 12px;">Scenario 1: Toll Plaza Entry & Exit Lanes</h3>
-        <div style="background: rgba(239, 68, 68, 0.1); border-left: 3px solid var(--accent-red); padding: 12px; border-radius: 4px; margin-bottom: 12px;">
-          <strong style="color: #fca5a5; font-size: 13px;">CHALLENGES:</strong>
-          <p style="font-size: 13px; color: #cbd5e1; margin-top: 4px;">Long vehicular queues at manual toll collection points; revenue leakage due to cash handling and vehicle misclassification; network outages halting gate barriers.</p>
-        </div>
-        <div style="background: rgba(16, 185, 129, 0.1); border-left: 3px solid var(--accent-green); padding: 12px; border-radius: 4px;">
-          <strong style="color: #86efac; font-size: 13px;">WHAT WE OFFER:</strong>
-          <p style="font-size: 13px; color: #cbd5e1; margin-top: 4px;">Dual RFID + ANPR automatic vehicle identification in &lt;150ms; offline-first edge Raspberry Pi local decision engine; instant MMQR dynamic booth code for low-balance accounts.</p>
-        </div>
-      </div>
-
-      <!-- General Highway Corridor -->
-      <div class="dahua-card">
-        <h3 style="color: var(--accent-cyan); font-size: 18px; margin-bottom: 12px;">Scenario 2: Corridor Traffic Monitoring & Vehicle Verification</h3>
-        <div style="background: rgba(239, 68, 68, 0.1); border-left: 3px solid var(--accent-red); padding: 12px; border-radius: 4px; margin-bottom: 12px;">
-          <strong style="color: #fca5a5; font-size: 13px;">CHALLENGES:</strong>
-          <p style="font-size: 13px; color: #cbd5e1; margin-top: 4px;">Unregistered vehicles, cloned plates, stolen RFID tags swapped onto larger trucks, and lack of real-time corridor visibility across 350+ miles of highway.</p>
-        </div>
-        <div style="background: rgba(16, 185, 129, 0.1); border-left: 3px solid var(--accent-green); padding: 12px; border-radius: 4px;">
-          <strong style="color: #86efac; font-size: 13px;">WHAT WE OFFER:</strong>
-          <p style="font-size: 13px; color: #cbd5e1; margin-top: 4px;">Myanmar RTAD AI OCR document scanner matching VIN & engine serials; Leaflet GIS live traffic telemetry; automatic violation snapshot workbench with photo proof.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Section 4: System Topology -->
-  <section class="portal-section" id="portalTopology">
-    <div class="badge-tag purple">SYSTEM ARCHITECTURE</div>
-    <h2 class="section-title">End-to-End System Topology & Data Flow</h2>
-    <p class="section-desc">Unified integration across sensors, edge computing, encrypted transport, central database, and client applications.</p>
-
-    <div class="topology-flow">
-      <div class="topology-layer">
-        <div class="topology-layer-tag">Layer 1: Edge Sensing</div>
-        <div class="topology-layer-items">
-          <div class="topo-node accent">UHF Long-Range RFID Reader</div>
-          <div class="topo-node accent">4K ANPR Starlight Camera</div>
-          <div class="topo-node accent">79GHz Anti-Smash Safety Radar</div>
-          <div class="topo-node">High-Speed Automatic Barrier</div>
-        </div>
-      </div>
-
-      <div class="topology-layer">
-        <div class="topology-layer-tag">Layer 2: Plaza Edge Nodes</div>
-        <div class="topology-layer-items">
-          <div class="topo-node green">Raspberry Pi 4 Edge Gateway</div>
-          <div class="topo-node green">Local SQLite Cache Engine</div>
-          <div class="topo-node green">Local Booth Operator Panel (:4000)</div>
-        </div>
-      </div>
-
-      <div class="topology-layer">
-        <div class="topology-layer-tag">Layer 3: Secure VPN & Sync</div>
-        <div class="topology-layer-items">
-          <div class="topo-node amber">IPsec / WireGuard VPN Tunnel</div>
-          <div class="topo-node amber">Exponential Backoff Delta Sync</div>
-          <div class="topo-node amber">Real-Time WebSocket Stream</div>
-        </div>
-      </div>
-
-      <div class="topology-layer">
-        <div class="topology-layer-tag">Layer 4: Central Cloud HQ</div>
-        <div class="topology-layer-items">
-          <div class="topo-node accent">PostgreSQL Master Cluster</div>
-          <div class="topo-node accent">HQ Core Express Engine (:3000)</div>
-          <div class="topo-node accent">Myanmar RTAD OCR Processor</div>
-          <div class="topo-node">Storage Server & Media Vault (:5000)</div>
-        </div>
-      </div>
-
-      <div class="topology-layer">
-        <div class="topology-layer-tag">Layer 5: Portals & Mobile Apps</div>
-        <div class="topology-layer-items">
-          <div class="topo-node">HQ Command Hub (Port 80)</div>
-          <div class="topo-node">Customer Portal PWA (Port 8080)</div>
-          <div class="topo-node">Highway 2D Canvas Simulator</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Section 5: Product Recommendation -->
-  <section class="portal-section" id="portalProducts">
-    <div class="badge-tag">PRODUCT RECOMMENDATION</div>
-    <h2 class="section-title">Hardware & Edge Appliance Catalog</h2>
-    <p class="section-desc">Dahua-grade hardware devices optimized for high-speed automated tolling and continuous highway surveillance.</p>
-
-    <div class="grid-4">
-      <div class="product-card">
-        <div class="product-img-box">
-          <div class="product-model-badge">DHI-ITC-RFID</div>
-          <img src="images/hardware/rfid_reader.jpg" class="product-real-img" alt="UHF RFID Interrogator">
-        </div>
-        <h4>UHF RFID Interrogator</h4>
-        <div class="product-series">860–960 MHz ISO 18000-6C</div>
-        <ul class="product-features-list">
-          <li>12 dBi Gain Antenna</li>
-          <li>Up to 12m Read Range</li>
-          <li>RS-232 / TCP-IP Interface</li>
-        </ul>
-      </div>
-
-      <div class="product-card">
-        <div class="product-img-box">
-          <div class="product-model-badge">DHI-ITC431</div>
-          <img src="images/hardware/anpr_camera.jpg" class="product-real-img" alt="4K AI ANPR Camera">
-        </div>
-        <h4>4K AI ANPR Camera</h4>
-        <div class="product-series">Starlight LPR Deep Learning</div>
-        <ul class="product-features-list">
-          <li>Myanmar Script OCR</li>
-          <li>Dual Shutter WDR 140dB</li>
-          <li>Motorized 10–50mm Lens</li>
-        </ul>
-      </div>
-
-      <div class="product-card">
-        <div class="product-img-box">
-          <div class="product-model-badge">ITS-RADAR-79G</div>
-          <img src="images/hardware/barrier_radar.jpg" class="product-real-img" alt="79 GHz Barrier Radar">
-        </div>
-        <h4>79 GHz Barrier Radar</h4>
-        <div class="product-series">Anti-Smashing Millimeter Wave</div>
-        <ul class="product-features-list">
-          <li>High Reliability & Safe Zone</li>
-          <li>Zero Cut Asphalt Installation</li>
-          <li>All-Weather IP67 Rated</li>
-        </ul>
-      </div>
-
-      <div class="product-card">
-        <div class="product-img-box">
-          <div class="product-model-badge">DHI-EDGE-RPI</div>
-          <img src="images/hardware/edge_gateway.jpg" class="product-real-img" alt="Industrial Edge Gateway">
-        </div>
-        <h4>Industrial Edge Gateway</h4>
-        <div class="product-series">Quad-Core Linux / SQLite</div>
-        <ul class="product-features-list">
-          <li>&lt;100ms Gate Trigger Latency</li>
-          <li>Local Delta Sync Queue</li>
-          <li>UPS Battery Backup Integration</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- Section 6: Financial System -->
-  <section class="portal-section" id="portalFinancial">
-    <div class="badge-tag green">FINANCIAL SYSTEM</div>
-    <h2 class="section-title">Financial Portal & Government Ministry Reporting</h2>
-    <p class="section-desc">Standalone financial reporting system with Myanmar/English language support, Excel exports, and approval workflows for government ministry compliance.</p>
-
-    <div class="grid-2">
-      <div class="dahua-card">
-        <h3 style="color: var(--accent-cyan); font-size: 18px; margin-bottom: 12px;">Financial Reports</h3>
-        <ul class="product-features-list">
-          <li>Daily Collection Statement (per-plaza revenue)</li>
-          <li>Toll Revenue by Region (15 Myanmar regions)</li>
-          <li>Wallet Deposits by Region (customer liabilities)</li>
-          <li>Vehicle Registration by Region</li>
-          <li>Pass-Through Volume by Plaza</li>
-          <li>Revenue Remittance to Treasury</li>
-          <li>Monthly Financial Reconciliation</li>
-          <li>Official Receipts</li>
-          <li>Fiscal Year Report (Apr–Mar)</li>
-        </ul>
-      </div>
-
-      <div class="dahua-card">
-        <h3 style="color: var(--accent-cyan); font-size: 18px; margin-bottom: 12px;">System Features</h3>
-        <ul class="product-features-list">
-          <li>Myanmar/English language toggle</li>
-          <li>Excel export on all pages</li>
-          <li>Approval workflow (Submit → Approve/Reject)</li>
-          <li>Role-based access (Admin, Manager, Viewer)</li>
-          <li>Copyright watermarks & footer</li>
-          <li>20+ REST API endpoints</li>
-          <li>Correct financial terminology</li>
-          <li>Fiscal year: April–March</li>
-        </ul>
-        <div style="background: rgba(6, 13, 26, 0.7); border: 1px solid var(--border-subtle); padding: 12px; border-radius: 8px; margin-top: 12px; font-family: 'JetBrains Mono', monospace; font-size: 11.5px;">
-          <div style="color: #10b981;">● URL: http://192.168.100.101:8081</div>
-          <div>Login: fin.admin@tollgate.com</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Section 7: Field Deployment -->
-  <section class="portal-section" id="portalDeployment" style="border-bottom: none;">
-    <div class="badge-tag green">FIELD DEPLOYMENT</div>
-    <h2 class="section-title">Deployment & Operational Management</h2>
-    <p class="section-desc">Containerized production deployment scripts for fast commissioning.</p>
-
-    <div class="grid-2">
-      <div class="dahua-card">
-        <h3>Cloud Central HQ Stack</h3>
-        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Includes HQ Command Hub UI, Customer Portal PWA, HQ API, PostgreSQL, and MinIO storage server.</p>
-        <div style="background: #040810; padding: 12px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #a5f3fc;">
-          chmod +x scripts/deploy-hq.sh<br>
-          ./scripts/deploy-hq.sh
-        </div>
-      </div>
-
-      <div class="dahua-card">
-        <h3>Raspberry Pi Plaza Edge Nodes</h3>
-        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Initializes local SQLite database, auto-configures serial RFID interfaces, and registers with central HQ cloud.</p>
-        <div style="background: #040810; padding: 12px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #a5f3fc;">
-          chmod +x scripts/deploy-plaza.sh<br>
-          ./scripts/deploy-plaza.sh plaza-001 "0-Mile" "0MILE" "http://hq:3000" "token"
-        </div>
-      </div>
-    </div>
-  </section>
-
-</div>
-
-<!-- ========================================================================= -->
-<!-- SLIDE DECK NAVIGATION BAR (BOTTOM)                                        -->
-<!-- ========================================================================= -->
-<footer class="deck-footer" id="deckFooter">
-  <div class="progress-track">
-    <div class="progress-bar" id="progressBar"></div>
-  </div>
-
-  <div style="display: flex; align-items: center; gap: 16px;">
-    <button class="drawer-toggle-btn" onclick="toggleDrawer()">
-      <span>📑 All Slides</span>
-    </button>
-    <div class="slide-counter">
-      Slide <strong id="currentSlideNum">1</strong> / <span id="totalSlideNum">15</span>
-    </div>
-  </div>
-
-  <div class="nav-buttons">
+<footer class="footer" id="deckFooter">
+  <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+  <div class="slide-counter">Slide <strong id="currentSlideNum">1</strong> / <span id="totalSlideNum">17</span></div>
+  <div style="display: flex; gap: 8px;">
     <button class="nav-btn" id="prevBtn" onclick="prevSlide()">← Prev</button>
     <button class="nav-btn" id="nextBtn" onclick="nextSlide()">Next →</button>
   </div>
 </footer>
 
-<!-- Slide Thumbnails Drawer -->
-<div class="slide-drawer" id="slideDrawer">
-  <!-- Generated dynamically in JavaScript -->
-</div>
-
-<!-- ================= JAVASCRIPT LOGIC ================= -->
 <script>
-// Slide state
 let currentSlide = 0;
 const slides = document.querySelectorAll('.slide');
 const totalSlides = slides.length;
 document.getElementById('totalSlideNum').textContent = totalSlides;
 
-const slideTitles = [
-  "Solution Title & Overview",
-  "Corridor GIS Aerial View",
-  "Industry Challenges",
-  "What We Offer",
-  "5-Tier System Topology",
-  "Myanmar RTAD AI OCR",
-  "Dual RFID + ANPR Verification",
-  "Offline-First Edge Sync",
-  "Customer Portal PWA",
-  "Central HQ Command Hub",
-  "Live Highway Simulator",
-  "Industrial Hardware Matrix",
-  "Field Deployment",
-  "Financial Portal & Reporting",
-  "Summary & Conclusion"
-];
-
-// Initialize Thumbnails Drawer
-const drawer = document.getElementById('slideDrawer');
-slideTitles.forEach((title, idx) => {
-  const card = document.createElement('div');
-  card.className = 'thumb-card' + (idx === 0 ? ' active' : '');
-  card.id = `thumb-${idx}`;
-  card.onclick = () => { showSlide(idx); toggleDrawer(); };
-  card.innerHTML = `
-    <div class="thumb-num">SLIDE ${idx + 1}</div>
-    <div class="thumb-title">${title}</div>
-  `;
-  drawer.appendChild(card);
-});
-
 function showSlide(index) {
   if (index < 0 || index >= totalSlides) return;
   slides[currentSlide].classList.remove('active');
-  const oldThumb = document.getElementById(`thumb-${currentSlide}`);
-  if (oldThumb) oldThumb.classList.remove('active');
-
   currentSlide = index;
   slides[currentSlide].classList.add('active');
-  const newThumb = document.getElementById(`thumb-${currentSlide}`);
-  if (newThumb) newThumb.classList.add('active');
-
   document.getElementById('currentSlideNum').textContent = currentSlide + 1;
   document.getElementById('prevBtn').disabled = currentSlide === 0;
   document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
-
-  // Update progress bar
-  const pct = ((currentSlide + 1) / totalSlides) * 100;
-  document.getElementById('progressBar').style.width = `${pct}%`;
-
-  // Start Canvas animation if on simulator slide
-  if (currentSlide === 10) {
-    initCanvas();
-  }
+  document.getElementById('progressBar').style.width = `${((currentSlide + 1) / totalSlides) * 100}%`;
 }
 
 function nextSlide() { showSlide(currentSlide + 1); }
 function prevSlide() { showSlide(currentSlide - 1); }
 
-function toggleDrawer() {
-  drawer.classList.toggle('open');
-}
-
-// View Mode Switcher
-function switchViewMode(mode) {
-  const deckContainer = document.getElementById('deckContainer');
-  const portalContainer = document.getElementById('portalContainer');
-  const deckFooter = document.getElementById('deckFooter');
-  const btnDeck = document.getElementById('btnDeckMode');
-  const btnPortal = document.getElementById('btnPortalMode');
-
-  if (mode === 'deck') {
-    deckContainer.style.display = 'flex';
-    portalContainer.classList.remove('active');
-    deckFooter.style.display = 'flex';
-    btnDeck.classList.add('active');
-    btnPortal.classList.remove('active');
-    document.body.style.overflow = 'hidden';
-  } else {
-    deckContainer.style.display = 'none';
-    portalContainer.classList.add('active');
-    deckFooter.style.display = 'none';
-    btnDeck.classList.remove('active');
-    btnPortal.classList.add('active');
-    document.body.style.overflow = 'auto';
-  }
-}
-
-// Keyboard Navigation
 document.addEventListener('keydown', (e) => {
-  // Only trigger in Deck Mode
-  if (document.getElementById('portalContainer').classList.contains('active')) return;
-
-  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
-    e.preventDefault();
-    nextSlide();
-  } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
-    e.preventDefault();
-    prevSlide();
-  } else if (e.key === 'Home') {
-    e.preventDefault();
-    showSlide(0);
-  } else if (e.key === 'End') {
-    e.preventDefault();
-    showSlide(totalSlides - 1);
-  } else if (e.key.toLowerCase() === 'f') {
-    toggleFullScreen();
-  }
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+  else if (e.key === 'Home') { e.preventDefault(); showSlide(0); }
+  else if (e.key === 'End') { e.preventDefault(); showSlide(totalSlides - 1); }
+  else if (e.key.toLowerCase() === 'f') { toggleFullScreen(); }
 });
 
-// Fullscreen Toggle
 function toggleFullScreen() {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen().catch(() => {});
-  } else {
-    if (document.exitFullscreen) document.exitFullscreen();
-  }
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
+  else if (document.exitFullscreen) document.exitFullscreen();
 }
 
-// Hotspot Data & Interactivity
-const hotspotData = [
-  {
-    title: "0-Mile Express Toll Plaza",
-    badge: "ENTRY/EXIT MULTI-LANE GATEWAY",
-    desc: "Primary expressway gateway with high-gain UHF RFID interrogators, 4K Starlight ANPR cameras, 79GHz safety barrier radars, and automated payment kiosks.",
-    lanes: "4 Lanes (2 UP / 2 DN)",
-    rate: "< 100ms per vehicle",
-    hw: "RPi 4 + Serial UHF RFID",
-    db: "SQLite + Zero-Loss Queue"
-  },
-  {
-    title: "Bago 39-Mile Axle & Weigh Check",
-    badge: "WEIGHT-IN-MOTION & AXLE COUNTING",
-    desc: "Intermediate corridor inspection point equipped with automated axle counting and optical vehicle classification to verify commercial truck tolls.",
-    lanes: "2 High-Speed Lanes",
-    rate: "< 120ms Classification",
-    hw: "Edge AI Cam + Axle Sensor",
-    db: "SQLite Edge Buffer"
-  },
-  {
-    title: "Phyu 115-Mile Free-Flow Gantry",
-    badge: "MULTI-LANE FREE-FLOW (MLFF)",
-    desc: "High-speed overhead gantry capturing non-stop transit at speeds up to 100 km/h with dual-camera optical redundancy and high-speed UHF arrays.",
-    lanes: "4 Free-Flow Lanes",
-    rate: "< 80ms Gantry Transit",
-    hw: "Dual 4K Starlight ANPR",
-    db: "Real-Time Telemetry Stream"
-  },
-  {
-    title: "Central Cloud HQ & Command Center",
-    badge: "CENTRALIZED MONITORING & SURVEILLANCE",
-    desc: "Cloud command cluster consolidating real-time highway GIS maps, Myanmar RTAD OCR engine, operator shift management, and automated violation audits.",
-    lanes: "Corridor-Wide Hub",
-    rate: "Real-Time WebSockets",
-    hw: "Cluster / MinIO Storage",
-    db: "PostgreSQL Master Cluster"
-  }
-];
-
-function selectHotspot(index) {
-  const pills = document.querySelectorAll('.dahua-pill-badge');
-  pills.forEach((p, idx) => {
-    if (idx === index || p.id === `pill-${index}`) p.classList.add('active');
-    else p.classList.remove('active');
-  });
-
-  const data = hotspotData[index];
-  document.getElementById('hotspotTitle').textContent = data.title;
-  document.getElementById('hotspotBadge').textContent = data.badge;
-  document.getElementById('hotspotDesc').textContent = data.desc;
-  document.getElementById('hotspotLanes').textContent = data.lanes;
-  document.getElementById('hotspotRate').textContent = data.rate;
-  document.getElementById('hotspotHw').textContent = data.hw;
-  document.getElementById('hotspotDb').textContent = data.db;
-}
-
-// -------------------------------------------------------------
-// Interactive 2D Canvas Highway Simulator
-// -------------------------------------------------------------
-let canvas, ctx, animId;
-let cars = [];
-let simSpeed = 1;
-
-function initCanvas() {
-  canvas = document.getElementById('tollCanvas');
-  if (!canvas) return;
-  ctx = canvas.getContext('2d');
-  
-  // Resize to match container
-  const rect = canvas.parentElement.getBoundingClientRect();
-  canvas.width = rect.width;
-  canvas.height = rect.height;
-
-  // Initialize initial cars
-  cars = [
-    { x: 30, y: 40, speed: 2.2, color: '#00d2ff', type: 'Sedan', tag: 'RFID-9812', scanned: false },
-    { x: 180, y: 90, speed: 1.8, color: '#10b981', type: 'SUV', tag: 'RFID-4501', scanned: false },
-    { x: 80, y: 140, speed: 1.4, color: '#f59e0b', type: 'Truck', tag: 'RFID-1129', scanned: false },
-    { x: 260, y: 190, speed: 2.0, color: '#8b5cf6', type: 'Bus', tag: 'RFID-3899', scanned: false }
-  ];
-
-  if (!animId) {
-    renderCanvas();
-  }
-}
-
-function addSimCar() {
-  const lanes = [40, 90, 140, 190];
-  const types = [
-    { type: 'Sedan', color: '#00d2ff', speed: 2.2 },
-    { type: 'SUV', color: '#10b981', speed: 1.9 },
-    { type: 'Truck', color: '#f59e0b', speed: 1.5 },
-    { type: 'Bus', color: '#8b5cf6', speed: 1.7 }
-  ];
-  const laneY = lanes[Math.floor(Math.random() * lanes.length)];
-  const t = types[Math.floor(Math.random() * types.length)];
-  cars.push({
-    x: 0,
-    y: laneY,
-    speed: t.speed,
-    color: t.color,
-    type: t.type,
-    tag: 'RFID-' + Math.floor(1000 + Math.random() * 9000),
-    scanned: false
-  });
-}
-
-function toggleSimSpeed() {
-  simSpeed = simSpeed === 1 ? 2 : 1;
-}
-
-function renderCanvas() {
-  if (!ctx || !canvas) return;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  const w = canvas.width;
-  const h = canvas.height;
-  const boothX = w * 0.55;
-
-  // Draw 4 Lanes
-  const laneHeight = h / 4;
-  for (let i = 0; i < 4; i++) {
-    const y = i * laneHeight;
-    ctx.fillStyle = i % 2 === 0 ? '#0b162c' : '#081124';
-    ctx.fillRect(0, y, w, laneHeight);
-
-    // Lane divider
-    if (i > 0) {
-      ctx.strokeStyle = '#1e3a66';
-      ctx.lineWidth = 1;
-      ctx.setLineDash([8, 8]);
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(w, y);
-      ctx.stroke();
-      ctx.setLineDash([]);
-    }
-  }
-
-  // Draw Toll Booth Barrier line
-  ctx.strokeStyle = '#0070ba';
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.moveTo(boothX, 0);
-  ctx.lineTo(boothX, h);
-  ctx.stroke();
-
-  // Draw RFID Antenna Sensors
-  ctx.fillStyle = '#00d2ff';
-  for (let i = 0; i < 4; i++) {
-    const y = i * laneHeight + laneHeight / 2;
-    ctx.beginPath();
-    ctx.arc(boothX - 25, y, 5, 0, Math.PI * 2);
-    ctx.fill();
-
-    // RFID Sensor wave
-    ctx.strokeStyle = 'rgba(0, 210, 255, 0.4)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.arc(boothX - 25, y, 16, -Math.PI / 3, Math.PI / 3);
-    ctx.stroke();
-  }
-
-  // Update & Draw Vehicles
-  for (let i = 0; i < cars.length; i++) {
-    const car = cars[i];
-    car.x += car.speed * simSpeed;
-
-    // Scan pulse at toll booth
-    if (car.x >= boothX - 50 && car.x <= boothX + 10) {
-      car.scanned = true;
-      ctx.strokeStyle = '#10b981';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(car.x + 16, car.y, 22, 0, Math.PI * 2);
-      ctx.stroke();
-
-      // Tag Label popup
-      ctx.fillStyle = '#10b981';
-      ctx.font = '10px JetBrains Mono';
-      ctx.fillText(`✓ PASS: ${car.tag}`, car.x - 10, car.y - 14);
-    }
-
-    // Wrap around
-    if (car.x > w + 40) {
-      car.x = -40;
-      car.scanned = false;
-    }
-
-    // Vehicle body
-    ctx.fillStyle = car.color;
-    ctx.beginPath();
-    ctx.roundRect(car.x, car.y - 8, 36, 16, 4);
-    ctx.fill();
-
-    // Headlights
-    ctx.fillStyle = '#fef08a';
-    ctx.fillRect(car.x + 34, car.y - 6, 2, 4);
-    ctx.fillRect(car.x + 34, car.y + 2, 2, 4);
-  }
-
-  animId = requestAnimationFrame(renderCanvas);
-}
-
-// Initial setup
 showSlide(0);
 </script>
 </body>
