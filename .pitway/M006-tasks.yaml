@@ -1,0 +1,90 @@
+schema_version: 1
+tasks:
+  - id: T001
+    name: Verify all login credentials
+    objective: Test all user login credentials to ensure they work correctly
+    status: ready
+    depends_on: []
+    acceptance_criteria:
+      - Admin login (admin@tollgate.com) returns JWT token
+      - Customer login (ko.min@personal.com) returns JWT token
+      - Financial admin login (fin.admin@tollgate.com) returns JWT token
+      - Financial manager login (fin.manager@tollgate.com) returns JWT token
+      - Financial viewer login (fin.viewer@tollgate.com) returns JWT token
+    relevant_files: []
+    verification:
+      strategy: command
+      detail: "curl -s -X POST http://localhost:3000/api/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"fin.admin@tollgate.com\",\"password\":\"password123\"}' | grep -q token"
+    result: null
+    attempts: 0
+    usage: null
+  - id: T002
+    name: Verify presentation deployment
+    objective: Confirm the presentation is accessible and updated
+    status: ready
+    depends_on: []
+    acceptance_criteria:
+      - Presentation accessible at http://192.168.100.101/presentation.html
+      - Returns HTTP 200
+      - Contains all 17 slides
+    relevant_files: []
+    verification:
+      strategy: command
+      detail: "curl -s -o /dev/null -w '%{http_code}' http://192.168.100.101/presentation.html | grep -q 200"
+    result: null
+    attempts: 0
+    usage: null
+  - id: T003
+    name: Verify Docker containers health
+    objective: Check all 8 containers are running and healthy
+    status: ready
+    depends_on: []
+    acceptance_criteria:
+      - All 8 containers running
+      - Backend container healthy
+      - All database containers healthy
+    relevant_files: []
+    verification:
+      strategy: command
+      detail: "docker ps --format '{{.Names}}' | grep -c tollgate | grep -q 8"
+    result: null
+    attempts: 0
+    usage: null
+  - id: T004
+    name: Update documentation
+    objective: Update AGENTS.md, SKILL.md, and USER_GUIDE.md with latest changes
+    status: ready
+    depends_on:
+      - T001
+      - T002
+      - T003
+    acceptance_criteria:
+      - AGENTS.md reflects current system state
+      - SKILL.md updated with latest procedures
+      - USER_GUIDE.md includes all portals and features
+    relevant_files:
+      - AGENTS.md
+      - .agents/skills/tollgate-operations/SKILL.md
+      - USER_GUIDE.md
+    verification:
+      strategy: command
+      detail: "test -f AGENTS.md && test -f .agents/skills/tollgate-operations/SKILL.md && test -f USER_GUIDE.md"
+    result: null
+    attempts: 0
+    usage: null
+  - id: T005
+    name: Verify financial portal branding
+    objective: Confirm financial portal has correct branding and favicon
+    status: ready
+    depends_on: []
+    acceptance_criteria:
+      - Favicon loads without 404
+      - Copyright shows nyimin
+      - Login page displays correctly
+    relevant_files: []
+    verification:
+      strategy: command
+      detail: "curl -s -o /dev/null -w '%{http_code}' http://192.168.100.101:8081/vite.svg | grep -q 200"
+    result: null
+    attempts: 0
+    usage: null
