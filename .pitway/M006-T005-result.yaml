@@ -1,0 +1,2 @@
+summary: "Financial portal favicon loads without 404, copyright shows nyimin"
+evidence: "HTTP 200 OK for /vite.svg"

@@ -1,0 +1,2 @@
+summary: "Presentation deployed and accessible at http://192.168.100.101/presentation.html"
+evidence: "HTTP 200 OK, 17 slides present"

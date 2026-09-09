@@ -1,0 +1,2 @@
+summary: "All 7 tollgate containers running + portainer = 8 total containers healthy"
+evidence: "docker ps shows all containers Up and healthy"
