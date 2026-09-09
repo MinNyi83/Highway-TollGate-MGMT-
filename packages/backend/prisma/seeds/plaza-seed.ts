@@ -61,17 +61,18 @@ async function main() {
   // Create sync statuses
   const entityTypes = ['VEHICLE', 'TOLL_EVENT', 'VIOLATION', 'DEVICE_STATUS'];
   for (const entityType of entityTypes) {
-    await prisma.syncStatus.upsert({
-      where: { entityType },
-      update: {},
-      create: {
-        entityType,
-        lastSyncAt: null,
-        lastSyncId: null,
-        recordsSynced: 0,
-        status: 'IDLE',
-      },
-    });
+    const existing = await prisma.syncStatus.findFirst({ where: { entityType } });
+    if (!existing) {
+      await prisma.syncStatus.create({
+        data: {
+          entityType,
+          lastSyncAt: null,
+          lastSyncId: null,
+          recordsSynced: 0,
+          status: 'IDLE',
+        },
+      });
+    }
   }
 
   // Create device configs
