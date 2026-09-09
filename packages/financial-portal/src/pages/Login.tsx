@@ -34,7 +34,7 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-command relative overflow-hidden">
       <div className="absolute top-20 left-20 w-72 h-72 bg-brand rounded-full opacity-20 blur-3xl" />
       <div className="absolute bottom-20 right-20 w-96 h-96 bg-brand rounded-full opacity-20 blur-3xl" />
-      <div className="absolute bottom-4 left-4 text-[10px] text-white/20 select-none pointer-events-none">© 2026 TollGate Myanmar</div>
+      <div className="absolute bottom-4 left-4 text-[10px] text-white/20 select-none pointer-events-none">© 2026 nyimin</div>
       <div className="absolute top-4 right-4 text-[10px] text-white/20 select-none pointer-events-none">Licensed Software - Unauthorized Use Prohibited</div>
 
       <div className="relative z-10 glass-card rounded-2xl p-10 w-full max-w-md">

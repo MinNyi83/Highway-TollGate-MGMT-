@@ -332,8 +332,9 @@ GET /api/financial/export/:type
   - `POST /api/reports/revenue/transfers/batch-confirm`: Batch confirm pending plazas.
 
 ### Dahua Highway Solution Presentation & Web Portal (`/presentation.html`)
-- **Dual-Mode Switcher**: Slide Deck Mode (14 slides) and Web Solution Portal Mode.
+- **Dual-Mode Switcher**: Slide Deck Mode (15 slides) and Web Solution Portal Mode.
 - **3D Isometric Scenario Digital Twin**: High-resolution 3D cutaway rendering.
+- **Financial Portal Slide**: Slide 14 covers Financial Portal & Government Reporting.
 
 ### Myanmar RTAD Wheel Tax OCR & Auto-Fill (`/api/ocr/scan-wheel-tax`)
 - **Dual-Side Support**: Scans both Front and Back of Myanmar RTAD cards.

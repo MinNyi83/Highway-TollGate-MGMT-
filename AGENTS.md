@@ -117,6 +117,9 @@ docker compose restart backend
 
 # Rebuild a single service
 docker compose up -d --build backend
+
+# Rebuild frontend with updated presentation
+docker compose up -d --build frontend
 ```
 
 ### Remote Server Deployment (Kali Linux)
@@ -197,3 +200,4 @@ curl -s http://localhost:3000/api/health/ready
 | Prisma client outdated | Run `npx prisma generate` |
 | Migration not applied | Run `npx prisma migrate deploy` |
 | Frontend 404 on reload | Check nginx conf has SPA fallback (`try_files`) |
+| Presentation not updated | Rebuild frontend: `docker compose up -d --build frontend` |

@@ -93,7 +93,7 @@ export default function Layout({ children }: LayoutProps) {
 
         <footer className="border-t border-slate-200 dark:border-white/10 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm px-6 py-3">
           <div className="flex items-center justify-between text-xs text-slate-400 dark:text-slate-500">
-            <span>© 2026 TollGate Myanmar. All rights reserved.</span>
+            <span>© 2026 nyimin. All rights reserved.</span>
             <span>TollGate RFID Pass Financial System v1.0</span>
           </div>
         </footer>
