@@ -19,6 +19,9 @@ import ComparisonReport from './pages/ComparisonReport';
 import PlazaPerformance from './pages/PlazaPerformance';
 import ViolationAnalytics from './pages/ViolationAnalytics';
 import RevenueForecast from './pages/RevenueForecast';
+import RevenueHeatmap from './pages/RevenueHeatmap';
+import TransactionSearch from './pages/TransactionSearch';
+import SettlementPipeline from './pages/SettlementPipeline';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -57,6 +60,9 @@ function App() {
                       <Route path="/plaza-performance" element={<PlazaPerformance />} />
                       <Route path="/violations" element={<ViolationAnalytics />} />
                       <Route path="/forecast" element={<RevenueForecast />} />
+                      <Route path="/heatmap" element={<RevenueHeatmap />} />
+                      <Route path="/transactions" element={<TransactionSearch />} />
+                      <Route path="/settlement-pipeline" element={<SettlementPipeline />} />
                       <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                   </Layout>

@@ -757,6 +757,159 @@ router.get('/forecast', authMiddleware, async (req: Request, res: Response) => {
   }
 });
 
+// Revenue Heatmap (hourly/daily patterns)
+router.get('/heatmap', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { hqPrisma } = await import('../../config/database');
+    const { days } = req.query;
+    const numDays = parseInt(days as string) || 30;
+
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - numDays);
+
+    const events = await hqPrisma.tollEvent.findMany({
+      where: { entryTime: { gte: startDate } },
+      select: { entryTime: true, amount: true },
+    });
+
+    const hourlyByDay = Array.from({ length: 7 }, () => Array(24).fill(0));
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+    for (const event of events) {
+      const day = event.entryTime.getDay();
+      const hour = event.entryTime.getHours();
+      hourlyByDay[day][hour] += Number(event.amount || 0);
+    }
+
+    const heatmap = dayNames.map((day, dayIndex) => ({
+      day,
+      dayIndex,
+      hours: hourlyByDay[dayIndex].map((revenue, hour) => ({
+        hour,
+        revenue: Math.round(revenue),
+        label: `${hour}:00`,
+      })),
+    }));
+
+    const totalRevenue = events.reduce((sum, e) => sum + Number(e.amount || 0), 0);
+    const peakHour = events.length > 0 ? (() => {
+      const hourCounts = Array(24).fill(0);
+      events.forEach(e => hourCounts[e.entryTime.getHours()]++);
+      return hourCounts.indexOf(Math.max(...hourCounts));
+    })() : 0;
+
+    const peakDay = events.length > 0 ? (() => {
+      const dayCounts = Array(7).fill(0);
+      events.forEach(e => dayCounts[e.entryTime.getDay()]++);
+      return dayNames[dayCounts.indexOf(Math.max(...dayCounts))];
+    })() : 'N/A';
+
+    res.json({ heatmap, totalRevenue, peakHour, peakDay, totalEvents: events.length });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to generate heatmap' });
+  }
+});
+
+// Transaction Search
+router.get('/transactions', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { hqPrisma } = await import('../../config/database');
+    const { plate, plazaId, startDate, endDate, page = '1', limit = '50' } = req.query;
+
+    const pageNum = parseInt(page as string);
+    const limitNum = parseInt(limit as string);
+    const skip = (pageNum - 1) * limitNum;
+
+    const where: any = {};
+    if (plate) where.anprPlate = { contains: plate as string, mode: 'insensitive' };
+    if (plazaId) where.plazaId = plazaId as string;
+    if (startDate || endDate) {
+      where.entryTime = {};
+      if (startDate) where.entryTime.gte = new Date(startDate as string);
+      if (endDate) where.entryTime.lte = new Date(endDate as string);
+    }
+
+    const [transactions, total] = await Promise.all([
+      hqPrisma.tollEvent.findMany({
+        where,
+        include: { vehicle: true, plaza: true },
+        orderBy: { entryTime: 'desc' },
+        skip,
+        take: limitNum,
+      }),
+      hqPrisma.tollEvent.count({ where }),
+    ]);
+
+    res.json({
+      data: transactions.map(t => ({
+        id: t.id,
+        plate: t.anprPlate,
+        vehicleClass: t.vehicle?.vehicleClass,
+        plaza: t.plaza?.name,
+        entryTime: t.entryTime,
+        exitTime: t.exitTime,
+        amount: Number(t.amount || 0),
+        status: t.status,
+      })),
+      pagination: {
+        page: pageNum,
+        limit: limitNum,
+        total,
+        pages: Math.ceil(total / limitNum),
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to search transactions' });
+  }
+});
+
+// Settlement Pipeline
+router.get('/settlement-pipeline', authMiddleware, async (_req: Request, res: Response) => {
+  try {
+    const { hqPrisma } = await import('../../config/database');
+
+    const [pending, confirmed, allTime] = await Promise.all([
+      hqPrisma.revenueTransfer.count({ where: { status: 'PENDING' } }),
+      hqPrisma.revenueTransfer.count({ where: { status: 'CONFIRMED' } }),
+      hqPrisma.revenueTransfer.count(),
+    ]);
+
+    const totalPending = await hqPrisma.revenueTransfer.aggregate({
+      where: { status: 'PENDING' },
+      _sum: { amount: true },
+    });
+
+    const totalConfirmed = await hqPrisma.revenueTransfer.aggregate({
+      where: { status: 'CONFIRMED' },
+      _sum: { amount: true },
+    });
+
+    const recentTransfers = await hqPrisma.revenueTransfer.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: 10,
+    });
+
+    const byStatus = [
+      { status: 'PENDING', count: pending, amount: Number(totalPending._sum.amount || 0) },
+      { status: 'CONFIRMED', count: confirmed, amount: Number(totalConfirmed._sum.amount || 0) },
+    ];
+
+    res.json({
+      summary: { pending, confirmed, total: allTime },
+      byStatus,
+      recentTransfers: recentTransfers.map(t => ({
+        id: t.id,
+        amount: Number(t.amount || 0),
+        status: t.status,
+        createdAt: t.createdAt,
+        confirmedAt: t.confirmedAt,
+      })),
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch settlement pipeline' });
+  }
+});
+
 // Financial Alerts
 router.get('/alerts', authMiddleware, async (_req: Request, res: Response) => {
   try {

@@ -15,6 +15,9 @@ import {
   MapPin,
   AlertTriangle,
   TrendingUp,
+  Grid,
+  Search,
+  GitBranch,
 } from 'lucide-react';
 import { useLanguage } from '../i18n';
 
@@ -33,6 +36,9 @@ const navItems = [
   { to: '/plaza-performance', icon: MapPin, label: 'Plaza Performance', labelMyanmar: 'ဂိတ်ရုံး စွမ်းဆောင်ရည်' },
   { to: '/violations', icon: AlertTriangle, label: 'Violation Analytics', labelMyanmar: 'ဖောက်ဖျက်မှု ခွဲခြမ်းစိတ်ဖြာ' },
   { to: '/forecast', icon: TrendingUp, label: 'Revenue Forecast', labelMyanmar: 'ဝင်ငွေ ခန့်မှန်းချက်' },
+  { to: '/heatmap', icon: Grid, label: 'Revenue Heatmap', labelMyanmar: 'ဝင်ငွေ မြေပုံ' },
+  { to: '/transactions', icon: Search, label: 'Transaction Search', labelMyanmar: 'ငွေပေးချေမှု ရှာဖွေ' },
+  { to: '/settlement-pipeline', icon: GitBranch, label: 'Settlement Pipeline', labelMyanmar: 'ငွေလွှဲ လုပ်ငန်းစဉ်' },
   { to: '/audit-log', icon: Shield, label: 'Audit Trail', labelMyanmar: 'စစ်ဆေးမှု မှတ်တမ်း' },
 ];
 
