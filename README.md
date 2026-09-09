@@ -15,20 +15,24 @@ A distributed, enterprise-grade highway toll management system with RFID + ANPR 
 ┌─────────────────────────────────────────────────────────────────┐
 │                        CLOUD (HQ)                               │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐  │
-│  │  HQ Command  │  │  Customer    │  │  Main Database       │  │
-│  │  Hub (Admin) │  │  Portal PWA  │  │  (PostgreSQL)        │  │
-│  │  (Port 80)   │  │  (Port 8080) │  │  (Port 5432)         │  │
-│  └──────┬───────┘  └──────┬───────┘  └──────────┬───────────┘  │
-│         │                  │                      │             │
-│  ┌──────┴──────────────────┴──────────────────────┴───────────┐ │
-│  │              HQ API Server (Node.js/Express)               │ │
-│  │  - Myanmar RTAD OCR  - Revenue Settlement - Delta sync     │ │
-│  └────────────────────────┬───────────────────────────────────┘ │
-│                           │                                     │
-│  ┌────────────────────────┴───────────────────────────────────┐ │
-│  │              Storage Server (Port 5000)                    │ │
-│  │  - Vehicle photos  - ANPR captures  - Documents           │ │
-│  └────────────────────────────────────────────────────────────┘ │
+│  │  HQ Command  │  │  Customer    │  │  HQ Database         │  │
+│  │  Hub (Admin) │  │  Portal PWA  │  │  (PostgreSQL :5432)  │  │
+│  │  (Port 80)   │  │  (Port 8080) │  │  vehicles, events,   │  │
+│  └──────┬───────┘  └──────┬───────┘  │  violations, plazas  │  │
+│         │                  │          └──────────┬───────────┘  │
+│  ┌──────┴──────────────────┴─────────────────────┴───────────┐  │
+│  │              HQ API Server (Node.js/Express)               │  │
+│  │  ┌─────────────┐  ┌──────────────┐  ┌──────────────────┐  │  │
+│  │  │  hqPrisma   │  │customerPrisma│  │  plazaPrisma     │  │  │
+│  │  └──────┬──────┘  └──────┬───────┘  └───────┬──────────┘  │  │
+│  └─────────┼────────────────┼───────────────────┼─────────────┘  │
+│            │                │                   │                │
+│  ┌─────────▼──────┐  ┌─────▼────────┐  ┌──────▼────────────┐  │
+│  │  HQ DB (:5432) │  │Customer DB   │  │ Plaza DB          │  │
+│  │  tollgate       │  │(:5433)       │  │ (:5434)           │  │
+│  │                 │  │tollgate_     │  │ tollgate_plaza     │  │
+│  │                 │  │customer      │  │                    │  │
+│  └────────────────┘  └──────────────┘  └────────────────────┘  │
 └───────────────────────────┬─────────────────────────────────────┘
                             │ Internet / VPN / 4G
         ┌───────────────────┼───────────────────┐
@@ -36,7 +40,7 @@ A distributed, enterprise-grade highway toll management system with RFID + ANPR 
 ┌───────┴──────┐  ┌────────┴───────┐  ┌───────┴──────┐
 │  Plaza 01    │  │  Plaza 02      │  │  Plaza N     │
 │  (0-Mile)    │  │  (Bago 39M)    │  │  (Mandalay)  │
-│  SQLite      │  │  SQLite        │  │  SQLite      │
+│  PostgreSQL  │  │  PostgreSQL    │  │  PostgreSQL  │
 │  RFID Reader │  │  RFID Reader   │  │  RFID Reader │
 │  Sync Engine │  │  Sync Engine   │  │  Sync Engine │
 │  Booth Panel │  │  Booth Panel   │  │  Booth Panel │
@@ -56,6 +60,9 @@ A distributed, enterprise-grade highway toll management system with RFID + ANPR 
 | **API Documentation** | `3000` | `http://<HOST>:3000/api-docs` | Swagger UI for API exploration |
 | **File Storage Server** | `5000` | `http://<HOST>:5000` | Vehicle photos, ANPR captures, violation proofs |
 | **Toll Simulator** | `80` | `http://<HOST>/simulator` | Live animated multi-lane canvas highway simulator |
+| **HQ Database** | `5432` | `postgresql://<HOST>:5432/tollgate` | Core toll operations: vehicles, events, violations |
+| **Customer Database** | `5433` | `postgresql://<HOST>:5433/tollgate_customer` | Customer accounts, wallets, notifications |
+| **Plaza Database** | `5434` | `postgresql://<HOST>:5434/tollgate_plaza` | Plaza sync queue, local events, device config |
 
 ---
 

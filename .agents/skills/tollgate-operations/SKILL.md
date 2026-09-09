@@ -15,23 +15,23 @@ This skill provides step-by-step procedures, standard operating instructions, an
 ┌─────────────────────────────────────────────────────────────────┐
 │                      CENTRAL HQ CLOUD                           │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐  │
-│  │ Admin Hub    │  │ Customer PWA │  │ PostgreSQL Database  │  │
-│  │ (Port 80)    │  │ (Port 8080)  │  │ (Port 5432)          │  │
-│  └──────┬───────┘  └──────┬───────┘  └──────────┬───────────┘  │
-│         │                  │                      │              │
-│  ┌──────┴──────────────────┴──────────────────────┴───────────┐  │
-│  │              HQ Backend API (Port 3000)                    │  │
-│  │  - Express / TypeScript / Prisma                           │  │
-│  │  - Helmet.js security + CORS + Rate Limiting              │  │
-│  │  - Myanmar RTAD OCR Document Parser (/api/ocr)             │  │
-│  │  - Day-by-Day Revenue Transfer & Settlement (/api/reports) │  │
-│  │  - WebSocket Telemetry & Payment Webhooks                  │  │
-│  └────────────────────────┬───────────────────────────────────┘  │
-│                           │                                      │
-│  ┌────────────────────────┴───────────────────────────────────┐  │
-│  │              Storage Server (Port 5000)                    │  │
-│  │  - Vehicle photos  - ANPR captures  - Documents           │  │
-│  └────────────────────────────────────────────────────────────┘  │
+│  │ Admin Hub    │  │ Customer PWA │  │ HQ Database          │  │
+│  │ (Port 80)    │  │ (Port 8080)  │  │ PostgreSQL :5432     │  │
+│  └──────┬───────┘  └──────┬───────┘  │ vehicles, events,    │  │
+│         │                  │          │ violations, plazas   │  │
+│  ┌──────┴──────────────────┴──────────┴──────────┬───────────┐  │
+│  │              HQ Backend API (Port 3000)        │           │  │
+│  │  ┌─────────────┐  ┌──────────────┐  ┌────────┴────────┐  │  │
+│  │  │  hqPrisma   │  │customerPrisma│  │  plazaPrisma    │  │  │
+│  │  └──────┬──────┘  └──────┬───────┘  └───────┬─────────┘  │  │
+│  └─────────┼────────────────┼───────────────────┼────────────┘  │
+│            │                │                   │               │
+│  ┌─────────▼──────┐  ┌─────▼────────┐  ┌──────▼───────────┐  │
+│  │  HQ DB (:5432) │  │Customer DB   │  │ Plaza DB         │  │
+│  │  tollgate       │  │(:5433)       │  │ (:5434)          │  │
+│  │                 │  │tollgate_     │  │ tollgate_plaza    │  │
+│  │                 │  │customer      │  │                   │  │
+│  └────────────────┘  └──────────────┘  └───────────────────┘  │
 └───────────────────────────┬─────────────────────────────────────┘
                             │ Internet / VPN / 4G
         ┌───────────────────┼───────────────────┐
@@ -39,7 +39,7 @@ This skill provides step-by-step procedures, standard operating instructions, an
 ┌───────┴──────────┐ ┌──────┴──────────┐ ┌──────┴──────────┐
 │ Plaza 01 (0-Mile)│ │ Plaza 02 (Bago) │ │ Plaza N (Edge)  │
 │ - RPi / Edge     │ │ - RPi / Edge    │ │ - RPi / Edge    │
-│ - SQLite Cache   │ │ - SQLite Cache  │ │ - SQLite Cache  │
+│ - PostgreSQL     │ │ - PostgreSQL    │ │ - PostgreSQL    │
 │ - RFID + ANPR    │ │ - RFID + ANPR   │ │ - RFID + ANPR   │
 │ - Sync Engine    │ │ - Sync Engine   │ │ - Sync Engine   │
 └──────────────────┘ └─────────────────┘ └─────────────────┘
@@ -74,9 +74,9 @@ echo 1512 | sudo -S docker compose up -d --build
 docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
 ```
 
-### Database Migration
+### Database Migration (3 Databases)
 ```bash
-# Run pending migrations
+# Run pending migrations (HQ database - default)
 echo 1512 | sudo -S docker exec tollgate-rfid-backend-1 sh -c \
   'cd packages/backend && npx prisma migrate deploy'
 
@@ -84,9 +84,25 @@ echo 1512 | sudo -S docker exec tollgate-rfid-backend-1 sh -c \
 echo 1512 | sudo -S docker exec tollgate-rfid-backend-1 sh -c \
   'cd packages/backend && npx prisma migrate dev --name <migration_name> --create-only'
 
-# Seed database (fresh install only)
+# Seed HQ database (fresh install only)
 echo 1512 | sudo -S docker exec tollgate-rfid-backend-1 sh -c \
   'cd packages/backend && npx tsx prisma/seed.ts'
+
+# Seed Customer database
+echo 1512 | sudo -S docker exec tollgate-rfid-backend-1 sh -c \
+  'cd packages/backend && DATABASE_URL=postgresql://postgres:postgres@customer-db:5432/tollgate_customer npx tsx prisma/seeds/customer-seed.ts'
+
+# Seed Plaza database
+echo 1512 | sudo -S docker exec tollgate-rfid-backend-1 sh -c \
+  'cd packages/backend && DATABASE_URL=postgresql://postgres:postgres@plaza-db:5432/tollgate_plaza npx tsx prisma/seeds/plaza-seed.ts'
+
+# Push schema to Customer database (no migration)
+echo 1512 | sudo -S docker exec tollgate-rfid-backend-1 sh -c \
+  'cd packages/backend && DATABASE_URL=postgresql://postgres:postgres@customer-db:5432/tollgate_customer npx prisma db push --schema=prisma/schema.customer.prisma --accept-data-loss'
+
+# Push schema to Plaza database (no migration)
+echo 1512 | sudo -S docker exec tollgate-rfid-backend-1 sh -c \
+  'cd packages/backend && DATABASE_URL=postgresql://postgres:postgres@plaza-db:5432/tollgate_plaza npx prisma db push --schema=prisma/schema.plaza.prisma --accept-data-loss'
 ```
 
 ---
@@ -141,21 +157,22 @@ docker stats --format 'table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}'
 ```json
 {
   "status": "healthy",
-  "timestamp": "2026-09-06T00:19:07.517Z",
-  "uptime": 66.943,
-  "database": {
-    "status": "connected",
-    "latencyMs": 1
+  "timestamp": "2026-09-09T06:45:20.332Z",
+  "uptime": 69.269982444,
+  "databases": {
+    "hq": { "name": "hq", "status": "connected", "latencyMs": 2 },
+    "customer": { "name": "customer", "status": "connected", "latencyMs": 2 },
+    "plaza": { "name": "plaza", "status": "connected", "latencyMs": 2 }
   },
   "memory": {
     "total": 8188993536,
-    "free": 5286567936,
-    "usagePercent": "35.4"
+    "free": 6204076032,
+    "usagePercent": "24.2"
   },
   "cpu": {
     "model": "Intel(R) Core(TM) i5-6300HQ CPU @ 2.30GHz",
     "cores": 4,
-    "loadAvg": [1.88, 1.95, 0.94]
+    "loadAvg": [0.8, 0.47, 0.28]
   }
 }
 ```
@@ -190,16 +207,33 @@ NODE_ENV=test  # Rate limiter disabled
 
 ## 6. Database Indexes
 
-### Applied Indexes (23 total)
-- **Vehicles**: plate_number, status, approval_status, vehicle_class, created_at
-- **Accounts**: user_id, status, customer_type
-- **Toll Events**: vehicle_id, plaza_id, entry_time, status, anpr_plate
-- **Transactions**: account_id, event_id, status, type, created_at
-- **Violations**: vehicle_id, event_id, status, violation_type, created_at
+### Applied Indexes (23 total across HQ + Customer databases)
+- **Vehicles** (HQ): plate_number, status, approval_status, vehicle_class, created_at
+- **Accounts** (Customer): user_id, status, customer_type
+- **Toll Events** (HQ): vehicle_id, plaza_id, entry_time, status, anpr_plate
+- **Transactions** (HQ): account_id, event_id, status, type, created_at
+- **Violations** (HQ): vehicle_id, event_id, status, violation_type, created_at
+- **RFID Tags** (Customer): account_id, vehicle_id, tag_uid
+- **Notifications** (Customer): user_id, read
 
 ### Creating New Indexes
-1. Add `@@index([column])` to the model in `packages/backend/prisma/schema.prisma`
-2. Run migration: `npx prisma migrate dev --name add_<index_name>`
+1. Add `@@index([column])` to the model in the appropriate schema:
+   - HQ: `packages/backend/prisma/schema.prisma`
+   - Customer: `packages/customer-portal/prisma/schema.prisma`
+   - Plaza: `packages/plaza-server/prisma/schema.prisma`
+2. Run migration or push:
+   ```bash
+   # HQ database
+   npx prisma migrate dev --name add_<index_name>
+   
+   # Customer database (push)
+   DATABASE_URL=postgresql://postgres:postgres@customer-db:5432/tollgate_customer \
+     npx prisma db push --schema=prisma/schema.customer.prisma --accept-data-loss
+   
+   # Plaza database (push)
+   DATABASE_URL=postgresql://postgres:postgres@plaza-db:5432/tollgate_plaza \
+     npx prisma db push --schema=prisma/schema.plaza.prisma --accept-data-loss
+   ```
 3. Deploy: `npx prisma migrate deploy`
 
 ---
@@ -305,14 +339,16 @@ cd packages/frontend && npx tsc --noEmit
 
 | Symptom | Probable Cause | Resolution |
 |---|---|---|
-| Relation "User" does not exist | Fresh PostgreSQL instance unmigrated | Run `npx prisma migrate deploy` and `npx tsx prisma/seed.ts` |
+| Relation "User" does not exist | Fresh PostgreSQL instance unmigrated | Run `npx prisma migrate deploy` and seed all 3 databases |
 | Rate limit 429 error | Too many rapid requests | Wait for window to reset; check `NODE_ENV=test` skips |
 | CORS origin not allowed | Request from unauthorized origin | Add origin to `CORS_ORIGINS` env var or `ALLOWED_ORIGINS` in `app.ts` |
-| Health returns 503 | Database connection lost | Check `docker ps`, restart db container: `docker compose restart db` |
-| Prisma client outdated | Schema changed without regen | Run `npx prisma generate` |
+| Health returns 503 | One or more databases disconnected | Check `docker ps`, restart db container: `docker compose restart db customer-db plaza-db` |
+| Prisma client outdated | Schema changed without regen | Run `npx prisma generate` for HQ, customer, and plaza schemas |
 | Migration not applied | New migration created but not deployed | Run `npx prisma migrate deploy` |
 | Frontend 404 on reload | nginx missing SPA fallback | Check `try_files $uri /index.html` in nginx.conf |
 | Presentation page shows 404 | Missing presentation.html in web root | Copy `PRESENTATION.html` to `packages/frontend/dist/presentation.html` |
 | Plaza offline sync backlog | Network interruption between Plaza and HQ | Run `SyncService.forceSync()` or check `/api/sync/status` |
 | Container won't start | Port already in use | `docker compose down` then `docker compose up -d --build` |
 | DNS resolution fails on server | Missing nameserver | `echo 1512 | sudo -S sh -c 'echo nameserver 8.8.8.8 > /etc/resolv.conf'` |
+| Customer login fails | Wrong database client | Ensure auth routes use `customerPrisma` not `hqPrisma` |
+| Cross-database query fails | Using wrong Prisma client | Import correct client: `hqPrisma` for HQ, `customerPrisma` for customer |
