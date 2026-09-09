@@ -3,7 +3,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 COPY packages/shared/package.json ./packages/shared/
 COPY packages/financial-portal/package.json ./packages/financial-portal/
-RUN npm ci
+RUN npm install
 
 FROM node:20-alpine AS build
 WORKDIR /app
