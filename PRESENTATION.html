@@ -1583,8 +1583,43 @@ canvas#tollCanvas {
     </div>
   </section>
 
-  <!-- SLIDE 14: Conclusion & Q&A -->
+  <!-- SLIDE 14: Financial Portal & Government Reporting -->
   <section class="slide" id="slide-14">
+    <div>
+      <div class="badge-tag green">FINANCIAL SYSTEM · GOVERNMENT REPORTING</div>
+      <h2 class="section-title">Financial Portal & Ministry Reporting System</h2>
+      <p class="section-desc">Government ministry-compliant financial reporting with Myanmar/English language support, Excel exports, and approval workflows for revenue remittance and reconciliation.</p>
+
+      <div class="grid-3">
+        <div class="dahua-card">
+          <div class="card-header"><div class="card-icon green">📊</div></div>
+          <h3>10 Financial Reports</h3>
+          <p>Daily Collection Statement, Toll Revenue by Region, Wallet Deposits, Vehicle Registration, Pass-Through Volume, Revenue Remittance, Financial Reconciliation, Official Receipts, Fiscal Year Report.</p>
+        </div>
+
+        <div class="dahua-card">
+          <div class="card-header"><div class="card-icon green">🇲🇲</div></div>
+          <h3>Myanmar/English Toggle</h3>
+          <p>Full i18n support with correct financial terminology. Revenue = toll charges (income), Deposits = customer liabilities (not revenue). Fiscal year April–March.</p>
+        </div>
+
+        <div class="dahua-card">
+          <div class="card-header"><div class="card-icon green">✅</div></div>
+          <h3>Approval Workflow</h3>
+          <p>Monthly reconciliation with Submit → Approve/Reject flow. Role-based access: Financial Admin, Manager, Viewer. Official receipt generation.</p>
+        </div>
+      </div>
+
+      <div style="background: rgba(6, 13, 26, 0.7); border: 1px solid var(--border-subtle); padding: 16px; border-radius: 10px; margin-top: 20px; font-family: 'JetBrains Mono', monospace; font-size: 12px;">
+        <div style="color: #10b981; margin-bottom: 8px;">● FINANCIAL PORTAL: http://192.168.100.101:8081</div>
+        <div style="color: #cbd5e1;">15 Myanmar Regions · 20+ API Endpoints · Excel Export · Copyright Watermarks</div>
+        <div style="color: #cbd5e1;">Login: fin.admin@tollgate.com / password123</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 15: Conclusion & Q&A -->
+  <section class="slide" id="slide-15">
     <div style="max-width: 880px; margin: 0 auto; text-align: center;">
       <div style="font-size: 54px; margin-bottom: 16px;">🛣️</div>
       <div class="badge-tag green">TRANSFORMING HIGHWAY MOBILITY</div>
@@ -1609,14 +1644,14 @@ canvas#tollCanvas {
         <div class="dahua-card">
           <h3>Live Demo URLs</h3>
           <p style="font-size: 12px; color: var(--text-muted);">
-            Admin: :80 | Driver: :8080 | Simulator: :80/simulator
+            Admin: :80 | Driver: :8080 | Financial: :8081
           </p>
         </div>
       </div>
 
       <div style="display: flex; justify-content: center; gap: 12px;">
         <button class="header-btn primary" onclick="showSlide(0)">Replay Presentation ↺</button>
-        <button class="header-btn" onclick="switchViewMode('portal')">Explore Dahua Solution Portal 🌐</button>
+        <button class="header-btn" onclick="switchViewMode('portal')">Explore Solution Portal 🌐</button>
       </div>
     </div>
   </section>
@@ -1635,6 +1670,7 @@ canvas#tollCanvas {
     <a href="#portalChallenges" class="subnav-link">Challenges & Offers</a>
     <a href="#portalTopology" class="subnav-link">System Topology</a>
     <a href="#portalProducts" class="subnav-link">Product Recommendation</a>
+    <a href="#portalFinancial" class="subnav-link">Financial System</a>
     <a href="#portalDeployment" class="subnav-link">Field Deployment</a>
   </nav>
 
@@ -1880,7 +1916,49 @@ canvas#tollCanvas {
     </div>
   </section>
 
-  <!-- Section 6: Field Deployment -->
+  <!-- Section 6: Financial System -->
+  <section class="portal-section" id="portalFinancial">
+    <div class="badge-tag green">FINANCIAL SYSTEM</div>
+    <h2 class="section-title">Financial Portal & Government Ministry Reporting</h2>
+    <p class="section-desc">Standalone financial reporting system with Myanmar/English language support, Excel exports, and approval workflows for government ministry compliance.</p>
+
+    <div class="grid-2">
+      <div class="dahua-card">
+        <h3 style="color: var(--accent-cyan); font-size: 18px; margin-bottom: 12px;">Financial Reports</h3>
+        <ul class="product-features-list">
+          <li>Daily Collection Statement (per-plaza revenue)</li>
+          <li>Toll Revenue by Region (15 Myanmar regions)</li>
+          <li>Wallet Deposits by Region (customer liabilities)</li>
+          <li>Vehicle Registration by Region</li>
+          <li>Pass-Through Volume by Plaza</li>
+          <li>Revenue Remittance to Treasury</li>
+          <li>Monthly Financial Reconciliation</li>
+          <li>Official Receipts</li>
+          <li>Fiscal Year Report (Apr–Mar)</li>
+        </ul>
+      </div>
+
+      <div class="dahua-card">
+        <h3 style="color: var(--accent-cyan); font-size: 18px; margin-bottom: 12px;">System Features</h3>
+        <ul class="product-features-list">
+          <li>Myanmar/English language toggle</li>
+          <li>Excel export on all pages</li>
+          <li>Approval workflow (Submit → Approve/Reject)</li>
+          <li>Role-based access (Admin, Manager, Viewer)</li>
+          <li>Copyright watermarks & footer</li>
+          <li>20+ REST API endpoints</li>
+          <li>Correct financial terminology</li>
+          <li>Fiscal year: April–March</li>
+        </ul>
+        <div style="background: rgba(6, 13, 26, 0.7); border: 1px solid var(--border-subtle); padding: 12px; border-radius: 8px; margin-top: 12px; font-family: 'JetBrains Mono', monospace; font-size: 11.5px;">
+          <div style="color: #10b981;">● URL: http://192.168.100.101:8081</div>
+          <div>Login: fin.admin@tollgate.com</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 7: Field Deployment -->
   <section class="portal-section" id="portalDeployment" style="border-bottom: none;">
     <div class="badge-tag green">FIELD DEPLOYMENT</div>
     <h2 class="section-title">Deployment & Operational Management</h2>
@@ -1922,7 +2000,7 @@ canvas#tollCanvas {
       <span>📑 All Slides</span>
     </button>
     <div class="slide-counter">
-      Slide <strong id="currentSlideNum">1</strong> / <span id="totalSlideNum">14</span>
+      Slide <strong id="currentSlideNum">1</strong> / <span id="totalSlideNum">15</span>
     </div>
   </div>
 
@@ -1959,6 +2037,7 @@ const slideTitles = [
   "Live Highway Simulator",
   "Industrial Hardware Matrix",
   "Field Deployment",
+  "Financial Portal & Reporting",
   "Summary & Conclusion"
 ];
 
