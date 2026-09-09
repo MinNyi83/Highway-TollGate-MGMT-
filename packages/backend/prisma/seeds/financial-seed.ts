@@ -1,9 +1,17 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
-const prisma = new PrismaClient({
+// HQ Database — regions, plazas, vehicles, daily_collections, etc.
+const hqPrisma = new PrismaClient({
   datasources: {
     db: { url: process.env.DATABASE_URL },
+  },
+});
+
+// Customer Database — users, accounts (auth system reads from here)
+const customerPrisma = new PrismaClient({
+  datasources: {
+    db: { url: process.env.CUSTOMER_DATABASE_URL },
   },
 });
 
@@ -35,10 +43,10 @@ const PLAZA_REGION_MAP: Record<string, string> = {
 async function main() {
   console.log('🌱 Seeding financial data...');
 
-  // 1. Create regions
+  // 1. Create regions (HQ database)
   const regions: Record<string, string> = {};
   for (const r of MYANMAR_REGIONS) {
-    const region = await prisma.region.upsert({
+    const region = await hqPrisma.region.upsert({
       where: { code: r.code },
       update: { name: r.name, nameMyanmar: r.nameMyanmar, type: r.type },
       create: r,
@@ -47,12 +55,12 @@ async function main() {
   }
   console.log(`  ✅ ${MYANMAR_REGIONS.length} regions created`);
 
-  // 2. Assign plazas to regions
-  const plazas = await prisma.tollPlaza.findMany();
+  // 2. Assign plazas to regions (HQ database)
+  const plazas = await hqPrisma.tollPlaza.findMany();
   for (const plaza of plazas) {
     const regionCode = PLAZA_REGION_MAP[plaza.name];
     if (regionCode && regions[regionCode]) {
-      await prisma.tollPlaza.update({
+      await hqPrisma.tollPlaza.update({
         where: { id: plaza.id },
         data: { regionId: regions[regionCode] },
       });
@@ -60,22 +68,22 @@ async function main() {
   }
   console.log(`  ✅ ${plazas.length} plazas assigned to regions`);
 
-  // 3. Assign vehicles to regions (round-robin for sample data)
-  const vehicles = await prisma.vehicle.findMany();
+  // 3. Assign vehicles to regions (round-robin for sample data, HQ database)
+  const vehicles = await hqPrisma.vehicle.findMany();
   const regionCodes = Object.keys(regions);
   for (let i = 0; i < vehicles.length; i++) {
     const regionCode = regionCodes[i % regionCodes.length];
-    await prisma.vehicle.update({
+    await hqPrisma.vehicle.update({
       where: { id: vehicles[i].id },
       data: { regionId: regions[regionCode] },
     });
   }
   console.log(`  ✅ ${vehicles.length} vehicles assigned to regions`);
 
-  // 4. Create financial staff accounts
+  // 4. Create financial staff accounts (customer database — auth reads from here)
   const finPassword = await bcrypt.hash('password123', 10);
 
-  const finAdmin = await prisma.user.upsert({
+  const finAdmin = await customerPrisma.user.upsert({
     where: { email: 'fin.admin@tollgate.com' },
     update: {},
     create: {
@@ -87,7 +95,7 @@ async function main() {
     },
   });
 
-  const finManager = await prisma.user.upsert({
+  const finManager = await customerPrisma.user.upsert({
     where: { email: 'fin.manager@tollgate.com' },
     update: {},
     create: {
@@ -99,7 +107,7 @@ async function main() {
     },
   });
 
-  const finViewer = await prisma.user.upsert({
+  const finViewer = await customerPrisma.user.upsert({
     where: { email: 'fin.viewer@tollgate.com' },
     update: {},
     create: {
@@ -111,9 +119,9 @@ async function main() {
     },
   });
 
-  // Create accounts for financial staff
+  // Create accounts for financial staff (customer database)
   for (const user of [finAdmin, finManager, finViewer]) {
-    await prisma.account.upsert({
+    await customerPrisma.account.upsert({
       where: { accountNumber: `FIN-${user.role}-${user.id.slice(0, 8)}` },
       update: {},
       create: {
@@ -158,7 +166,7 @@ async function main() {
       const cashTrips = totalTrips - rfidTrips;
       const violationFines = Math.floor(Math.random() * 50000) + 10000;
 
-      await prisma.dailyCollection.upsert({
+      await hqPrisma.dailyCollection.upsert({
         where: { collectionDate_plazaId: { collectionDate: date, plazaId: plaza.id } },
         update: {},
         create: {
@@ -196,7 +204,7 @@ async function main() {
       const amount = baseRevenue + variance;
       const tripCount = Math.floor(amount / 3000);
 
-      await prisma.revenueTransfer.upsert({
+      await hqPrisma.revenueTransfer.upsert({
         where: { transferDate_plazaId: { transferDate: date, plazaId: plaza.id } },
         update: {},
         create: {
@@ -231,7 +239,7 @@ async function main() {
       const totalTrips = Math.floor(baseRevenue / 3000);
       const settled = m < today.getMonth() + 1 ? baseRevenue : 0;
 
-      await prisma.monthlyReconciliation.upsert({
+      await hqPrisma.monthlyReconciliation.upsert({
         where: { fiscalYear_month_regionId: { fiscalYear, month: m, regionId } },
         update: {},
         create: {
@@ -264,5 +272,6 @@ main()
     process.exit(1);
   })
   .finally(async () => {
-    await prisma.$disconnect();
+    await hqPrisma.$disconnect();
+    await customerPrisma.$disconnect();
   });
