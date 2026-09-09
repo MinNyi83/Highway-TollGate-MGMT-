@@ -131,7 +131,6 @@ async function main() {
         balance: 0,
         creditLimit: 0,
         status: 'ACTIVE',
-        regionId: regions['NPT'],
       },
     });
   }
