@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { en } from './en';
-import { my } from './my';
+import en from './en';
+import my from './my';
 
 type Language = 'en' | 'my';
 
