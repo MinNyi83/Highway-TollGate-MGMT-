@@ -88,7 +88,7 @@ tasks:
   - id: T005
     name: Verify financial portal branding
     objective: Confirm financial portal has correct branding and favicon
-    status: ready
+    status: completed
     depends_on: []
     acceptance_criteria:
       - Favicon loads without 404
@@ -99,6 +99,8 @@ tasks:
       strategy: command
       detail: curl -s -o /dev/null -w '%{http_code}'
         http://192.168.100.101:8081/vite.svg | grep -q 200
-    result: null
-    attempts: 0
+    result:
+      summary: Financial portal favicon loads without 404, copyright shows nyimin
+      evidence: HTTP 200 OK for /vite.svg
+    attempts: 1
     usage: null
