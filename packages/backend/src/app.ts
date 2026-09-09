@@ -25,6 +25,7 @@ import paymentRoutes from './modules/payments/payments.routes';
 import featuresRoutes from './modules/features/features.routes';
 import adminCustomerRoutes from './modules/admin/admin-customers.routes';
 import ocrRoutes from './modules/ocr/ocr.routes';
+import financialRoutes from './modules/financial/financial.routes';
 import { setupSwagger } from './config/swagger';
 import { logger } from './middleware/logger';
 import { errorHandler } from './middleware/errorHandler';
@@ -40,9 +41,12 @@ const ALLOWED_ORIGINS = process.env.CORS_ORIGINS
       'http://localhost:80',
       'http://localhost:3000',
       'http://localhost:8080',
+      'http://localhost:8081',
       'http://localhost:5173',
+      'http://localhost:5175',
       'http://192.168.100.101',
       'http://192.168.100.101:8080',
+      'http://192.168.100.101:8081',
     ];
 
 app.use(logger);
@@ -89,6 +93,7 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/features', featuresRoutes);
 app.use('/api/admin/customers', adminCustomerRoutes);
 app.use('/api/ocr', ocrRoutes);
+app.use('/api/financial', financialRoutes);
 
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use(errorHandler);
