@@ -6,17 +6,17 @@ tasks:
     depends_on: []
     acceptance_criteria:
       - All 22 financial API endpoints return 200
+    relevant_files:
+      - packages/backend/src/modules/financial/financial.routes.ts
     verification:
       strategy: command
-      detail: "curl -s -o /dev/null -w '%{http_code}' http://localhost:3000/api/financial/regions | grep -q 200"
+      detail: curl -s -o /dev/null -w '%{http_code}'
+        http://localhost:3000/api/financial/regions | grep -q 200
     result:
       summary: All 22 financial API endpoints implemented and returning 200
       evidence: Verified via curl tests
     usage:
       total_tokens: 0
-    relevant_files:
-      - packages/backend/src/modules/financial/financial.routes.ts
-
   - id: T002
     objective: Frontend Page Development
     status: completed
@@ -24,18 +24,18 @@ tasks:
       - T001
     acceptance_criteria:
       - All 24 financial portal pages load correctly
+    relevant_files:
+      - packages/financial-portal/src/App.tsx
+      - packages/financial-portal/src/components/Sidebar.tsx
     verification:
       strategy: command
-      detail: "curl -s -o /dev/null -w '%{http_code}' http://localhost:8081 | grep -q 200"
+      detail: curl -s -o /dev/null -w '%{http_code}' http://localhost:8081 | grep -q
+        200
     result:
       summary: All 24 financial portal pages implemented and loading correctly
       evidence: Verified via curl tests
     usage:
       total_tokens: 0
-    relevant_files:
-      - packages/financial-portal/src/App.tsx
-      - packages/financial-portal/src/components/Sidebar.tsx
-
   - id: T003
     objective: Integration & Testing
     status: completed
@@ -44,17 +44,19 @@ tasks:
       - T002
     acceptance_criteria:
       - All 6 login accounts work
+    relevant_files:
+      - packages/backend/src/modules/auth/auth.service.ts
     verification:
       strategy: command
-      detail: "curl -s -X POST http://localhost:3000/api/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"fin.admin@tollgate.com\",\"password\":\"password123\"}' | grep -q token"
+      detail: "curl -s -X POST http://localhost:3000/api/auth/login -H 'Content-Type:
+        application/json' -d
+        '{\"email\":\"fin.admin@tollgate.com\",\"password\":\"password123\"}' |
+        grep -q token"
     result:
       summary: All 6 login accounts verified working
       evidence: Verified via curl tests
     usage:
       total_tokens: 0
-    relevant_files:
-      - packages/backend/src/modules/auth/auth.service.ts
-
   - id: T004
     objective: Documentation Update
     status: completed
@@ -62,15 +64,16 @@ tasks:
       - T003
     acceptance_criteria:
       - Documentation updated
+    relevant_files:
+      - README.md
+      - USER_GUIDE.md
+      - .agents/skills/tollgate-operations/SKILL.md
     verification:
       strategy: command
-      detail: "test -f README.md && test -f USER_GUIDE.md && test -f .agents/skills/tollgate-operations/SKILL.md"
+      detail: test -f README.md && test -f USER_GUIDE.md && test -f
+        .agents/skills/tollgate-operations/SKILL.md
     result:
       summary: All documentation files updated with financial system details
       evidence: Verified file existence
     usage:
       total_tokens: 0
-    relevant_files:
-      - README.md
-      - USER_GUIDE.md
-      - .agents/skills/tollgate-operations/SKILL.md
