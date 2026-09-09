@@ -36,7 +36,7 @@ export default function TopUpByRegion() {
       const params = new URLSearchParams({ startDate, endDate });
       if (regionId) params.append('regionId', regionId);
       const res = await api.get(`/financial/topup/by-region?${params.toString()}`);
-      return res.data.data;
+      return res.data;
     },
   });
 

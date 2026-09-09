@@ -30,7 +30,7 @@ export default function FiscalYearReport() {
       const params = new URLSearchParams({ fiscalYear: String(fiscalYear) });
       if (regionId) params.append('regionId', regionId);
       const res = await api.get(`/financial/fiscal-year/summary?${params.toString()}`);
-      return res.data.data;
+      return res.data;
     },
   });
 

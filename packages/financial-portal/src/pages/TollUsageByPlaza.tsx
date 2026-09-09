@@ -30,7 +30,7 @@ export default function TollUsageByPlaza() {
     queryKey: ['plazas'],
     queryFn: async () => {
       const res = await api.get('/financial/plazas');
-      return res.data.data;
+      return res.data;
     },
   });
 
@@ -40,7 +40,7 @@ export default function TollUsageByPlaza() {
       if (!plazaId) return null;
       const params = new URLSearchParams({ startDate, endDate });
       const res = await api.get(`/financial/toll-usage/${plazaId}?${params.toString()}`);
-      return res.data.data;
+      return res.data;
     },
     enabled: !!plazaId,
   });

@@ -24,7 +24,7 @@ export default function VehicleByRegion() {
     queryFn: async () => {
       const params = regionId ? `?regionId=${regionId}` : '';
       const res = await api.get(`/financial/vehicles/by-region${params}`);
-      return res.data.data;
+      return res.data;
     },
   });
 

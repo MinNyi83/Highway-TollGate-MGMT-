@@ -12,7 +12,7 @@ export default function RegionFilter({ value, onChange, showAll = true }: Region
     queryKey: ['regions'],
     queryFn: async () => {
       const res = await api.get('/financial/regions');
-      return res.data.data;
+      return res.data;
     },
   });
 

@@ -37,7 +37,7 @@ export default function MonthlyReconciliation() {
       if (regionId) params.append('regionId', regionId);
       if (statusFilter) params.append('status', statusFilter);
       const res = await api.get(`/financial/reconciliation?${params.toString()}`);
-      return res.data.data;
+      return res.data;
     },
   });
 

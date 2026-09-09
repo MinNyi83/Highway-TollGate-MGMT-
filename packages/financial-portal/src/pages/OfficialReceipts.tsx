@@ -25,7 +25,7 @@ export default function OfficialReceipts() {
     queryKey: ['plazas'],
     queryFn: async () => {
       const res = await api.get('/financial/plazas');
-      return res.data.data;
+      return res.data;
     },
   });
 
@@ -36,7 +36,7 @@ export default function OfficialReceipts() {
       if (regionId) params.append('regionId', regionId);
       if (plazaId) params.append('plazaId', plazaId);
       const res = await api.get(`/financial/receipts?${params.toString()}`);
-      return res.data.data;
+      return res.data;
     },
   });
 

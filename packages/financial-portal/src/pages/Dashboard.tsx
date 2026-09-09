@@ -23,7 +23,7 @@ export default function Dashboard() {
     queryKey: ['dashboard-kpi'],
     queryFn: async () => {
       const res = await api.get('/financial/dashboard/kpi');
-      return res.data.data;
+      return res.data;
     },
   });
 
@@ -31,7 +31,7 @@ export default function Dashboard() {
     queryKey: ['dashboard-revenue-region'],
     queryFn: async () => {
       const res = await api.get('/financial/dashboard/revenue-by-region');
-      return res.data.data;
+      return res.data;
     },
   });
 
@@ -39,7 +39,7 @@ export default function Dashboard() {
     queryKey: ['dashboard-deposits-region'],
     queryFn: async () => {
       const res = await api.get('/financial/dashboard/deposits-by-region');
-      return res.data.data;
+      return res.data;
     },
   });
 
@@ -47,7 +47,7 @@ export default function Dashboard() {
     queryKey: ['dashboard-monthly-trend'],
     queryFn: async () => {
       const res = await api.get('/financial/dashboard/monthly-trend');
-      return res.data.data;
+      return res.data;
     },
   });
 

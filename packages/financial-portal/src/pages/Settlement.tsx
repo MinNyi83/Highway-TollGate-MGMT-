@@ -35,7 +35,7 @@ export default function Settlement() {
       if (regionId) params.append('regionId', regionId);
       if (statusFilter) params.append('status', statusFilter);
       const res = await api.get(`/financial/settlement?${params.toString()}`);
-      return res.data.data;
+      return res.data;
     },
   });
 

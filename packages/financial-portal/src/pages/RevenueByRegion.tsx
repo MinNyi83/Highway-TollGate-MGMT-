@@ -29,7 +29,7 @@ export default function RevenueByRegion() {
     queryKey: ['revenue-by-region', startDate, endDate],
     queryFn: async () => {
       const res = await api.get(`/financial/revenue/by-region?startDate=${startDate}&endDate=${endDate}`);
-      return res.data.data;
+      return res.data;
     },
   });
 

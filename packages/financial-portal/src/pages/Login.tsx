@@ -20,7 +20,7 @@ export default function Login() {
     setError('');
     try {
       const res = await api.post('/auth/login', { email, password });
-      const { token, user } = res.data.data;
+      const { token, user } = res.data;
       login(token, user);
       navigate('/');
     } catch (err: any) {

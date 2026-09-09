@@ -28,7 +28,7 @@ export default function DailyCollection() {
       if (regionId) params.append('regionId', regionId);
       if (plazaId) params.append('plazaId', plazaId);
       const res = await api.get(`/financial/daily-collection?${params.toString()}`);
-      return res.data.data;
+      return res.data;
     },
   });
 
