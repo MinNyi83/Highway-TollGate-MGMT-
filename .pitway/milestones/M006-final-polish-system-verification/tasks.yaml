@@ -3,7 +3,7 @@ tasks:
   - id: T001
     name: Verify all login credentials
     objective: Test all user login credentials to ensure they work correctly
-    status: ready
+    status: completed
     depends_on: []
     acceptance_criteria:
       - Admin login (admin@tollgate.com) returns JWT token
@@ -18,8 +18,10 @@ tasks:
         application/json' -d
         '{\"email\":\"fin.admin@tollgate.com\",\"password\":\"password123\"}' |
         grep -q token"
-    result: null
-    attempts: 0
+    result:
+      summary: All 5 login credentials verified working on server 192.168.100.101
+      evidence: fin.admin, fin.manager, fin.viewer, admin, ko.min all return JWT tokens
+    attempts: 1
     usage: null
   - id: T002
     name: Verify presentation deployment
