@@ -3,7 +3,7 @@ tasks:
   - id: T001
     name: Verify all login credentials
     objective: Test all user login credentials to ensure they work correctly
-    status: planned
+    status: ready
     depends_on: []
     acceptance_criteria:
       - Admin login (admin@tollgate.com) returns JWT token
@@ -24,7 +24,7 @@ tasks:
   - id: T002
     name: Verify presentation deployment
     objective: Confirm the presentation is accessible and updated
-    status: planned
+    status: ready
     depends_on: []
     acceptance_criteria:
       - Presentation accessible at http://192.168.100.101/presentation.html
@@ -41,7 +41,7 @@ tasks:
   - id: T003
     name: Verify Docker containers health
     objective: Check all 8 containers are running and healthy
-    status: planned
+    status: ready
     depends_on: []
     acceptance_criteria:
       - All 8 containers running
@@ -57,7 +57,7 @@ tasks:
   - id: T004
     name: Update documentation
     objective: Update AGENTS.md, SKILL.md, and USER_GUIDE.md with latest changes
-    status: planned
+    status: waiting
     depends_on:
       - T001
       - T002
@@ -80,7 +80,7 @@ tasks:
   - id: T005
     name: Verify financial portal branding
     objective: Confirm financial portal has correct branding and favicon
-    status: planned
+    status: ready
     depends_on: []
     acceptance_criteria:
       - Favicon loads without 404
