@@ -10,7 +10,7 @@ interface LanguageContextType {
   t: (key: string) => string;
 }
 
-const translations: Record<Language, Record<string, string>> = { en, my };
+const translations: Record<Language, any> = { en, my };
 
 const LanguageContext = createContext<LanguageContextType>({
   language: 'en',
@@ -35,7 +35,20 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   };
 
   const t = (key: string): string => {
-    return translations[language][key] || translations['en'][key] || key;
+    const keys = key.split('.');
+    let value: any = translations[language];
+    for (const k of keys) {
+      value = value?.[k];
+    }
+    if (value !== undefined && typeof value === 'string') {
+      return value;
+    }
+    // Fallback to English
+    value = translations['en'];
+    for (const k of keys) {
+      value = value?.[k];
+    }
+    return typeof value === 'string' ? value : key;
   };
 
   return (
