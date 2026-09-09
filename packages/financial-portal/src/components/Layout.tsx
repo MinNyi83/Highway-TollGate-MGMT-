@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Watermark from './Watermark';
@@ -7,7 +7,11 @@ import { useAuthStore } from '../stores/authStore';
 import { useLanguage } from '../i18n';
 import { Menu, Moon, Sun, LogOut } from 'lucide-react';
 
-export default function Layout() {
+interface LayoutProps {
+  children?: ReactNode;
+}
+
+export default function Layout({ children }: LayoutProps) {
   const { user, logout } = useAuthStore();
   const { t } = useLanguage();
   const navigate = useNavigate();
@@ -84,7 +88,7 @@ export default function Layout() {
         </header>
 
         <main className="flex-1 overflow-auto bg-slate-100/60 dark:bg-slate-950 p-6 transition-colors duration-200">
-          <Outlet />
+          {children || <Outlet />}
         </main>
 
         <footer className="border-t border-slate-200 dark:border-white/10 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm px-6 py-3">
