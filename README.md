@@ -54,8 +54,9 @@ A distributed, enterprise-grade highway toll management system with RFID + ANPR 
 | Server / Application | Default Port | Access URL | Purpose |
 |---|---|---|---|
 | **HQ Admin Command Hub** | `80` | `http://<HOST>` | Highway administration dashboard, operator console, telemetry |
-| **Dahua Solution Presentation** | `80` | `http://<HOST>/presentation.html` | 14-slide executive deck + 3D interactive web portal |
+| **Dahua Solution Presentation** | `80` | `http://<HOST>/presentation.html` | 17-slide executive deck + 3D interactive web portal |
 | **Customer Portal (PWA)** | `8080` | `http://<HOST>:8080` | Driver digital wallet, vehicle manager, virtual RFID pass |
+| **Financial Portal** | `8081` | `http://<HOST>:8081` | Government ministry financial reporting, 24 pages |
 | **HQ Central Backend API** | `3000` | `http://<HOST>:3000` | Central REST API, OCR engine, settlement service, WebSockets |
 | **API Documentation** | `3000` | `http://<HOST>:3000/api-docs` | Swagger UI for API exploration |
 | **File Storage Server** | `5000` | `http://<HOST>:5000` | Vehicle photos, ANPR captures, violation proofs |
@@ -100,6 +101,14 @@ A distributed, enterprise-grade highway toll management system with RFID + ANPR 
 - **Digital Toll Pass (Virtual RFID)**: Rotating optical QR code usable as a fallback.
 - **Prepaid Wallet & Receipts**: Instant balance top-up via KBZPay, WavePay, and MMQR.
 
+### 6. Financial Portal (Port 8081)
+- **24 Pages**: Dashboard, Daily Collection, Revenue by Region, Wallet Deposits, Vehicle Registration, Pass-Through Volume, Revenue Remittance, Financial Reconciliation, Official Receipts, Fiscal Year Report, Comparison Report, Plaza Performance, Violation Analytics, Revenue Forecast, Revenue Heatmap, Transaction Search, Settlement Pipeline, Audit Trail, Wallet Analytics, Revenue by Vehicle, Customer Spending.
+- **Myanmar/English Toggle**: i18n support with correct financial terminology.
+- **Excel & PDF Export**: All pages support Excel export via SheetJS and PDF export via jsPDF.
+- **Approval Workflow**: Monthly reconciliation with Submit → Approve/Reject flow.
+- **Real-Time Alerts**: Dashboard alerts for traffic drops, revenue changes, pending settlements.
+- **22 Backend Endpoints**: Under `/api/financial/*` using `hqPrisma` client.
+
 ---
 
 ## Security & Performance
@@ -132,6 +141,7 @@ docker compose up -d --build
 # HQ Command Hub:       http://localhost:80
 # Presentation Portal:  http://localhost:80/presentation.html
 # Customer Portal:      http://localhost:8080
+# Financial Portal:     http://localhost:8081
 # Central API:          http://localhost:3000/api/health
 # API Documentation:    http://localhost:3000/api-docs
 ```
@@ -160,6 +170,9 @@ docker compose up -d --build
 | **Auditor / Viewer** | `viewer@tollgate.com` | `password123` | Reports, revenue settlement & audit logs |
 | **Enterprise Customer** | `fleet@transportco.com` | `password123` | TransportCo Fleet management (8 vehicles) |
 | **Individual Driver** | `ko.min@personal.com` | `password123` | Customer PWA portal, digital wallet & pass |
+| **Financial Admin** | `fin.admin@tollgate.com` | `password123` | Financial Portal admin access |
+| **Financial Manager** | `fin.manager@tollgate.com` | `password123` | Financial Portal approval workflow |
+| **Financial Viewer** | `fin.viewer@tollgate.com` | `password123` | Financial Portal read-only access |
 
 ---
 

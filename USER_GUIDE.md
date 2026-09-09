@@ -149,21 +149,22 @@ If a driver's physical windshield RFID sticker is damaged or not yet delivered:
 - **KPI Cards**: Total toll revenue, total wallet deposits, active vehicles, total plazas, total regions
 - **Revenue Trend Chart**: Daily revenue and deposit trends
 - **Regional Comparison**: Revenue breakdown by 15 Myanmar regions
+- **Real-Time Alerts**: Traffic drops, revenue changes, pending settlements
 
 #### Daily Collection Statement
 - Per-plaza daily toll revenue breakdown
 - Filter by plaza, date range, and region
-- Excel export for accounting reconciliation
+- Excel & PDF export for accounting reconciliation
 
 #### Toll Revenue by Region
 - Revenue breakdown across 15 administrative regions
 - Daily revenue trends per region
-- Excel export by region
+- Excel & PDF export by region
 
 #### Wallet Deposits by Region
 - Customer wallet top-up amounts by region
 - **Important**: These are customer liabilities, NOT company revenue
-- Excel export by region
+- Excel & PDF export by region
 
 #### Vehicle Registration by Region
 - Vehicle counts and class distribution by region
@@ -192,6 +193,61 @@ If a driver's physical windshield RFID sticker is damaged or not yet delivered:
 - Annual revenue summary by fiscal year (April–March)
 - Quarterly breakdown (Q1=Apr-Jun, Q2=Jul-Sep, Q3=Oct-Dec, Q4=Jan-Mar)
 - Executive summary with total revenue, remittances, reconciliation status
+
+#### Comparison Report
+- Year-over-year revenue comparison
+- Monthly breakdown with growth percentages
+- Interactive bar chart visualization
+
+#### Plaza Performance
+- Compare individual plaza revenue and traffic
+- Plaza rankings by revenue
+- Average revenue per trip analysis
+
+#### Violation Analytics
+- Violations by type (pie chart)
+- Violations by region (bar chart)
+- Fine collection summary
+
+#### Revenue Forecast
+- Linear projection based on historical trends
+- 3/6/12 month forecast periods
+- Confidence levels for predictions
+
+#### Revenue Heatmap
+- Hourly/daily traffic patterns
+- Peak hour and peak day identification
+- Visual heatmap grid
+
+#### Transaction Search
+- Search by license plate, date range, plaza
+- Pagination for large result sets
+- PDF export of search results
+
+#### Settlement Pipeline
+- Track pending/confirmed transfers
+- Visual pipeline flow
+- Recent transfer history
+
+#### Audit Trail
+- Financial action history
+- Who approved/rejected what, when, with notes
+- IP address logging
+
+#### Wallet Analytics
+- Account balances by type
+- Total system balance
+- Average balance per account
+
+#### Revenue by Vehicle Type
+- Revenue contribution by vehicle class
+- Trips and average revenue per trip
+- Share percentage visualization
+
+#### Customer Spending Dashboard
+- Top 10 spending customers
+- Spending patterns and trends
+- Customer rankings
 
 ### Financial Terminology
 | Term | Meaning |

@@ -314,6 +314,23 @@ GET /api/financial/receipts
 POST /api/financial/receipts/generate
 GET /api/financial/fiscal-year/summary
 GET /api/financial/export/:type
+GET /api/financial/plaza-performance
+GET /api/financial/violations
+GET /api/financial/forecast
+GET /api/financial/heatmap
+GET /api/financial/transactions
+GET /api/financial/settlement-pipeline
+GET /api/financial/alerts
+GET /api/financial/comparison
+GET /api/financial/audit-logs
+GET /api/financial/dashboard/kpi
+GET /api/financial/dashboard/revenue-by-region
+GET /api/financial/dashboard/deposits-by-region
+GET /api/financial/dashboard/monthly-trend
+GET /api/financial/plazas
+GET /api/financial/wallet-analytics
+GET /api/financial/revenue-by-vehicle
+GET /api/financial/customer-spending
 ```
 
 ---
@@ -349,12 +366,12 @@ GET /api/financial/export/:type
 
 ### Financial Portal (Port 8081) 🆕
 - **Standalone Frontend**: React + Vite + Tailwind, separate from other portals.
-- **10 Financial Pages**: Dashboard, Daily Collection Statement, Toll Revenue by Region, Wallet Deposits by Region, Vehicle Registration, Pass-Through Volume, Revenue Remittance, Financial Reconciliation, Official Receipts, Fiscal Year Report.
+- **24 Financial Pages**: Dashboard, Daily Collection, Revenue by Region, Wallet Deposits, Vehicle Registration, Pass-Through Volume, Revenue Remittance, Financial Reconciliation, Official Receipts, Fiscal Year Report, Comparison Report, Plaza Performance, Violation Analytics, Revenue Forecast, Revenue Heatmap, Transaction Search, Settlement Pipeline, Audit Trail, Wallet Analytics, Revenue by Vehicle, Customer Spending.
 - **Myanmar/English Toggle**: i18n support with correct financial terminology.
-- **Excel Export**: All pages support Excel export via SheetJS.
+- **Excel & PDF Export**: All pages support Excel export via SheetJS and PDF export via jsPDF.
 - **Approval Workflow**: Monthly reconciliation with Submit → Approve/Reject flow.
 - **Copyright Protection**: Watermarks, footer, login watermarks, meta tags.
-- **20+ Backend Endpoints**: Under `/api/financial/*` using `financialPrisma` client.
+- **22 Backend Endpoints**: Under `/api/financial/*` using `hqPrisma` client.
 
 ---
 
