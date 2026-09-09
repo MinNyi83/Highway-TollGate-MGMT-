@@ -1,6 +1,7 @@
 services:
   db:
     image: postgres:16-alpine
+    restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -19,6 +20,7 @@ services:
     build:
       context: .
       dockerfile: packages/backend/Dockerfile
+    restart: always
     ports:
       - "3000:3000"
     environment:
@@ -56,6 +58,7 @@ services:
     build:
       context: .
       dockerfile: packages/frontend/Dockerfile
+    restart: always
     ports:
       - "80:80"
     depends_on:
@@ -72,6 +75,7 @@ services:
     build:
       context: .
       dockerfile: packages/customer-portal/Dockerfile
+    restart: always
     ports:
       - "8080:80"
     depends_on:
