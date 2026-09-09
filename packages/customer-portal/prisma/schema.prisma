@@ -25,12 +25,23 @@ enum RFIDTagStatus {
   DEACTIVATED
 }
 
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  MANAGER
+  OPERATOR
+  VIEWER
+  CUSTOMER
+  ENTERPRISE_ADMIN
+  ENTERPRISE_USER
+}
+
 model User {
   id                    String       @id @default(uuid())
   email                 String       @unique
   passwordHash          String       @map("password_hash")
   name                  String
-  role                  String       @default("CUSTOMER")
+  role                  UserRole     @default(CUSTOMER)
   customerType          CustomerType @default(INDIVIDUAL) @map("customer_type")
   phone                 String?
   nrcNumber             String?      @map("nrc_number")
