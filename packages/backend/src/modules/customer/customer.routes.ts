@@ -1,11 +1,10 @@
 import { Router, Request, Response } from 'express';
-import { PrismaClient, CustomerType } from '@prisma/client';
+import { CustomerType } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { generateToken } from '../../utils/jwt';
 import { authMiddleware } from '../../middleware/auth';
 import { createSMSService } from '../../services/sms.service';
-
-const prisma = new PrismaClient();
+import { customerPrisma as prisma } from '../../config/database';
 const router = Router();
 
 router.post('/login', async (req: Request, res: Response) => {

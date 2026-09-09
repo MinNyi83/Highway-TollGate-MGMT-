@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import path from 'path';
 import dotenv from 'dotenv';
+import { connectDatabases } from './config/database';
 import healthRoutes from './routes/health';
 import authRoutes from './modules/auth/auth.routes';
 import usersRoutes from './modules/users/users.routes';
@@ -91,5 +92,8 @@ app.use('/api/ocr', ocrRoutes);
 
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use(errorHandler);
+
+// Connect to all databases on startup
+connectDatabases().catch(console.error);
 
 export default app;

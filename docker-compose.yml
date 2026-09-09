@@ -1,4 +1,5 @@
 services:
+  # ── Main HQ Database (vehicles, toll events, plazas, violations) ──
   db:
     image: postgres:16-alpine
     restart: always
@@ -11,11 +12,48 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d tollgate"]
       interval: 5s
       timeout: 5s
       retries: 5
 
+  # ── Customer Portal Database (accounts, wallets, transactions) ──
+  customer-db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: tollgate_customer
+    ports:
+      - "5433:5432"
+    volumes:
+      - customer_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d tollgate_customer"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ── Plaza Sync Database (sync queue, plaza config, local events) ──
+  plaza-db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: tollgate_plaza
+    ports:
+      - "5434:5432"
+    volumes:
+      - plaza_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d tollgate_plaza"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ── Backend API Server ──
   backend:
     build:
       context: .
@@ -24,10 +62,17 @@ services:
     ports:
       - "3000:3000"
     environment:
+      # HQ Database
       DATABASE_URL: postgresql://postgres:postgres@db:5432/tollgate
+      # Customer Database
+      CUSTOMER_DATABASE_URL: postgresql://postgres:postgres@customer-db:5432/tollgate_customer
+      # Plaza Database
+      PLAZA_DATABASE_URL: postgresql://postgres:postgres@plaza-db:5432/tollgate_plaza
+      # Auth
       JWT_SECRET: docker-dev-secret-key
       JWT_EXPIRES_IN: 24h
       NODE_ENV: development
+      # Payment Gateways
       KBZ_PAY_MERCHANT_ID: ${KBZ_PAY_MERCHANT_ID:-}
       KBZ_PAY_APP_ID: ${KBZ_PAY_APP_ID:-}
       KBZ_PAY_SECRET_KEY: ${KBZ_PAY_SECRET_KEY:-}
@@ -45,6 +90,10 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      customer-db:
+        condition: service_healthy
+      plaza-db:
+        condition: service_healthy
     volumes:
       - uploads:/app/uploads
     healthcheck:
@@ -54,6 +103,7 @@ services:
       retries: 3
       start_period: 20s
 
+  # ── Admin Dashboard (Nginx) ──
   frontend:
     build:
       context: .
@@ -71,6 +121,7 @@ services:
       retries: 3
       start_period: 15s
 
+  # ── Customer Portal (Nginx) ──
   customer-portal:
     build:
       context: .
@@ -88,6 +139,7 @@ services:
       retries: 3
       start_period: 15s
 
+  # ── Highway Simulator (optional) ──
   simulator:
     build:
       context: .
@@ -102,4 +154,6 @@ services:
 
 volumes:
   pgdata:
+  customer_pgdata:
+  plaza_pgdata:
   uploads:

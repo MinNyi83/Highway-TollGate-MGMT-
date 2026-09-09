@@ -1,36 +1,38 @@
 import { Router, Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { hqPrisma, customerPrisma, plazaPrisma } from '../config/database';
 import os from 'os';
 import fs from 'fs';
 import path from 'path';
 import { authMiddleware } from '../middleware/auth';
 
-const prisma = new PrismaClient();
 const router = Router();
 const startTime = Date.now();
 
-router.get('/health', async (req: Request, res: Response) => {
-  let dbStatus = 'disconnected';
-  let dbLatency = 0;
+async function checkDbHealth(client: any, name: string) {
   try {
-    const dbStart = Date.now();
-    await prisma.$queryRaw`SELECT 1`;
-    dbLatency = Date.now() - dbStart;
-    dbStatus = 'connected';
+    const start = Date.now();
+    await client.$queryRaw`SELECT 1`;
+    return { name, status: 'connected', latencyMs: Date.now() - start };
   } catch {
-    // dbStatus stays disconnected
+    return { name, status: 'disconnected', latencyMs: 0 };
   }
+}
 
-  const healthStatus = dbStatus === 'connected' ? 'healthy' : 'degraded';
+router.get('/health', async (req: Request, res: Response) => {
+  const [hq, customer, plaza] = await Promise.all([
+    checkDbHealth(hqPrisma, 'hq'),
+    checkDbHealth(customerPrisma, 'customer'),
+    checkDbHealth(plazaPrisma, 'plaza'),
+  ]);
 
-  res.status(dbStatus === 'connected' ? 200 : 503).json({
+  const allConnected = hq.status === 'connected' && customer.status === 'connected' && plaza.status === 'connected';
+  const healthStatus = allConnected ? 'healthy' : 'degraded';
+
+  res.status(allConnected ? 200 : 503).json({
     status: healthStatus,
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
-    database: {
-      status: dbStatus,
-      latencyMs: dbLatency,
-    },
+    databases: { hq, customer, plaza },
     memory: {
       total: os.totalmem(),
       free: os.freemem(),
@@ -50,8 +52,17 @@ router.get('/health', async (req: Request, res: Response) => {
 
 router.get('/health/ready', async (req: Request, res: Response) => {
   try {
-    await prisma.$queryRaw`SELECT 1`;
-    res.json({ status: 'ready', timestamp: new Date().toISOString() });
+    const [hq, customer, plaza] = await Promise.all([
+      checkDbHealth(hqPrisma, 'hq'),
+      checkDbHealth(customerPrisma, 'customer'),
+      checkDbHealth(plazaPrisma, 'plaza'),
+    ]);
+    const ready = hq.status === 'connected' && customer.status === 'connected' && plaza.status === 'connected';
+    res.status(ready ? 200 : 503).json({
+      status: ready ? 'ready' : 'not ready',
+      databases: { hq: hq.status, customer: customer.status, plaza: plaza.status },
+      timestamp: new Date().toISOString(),
+    });
   } catch {
     res.status(503).json({ status: 'not ready', timestamp: new Date().toISOString() });
   }
@@ -70,13 +81,19 @@ router.get('/health/metrics', authMiddleware, async (req: Request, res: Response
       violationCount,
       transactionCount,
       deviceCount,
+      accountCount,
+      rfidTagCount,
+      notificationCount,
     ] = await Promise.all([
-      prisma.user.count(),
-      prisma.vehicle.count(),
-      prisma.tollEvent.count(),
-      prisma.violation.count(),
-      prisma.transaction.count(),
-      prisma.deviceStatus.count(),
+      customerPrisma.user.count(),
+      hqPrisma.vehicle.count(),
+      hqPrisma.tollEvent.count(),
+      hqPrisma.violation.count(),
+      hqPrisma.transaction.count(),
+      hqPrisma.deviceStatus.count(),
+      customerPrisma.account.count(),
+      customerPrisma.rFIDTag.count(),
+      customerPrisma.notification.count(),
     ]);
 
     const uploadsDir = path.join(__dirname, '../../uploads');
@@ -94,9 +111,21 @@ router.get('/health/metrics', authMiddleware, async (req: Request, res: Response
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
       uptimeFormatted: formatUptime(process.uptime()),
-      database: {
-        status: 'connected',
-        counts: { userCount, vehicleCount, eventCount, violationCount, transactionCount, deviceCount },
+      databases: {
+        hq: { status: 'connected' },
+        customer: { status: 'connected' },
+        plaza: { status: 'connected' },
+      },
+      counts: {
+        users: userCount,
+        vehicles: vehicleCount,
+        tollEvents: eventCount,
+        violations: violationCount,
+        transactions: transactionCount,
+        devices: deviceCount,
+        accounts: accountCount,
+        rfidTags: rfidTagCount,
+        notifications: notificationCount,
       },
       system: {
         platform: os.platform(),
@@ -130,13 +159,19 @@ router.get('/health/detailed', authMiddleware, async (req: Request, res: Respons
       violationCount,
       transactionCount,
       deviceCount,
+      accountCount,
+      rfidTagCount,
+      notificationCount,
     ] = await Promise.all([
-      prisma.user.count(),
-      prisma.vehicle.count(),
-      prisma.tollEvent.count(),
-      prisma.violation.count(),
-      prisma.transaction.count(),
-      prisma.deviceStatus.count(),
+      customerPrisma.user.count(),
+      hqPrisma.vehicle.count(),
+      hqPrisma.tollEvent.count(),
+      hqPrisma.violation.count(),
+      hqPrisma.transaction.count(),
+      hqPrisma.deviceStatus.count(),
+      customerPrisma.account.count(),
+      customerPrisma.rFIDTag.count(),
+      customerPrisma.notification.count(),
     ]);
 
     const uploadsDir = path.join(__dirname, '../../uploads');
@@ -153,9 +188,21 @@ router.get('/health/detailed', authMiddleware, async (req: Request, res: Respons
       status: 'ok',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
-      database: {
-        status: 'connected',
-        counts: { userCount, vehicleCount, eventCount, violationCount, transactionCount, deviceCount },
+      databases: {
+        hq: { status: 'connected' },
+        customer: { status: 'connected' },
+        plaza: { status: 'connected' },
+      },
+      counts: {
+        users: userCount,
+        vehicles: vehicleCount,
+        tollEvents: eventCount,
+        violations: violationCount,
+        transactions: transactionCount,
+        devices: deviceCount,
+        accounts: accountCount,
+        rfidTags: rfidTagCount,
+        notifications: notificationCount,
       },
       system: {
         platform: os.platform(),
@@ -185,16 +232,17 @@ router.get('/health/backup', authMiddleware, async (req: Request, res: Response)
     const data = {
       timestamp: new Date().toISOString(),
       version: process.env.npm_package_version || '1.0.0',
-      users: await prisma.user.findMany({ select: { id: true, email: true, name: true, role: true } }),
-      vehicles: await prisma.vehicle.findMany(),
-      rfidTags: await prisma.rFIDTag.findMany(),
-      accounts: await prisma.account.findMany(),
-      tollPlazas: await prisma.tollPlaza.findMany(),
-      tollEvents: await prisma.tollEvent.findMany(),
-      transactions: await prisma.transaction.findMany(),
-      violations: await prisma.violation.findMany(),
-      notifications: await prisma.notification.findMany(),
-      deviceStatuses: await prisma.deviceStatus.findMany(),
+      databases: { hq: 'tollgate', customer: 'tollgate_customer', plaza: 'tollgate_plaza' },
+      users: await customerPrisma.user.findMany({ select: { id: true, email: true, name: true, role: true } }),
+      vehicles: await hqPrisma.vehicle.findMany(),
+      rfidTags: await customerPrisma.rFIDTag.findMany(),
+      accounts: await customerPrisma.account.findMany(),
+      tollPlazas: await hqPrisma.tollPlaza.findMany(),
+      tollEvents: await hqPrisma.tollEvent.findMany(),
+      transactions: await hqPrisma.transaction.findMany(),
+      violations: await hqPrisma.violation.findMany(),
+      notifications: await customerPrisma.notification.findMany(),
+      deviceStatuses: await hqPrisma.deviceStatus.findMany(),
     };
 
     res.setHeader('Content-Type', 'application/json');

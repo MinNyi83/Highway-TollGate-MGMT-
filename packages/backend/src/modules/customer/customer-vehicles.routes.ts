@@ -1,11 +1,10 @@
 import { Router, Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
 import { authMiddleware } from '../../middleware/auth';
 import { broadcastNotification, broadcastToAdmins } from '../../websocket/gateway';
+import { hqPrisma, customerPrisma } from '../../config/database';
 import multer from 'multer';
 import path from 'path';
 
-const prisma = new PrismaClient();
 const router = Router();
 
 const storage = multer.diskStorage({
@@ -40,13 +39,13 @@ router.post('/register-vehicle', authMiddleware, upload.fields([
       return;
     }
 
-    const existing = await prisma.vehicle.findUnique({ where: { plateNumber } });
+    const existing = await hqPrisma.vehicle.findUnique({ where: { plateNumber } });
     if (existing) {
       res.status(409).json({ error: 'Vehicle with this plate number already exists' });
       return;
     }
 
-    const account = await prisma.account.findFirst({ where: { userId } });
+    const account = await customerPrisma.account.findFirst({ where: { userId } });
     if (!account) {
       res.status(404).json({ error: 'Account not found' });
       return;
@@ -56,7 +55,7 @@ router.post('/register-vehicle', authMiddleware, upload.fields([
     const vehiclePhoto = files?.vehiclePhoto?.[0]?.filename;
     const wheelTaxCard = files?.wheelTaxCard?.[0]?.filename;
 
-    const vehicle = await prisma.vehicle.create({
+    const vehicle = await hqPrisma.vehicle.create({
       data: {
         plateNumber,
         make,
@@ -71,7 +70,7 @@ router.post('/register-vehicle', authMiddleware, upload.fields([
     });
 
     const tagUid = `RFID-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-    const rfidTag = await prisma.rFIDTag.create({
+    const rfidTag = await customerPrisma.rFIDTag.create({
       data: {
         tagUid,
         vehicleId: vehicle.id,
@@ -80,7 +79,7 @@ router.post('/register-vehicle', authMiddleware, upload.fields([
       },
     });
 
-    const notification = await prisma.notification.create({
+    const notification = await customerPrisma.notification.create({
       data: {
         userId,
         type: 'VEHICLE_REGISTERED',
@@ -114,25 +113,34 @@ router.get('/my-vehicles', authMiddleware, async (req: Request, res: Response) =
       return;
     }
 
-    const tags = await prisma.rFIDTag.findMany({
+    const tags = await customerPrisma.rFIDTag.findMany({
       where: { account: { userId } },
       include: {
-        vehicle: {
-          include: {
-            rfidTags: true,
-            _count: { select: { tollEvents: true, violations: true } },
-          },
-        },
+        account: true,
       },
       orderBy: { issuedAt: 'desc' },
     });
 
-    res.json(tags.map((t) => ({
-      ...t.vehicle,
-      rfidTag: { id: t.id, tagUid: t.tagUid, status: t.status, issuedAt: t.issuedAt },
-      eventCount: t.vehicle._count.tollEvents,
-      violationCount: t.vehicle._count.violations,
-    })));
+    const vehicleIds = tags.map(t => t.vehicleId);
+    const vehicles = await hqPrisma.vehicle.findMany({
+      where: { id: { in: vehicleIds } },
+      include: {
+        rfidTags: true,
+        _count: { select: { tollEvents: true, violations: true } },
+      },
+    });
+
+    const vehicleMap = new Map(vehicles.map(v => [v.id, v]));
+
+    res.json(tags.map((t) => {
+      const vehicle = vehicleMap.get(t.vehicleId);
+      return {
+        ...vehicle,
+        rfidTag: { id: t.id, tagUid: t.tagUid, status: t.status, issuedAt: t.issuedAt },
+        eventCount: vehicle?._count.tollEvents || 0,
+        violationCount: vehicle?._count.violations || 0,
+      };
+    }));
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -146,7 +154,7 @@ router.put('/my-vehicles/:vehicleId', authMiddleware, upload.fields([
     const userId = req.user?.userId;
     const { vehicleId } = req.params;
 
-    const tag = await prisma.rFIDTag.findFirst({
+    const tag = await customerPrisma.rFIDTag.findFirst({
       where: { vehicleId, account: { userId } },
     });
     if (!tag) {
@@ -165,7 +173,7 @@ router.put('/my-vehicles/:vehicleId', authMiddleware, upload.fields([
     if (files?.vehiclePhoto?.[0]) updateData.vehiclePhoto = files.vehiclePhoto[0].filename;
     if (files?.wheelTaxCard?.[0]) updateData.wheelTaxCard = files.wheelTaxCard[0].filename;
 
-    const vehicle = await prisma.vehicle.update({
+    const vehicle = await hqPrisma.vehicle.update({
       where: { id: vehicleId },
       data: updateData,
     });
@@ -181,7 +189,7 @@ router.delete('/my-vehicles/:vehicleId', authMiddleware, async (req: Request, re
     const userId = req.user?.userId;
     const { vehicleId } = req.params;
 
-    const tag = await prisma.rFIDTag.findFirst({
+    const tag = await customerPrisma.rFIDTag.findFirst({
       where: { vehicleId, account: { userId } },
     });
     if (!tag) {
@@ -189,8 +197,8 @@ router.delete('/my-vehicles/:vehicleId', authMiddleware, async (req: Request, re
       return;
     }
 
-    await prisma.rFIDTag.deleteMany({ where: { vehicleId } });
-    await prisma.vehicle.delete({ where: { id: vehicleId } });
+    await customerPrisma.rFIDTag.deleteMany({ where: { vehicleId } });
+    await hqPrisma.vehicle.delete({ where: { id: vehicleId } });
 
     res.json({ message: 'Vehicle deleted' });
   } catch (error) {

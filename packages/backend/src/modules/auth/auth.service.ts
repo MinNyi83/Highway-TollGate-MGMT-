@@ -1,8 +1,7 @@
-import { PrismaClient, CustomerType } from '@prisma/client';
+import { CustomerType } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { generateToken, TokenPayload } from '../../utils/jwt';
-
-const prisma = new PrismaClient();
+import { customerPrisma as prisma } from '../../config/database';
 
 export interface RegisterInput {
   email: string;
