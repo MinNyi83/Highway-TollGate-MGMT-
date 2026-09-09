@@ -1,0 +1,2 @@
+summary: "All 5 login credentials verified working on server 192.168.100.101"
+evidence: "fin.admin, fin.manager, fin.viewer, admin, ko.min all return JWT tokens"
