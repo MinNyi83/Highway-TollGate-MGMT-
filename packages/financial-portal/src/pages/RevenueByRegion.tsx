@@ -13,6 +13,7 @@ import en from '../i18n/en';
 import my from '../i18n/my';
 import api from '../api/client';
 import { exportToExcel } from '../utils/excel';
+import { exportToPDF } from '../utils/exportPDF';
 
 export default function RevenueByRegion() {
   const { language } = useLanguage();
@@ -68,6 +69,21 @@ export default function RevenueByRegion() {
     );
   };
 
+  const handlePDFExport = () => {
+    exportToPDF(
+      `Toll Revenue by Region (${startDate} to ${endDate})`,
+      regions,
+      [
+        { header: 'Region', key: 'regionName' },
+        { header: 'Total Revenue (MMK)', key: 'totalRevenue', format: (v: number) => v?.toLocaleString() || '0' },
+        { header: 'Transaction Count', key: 'totalTrips' },
+        { header: 'Avg/Trip (MMK)', key: 'avgPerTrip', format: (v: number) => v?.toLocaleString() || '0' },
+        { header: 'Growth %', key: 'growth', format: (v: number) => `${v || 0}%` },
+      ],
+      `revenue-by-region-${startDate}-${endDate}`
+    );
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -80,7 +96,7 @@ export default function RevenueByRegion() {
             {language === 'my' ? 'ဒေသအလိုက် တံတားခ ဝင်ငွေ' : 'Toll Revenue by Region'}
           </p>
         </div>
-        <ExportButton onClick={handleExport} />
+        <ExportButton onClick={handleExport} onPDF={handlePDFExport} />
       </div>
 
       <div className="glass-card rounded-xl p-4">

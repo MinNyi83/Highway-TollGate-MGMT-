@@ -11,6 +11,7 @@ import en from '../i18n/en';
 import my from '../i18n/my';
 import api from '../api/client';
 import { exportToExcel } from '../utils/excel';
+import { exportToPDF } from '../utils/exportPDF';
 
 export default function DailyCollection() {
   const { language } = useLanguage();
@@ -65,6 +66,25 @@ export default function DailyCollection() {
     );
   };
 
+  const handlePDFExport = () => {
+    exportToPDF(
+      `Daily Collection Statement - ${date}`,
+      records,
+      [
+        { header: 'Date', key: 'date' },
+        { header: 'Plaza', key: 'plazaName' },
+        { header: 'Region', key: 'regionName' },
+        { header: 'RFID Trips', key: 'rfidTrips' },
+        { header: 'Cash Trips', key: 'cashTrips' },
+        { header: 'Total Trips', key: 'totalTrips' },
+        { header: 'Toll Revenue (MMK)', key: 'tollRevenue', format: (v: number) => v?.toLocaleString() || '0' },
+        { header: 'Violation Fines (MMK)', key: 'violationFines', format: (v: number) => v?.toLocaleString() || '0' },
+        { header: 'Status', key: 'status' },
+      ],
+      `daily-collection-${date}`
+    );
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -77,7 +97,7 @@ export default function DailyCollection() {
             {language === 'my' ? 'နေ့စဉ်ကောက်ခံမှု ဖော်ပြချက်' : 'Daily Collection Statement'}
           </p>
         </div>
-        <ExportButton onClick={handleExport} />
+        <ExportButton onClick={handleExport} onPDF={handlePDFExport} />
       </div>
 
       <div className="glass-card rounded-xl p-4">

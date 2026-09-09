@@ -26,6 +26,15 @@ import ExcelJS from 'exceljs';
 
 const router = Router();
 
+async function logFinancialAudit(action: string, entityType: string, entityId: string | null, performedBy: string, details: any, ipAddress?: string) {
+  try {
+    const { hqPrisma } = await import('../../config/database');
+    await hqPrisma.financialAuditLog.create({
+      data: { action, entityType, entityId, performedBy, details: details || {}, ipAddress },
+    });
+  } catch {}
+}
+
 router.get('/regions', authMiddleware, async (_req: Request, res: Response) => {
   try {
     const regions = await getRegions();
@@ -320,6 +329,7 @@ router.post('/settlement/confirm', authMiddleware, async (req: Request, res: Res
       return;
     }
     const result = await confirmSettlement(transferId, bankName, depositRef);
+    await logFinancialAudit('CONFIRM_SETTLEMENT', 'SETTLEMENT', transferId, (req as any).user?.userId || 'system', { bankName, depositRef }, req.ip);
     res.json({ success: true, settlement: result });
   } catch (error) {
     res.status(500).json({ error: 'Failed to confirm settlement' });
@@ -334,6 +344,7 @@ router.post('/settlement/batch', authMiddleware, async (req: Request, res: Respo
       return;
     }
     const results = await batchConfirmSettlement(date, plazaIds);
+    await logFinancialAudit('BATCH_CONFIRM_SETTLEMENT', 'SETTLEMENT', null, (req as any).user?.userId || 'system', { date, plazaIds, count: results.length }, req.ip);
     res.json({ success: true, confirmed: results.length, settlements: results });
   } catch (error) {
     res.status(500).json({ error: 'Failed to batch confirm settlements' });
@@ -367,6 +378,7 @@ router.post('/reconciliation/submit', authMiddleware, async (req: Request, res: 
       return;
     }
     const result = await submitReconciliation(id, submittedBy);
+    await logFinancialAudit('SUBMIT_RECONCILIATION', 'RECONCILIATION', id, submittedBy, { submittedBy }, req.ip);
     res.json({ success: true, reconciliation: result });
   } catch (error) {
     res.status(500).json({ error: 'Failed to submit reconciliation' });
@@ -381,6 +393,7 @@ router.post('/reconciliation/approve', authMiddleware, async (req: Request, res:
       return;
     }
     const result = await approveReconciliation(id, approvedBy, notes);
+    await logFinancialAudit('APPROVE_RECONCILIATION', 'RECONCILIATION', id, approvedBy, { approvedBy, notes }, req.ip);
     res.json({ success: true, reconciliation: result });
   } catch (error) {
     res.status(500).json({ error: 'Failed to approve reconciliation' });
@@ -395,6 +408,7 @@ router.post('/reconciliation/reject', authMiddleware, async (req: Request, res: 
       return;
     }
     const result = await rejectReconciliation(id, approvedBy, reason);
+    await logFinancialAudit('REJECT_RECONCILIATION', 'RECONCILIATION', id, approvedBy, { approvedBy, reason }, req.ip);
     res.json({ success: true, reconciliation: result });
   } catch (error) {
     res.status(500).json({ error: 'Failed to reject reconciliation' });
@@ -546,6 +560,56 @@ router.get('/fiscal-year/excel', authMiddleware, async (req: Request, res: Respo
     res.end();
   } catch (error) {
     res.status(500).json({ error: 'Failed to generate fiscal year Excel' });
+  }
+});
+
+// Audit logs
+router.get('/audit-logs', authMiddleware, async (_req: Request, res: Response) => {
+  try {
+    const { hqPrisma } = await import('../../config/database');
+    const logs = await hqPrisma.financialAuditLog.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: 100,
+    });
+    res.json(logs);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch audit logs' });
+  }
+});
+
+// Comparison reports (MoM, YoY)
+router.get('/comparison', authMiddleware, async (_req: Request, res: Response) => {
+  try {
+    const { hqPrisma } = await import('../../config/database');
+    const currentYear = new Date().getFullYear();
+    const lastYear = currentYear - 1;
+    
+    const currentYearData = await hqPrisma.monthlyReconciliation.findMany({
+      where: { fiscalYear: currentYear },
+      orderBy: { month: 'asc' },
+    });
+    const lastYearData = await hqPrisma.monthlyReconciliation.findMany({
+      where: { fiscalYear: lastYear },
+      orderBy: { month: 'asc' },
+    });
+    
+    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const comparison = monthNames.map((name, i) => {
+      const current = currentYearData.find(d => d.month === i + 1);
+      const previous = lastYearData.find(d => d.month === i + 1);
+      return {
+        month: name,
+        currentRevenue: Number(current?.totalRevenue || 0),
+        previousRevenue: Number(previous?.totalRevenue || 0),
+        growth: current && previous 
+          ? ((Number(current.totalRevenue) - Number(previous.totalRevenue)) / Number(previous.totalRevenue) * 100).toFixed(1)
+          : '0',
+      };
+    });
+    
+    res.json(comparison);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch comparison data' });
   }
 });
 

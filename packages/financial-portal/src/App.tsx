@@ -14,6 +14,8 @@ import Settlement from './pages/Settlement';
 import MonthlyReconciliation from './pages/MonthlyReconciliation';
 import OfficialReceipts from './pages/OfficialReceipts';
 import FiscalYearReport from './pages/FiscalYearReport';
+import AuditLog from './pages/AuditLog';
+import ComparisonReport from './pages/ComparisonReport';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -47,6 +49,8 @@ function App() {
                       <Route path="/reconciliation" element={<MonthlyReconciliation />} />
                       <Route path="/receipts" element={<OfficialReceipts />} />
                       <Route path="/fiscal-year" element={<FiscalYearReport />} />
+                      <Route path="/audit-log" element={<AuditLog />} />
+                      <Route path="/comparison" element={<ComparisonReport />} />
                       <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                   </Layout>

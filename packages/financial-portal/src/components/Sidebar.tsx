@@ -10,6 +10,8 @@ import {
   ClipboardCheck,
   Receipt,
   Calendar,
+  Shield,
+  BarChart3,
 } from 'lucide-react';
 import { useLanguage } from '../i18n';
 
@@ -24,6 +26,8 @@ const navItems = [
   { to: '/reconciliation', icon: ClipboardCheck, label: 'Financial Reconciliation', labelMyanmar: 'ဘဏ္ဍာရေးပေါင်းစည်းခြင်း' },
   { to: '/receipts', icon: Receipt, label: 'Official Receipts', labelMyanmar: 'တရားဝင်ပြေစာ' },
   { to: '/fiscal-year', icon: Calendar, label: 'Fiscal Year Report', labelMyanmar: 'ဘဏ္ဍာနှစ် အစီရင်ခံစာ' },
+  { to: '/comparison', icon: BarChart3, label: 'Comparison Report', labelMyanmar: 'နှိုင်းယှဉ်မှု အစီရင်ခံစာ' },
+  { to: '/audit-log', icon: Shield, label: 'Audit Trail', labelMyanmar: 'စစ်ဆေးမှု မှတ်တမ်း' },
 ];
 
 export default function Sidebar({ collapsed = false }: { collapsed: boolean }) {
