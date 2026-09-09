@@ -18,6 +18,7 @@ import {
   Grid,
   Search,
   GitBranch,
+  CreditCard,
 } from 'lucide-react';
 import { useLanguage } from '../i18n';
 
@@ -39,6 +40,9 @@ const navItems = [
   { to: '/heatmap', icon: Grid, label: 'Revenue Heatmap', labelMyanmar: 'ဝင်ငွေ မြေပုံ' },
   { to: '/transactions', icon: Search, label: 'Transaction Search', labelMyanmar: 'ငွေပေးချေမှု ရှာဖွေ' },
   { to: '/settlement-pipeline', icon: GitBranch, label: 'Settlement Pipeline', labelMyanmar: 'ငွေလွှဲ လုပ်ငန်းစဉ်' },
+  { to: '/wallet-analytics', icon: Wallet, label: 'Wallet Analytics', labelMyanmar: 'ပိုက်ဆံအိတ် ခွဲခြမ်းစိတ်ဖြာ' },
+  { to: '/revenue-by-vehicle', icon: Car, label: 'Revenue by Vehicle', labelMyanmar: 'ယာဉ်အလိုက် ဝင်ငွေ' },
+  { to: '/customer-spending', icon: CreditCard, label: 'Customer Spending', labelMyanmar: 'ဖောက်သည် သုံးစွဲမှု' },
   { to: '/audit-log', icon: Shield, label: 'Audit Trail', labelMyanmar: 'စစ်ဆေးမှု မှတ်တမ်း' },
 ];
 

@@ -22,6 +22,9 @@ import RevenueForecast from './pages/RevenueForecast';
 import RevenueHeatmap from './pages/RevenueHeatmap';
 import TransactionSearch from './pages/TransactionSearch';
 import SettlementPipeline from './pages/SettlementPipeline';
+import WalletAnalytics from './pages/WalletAnalytics';
+import RevenueByVehicle from './pages/RevenueByVehicle';
+import CustomerSpending from './pages/CustomerSpending';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -63,6 +66,9 @@ function App() {
                       <Route path="/heatmap" element={<RevenueHeatmap />} />
                       <Route path="/transactions" element={<TransactionSearch />} />
                       <Route path="/settlement-pipeline" element={<SettlementPipeline />} />
+                      <Route path="/wallet-analytics" element={<WalletAnalytics />} />
+                      <Route path="/revenue-by-vehicle" element={<RevenueByVehicle />} />
+                      <Route path="/customer-spending" element={<CustomerSpending />} />
                       <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                   </Layout>

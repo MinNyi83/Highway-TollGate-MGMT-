@@ -910,6 +910,136 @@ router.get('/settlement-pipeline', authMiddleware, async (_req: Request, res: Re
   }
 });
 
+// Wallet Analytics
+router.get('/wallet-analytics', authMiddleware, async (_req: Request, res: Response) => {
+  try {
+    const { hqPrisma } = await import('../../config/database');
+
+    const accounts = await hqPrisma.account.findMany({
+      select: { id: true, balance: true, customerType: true, userId: true },
+    });
+
+    const totalBalance = accounts.reduce((sum, a) => sum + Number(a.balance || 0), 0);
+    const avgBalance = accounts.length > 0 ? totalBalance / accounts.length : 0;
+
+    const byType = new Map<string, { count: number; totalBalance: number }>();
+    for (const acc of accounts) {
+      const type = acc.customerType || 'INDIVIDUAL';
+      if (!byType.has(type)) byType.set(type, { count: 0, totalBalance: 0 });
+      const entry = byType.get(type)!;
+      entry.count++;
+      entry.totalBalance += Number(acc.balance || 0);
+    }
+
+    res.json({
+      summary: {
+        totalAccounts: accounts.length,
+        totalBalance,
+        avgBalance,
+      },
+      byType: Array.from(byType.entries()).map(([type, data]) => ({
+        type,
+        count: data.count,
+        totalBalance: data.totalBalance,
+      })),
+      topUpTrend: [],
+      recentTopUps: [],
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch wallet analytics' });
+  }
+});
+
+// Revenue by Vehicle Type
+router.get('/revenue-by-vehicle', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { hqPrisma } = await import('../../config/database');
+    const { startDate, endDate } = req.query;
+
+    const start = startDate ? new Date(startDate as string) : new Date(new Date().setMonth(new Date().getMonth() - 1));
+    const end = endDate ? new Date(endDate as string) : new Date();
+
+    const events = await hqPrisma.tollEvent.findMany({
+      where: { entryTime: { gte: start, lte: end } },
+      include: { vehicle: true },
+    });
+
+    const byVehicle = new Map<string, { trips: number; revenue: number }>();
+    for (const event of events) {
+      const vehicleClass = event.vehicle?.vehicleClass || 'UNKNOWN';
+      if (!byVehicle.has(vehicleClass)) byVehicle.set(vehicleClass, { trips: 0, revenue: 0 });
+      const entry = byVehicle.get(vehicleClass)!;
+      entry.trips++;
+      entry.revenue += Number(event.amount || 0);
+    }
+
+    const totalRevenue = events.reduce((sum, e) => sum + Number(e.amount || 0), 0);
+    const result = Array.from(byVehicle.entries())
+      .map(([type, data]) => ({
+        vehicleType: type,
+        trips: data.trips,
+        revenue: data.revenue,
+        percentage: totalRevenue > 0 ? ((data.revenue / totalRevenue) * 100).toFixed(1) : '0',
+        avgPerTrip: data.trips > 0 ? data.revenue / data.trips : 0,
+      }))
+      .sort((a, b) => b.revenue - a.revenue);
+
+    res.json({ vehicleTypes: result, totalRevenue, totalTrips: events.length });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch revenue by vehicle type' });
+  }
+});
+
+// Customer Spending Dashboard
+router.get('/customer-spending', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { hqPrisma } = await import('../../config/database');
+    const { startDate, endDate } = req.query;
+
+    const start = startDate ? new Date(startDate as string) : new Date(new Date().setMonth(new Date().getMonth() - 1));
+    const end = endDate ? new Date(endDate as string) : new Date();
+
+    const events = await hqPrisma.tollEvent.findMany({
+      where: { entryTime: { gte: start, lte: end } },
+      include: { vehicle: true },
+    });
+
+    const byVehicle = new Map<string, { trips: number; totalSpent: number }>();
+    for (const event of events) {
+      const plate = event.anprPlate || 'UNKNOWN';
+      if (!byVehicle.has(plate)) byVehicle.set(plate, { trips: 0, totalSpent: 0 });
+      const entry = byVehicle.get(plate)!;
+      entry.trips++;
+      entry.totalSpent += Number(event.amount || 0);
+    }
+
+    const customers = Array.from(byVehicle.entries())
+      .map(([plate, data]) => ({
+        plate,
+        trips: data.trips,
+        totalSpent: data.totalSpent,
+        avgPerTrip: data.trips > 0 ? data.totalSpent / data.trips : 0,
+      }))
+      .sort((a, b) => b.totalSpent - a.totalSpent);
+
+    const top10 = customers.slice(0, 10);
+    const totalSpent = customers.reduce((sum, c) => sum + c.totalSpent, 0);
+    const avgSpendPerCustomer = customers.length > 0 ? totalSpent / customers.length : 0;
+
+    res.json({
+      summary: {
+        totalCustomers: customers.length,
+        totalSpent,
+        avgSpendPerCustomer,
+      },
+      top10,
+      allCustomers: customers,
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch customer spending' });
+  }
+});
+
 // Financial Alerts
 router.get('/alerts', authMiddleware, async (_req: Request, res: Response) => {
   try {
