@@ -375,7 +375,7 @@ docker exec tollgate-rfid-db-1 pg_isready -U postgres
 > **A**: **Toll Revenue** is actual money earned from toll charges (DEBIT transactions). **Wallet Deposits** are customer loaded money (TOPUP transactions) - this is a company LIABILITY, not revenue.
 
 ### Q: How do I access the Presentation?
-> **A**: Visit `http://<SERVER_IP>/presentation.html` for the interactive slide deck (15 slides) with Solution Portal mode.
+> **A**: Visit `http://<SERVER_IP>/presentation.html` for the interactive slide deck (17 slides) with fullscreen mode.
 
 ### Q: How many slides are in the presentation?
-> **A**: 15 slides covering: Solution Overview, Corridor GIS, Challenges, What We Offer, System Topology, Myanmar RTAD OCR, Dual RFID+ANPR, Offline-First Sync, Customer PWA, HQ Command Hub, Highway Simulator, Hardware Matrix, Deployment, Financial Portal, and Conclusion.
+> **A**: 17 slides covering: Title & System Overview, Monorepo Structure, Database Architecture, Challenges, Solution Pillars, System Topology, Myanmar RTAD OCR, Dual Verification, Offline-First Sync, Customer PWA, HQ Command Hub, Highway Simulator, Hardware Matrix, Financial Portal, Docker Deployment, API Reference, and Conclusion.
