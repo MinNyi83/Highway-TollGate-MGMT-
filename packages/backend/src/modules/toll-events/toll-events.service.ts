@@ -1,8 +1,7 @@
-import { PrismaClient, TollEventStatus } from '@prisma/client';
+import { TollEventStatus } from '@prisma/client';
+import { hqPrisma as prisma } from '../../config/database';
 import { createTransaction } from '../transactions/transactions.service';
 import { cache, invalidateCache } from '../../services/cache.service';
-
-const prisma = new PrismaClient();
 
 export interface CreateEntryEventInput {
   vehicleId: string;

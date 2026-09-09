@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { authMiddleware } from '../../middleware/auth';
 import { getFleetStats, getFleetVehicles, getFleetTripHistory, getFleetSpendingReport } from './fleet.service';
+import { customerPrisma } from '../../config/database';
 
 const router = Router();
 
@@ -12,10 +13,7 @@ router.get('/stats', authMiddleware, async (req: Request, res: Response) => {
       return;
     }
 
-    const { PrismaClient } = require('@prisma/client');
-    const prisma = new PrismaClient();
-    const account = await prisma.account.findFirst({ where: { userId } });
-
+    const account = await customerPrisma.account.findFirst({ where: { userId } });
     if (!account) {
       res.status(404).json({ error: 'Account not found' });
       return;
@@ -36,10 +34,7 @@ router.get('/vehicles', authMiddleware, async (req: Request, res: Response) => {
       return;
     }
 
-    const { PrismaClient } = require('@prisma/client');
-    const prisma = new PrismaClient();
-    const account = await prisma.account.findFirst({ where: { userId } });
-
+    const account = await customerPrisma.account.findFirst({ where: { userId } });
     if (!account) {
       res.status(404).json({ error: 'Account not found' });
       return;
@@ -60,10 +55,7 @@ router.get('/trips', authMiddleware, async (req: Request, res: Response) => {
       return;
     }
 
-    const { PrismaClient } = require('@prisma/client');
-    const prisma = new PrismaClient();
-    const account = await prisma.account.findFirst({ where: { userId } });
-
+    const account = await customerPrisma.account.findFirst({ where: { userId } });
     if (!account) {
       res.status(404).json({ error: 'Account not found' });
       return;
@@ -92,10 +84,7 @@ router.get('/spending', authMiddleware, async (req: Request, res: Response) => {
       return;
     }
 
-    const { PrismaClient } = require('@prisma/client');
-    const prisma = new PrismaClient();
-    const account = await prisma.account.findFirst({ where: { userId } });
-
+    const account = await customerPrisma.account.findFirst({ where: { userId } });
     if (!account) {
       res.status(404).json({ error: 'Account not found' });
       return;

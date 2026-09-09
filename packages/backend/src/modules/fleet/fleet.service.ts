@@ -1,6 +1,8 @@
-import { PrismaClient, CustomerType } from '@prisma/client';
+import { CustomerType } from '@prisma/client';
+import { hqPrisma, customerPrisma } from '../../config/database';
 
-const prisma = new PrismaClient();
+const prisma = hqPrisma;
+const customerDb = customerPrisma;
 
 export interface FleetStats {
   totalVehicles: number;
@@ -25,14 +27,10 @@ export interface FleetStats {
 }
 
 export async function getFleetStats(accountId: string): Promise<FleetStats> {
-  const account = await prisma.account.findUnique({
+  const account = await customerDb.account.findUnique({
     where: { id: accountId },
     include: {
-      rfidTags: {
-        include: {
-          vehicle: true,
-        },
-      },
+      rfidTags: true,
     },
   });
 
@@ -41,9 +39,11 @@ export async function getFleetStats(accountId: string): Promise<FleetStats> {
   }
 
   const vehicleIds = account.rfidTags.map((tag) => tag.vehicleId);
-  const rfidTagIds = account.rfidTags.map((tag) => tag.id);
 
-  const [totalVehicles, activeVehicles, tollEvents, violations, transactions] = await Promise.all([
+  const [vehicles, totalVehicles, activeVehicles, tollEvents, violations, transactions] = await Promise.all([
+    prisma.vehicle.findMany({
+      where: { id: { in: vehicleIds } },
+    }),
     prisma.vehicle.count({
       where: { id: { in: vehicleIds } },
     }),
@@ -72,6 +72,8 @@ export async function getFleetStats(accountId: string): Promise<FleetStats> {
     }),
   ]);
 
+  const vehicleMap = new Map(vehicles.map(v => [v.id, v]));
+
   const totalTrips = tollEvents.filter((e) => e.status === 'COMPLETED').length;
   const totalRevenue = transactions.reduce((sum, t) => sum + Number(t.amount), 0);
   const totalViolations = violations.length;
@@ -87,8 +89,11 @@ export async function getFleetStats(accountId: string): Promise<FleetStats> {
   // Vehicles by class
   const vehiclesByClass: Record<string, number> = {};
   account.rfidTags.forEach((tag) => {
-    const cls = tag.vehicle.vehicleClass;
-    vehiclesByClass[cls] = (vehiclesByClass[cls] || 0) + 1;
+    const vehicle = vehicleMap.get(tag.vehicleId);
+    if (vehicle) {
+      const cls = vehicle.vehicleClass;
+      vehiclesByClass[cls] = (vehiclesByClass[cls] || 0) + 1;
+    }
   });
 
   // Trips by plaza

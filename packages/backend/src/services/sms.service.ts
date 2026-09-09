@@ -1,7 +1,5 @@
 import axios from 'axios';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { hqPrisma as prisma } from '../config/database';
 
 export interface SMSConfig {
   provider: 'mpt' | 'atom' | 'u9' | 'mytel';

@@ -1,6 +1,5 @@
-import { PrismaClient, VehicleClass, VehicleStatus, ApprovalStatus } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { VehicleClass, VehicleStatus, ApprovalStatus } from '@prisma/client';
+import { hqPrisma as prisma } from '../../config/database';
 
 export interface CreateVehicleInput {
   plateNumber: string;

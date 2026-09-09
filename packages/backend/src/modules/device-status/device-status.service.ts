@@ -1,6 +1,5 @@
-import { PrismaClient, DeviceType, DeviceStatusEnum } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { DeviceType, DeviceStatusEnum } from '@prisma/client';
+import { hqPrisma as prisma } from '../../config/database';
 
 export interface CreateDeviceStatusInput {
   plazaId: string;

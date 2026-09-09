@@ -1,7 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { hqPrisma as prisma } from '../config/database';
 
 export function auditLog(action: string, entity: string) {
   return async (req: Request, res: Response, next: NextFunction) => {

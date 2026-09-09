@@ -1,6 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { hqPrisma as prisma } from '../../config/database';
 
 export async function getTollEventsByDateRange(startDate: Date, endDate: Date) {
   return prisma.tollEvent.findMany({

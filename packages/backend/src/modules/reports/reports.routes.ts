@@ -9,10 +9,8 @@ import {
   confirmRevenueTransfer,
 } from './reports.service';
 import { authMiddleware } from '../../middleware/auth';
-import { PrismaClient } from '@prisma/client';
+import { hqPrisma as prisma } from '../../config/database';
 import ExcelJS from 'exceljs';
-
-const prisma = new PrismaClient();
 const router = Router();
 
 router.get('/events', authMiddleware, async (req: Request, res: Response) => {

@@ -13,9 +13,7 @@ import { deviceManager } from '../../services/devices/device-manager.service';
 import { createZKTecoClient } from '../../services/devices/zkteco.service';
 import { createHikvisionClient } from '../../services/devices/hikvision.service';
 import { createIPCameraService } from '../../services/devices/ipcamera.service';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { hqPrisma as prisma } from '../../config/database';
 const router = Router();
 
 router.get('/', authMiddleware, async (req: Request, res: Response) => {

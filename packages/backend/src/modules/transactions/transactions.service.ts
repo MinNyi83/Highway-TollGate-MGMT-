@@ -1,6 +1,5 @@
-import { PrismaClient, TransactionStatus, TransactionType } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { TransactionStatus, TransactionType } from '@prisma/client';
+import { hqPrisma as prisma } from '../../config/database';
 
 export async function createTransaction(eventId: string) {
   const event = await prisma.tollEvent.findUnique({

@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { hqPrisma as prisma } from '../../config/database';
 import {
   PaymentProvider,
   PaymentConfig,
@@ -19,8 +19,6 @@ import {
   generateQRCodeBase64,
   MERCHANT_CONFIG,
 } from './mmqr-qr';
-
-const prisma = new PrismaClient();
 
 interface PaymentProviderConfig {
   kbzpay: PaymentConfig;

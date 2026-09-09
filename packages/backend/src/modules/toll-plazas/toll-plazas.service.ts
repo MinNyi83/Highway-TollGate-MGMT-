@@ -1,7 +1,6 @@
-import { PrismaClient, VehicleClass, TollPlazaStatus } from '@prisma/client';
+import { VehicleClass, TollPlazaStatus } from '@prisma/client';
+import { hqPrisma as prisma } from '../../config/database';
 import { cache, invalidateCache } from '../../services/cache.service';
-
-const prisma = new PrismaClient();
 
 export interface CreateTollPlazaInput {
   name: string;

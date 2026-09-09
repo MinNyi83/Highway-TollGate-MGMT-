@@ -1,7 +1,6 @@
-import { PrismaClient, UserRole, CustomerType, AccountStatus } from '@prisma/client';
+import { UserRole, CustomerType, AccountStatus } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-
-const prisma = new PrismaClient();
+import { customerPrisma as prisma } from '../../config/database';
 
 export interface CreateCustomerInput {
   email: string;

@@ -1,6 +1,5 @@
-import { PrismaClient, ViolationStatus } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { ViolationStatus } from '@prisma/client';
+import { hqPrisma as prisma } from '../../config/database';
 
 export async function getViolations() {
   return prisma.violation.findMany({

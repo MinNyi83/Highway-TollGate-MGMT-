@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { authMiddleware } from '../../middleware/auth';
-import { PrismaClient } from '@prisma/client';
+import { hqPrisma as prisma } from '../../config/database';
 import { TwoFactorService } from '../../services/two-factor.service';
 import { ReportExportService } from '../../services/report-export.service';
 import { BulkOperationsService } from '../../services/bulk-operations.service';
@@ -8,7 +8,6 @@ import { DynamicPricingService } from '../../services/dynamic-pricing.service';
 import { LoyaltyService, CreditService, WebhookService, AnalyticsService, ReceiptService } from '../../services/extended-features.service';
 
 const router = Router();
-const prisma = new PrismaClient();
 
 const twoFactorService = new TwoFactorService(prisma);
 const reportExportService = new ReportExportService(prisma);

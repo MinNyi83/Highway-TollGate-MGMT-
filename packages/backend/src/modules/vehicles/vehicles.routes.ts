@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { hqPrisma as prisma } from '../../config/database';
 import {
   getVehicles,
   getVehicleById,
@@ -15,7 +15,6 @@ import {
 import { authMiddleware } from '../../middleware/auth';
 import { uploadVehiclePhotos, uploadSingle } from '../../middleware/upload';
 
-const prisma = new PrismaClient();
 const router = Router();
 
 router.get('/', authMiddleware, async (req: Request, res: Response) => {

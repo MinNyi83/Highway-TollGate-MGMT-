@@ -1,10 +1,9 @@
-import { PrismaClient, DeviceType } from '@prisma/client';
+import { DeviceType } from '@prisma/client';
+import { hqPrisma as prisma } from '../../config/database';
 import { createZKTecoClient, ZKTecoClient } from './zkteco.service';
 import { createHikvisionClient, HikvisionClient } from './hikvision.service';
 import { createIPCameraService, IPCameraService } from './ipcamera.service';
 import { createTollHardwareService, TollHardwareService } from './toll-hardware.service';
-
-const prisma = new PrismaClient();
 
 interface DeviceConfig {
   id: string;
