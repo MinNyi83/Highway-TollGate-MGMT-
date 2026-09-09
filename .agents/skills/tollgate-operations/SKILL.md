@@ -331,6 +331,9 @@ GET /api/financial/plazas
 GET /api/financial/wallet-analytics
 GET /api/financial/revenue-by-vehicle
 GET /api/financial/customer-spending
+GET /api/financial/revenue-by-payment
+GET /api/financial/loyalty-analytics
+GET /api/financial/reports/summary
 ```
 
 ---
@@ -366,12 +369,12 @@ GET /api/financial/customer-spending
 
 ### Financial Portal (Port 8081) 🆕
 - **Standalone Frontend**: React + Vite + Tailwind, separate from other portals.
-- **24 Financial Pages**: Dashboard, Daily Collection, Revenue by Region, Wallet Deposits, Vehicle Registration, Pass-Through Volume, Revenue Remittance, Financial Reconciliation, Official Receipts, Fiscal Year Report, Comparison Report, Plaza Performance, Violation Analytics, Revenue Forecast, Revenue Heatmap, Transaction Search, Settlement Pipeline, Audit Trail, Wallet Analytics, Revenue by Vehicle, Customer Spending.
+- **27 Financial Pages**: Dashboard, Daily Collection, Revenue by Region, Wallet Deposits, Vehicle Registration, Pass-Through Volume, Revenue Remittance, Financial Reconciliation, Official Receipts, Fiscal Year Report, Comparison Report, Plaza Performance, Violation Analytics, Revenue Forecast, Revenue Heatmap, Transaction Search, Settlement Pipeline, Audit Trail, Wallet Analytics, Revenue by Vehicle, Customer Spending, Revenue by Payment Method, Loyalty Analytics, Financial Reports Generator.
 - **Myanmar/English Toggle**: i18n support with correct financial terminology.
 - **Excel & PDF Export**: All pages support Excel export via SheetJS and PDF export via jsPDF.
 - **Approval Workflow**: Monthly reconciliation with Submit → Approve/Reject flow.
 - **Copyright Protection**: Watermarks, footer, login watermarks, meta tags.
-- **22 Backend Endpoints**: Under `/api/financial/*` using `hqPrisma` client.
+- **25 Backend Endpoints**: Under `/api/financial/*` using `hqPrisma` client.
 
 ---
 

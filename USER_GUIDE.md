@@ -249,6 +249,21 @@ If a driver's physical windshield RFID sticker is damaged or not yet delivered:
 - Spending patterns and trends
 - Customer rankings
 
+#### Revenue by Payment Method
+- Revenue breakdown by payment type (RFID, Cash, QR)
+- Transaction counts by method
+- Share percentage visualization
+
+#### Loyalty Analytics
+- Loyalty points distribution
+- Top 10 accounts by points
+- Tier classification (Gold, Silver, Bronze)
+
+#### Financial Reports Generator
+- Custom date range and region filters
+- Revenue, fines, trips, and transactions summary
+- PDF export capability
+
 ### Financial Terminology
 | Term | Meaning |
 |---|---|
