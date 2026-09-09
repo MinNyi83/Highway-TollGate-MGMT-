@@ -550,6 +550,18 @@ router.get('/fiscal-year/excel', authMiddleware, async (req: Request, res: Respo
 });
 
 // Dashboard KPI endpoints
+router.get('/plazas', authMiddleware, async (_req: Request, res: Response) => {
+  try {
+    const { hqPrisma } = await import('../../config/database');
+    const plazas = await hqPrisma.tollPlaza.findMany({
+      select: { id: true, name: true, mileMarker: true, status: true, regionId: true },
+    });
+    res.json(plazas);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch plazas' });
+  }
+});
+
 router.get('/dashboard/kpi', authMiddleware, async (_req: Request, res: Response) => {
   try {
     const { hqPrisma } = await import('../../config/database');
