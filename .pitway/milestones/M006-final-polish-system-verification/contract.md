@@ -2,7 +2,7 @@
 schema_version: 1
 id: M006
 title: Final Polish & System Verification
-status: in_progress
+status: completed
 requirement: null
 confirmed_at: 2026-09-09T12:23:14Z
 verification_approved_hash: sha256:5bfc4d78eb776833d7de266f5a8d9030d60528a62990808ab5ed6347fa2a6dff
