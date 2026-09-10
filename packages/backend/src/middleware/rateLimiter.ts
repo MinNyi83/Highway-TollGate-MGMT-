@@ -27,3 +27,11 @@ export const strictLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+
+export function resetAllLimiters(): { auth: number; global: number; strict: number } {
+  const results = { auth: 0, global: 0, strict: 0 };
+  try { (authLimiter as any).store?.resetAll?.(); results.auth = 1; } catch {}
+  try { (globalLimiter as any).store?.resetAll?.(); results.global = 1; } catch {}
+  try { (strictLimiter as any).store?.resetAll?.(); results.strict = 1; } catch {}
+  return results;
+}

@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { register, login, refreshToken, changePassword, forgotPassword, resetPassword, updateProfile } from './auth.service';
-import { authMiddleware } from '../../middleware/auth';
+import { authMiddleware, requireRole } from '../../middleware/auth';
+import { resetAllLimiters } from '../../middleware/rateLimiter';
 import { createSMSService } from '../../services/sms.service';
 
 const router = Router();
@@ -156,6 +157,15 @@ router.post('/reset-password', async (req: Request, res: Response) => {
     } else {
       res.status(500).json({ error: 'Internal server error' });
     }
+  }
+});
+
+router.post('/reset-rate-limiters', authMiddleware, requireRole('SUPER_ADMIN', 'ADMIN'), async (req: Request, res: Response) => {
+  try {
+    const results = resetAllLimiters();
+    res.json({ success: true, message: 'All rate limiters reset', results });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to reset rate limiters' });
   }
 });
 
