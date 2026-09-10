@@ -1597,4 +1597,84 @@ router.get('/tax-withholding', authMiddleware, async (req: Request, res: Respons
   }
 });
 
+router.get('/integrations/plugins', authMiddleware, async (_req: Request, res: Response) => {
+  try {
+    const { pluginManager } = await import('./integrations');
+    const plugins = pluginManager.listPlugins();
+    res.json({ plugins, total: plugins.length });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch plugins' });
+  }
+});
+
+router.post('/integrations/sync', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { pluginManager } = await import('./integrations');
+    const { data, type } = req.body;
+    const results = type ? await pluginManager.syncByType(type, data) : await pluginManager.syncAll(data);
+    res.json({ results, timestamp: new Date().toISOString() });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to sync integrations' });
+  }
+});
+
+router.post('/integrations/webhooks/register', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { webhookManager } = await import('./integrations');
+    const { id, url, secret, events } = req.body;
+    await webhookManager.registerWebhook(id, { url, secret, events, active: true, maxRetries: 3, retryDelay: 5000 });
+    res.json({ success: true, webhookId: id });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to register webhook' });
+  }
+});
+
+router.delete('/integrations/webhooks/:id', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { webhookManager } = await import('./integrations');
+    await webhookManager.unregisterWebhook(req.params.id);
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to unregister webhook' });
+  }
+});
+
+router.get('/integrations/webhooks/logs', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { webhookManager } = await import('./integrations');
+    const logs = await webhookManager.getWebhookLogs(req.query.webhookId as string);
+    res.json({ logs });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch webhook logs' });
+  }
+});
+
+router.post('/integrations/webhooks/trigger', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { webhookManager } = await import('./integrations');
+    const { event, data } = req.body;
+    const results = await webhookManager.triggerWebhook(event, data);
+    res.json({ results });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to trigger webhooks' });
+  }
+});
+
+router.get('/integrations/status', authMiddleware, async (_req: Request, res: Response) => {
+  try {
+    const { pluginManager } = await import('./integrations');
+    const plugins = pluginManager.listPlugins();
+    const status = {
+      totalPlugins: plugins.length,
+      active: plugins.filter(p => p.status === 'active').length,
+      inactive: plugins.filter(p => p.status === 'inactive').length,
+      error: plugins.filter(p => p.status === 'error').length,
+      plugins: plugins.map(p => ({ name: p.name, type: p.type, status: p.status, version: p.version })),
+    };
+    res.json(status);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch integration status' });
+  }
+});
+
 export default router;

@@ -645,3 +645,37 @@ model FinancialAuditLog {
   @@index([performedBy])
   @@index([createdAt])
 }
+
+model WebhookConfig {
+  id          String   @id
+  url         String
+  secret      String
+  events      String[]
+  active      Boolean  @default(true)
+  maxRetries  Int      @default(3)
+  retryDelay  Int      @default(5000)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  logs        WebhookLog[]
+
+  @@map("webhook_configs")
+  @@index([active])
+}
+
+model WebhookLog {
+  id          String   @id @default(uuid())
+  webhookId   String   @map("webhook_id")
+  event       String
+  status      String
+  payload     Json?
+  timestamp   DateTime @default(now())
+
+  webhook     WebhookConfig @relation(fields: [webhookId], references: [id])
+
+  @@map("webhook_logs")
+  @@index([webhookId])
+  @@index([event])
+  @@index([status])
+  @@index([timestamp])
+}
