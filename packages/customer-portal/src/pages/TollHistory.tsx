@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 import { ArrowDownRight, ArrowUpRight, Search, X, MapPin, Clock, Car, CreditCard, Hash, ArrowRight } from 'lucide-react';
 import api from '../lib/api';
+import ErrorState from '../components/ErrorState';
 
 export default function TollHistory() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -10,7 +11,7 @@ export default function TollHistory() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
 
-  const { data: events, isLoading } = useQuery({
+  const { data: events, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['customer-toll-events'],
     queryFn: async () => {
       const response = await api.get('/customer/toll-events');
@@ -54,6 +55,8 @@ export default function TollHistory() {
       </div>
     );
   }
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-4">

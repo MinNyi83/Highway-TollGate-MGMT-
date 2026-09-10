@@ -13,6 +13,7 @@ import en from '../i18n/en';
 import my from '../i18n/my';
 import FinancialAlerts from '../components/FinancialAlerts';
 import api from '../api/client';
+import ErrorState from '../components/ErrorState';
 
 const COLORS = ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899'];
 
@@ -20,7 +21,7 @@ export default function Dashboard() {
   const { language } = useLanguage();
   const t = (key: string) => (language === 'my' ? (my as any) : (en as any))[key] ?? key;
 
-  const { data: kpi, isLoading: kpiLoading } = useQuery({
+  const { data: kpi, isLoading: kpiLoading, isError: isKpiError, error: kpiError, refetch: refetchKpi } = useQuery({
     queryKey: ['dashboard-kpi'],
     queryFn: async () => {
       const res = await api.get('/financial/dashboard/kpi');
@@ -28,7 +29,7 @@ export default function Dashboard() {
     },
   });
 
-  const { data: revenueByRegion } = useQuery({
+  const { data: revenueByRegion, isError: isRevenueError, error: revenueError, refetch: refetchRevenue } = useQuery({
     queryKey: ['dashboard-revenue-region'],
     queryFn: async () => {
       const res = await api.get('/financial/dashboard/revenue-by-region');
@@ -36,7 +37,7 @@ export default function Dashboard() {
     },
   });
 
-  const { data: depositsByRegion } = useQuery({
+  const { data: depositsByRegion, isError: isDepositsError, error: depositsError, refetch: refetchDeposits } = useQuery({
     queryKey: ['dashboard-deposits-region'],
     queryFn: async () => {
       const res = await api.get('/financial/dashboard/deposits-by-region');
@@ -44,13 +45,19 @@ export default function Dashboard() {
     },
   });
 
-  const { data: monthlyTrend } = useQuery({
+  const { data: monthlyTrend, isError: isTrendError, error: trendError, refetch: refetchTrend } = useQuery({
     queryKey: ['dashboard-monthly-trend'],
     queryFn: async () => {
       const res = await api.get('/financial/dashboard/monthly-trend');
       return res.data;
     },
   });
+
+  const isError = isKpiError || isRevenueError || isDepositsError || isTrendError;
+  const error = kpiError || revenueError || depositsError || trendError;
+  const refetch = () => { refetchKpi(); refetchRevenue(); refetchDeposits(); refetchTrend(); };
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">

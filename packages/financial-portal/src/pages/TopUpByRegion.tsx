@@ -14,6 +14,7 @@ import { useLanguage } from '../i18n';
 import en from '../i18n/en';
 import my from '../i18n/my';
 import api from '../api/client';
+import ErrorState from '../components/ErrorState';
 import { exportToExcel } from '../utils/excel';
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899'];
@@ -30,7 +31,7 @@ export default function TopUpByRegion() {
   const [endDate, setEndDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [regionId, setRegionId] = useState('');
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['topup-by-region', startDate, endDate, regionId],
     queryFn: async () => {
       const params = new URLSearchParams({ startDate, endDate });
@@ -63,6 +64,8 @@ export default function TopUpByRegion() {
       `wallet-deposits-by-region-${startDate}-${endDate}`
     );
   };
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">

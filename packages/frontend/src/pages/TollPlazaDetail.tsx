@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import api from '../lib/api';
 import { ArrowLeft, MapPin, Cpu, Wifi, WifiOff, AlertTriangle, Wrench, Plus, Trash2, X } from 'lucide-react';
+import { ErrorState } from '../components/ErrorState';
 
 interface DeviceStatus {
   id: string;
@@ -62,7 +63,7 @@ export default function TollPlazaDetail() {
   const [deviceError, setDeviceError] = useState('');
   const [deleteDeviceId, setDeleteDeviceId] = useState<string | null>(null);
 
-  const { data: plaza, isLoading } = useQuery<TollPlaza>({
+  const { data: plaza, isLoading, isError, error, refetch } = useQuery<TollPlaza>({
     queryKey: ['toll-plaza', id],
     queryFn: async () => {
       const response = await api.get(`/toll-plazas/${id}`);
@@ -120,6 +121,7 @@ export default function TollPlazaDetail() {
   const formatDate = (d: string | null) => d ? new Date(d).toLocaleString() : 'Never';
 
   if (isLoading) return <div className="text-center py-8">Loading...</div>;
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
   if (!plaza) return <div className="text-center py-8 text-red-600">Plaza not found</div>;
 
   const devices = plaza.deviceStatuses || [];

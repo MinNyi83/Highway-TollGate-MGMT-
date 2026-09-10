@@ -2,9 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 import { Building } from 'lucide-react';
 import api from '../api/client';
 import { formatMMK } from '../utils/format';
+import ErrorState from '../components/ErrorState';
 
 export default function VendorPayments() {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['vendor-payments'],
     queryFn: async () => {
       const res = await api.get('/financial/vendor-payments');
@@ -15,6 +16,8 @@ export default function VendorPayments() {
   const vendors = data?.vendors ?? [];
   const pendingPayments = data?.pendingPayments ?? [];
   const summary = data?.summary ?? {};
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">

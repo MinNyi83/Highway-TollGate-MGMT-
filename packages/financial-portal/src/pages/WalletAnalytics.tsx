@@ -3,17 +3,20 @@ import { Wallet, TrendingUp, Users } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import api from '../api/client';
 import { formatMMK } from '../utils/format';
+import ErrorState from '../components/ErrorState';
 
 const COLORS = ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
 export default function WalletAnalytics() {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['wallet-analytics'],
     queryFn: async () => {
       const res = await api.get('/financial/wallet-analytics');
       return res.data;
     },
   });
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">

@@ -6,6 +6,7 @@ import DateRangePicker from '../components/DateRangePicker';
 import RegionFilter from '../components/RegionFilter';
 import { formatMMK } from '../utils/format';
 import { exportToPDF } from '../utils/exportPDF';
+import ErrorState from '../components/ErrorState';
 
 export default function FinancialReports() {
   const [startDate, setStartDate] = useState(() => {
@@ -16,7 +17,7 @@ export default function FinancialReports() {
   const [endDate, setEndDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [regionId, setRegionId] = useState('');
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['reports-summary', startDate, endDate, regionId],
     queryFn: async () => {
       const params = new URLSearchParams({ startDate, endDate });
@@ -41,6 +42,8 @@ export default function FinancialReports() {
       `financial-report-${startDate}-${endDate}`
     );
   };
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">

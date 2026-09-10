@@ -12,6 +12,7 @@ import { useLanguage } from '../i18n';
 import en from '../i18n/en';
 import my from '../i18n/my';
 import api from '../api/client';
+import ErrorState from '../components/ErrorState';
 import { exportToExcel } from '../utils/excel';
 
 export default function TollUsageByPlaza() {
@@ -26,7 +27,7 @@ export default function TollUsageByPlaza() {
   });
   const [endDate, setEndDate] = useState(() => new Date().toISOString().split('T')[0]);
 
-  const { data: plazas } = useQuery({
+  const { data: plazas, isError: isPlazasError, error: plazasError, refetch: refetchPlazas } = useQuery({
     queryKey: ['plazas'],
     queryFn: async () => {
       const res = await api.get('/financial/plazas');
@@ -34,7 +35,7 @@ export default function TollUsageByPlaza() {
     },
   });
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['toll-usage', plazaId, startDate, endDate],
     queryFn: async () => {
       if (!plazaId) return null;
@@ -44,6 +45,12 @@ export default function TollUsageByPlaza() {
     },
     enabled: !!plazaId,
   });
+
+  const isAnyError = isError || isPlazasError;
+  const anyError = error || plazasError;
+  const anyRefetch = () => { if (isError) refetch(); if (isPlazasError) refetchPlazas(); };
+
+  if (isAnyError) return <ErrorState message={anyError?.message} onRetry={anyRefetch} />;
 
   const records = data?.records ?? [];
   const plazaList = plazas ?? [];

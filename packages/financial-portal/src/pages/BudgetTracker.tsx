@@ -4,6 +4,7 @@ import { Target, TrendingUp, TrendingDown } from 'lucide-react';
 import api from '../api/client';
 import DateRangePicker from '../components/DateRangePicker';
 import { formatMMK } from '../utils/format';
+import ErrorState from '../components/ErrorState';
 
 export default function BudgetTracker() {
   const [startDate, setStartDate] = useState(() => {
@@ -13,7 +14,7 @@ export default function BudgetTracker() {
   });
   const [endDate, setEndDate] = useState(() => new Date().toISOString().split('T')[0]);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['budget-tracker', startDate, endDate],
     queryFn: async () => {
       const params = new URLSearchParams({ startDate, endDate });
@@ -24,6 +25,8 @@ export default function BudgetTracker() {
 
   const items = data?.items ?? [];
   const summary = data?.summary ?? {};
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">

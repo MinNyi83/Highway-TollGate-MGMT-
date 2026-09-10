@@ -2,9 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 import { Database, HardDrive, Cpu, MemoryStick, Download, RefreshCw } from 'lucide-react';
 import api from '../lib/api';
 import { DashboardSkeleton } from '../components/Skeleton';
+import { ErrorState } from '../components/ErrorState';
 
 export default function SystemHealth() {
-  const { data: health, isLoading, refetch } = useQuery({
+  const { data: health, isLoading, refetch, isError, error } = useQuery({
     queryKey: ['system-health'],
     queryFn: async () => {
       const res = await api.get('/health/detailed');
@@ -29,6 +30,7 @@ export default function SystemHealth() {
   };
 
   if (isLoading) return <DashboardSkeleton />;
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div>

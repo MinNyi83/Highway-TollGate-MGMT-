@@ -4,6 +4,7 @@ import { ArrowLeft, Car } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../lib/api';
 import { CardSkeleton } from '../components/Skeleton';
+import { ErrorState } from '../components/ErrorState';
 
 interface VehicleDetail {
   id: string;
@@ -35,7 +36,7 @@ export default function VehicleDetailPage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'events' | 'violations' | 'rfid'>('events');
 
-  const { data: vehicle, isLoading } = useQuery<VehicleDetail>({
+  const { data: vehicle, isLoading, isError, error, refetch } = useQuery<VehicleDetail>({
     queryKey: ['vehicle', id],
     queryFn: async () => {
       const response = await api.get(`/vehicles/${id}`);
@@ -47,6 +48,8 @@ export default function VehicleDetailPage() {
   if (isLoading) {
     return <CardSkeleton />;
   }
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   if (!vehicle) {
     return <div className="text-center py-8 text-gray-500">Vehicle not found</div>;

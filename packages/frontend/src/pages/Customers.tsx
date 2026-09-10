@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Search, Plus, Edit, Trash2, X, User, Building2, Wallet, Ban, CheckCircle, Key, ArrowUpRight } from 'lucide-react';
 import api from '../lib/api';
+import { ErrorState } from '../components/ErrorState';
 
 interface Customer {
   id: string;
@@ -37,7 +38,7 @@ export default function Customers() {
   const [newPassword, setNewPassword] = useState('');
   const queryClient = useQueryClient();
 
-  const { data: customers, isLoading } = useQuery<Customer[]>({
+  const { data: customers, isLoading, isError, error, refetch } = useQuery<Customer[]>({
     queryKey: ['admin-customers', search],
     queryFn: async () => {
       const config = search ? { params: { search } } : undefined;
@@ -121,6 +122,7 @@ export default function Customers() {
   const filteredCustomers = customers || [];
 
   if (isLoading) return <div className="text-center py-8 text-gray-500">Loading...</div>;
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">

@@ -5,6 +5,7 @@ import { Users } from 'lucide-react';
 import api from '../api/client';
 import DateRangePicker from '../components/DateRangePicker';
 import { formatMMK } from '../utils/format';
+import ErrorState from '../components/ErrorState';
 
 export default function CustomerSpending() {
   const [startDate, setStartDate] = useState(() => {
@@ -14,7 +15,7 @@ export default function CustomerSpending() {
   });
   const [endDate, setEndDate] = useState(() => new Date().toISOString().split('T')[0]);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['customer-spending', startDate, endDate],
     queryFn: async () => {
       const res = await api.get(`/financial/customer-spending?startDate=${startDate}&endDate=${endDate}`);
@@ -23,6 +24,8 @@ export default function CustomerSpending() {
   });
 
   const top10 = data?.top10 ?? [];
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">

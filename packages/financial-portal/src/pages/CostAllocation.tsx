@@ -2,9 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 import { PieChart } from 'lucide-react';
 import api from '../api/client';
 import { formatMMK } from '../utils/format';
+import ErrorState from '../components/ErrorState';
 
 export default function CostAllocation() {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['cost-allocation'],
     queryFn: async () => {
       const res = await api.get('/financial/cost-allocation');
@@ -15,6 +16,8 @@ export default function CostAllocation() {
   const allocations = data?.allocations ?? [];
   const costBreakdown = data?.costBreakdown ?? [];
   const colors = ['#6366f1', '#10b981', '#f59e0b', '#3b82f6', '#ef4444', '#8b5cf6'];
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">

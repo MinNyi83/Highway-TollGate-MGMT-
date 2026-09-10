@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Activity, AlertTriangle, Car, DollarSign, Radio } from 'lucide-react';
 import api from '../lib/api';
+import { ErrorState } from '../components/ErrorState';
 import { useSocket } from '../hooks/useSocket';
 import TelemetryBar from '../components/command-hub/TelemetryBar';
 import PlazaGrid from '../components/command-hub/PlazaGrid';
@@ -17,7 +18,7 @@ export default function Dashboard() {
   const { socket } = useSocket();
   const [stats, setStats] = useState<any>(null);
 
-  const { data: initialStats, refetch: refetchStats } = useQuery({
+  const { data: initialStats, refetch: refetchStats, isError: isStatsError, error: statsError } = useQuery({
     queryKey: ['admin-dashboard-stats'],
     queryFn: async () => {
       const res = await api.get('/reports/summary');
@@ -58,6 +59,8 @@ export default function Dashboard() {
     },
     refetchInterval: 30000,
   });
+
+  if (isStatsError) return <ErrorState message={statsError?.message} onRetry={refetchStats} />;
 
   useEffect(() => {
     if (!socket) return;

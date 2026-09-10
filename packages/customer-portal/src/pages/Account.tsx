@@ -2,6 +2,7 @@ import { useState, useRef, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Wallet, Plus, CheckCircle, QrCode, Loader2, AlertCircle, History, CreditCard, Smartphone } from 'lucide-react';
 import api from '../lib/api';
+import ErrorState from '../components/ErrorState';
 
 const walletOptions = [
   { id: 'kbzpay', name: 'KBZ Pay', icon: '🏦', color: 'from-red-500 to-rose-600', description: 'Pay with KBZ Pay app' },
@@ -22,7 +23,7 @@ export default function Account() {
   const queryClient = useQueryClient();
   const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const { data: account, isLoading } = useQuery({
+  const { data: account, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['customer-account'],
     queryFn: async () => {
       const response = await api.get('/customer/account');
@@ -30,7 +31,7 @@ export default function Account() {
     },
   });
 
-  const { data: topUpHistory } = useQuery({
+  const { data: topUpHistory, isError: isTopUpError, error: topUpError } = useQuery({
     queryKey: ['customer-topup-history'],
     queryFn: async () => {
       const response = await api.get('/customer/topup-history');
@@ -154,6 +155,8 @@ export default function Account() {
       </div>
     );
   }
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-5">

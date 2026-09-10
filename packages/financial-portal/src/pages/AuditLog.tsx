@@ -3,12 +3,13 @@ import { useQuery } from '@tanstack/react-query';
 import { Shield, User, Clock, FileText } from 'lucide-react';
 import api from '../api/client';
 import { useLanguage } from '../i18n';
+import ErrorState from '../components/ErrorState';
 
 export default function AuditLog() {
   const { language } = useLanguage();
   const t = (key: string) => key;
 
-  const { data: logs, isLoading } = useQuery({
+  const { data: logs, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['audit-logs'],
     queryFn: async () => {
       const res = await api.get('/financial/audit-logs');
@@ -23,6 +24,8 @@ export default function AuditLog() {
     if (action.includes('CONFIRM')) return 'text-purple-600 bg-purple-50';
     return 'text-slate-600 bg-slate-50';
   };
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">

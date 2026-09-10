@@ -5,6 +5,7 @@ import { CreditCard } from 'lucide-react';
 import api from '../api/client';
 import DateRangePicker from '../components/DateRangePicker';
 import { formatMMK } from '../utils/format';
+import ErrorState from '../components/ErrorState';
 
 const COLORS = ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
@@ -16,7 +17,7 @@ export default function RevenueByPayment() {
   });
   const [endDate, setEndDate] = useState(() => new Date().toISOString().split('T')[0]);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['revenue-by-payment', startDate, endDate],
     queryFn: async () => {
       const res = await api.get(`/financial/revenue-by-payment?startDate=${startDate}&endDate=${endDate}`);
@@ -25,6 +26,8 @@ export default function RevenueByPayment() {
   });
 
   const methods = data?.methods ?? [];
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">

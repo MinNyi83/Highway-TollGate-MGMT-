@@ -11,6 +11,7 @@ import { useLanguage } from '../i18n';
 import en from '../i18n/en';
 import my from '../i18n/my';
 import api from '../api/client';
+import ErrorState from '../components/ErrorState';
 import { useAuthStore } from '../stores/authStore';
 import { exportToExcel } from '../utils/excel';
 
@@ -29,7 +30,7 @@ export default function MonthlyReconciliation() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<any>(null);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['reconciliation', fiscalYear, month, regionId, statusFilter],
     queryFn: async () => {
       const params = new URLSearchParams({ fiscalYear: String(fiscalYear) });
@@ -122,6 +123,8 @@ export default function MonthlyReconciliation() {
       `reconciliation-${fiscalYear}`
     );
   };
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">

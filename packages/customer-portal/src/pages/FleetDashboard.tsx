@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import api from '../lib/api';
 import { useLanguage } from '../hooks/useLanguage';
+import ErrorState from '../components/ErrorState';
 
 interface FleetStats {
   totalVehicles: number;
@@ -55,7 +56,7 @@ export default function FleetDashboard() {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<'overview' | 'vehicles' | 'trips' | 'spending'>('overview');
 
-  const { data: stats, isLoading: loadingStats } = useQuery<FleetStats>({
+  const { data: stats, isLoading: loadingStats, isError: isStatsError, error: statsError, refetch: refetchStats } = useQuery<FleetStats>({
     queryKey: ['fleet-stats'],
     queryFn: async () => {
       const res = await api.get('/fleet/stats');
@@ -63,7 +64,7 @@ export default function FleetDashboard() {
     },
   });
 
-  const { data: vehicles, isLoading: loadingVehicles } = useQuery<FleetVehicle[]>({
+  const { data: vehicles, isLoading: loadingVehicles, isError: isVehiclesError, error: vehiclesError, refetch: refetchVehicles } = useQuery<FleetVehicle[]>({
     queryKey: ['fleet-vehicles'],
     queryFn: async () => {
       const res = await api.get('/fleet/vehicles');
@@ -71,7 +72,7 @@ export default function FleetDashboard() {
     },
   });
 
-  const { data: tripData, isLoading: loadingTrips } = useQuery({
+  const { data: tripData, isLoading: loadingTrips, isError: isTripsError, error: tripsError, refetch: refetchTrips } = useQuery({
     queryKey: ['fleet-trips'],
     queryFn: async () => {
       const res = await api.get('/fleet/trips?limit=20');
@@ -79,7 +80,7 @@ export default function FleetDashboard() {
     },
   });
 
-  const { data: spendingData, isLoading: loadingSpending } = useQuery({
+  const { data: spendingData, isLoading: loadingSpending, isError: isSpendingError, error: spendingError, refetch: refetchSpending } = useQuery({
     queryKey: ['fleet-spending'],
     queryFn: async () => {
       const res = await api.get('/fleet/spending?period=daily');
@@ -93,6 +94,12 @@ export default function FleetDashboard() {
     { id: 'trips' as const, label: 'Trip History', icon: Route },
     { id: 'spending' as const, label: 'Spending', icon: DollarSign },
   ];
+
+  if (loadingStats) {
+    return <div className="text-center py-8 text-gray-500">Loading fleet data...</div>;
+  }
+
+  if (isStatsError) return <ErrorState message={statsError?.message} onRetry={refetchStats} />;
 
   return (
     <div className="space-y-6">

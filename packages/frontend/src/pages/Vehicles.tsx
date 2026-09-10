@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import api from '../lib/api';
 import { Plus, Search, X, Upload, Image, Edit, Trash2, CreditCard, CheckCircle, XCircle, Clock, AlertTriangle, Sparkles } from 'lucide-react';
 import OcrScannerModal, { ExtractedVehicleData } from '../components/command-hub/OcrScannerModal';
+import { ErrorState } from '../components/ErrorState';
 
 interface Vehicle {
   id: string;
@@ -69,7 +70,7 @@ export default function Vehicles() {
   const [rejectReason, setRejectReason] = useState('');
   const queryClient = useQueryClient();
 
-  const { data: vehicles, isLoading } = useQuery<Vehicle[]>({
+  const { data: vehicles, isLoading, isError, error, refetch } = useQuery<Vehicle[]>({
     queryKey: ['vehicles', search],
     queryFn: async () => {
       const response = await api.get('/vehicles');
@@ -176,6 +177,7 @@ export default function Vehicles() {
   };
 
   if (isLoading) return <div className="text-center py-8">Loading...</div>;
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div>

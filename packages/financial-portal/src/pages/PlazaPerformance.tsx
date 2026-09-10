@@ -5,6 +5,7 @@ import { Building2 } from 'lucide-react';
 import api from '../api/client';
 import DateRangePicker from '../components/DateRangePicker';
 import { formatMMK } from '../utils/format';
+import ErrorState from '../components/ErrorState';
 
 export default function PlazaPerformance() {
   const [startDate, setStartDate] = useState(() => {
@@ -14,7 +15,7 @@ export default function PlazaPerformance() {
   });
   const [endDate, setEndDate] = useState(() => new Date().toISOString().split('T')[0]);
 
-  const { data: plazas, isLoading } = useQuery({
+  const { data: plazas, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['plaza-performance', startDate, endDate],
     queryFn: async () => {
       const res = await api.get(`/financial/plaza-performance?startDate=${startDate}&endDate=${endDate}`);
@@ -26,6 +27,8 @@ export default function PlazaPerformance() {
   const topRevenue = sortedByRevenue[0];
   const totalRevenue = plazas?.reduce((sum: number, p: any) => sum + p.totalRevenue, 0) || 0;
   const totalTrips = plazas?.reduce((sum: number, p: any) => sum + p.totalTrips, 0) || 0;
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">

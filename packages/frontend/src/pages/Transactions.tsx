@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '../lib/api';
 import { Search, ChevronDown, ChevronUp, ArrowDown, ArrowUp, CreditCard, Clock, MapPin, Hash, AlertTriangle, CheckCircle, XCircle, Receipt } from 'lucide-react';
+import { ErrorState } from '../components/ErrorState';
 
 interface Transaction {
   id: string;
@@ -51,7 +52,7 @@ export default function Transactions() {
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const { data: transactions, isLoading } = useQuery<Transaction[]>({
+  const { data: transactions, isLoading, isError, error, refetch } = useQuery<Transaction[]>({
     queryKey: ['transactions'],
     queryFn: async () => {
       const response = await api.get('/transactions');
@@ -89,6 +90,7 @@ export default function Transactions() {
   };
 
   if (isLoading) return <div className="text-center py-8">Loading...</div>;
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div>

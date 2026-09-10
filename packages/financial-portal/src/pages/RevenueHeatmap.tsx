@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Grid, Clock, Calendar } from 'lucide-react';
 import api from '../api/client';
 import { formatMMK } from '../utils/format';
+import ErrorState from '../components/ErrorState';
 
 function HeatmapCell({ value, max }: { value: number; max: number }) {
   const intensity = max > 0 ? value / max : 0;
@@ -26,7 +27,7 @@ function HeatmapCell({ value, max }: { value: number; max: number }) {
 export default function RevenueHeatmap() {
   const [days, setDays] = useState(30);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['heatmap', days],
     queryFn: async () => {
       const res = await api.get(`/financial/heatmap?days=${days}`);
@@ -38,6 +39,8 @@ export default function RevenueHeatmap() {
   const maxRevenue = data?.heatmap?.reduce((max: number, day: any) => {
     return Math.max(max, ...day.hours.map((h: any) => h.revenue));
   }, 0) || 1;
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">

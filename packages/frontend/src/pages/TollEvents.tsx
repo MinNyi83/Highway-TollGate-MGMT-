@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { io } from 'socket.io-client';
 import api from '../lib/api';
 import { Search, ChevronDown, ChevronUp, ArrowUp, ArrowDown, Camera, AlertTriangle, Clock, MapPin, Hash } from 'lucide-react';
+import { ErrorState } from '../components/ErrorState';
 
 interface TollEvent {
   id: string;
@@ -34,7 +35,7 @@ export default function TollEvents() {
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const { data: initialEvents, isLoading } = useQuery<TollEvent[]>({
+  const { data: initialEvents, isLoading, isError, error, refetch } = useQuery<TollEvent[]>({
     queryKey: ['toll-events'],
     queryFn: async () => {
       const response = await api.get('/toll-events');
@@ -80,6 +81,7 @@ export default function TollEvents() {
   };
 
   if (isLoading) return <div className="text-center py-8">Loading...</div>;
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div>

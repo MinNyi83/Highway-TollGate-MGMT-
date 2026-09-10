@@ -4,6 +4,7 @@ import { Wallet, Car, Activity, AlertTriangle, ArrowUpRight, ArrowDownRight, Che
 import { useNavigate } from 'react-router-dom';
 import api from '../lib/api';
 import { StatSkeleton, CardSkeleton } from '../components/Skeleton';
+import ErrorState from '../components/ErrorState';
 import DigitalPassModal from '../components/DigitalPassModal';
 import RoutePlannerModal from '../components/RoutePlannerModal';
 
@@ -11,7 +12,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [showPassModal, setShowPassModal] = useState(false);
   const [showRoutePlanner, setShowRoutePlanner] = useState(false);
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['customer-dashboard'],
     queryFn: async () => {
       const response = await api.get('/customer/dashboard');
@@ -32,6 +33,8 @@ export default function Dashboard() {
       </div>
     );
   }
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   if (!data) return <div className="text-center py-8 text-gray-500 dark:text-gray-400">No data</div>;
 

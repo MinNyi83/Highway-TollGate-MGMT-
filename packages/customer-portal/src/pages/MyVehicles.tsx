@@ -4,6 +4,7 @@ import { Car, Plus, Upload, Trash2, AlertTriangle, Radio, Image, X, Sparkles, Ca
 import api from '../lib/api';
 import { showToast } from '../components/Toast';
 import OcrScannerModal, { ExtractedVehicleData } from '../components/OcrScannerModal';
+import ErrorState from '../components/ErrorState';
 
 const vehicleClasses = [
   { value: 'MOTORCYCLE', label: 'Motorcycle', icon: '🏍️' },
@@ -76,7 +77,7 @@ export default function MyVehicles() {
     showToast('success', `✨ Auto-filled: ${data.make} ${data.model} (${data.plateNumber})`);
   };
 
-  const { data: vehicles, isLoading } = useQuery({
+  const { data: vehicles, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['my-vehicles'],
     queryFn: async () => {
       const res = await api.get('/customer/my-vehicles');
@@ -323,6 +324,8 @@ export default function MyVehicles() {
       {/* Vehicle List */}
       {isLoading ? (
         <div className="text-center py-8 dark:text-gray-400">Loading...</div>
+      ) : isError ? (
+        <ErrorState message={error?.message} onRetry={refetch} />
       ) : (
         <div className="space-y-3">
           {vehicles?.map((v: any) => {

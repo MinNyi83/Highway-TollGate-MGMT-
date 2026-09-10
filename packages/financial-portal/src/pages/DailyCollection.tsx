@@ -10,6 +10,7 @@ import { useLanguage } from '../i18n';
 import en from '../i18n/en';
 import my from '../i18n/my';
 import api from '../api/client';
+import ErrorState from '../components/ErrorState';
 import { exportToExcel } from '../utils/excel';
 import { exportToPDF } from '../utils/exportPDF';
 
@@ -22,7 +23,7 @@ export default function DailyCollection() {
   const [regionId, setRegionId] = useState('');
   const [plazaId, setPlazaId] = useState('');
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['daily-collection', date, regionId, plazaId],
     queryFn: async () => {
       const params = new URLSearchParams({ date });
@@ -84,6 +85,8 @@ export default function DailyCollection() {
       `daily-collection-${date}`
     );
   };
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">

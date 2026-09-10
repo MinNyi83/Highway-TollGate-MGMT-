@@ -4,6 +4,7 @@ import { Search, Download } from 'lucide-react';
 import api from '../api/client';
 import { formatMMK, formatDate } from '../utils/format';
 import ExportButton from '../components/ExportButton';
+import ErrorState from '../components/ErrorState';
 import { exportToPDF } from '../utils/exportPDF';
 
 export default function TransactionSearch() {
@@ -16,7 +17,7 @@ export default function TransactionSearch() {
   const [endDate, setEndDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [page, setPage] = useState(1);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['transactions', plate, startDate, endDate, page],
     queryFn: async () => {
       const params = new URLSearchParams({
@@ -50,6 +51,8 @@ export default function TransactionSearch() {
       `transactions-${startDate}-${endDate}`
     );
   };
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">

@@ -12,6 +12,7 @@ import { useLanguage } from '../i18n';
 import en from '../i18n/en';
 import my from '../i18n/my';
 import api from '../api/client';
+import ErrorState from '../components/ErrorState';
 import { exportToExcel } from '../utils/excel';
 import { exportToPDF } from '../utils/exportPDF';
 
@@ -26,7 +27,7 @@ export default function RevenueByRegion() {
   });
   const [endDate, setEndDate] = useState(() => new Date().toISOString().split('T')[0]);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['revenue-by-region', startDate, endDate],
     queryFn: async () => {
       const res = await api.get(`/financial/revenue/by-region?startDate=${startDate}&endDate=${endDate}`);
@@ -83,6 +84,8 @@ export default function RevenueByRegion() {
       `revenue-by-region-${startDate}-${endDate}`
     );
   };
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">

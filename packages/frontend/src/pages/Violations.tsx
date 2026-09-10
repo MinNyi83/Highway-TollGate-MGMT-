@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/api';
 import { Search, ChevronDown, ChevronUp, AlertTriangle, Clock, MapPin, Hash, ArrowUp, ArrowDown, CheckCircle, XCircle, Ban, FileText, Shield } from 'lucide-react';
+import { ErrorState } from '../components/ErrorState';
 
 interface Violation {
   id: string;
@@ -46,7 +47,7 @@ export default function Violations() {
   const [typeFilter, setTypeFilter] = useState('ALL');
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const { data: violations, isLoading } = useQuery<Violation[]>({
+  const { data: violations, isLoading, isError, error, refetch } = useQuery<Violation[]>({
     queryKey: ['violations'],
     queryFn: async () => {
       const response = await api.get('/violations');
@@ -94,6 +95,7 @@ export default function Violations() {
   const isOverdue = (dueDate: string) => new Date(dueDate) < new Date();
 
   if (isLoading) return <div className="text-center py-8">Loading...</div>;
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div>

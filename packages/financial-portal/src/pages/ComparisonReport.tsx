@@ -4,12 +4,13 @@ import { TrendingUp, TrendingDown } from 'lucide-react';
 import api from '../api/client';
 import { formatMMK } from '../utils/format';
 import { useLanguage } from '../i18n';
+import ErrorState from '../components/ErrorState';
 
 export default function ComparisonReport() {
   const { language } = useLanguage();
   const t = (key: string) => key;
 
-  const { data: comparison, isLoading } = useQuery({
+  const { data: comparison, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['comparison-report'],
     queryFn: async () => {
       const res = await api.get('/financial/comparison');
@@ -23,6 +24,8 @@ export default function ComparisonReport() {
   const totalCurrent = comparison?.reduce((sum: number, r: any) => sum + r.currentRevenue, 0) || 0;
   const totalPrevious = comparison?.reduce((sum: number, r: any) => sum + r.previousRevenue, 0) || 0;
   const yoyGrowth = totalPrevious > 0 ? ((totalCurrent - totalPrevious) / totalPrevious * 100).toFixed(1) : '0';
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">

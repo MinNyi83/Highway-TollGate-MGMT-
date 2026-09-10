@@ -5,6 +5,7 @@ import {
   Settings, Trash2, Edit, TestTube, ChevronDown, ChevronUp, Search
 } from 'lucide-react';
 import api from '../lib/api';
+import { ErrorState } from '../components/ErrorState';
 
 interface Device {
   id: string;
@@ -56,7 +57,7 @@ export default function DeviceStatus() {
   const [testResult, setTestResult] = useState<{ deviceId: string; result: any } | null>(null);
   const queryClient = useQueryClient();
 
-  const { data: devices, isLoading } = useQuery<Device[]>({
+  const { data: devices, isLoading, isError, error, refetch } = useQuery<Device[]>({
     queryKey: ['device-status'],
     queryFn: async () => {
       const response = await api.get('/device-status');
@@ -142,6 +143,7 @@ export default function DeviceStatus() {
   };
 
   if (isLoading) return <div className="text-center py-8">Loading...</div>;
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div>

@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend } from 'recharts';
 import api from '../lib/api';
 import { FileSpreadsheet, TrendingUp, Car, AlertTriangle, DollarSign } from 'lucide-react';
+import { ErrorState } from '../components/ErrorState';
 
 interface RevenueData { plazaName: string; totalRevenue: number; transactionCount: number; }
 interface ViolationData { violationType: string; count: number; totalFines: number; }
@@ -22,7 +23,7 @@ export default function Reports() {
   const [startDate, setStartDate] = useState(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
   const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
 
-  const { data: summary } = useQuery<SummaryData>({
+  const { data: summary, isError, error, refetch } = useQuery<SummaryData>({
     queryKey: ['reports', 'summary'],
     queryFn: async () => (await api.get('/reports/summary')).data,
   });
@@ -71,6 +72,8 @@ export default function Reports() {
   };
 
   const isLoading = revenueLoading || violationLoading;
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   const plazaRevenueByGateCode = revenueData?.map((r) => ({
     ...r,

@@ -13,6 +13,7 @@ import { useLanguage } from '../i18n';
 import en from '../i18n/en';
 import my from '../i18n/my';
 import api from '../api/client';
+import ErrorState from '../components/ErrorState';
 import { exportToExcel } from '../utils/excel';
 
 const currentYear = new Date().getFullYear();
@@ -24,7 +25,7 @@ export default function FiscalYearReport() {
   const [fiscalYear, setFiscalYear] = useState(currentYear);
   const [regionId, setRegionId] = useState('');
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['fiscal-year', fiscalYear, regionId],
     queryFn: async () => {
       const params = new URLSearchParams({ fiscalYear: String(fiscalYear) });
@@ -73,6 +74,8 @@ export default function FiscalYearReport() {
       `fiscal-year-report-${fiscalYear}`
     );
   };
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">

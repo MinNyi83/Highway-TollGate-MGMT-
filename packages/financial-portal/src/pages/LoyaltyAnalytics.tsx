@@ -2,9 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Star, Award } from 'lucide-react';
 import api from '../api/client';
+import ErrorState from '../components/ErrorState';
 
 export default function LoyaltyAnalytics() {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['loyalty-analytics'],
     queryFn: async () => {
       const res = await api.get('/financial/loyalty-analytics');
@@ -13,6 +14,8 @@ export default function LoyaltyAnalytics() {
   });
 
   const topAccounts = data?.topAccounts ?? [];
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">

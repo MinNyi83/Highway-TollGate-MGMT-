@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '../lib/api';
 import { Play, Square, Settings, Car, MapPin, AlertTriangle, CheckCircle, Clock, RefreshCw, Calendar, Sun, Moon, Sunrise, Sunset, Users } from 'lucide-react';
+import { ErrorState } from '../components/ErrorState';
 
 interface Vehicle {
   id: string;
@@ -99,7 +100,7 @@ export default function Simulator() {
   const [holidayProgress, setHolidayProgress] = useState({ current: 0, timeOfDay: '', wave: '' });
   const [holidayStats, setHolidayStats] = useState({ byTimeOfDay: {} as Record<string, number>, byVehicleClass: {} as Record<string, number> });
 
-  const { data: vehicles, isLoading: loadingVehicles } = useQuery<Vehicle[]>({
+  const { data: vehicles, isLoading: loadingVehicles, isError: isVehiclesError, error: vehiclesError, refetch: refetchVehicles } = useQuery<Vehicle[]>({
     queryKey: ['vehicles-list'],
     queryFn: async () => (await api.get('/vehicles')).data,
   });
@@ -286,6 +287,8 @@ export default function Simulator() {
   const canSimulate = simMode === 'manual'
     ? selectedVehicleId && (selectedPlazaId || (plazas?.length ?? 0) > 0) && !isRunning
     : (vehicles?.length ?? 0) > 0 && (plazas?.length ?? 0) > 0 && !isRunning;
+
+  if (isVehiclesError) return <ErrorState message={vehiclesError?.message} onRetry={refetchVehicles} />;
 
   return (
     <div className="h-full flex flex-col">

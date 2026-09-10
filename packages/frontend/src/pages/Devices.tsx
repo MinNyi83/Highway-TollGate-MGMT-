@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Search, Plus, Edit, Trash2, X, Wifi, WifiOff, Settings, Cpu, Radio, Camera, Cog, Wrench } from 'lucide-react';
 import api from '../lib/api';
+import { ErrorState } from '../components/ErrorState';
 
 interface Device {
   id: string;
@@ -57,7 +58,7 @@ export default function Devices() {
   const [filterStatus, setFilterStatus] = useState('all');
   const queryClient = useQueryClient();
 
-  const { data: devices, isLoading } = useQuery<Device[]>({
+  const { data: devices, isLoading, isError, error, refetch } = useQuery<Device[]>({
     queryKey: ['device-status'],
     queryFn: async () => {
       const r = await api.get('/device-status');
@@ -135,6 +136,7 @@ export default function Devices() {
   };
 
   if (isLoading) return <div className="text-center py-8 text-gray-500">Loading...</div>;
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">

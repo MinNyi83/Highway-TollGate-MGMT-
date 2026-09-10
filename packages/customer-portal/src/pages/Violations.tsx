@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import api from '../lib/api';
+import ErrorState from '../components/ErrorState';
 
 export default function Violations() {
-  const { data: violations, isLoading } = useQuery({
+  const { data: violations, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['customer-violations'],
     queryFn: async () => {
       const response = await api.get('/customer/violations');
@@ -11,6 +12,8 @@ export default function Violations() {
   });
 
   if (isLoading) return <div className="text-center py-8">Loading...</div>;
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div>

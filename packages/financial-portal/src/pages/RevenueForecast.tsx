@@ -4,11 +4,12 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { TrendingUp } from 'lucide-react';
 import api from '../api/client';
 import { formatMMK } from '../utils/format';
+import ErrorState from '../components/ErrorState';
 
 export default function RevenueForecast() {
   const [months, setMonths] = useState(6);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['forecast', months],
     queryFn: async () => {
       const res = await api.get(`/financial/forecast?months=${months}`);
@@ -24,6 +25,8 @@ export default function RevenueForecast() {
   const lastActual = data?.historical?.[data.historical.length - 1]?.actual || 0;
   const lastForecast = data?.forecast?.[data.forecast.length - 1]?.projected || 0;
   const growth = lastActual > 0 ? ((lastForecast - lastActual) / lastActual * 100).toFixed(1) : '0';
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">

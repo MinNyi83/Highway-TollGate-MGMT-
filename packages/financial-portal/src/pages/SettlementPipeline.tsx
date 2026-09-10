@@ -2,9 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 import { GitBranch, Clock, CheckCircle, ArrowRight } from 'lucide-react';
 import api from '../api/client';
 import { formatMMK } from '../utils/format';
+import ErrorState from '../components/ErrorState';
 
 export default function SettlementPipeline() {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['settlement-pipeline'],
     queryFn: async () => {
       const res = await api.get('/financial/settlement-pipeline');
@@ -15,6 +16,8 @@ export default function SettlementPipeline() {
   const summary = data?.summary ?? {};
   const byStatus = data?.byStatus ?? [];
   const recentTransfers = data?.recentTransfers ?? [];
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">

@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import api from '../lib/api';
 import { Shield } from 'lucide-react';
 import { TableSkeleton } from '../components/Skeleton';
+import { ErrorState } from '../components/ErrorState';
 
 interface AuditEntry {
   id: string;
@@ -14,7 +15,7 @@ interface AuditEntry {
 }
 
 export default function AuditLog() {
-  const { data: logs, isLoading } = useQuery<AuditEntry[]>({
+  const { data: logs, isLoading, isError, error, refetch } = useQuery<AuditEntry[]>({
     queryKey: ['audit-logs'],
     queryFn: async () => {
       const response = await api.get('/audit-logs');
@@ -23,6 +24,7 @@ export default function AuditLog() {
   });
 
   if (isLoading) return <TableSkeleton />;
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div>

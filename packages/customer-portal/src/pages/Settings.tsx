@@ -6,6 +6,7 @@ import { useLanguage } from '../hooks/useLanguage';
 import { useTheme } from '../hooks/useTheme';
 import { useAuthStore } from '../stores/authStore';
 import { showToast } from '../components/Toast';
+import ErrorState from '../components/ErrorState';
 
 export default function Settings() {
   const { language, setLanguage } = useLanguage();
@@ -17,7 +18,7 @@ export default function Settings() {
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
 
-  const { data: profile } = useQuery({
+  const { data: profile, isError, error, refetch } = useQuery({
     queryKey: ['profile'],
     queryFn: async () => {
       const res = await api.get('/customer/profile');
@@ -25,7 +26,7 @@ export default function Settings() {
     },
   });
 
-  const { data: smsHistory } = useQuery({
+  const { data: smsHistory, isError: isSmsError } = useQuery({
     queryKey: ['sms-history'],
     queryFn: async () => {
       const res = await api.get('/customer/sms-history');
@@ -61,6 +62,8 @@ export default function Settings() {
   };
 
   const isEnterprise = profile?.customerType === 'ENTERPRISE';
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="max-w-2xl mx-auto">

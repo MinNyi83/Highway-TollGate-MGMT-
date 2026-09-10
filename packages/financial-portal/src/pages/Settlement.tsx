@@ -11,6 +11,7 @@ import { useLanguage } from '../i18n';
 import en from '../i18n/en';
 import my from '../i18n/my';
 import api from '../api/client';
+import ErrorState from '../components/ErrorState';
 import { exportToExcel } from '../utils/excel';
 
 export default function Settlement() {
@@ -28,7 +29,7 @@ export default function Settlement() {
   const [statusFilter, setStatusFilter] = useState('');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['settlement', startDate, endDate, regionId, statusFilter],
     queryFn: async () => {
       const params = new URLSearchParams({ startDate, endDate });
@@ -98,6 +99,8 @@ export default function Settlement() {
       `settlement-${startDate}-${endDate}`
     );
   };
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">

@@ -2,9 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 import { Banknote } from 'lucide-react';
 import api from '../api/client';
 import { formatMMK } from '../utils/format';
+import ErrorState from '../components/ErrorState';
 
 export default function CashFlow() {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['cash-flow'],
     queryFn: async () => {
       const res = await api.get('/financial/cash-flow');
@@ -14,6 +15,8 @@ export default function CashFlow() {
 
   const months = data?.months ?? [];
   const summary = data?.summary ?? {};
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">

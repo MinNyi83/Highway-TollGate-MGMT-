@@ -6,6 +6,7 @@ import { Plus, X, Pencil, Trash2, Eye, MapPin, Cpu, Map as MapIcon, LayoutGrid }
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { HIGHWAY_ROUTE_COORDINATES } from '../components/command-hub/PlazaMapModal';
+import { ErrorState } from '../components/ErrorState';
 
 interface TollPlaza {
   id: string;
@@ -41,7 +42,7 @@ export default function TollPlazas() {
   const [error, setError] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
-  const { data: plazas, isLoading } = useQuery<TollPlaza[]>({
+  const { data: plazas, isLoading, isError, error: queryError, refetch } = useQuery<TollPlaza[]>({
     queryKey: ['toll-plazas'],
     queryFn: async () => {
       const response = await api.get('/toll-plazas');
@@ -142,6 +143,7 @@ export default function TollPlazas() {
   };
 
   if (isLoading) return <div className="text-center py-8 text-slate-500 font-medium">Loading Toll Plazas...</div>;
+  if (isError) return <ErrorState message={queryError?.message} onRetry={refetch} />;
 
   return (
     <div>

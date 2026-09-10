@@ -9,6 +9,7 @@ import { useLanguage } from '../i18n';
 import en from '../i18n/en';
 import my from '../i18n/my';
 import api from '../api/client';
+import ErrorState from '../components/ErrorState';
 import { exportToExcel } from '../utils/excel';
 
 const currentYear = new Date().getFullYear();
@@ -21,7 +22,7 @@ export default function OfficialReceipts() {
   const [regionId, setRegionId] = useState('');
   const [plazaId, setPlazaId] = useState('');
 
-  const { data: plazas } = useQuery({
+  const { data: plazas, isError: isPlazasError, error: plazasError, refetch: refetchPlazas } = useQuery({
     queryKey: ['plazas'],
     queryFn: async () => {
       const res = await api.get('/financial/plazas');
@@ -29,7 +30,7 @@ export default function OfficialReceipts() {
     },
   });
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['receipts', fiscalYear, regionId, plazaId],
     queryFn: async () => {
       const params = new URLSearchParams({ fiscalYear: String(fiscalYear) });
@@ -39,6 +40,12 @@ export default function OfficialReceipts() {
       return res.data;
     },
   });
+
+  const isAnyError = isError || isPlazasError;
+  const anyError = error || plazasError;
+  const anyRefetch = () => { if (isError) refetch(); if (isPlazasError) refetchPlazas(); };
+
+  if (isAnyError) return <ErrorState message={anyError?.message} onRetry={anyRefetch} />;
 
   const records = data?.records ?? [];
   const plazaList = plazas ?? [];

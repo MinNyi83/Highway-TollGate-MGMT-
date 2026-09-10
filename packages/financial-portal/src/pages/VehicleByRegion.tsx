@@ -11,6 +11,7 @@ import { useLanguage } from '../i18n';
 import en from '../i18n/en';
 import my from '../i18n/my';
 import api from '../api/client';
+import ErrorState from '../components/ErrorState';
 import { exportToExcel } from '../utils/excel';
 
 export default function VehicleByRegion() {
@@ -19,7 +20,7 @@ export default function VehicleByRegion() {
 
   const [regionId, setRegionId] = useState('');
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['vehicle-by-region', regionId],
     queryFn: async () => {
       const params = regionId ? `?regionId=${regionId}` : '';
@@ -64,6 +65,8 @@ export default function VehicleByRegion() {
       `vehicle-registration-by-region`
     );
   };
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">

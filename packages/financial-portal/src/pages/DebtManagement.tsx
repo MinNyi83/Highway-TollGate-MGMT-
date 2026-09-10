@@ -2,9 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 import { Landmark } from 'lucide-react';
 import api from '../api/client';
 import { formatMMK } from '../utils/format';
+import ErrorState from '../components/ErrorState';
 
 export default function DebtManagement() {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['debt-management'],
     queryFn: async () => {
       const res = await api.get('/financial/debt-management');
@@ -14,6 +15,8 @@ export default function DebtManagement() {
 
   const debts = data?.debts ?? [];
   const summary = data?.summary ?? {};
+
+  if (isError) return <ErrorState message={error?.message} onRetry={refetch} />;
 
   return (
     <div className="space-y-6">
