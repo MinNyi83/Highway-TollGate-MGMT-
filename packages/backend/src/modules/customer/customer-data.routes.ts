@@ -9,11 +9,6 @@ router.get('/account', authMiddleware, async (req: Request, res: Response) => {
       where: { userId: req.user!.userId },
       include: {
         user: { select: { id: true, email: true, name: true } },
-        rfidTags: {
-          include: {
-            vehicle: { select: { id: true, plateNumber: true, make: true, model: true, year: true, vehicleClass: true, vehiclePhoto: true } },
-          },
-        },
       },
     });
 
@@ -22,7 +17,23 @@ router.get('/account', authMiddleware, async (req: Request, res: Response) => {
       return;
     }
 
-    res.json(account);
+    const tags = await customerPrisma.rFIDTag.findMany({
+      where: { accountId: account.id },
+    });
+
+    const vehicleIds = tags.map(t => t.vehicleId).filter(Boolean);
+    const vehicles = vehicleIds.length > 0 ? await hqPrisma.vehicle.findMany({
+      where: { id: { in: vehicleIds } },
+      select: { id: true, plateNumber: true, make: true, model: true, year: true, vehicleClass: true, vehiclePhoto: true },
+    }) : [];
+
+    res.json({
+      ...account,
+      rfidTags: tags.map(t => ({
+        ...t,
+        vehicle: vehicles.find(v => v.id === t.vehicleId) || null,
+      })),
+    });
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -32,16 +43,14 @@ router.get('/vehicles', authMiddleware, async (req: Request, res: Response) => {
   try {
     const tags = await customerPrisma.rFIDTag.findMany({
       where: { account: { userId: req.user!.userId } },
-      include: {
-        vehicle: {
-          include: {
-            rfidTags: true,
-          },
-        },
-      },
     });
 
-    const vehicles = tags.map((t) => t.vehicle);
+    const vehicleIds = tags.map(t => t.vehicleId).filter(Boolean);
+    const vehicles = vehicleIds.length > 0 ? await hqPrisma.vehicle.findMany({
+      where: { id: { in: vehicleIds } },
+      include: { rfidTags: true },
+    }) : [];
+
     res.json(vehicles);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
@@ -52,16 +61,22 @@ router.get('/my-vehicles', authMiddleware, async (req: Request, res: Response) =
   try {
     const tags = await customerPrisma.rFIDTag.findMany({
       where: { account: { userId: req.user!.userId } },
-      include: {
-        vehicle: true,
-      },
     });
 
-    const vehicles = tags.map((t) => ({
-      ...t.vehicle,
-      rfidTag: { tagUid: t.tagUid, status: t.status },
-    }));
-    res.json(vehicles);
+    const vehicleIds = tags.map(t => t.vehicleId).filter(Boolean);
+    const vehicles = vehicleIds.length > 0 ? await hqPrisma.vehicle.findMany({
+      where: { id: { in: vehicleIds } },
+    }) : [];
+
+    const result = vehicles.map(v => {
+      const tag = tags.find(t => t.vehicleId === v.id);
+      return {
+        ...v,
+        rfidTag: tag ? { tagUid: tag.tagUid, status: tag.status } : null,
+      };
+    });
+
+    res.json(result);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -217,18 +232,18 @@ router.get('/dashboard', authMiddleware, async (req: Request, res: Response) => 
     const vehicleIds = tags.map(t => t.vehicleId).filter(Boolean);
     const vehicleCount = tags.length;
 
-    const eventCount = await hqPrisma.tollEvent.count({
+    const eventCount = vehicleIds.length > 0 ? await hqPrisma.tollEvent.count({
       where: { vehicleId: { in: vehicleIds } },
-    });
+    }) : 0;
 
-    const violationCount = await hqPrisma.violation.count({
+    const violationCount = vehicleIds.length > 0 ? await hqPrisma.violation.count({
       where: {
         vehicleId: { in: vehicleIds },
         status: { not: 'PAID' },
       },
-    });
+    }) : 0;
 
-    const recentEvents = await hqPrisma.tollEvent.findMany({
+    const recentEvents = vehicleIds.length > 0 ? await hqPrisma.tollEvent.findMany({
       where: { vehicleId: { in: vehicleIds } },
       include: {
         plaza: { select: { name: true } },
@@ -237,7 +252,7 @@ router.get('/dashboard', authMiddleware, async (req: Request, res: Response) => 
       },
       orderBy: { entryTime: 'desc' },
       take: 5,
-    });
+    }) : [];
 
     res.json({
       balance: account.balance,
