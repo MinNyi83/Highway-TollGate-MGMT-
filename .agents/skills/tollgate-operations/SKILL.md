@@ -435,3 +435,32 @@ cd packages/frontend && npx tsc --noEmit
 | Cross-database query fails | Using wrong Prisma client | Import correct client: `hqPrisma` for HQ, `customerPrisma` for customer |
 | Financial portal "Login failed" | Response parsing mismatch | API returns `{user, token}` directly; use `res.data` not `res.data.data` |
 | Financial portal rate limited | In-memory rate limiter full | Restart backend: `docker restart tollgate-rfid-backend-1` |
+| Financial portal rate limited | In-memory rate limiter full | Use admin endpoint: `POST /api/auth/reset-rate-limiters` with SUPER_ADMIN token |
+
+---
+
+## 13. UI/UX Infrastructure (M008)
+
+### Error Boundaries
+All 3 portals have `ErrorBoundary` components that catch render errors and show a graceful fallback UI with a reload button.
+- `packages/frontend/src/components/ErrorBoundary.tsx`
+- `packages/customer-portal/src/components/ErrorBoundary.tsx`
+- `packages/financial-portal/src/components/ErrorBoundary.tsx`
+
+### Toast Notifications
+- **Admin portal**: `packages/frontend/src/components/Toast.tsx` — `useToast()` hook, `addToast(type, message)`
+- **Financial portal**: `packages/financial-portal/src/components/Toast.tsx` — same API
+- **Customer portal**: `packages/customer-portal/src/components/Toast.tsx` — `showToast()` event-based system
+
+### Skeleton Loading
+- `packages/frontend/src/components/Skeleton.tsx` — `CardSkeleton`, `TableSkeleton`, `ChartSkeleton`, `DashboardSkeleton`
+- `packages/financial-portal/src/components/Skeleton.tsx` — same components
+- `packages/customer-portal/src/components/Skeleton.tsx` — `Skeleton`, `CardSkeleton`, `TableSkeleton`, `StatSkeleton`
+
+### Rate Limiter Reset
+Admin-only endpoint to clear all in-memory rate limiters:
+```
+POST /api/auth/reset-rate-limiters
+Authorization: Bearer <SUPER_ADMIN_TOKEN>
+Response: { success: true, message: "All rate limiters reset", results: { auth: 1, global: 1, strict: 1 } }
+```

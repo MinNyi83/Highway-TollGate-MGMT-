@@ -130,6 +130,12 @@ A distributed, enterprise-grade highway toll management system with RFID + ANPR 
 - **Docker Health Checks**: All services have health checks with dependency ordering
 - **Prisma Connection Pooling**: Automatic database connection management
 
+### UI/UX Infrastructure
+- **Error Boundaries**: All 3 portals catch render errors with graceful fallback UI
+- **Toast Notifications**: Success/error feedback on mutations (admin, financial, customer portals)
+- **Skeleton Loading**: Card, table, chart, and dashboard skeleton components replace bare "Loading..." text
+- **Rate Limiter Reset**: Admin endpoint `POST /api/auth/reset-rate-limiters` to clear in-memory rate limits
+
 ---
 
 ## Quick Start (Docker)

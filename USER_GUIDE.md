@@ -25,6 +25,7 @@
 6. [API Reference](#api-reference)
 7. [Health & Monitoring](#health--monitoring)
 8. [Troubleshooting & FAQ](#troubleshooting--faq)
+9. [UI/UX Features](#uiux-features)
 
 ---
 
@@ -505,4 +506,32 @@ docker exec tollgate-rfid-db-1 pg_isready -U postgres
 > **A**: 17 slides covering: Title & System Overview, Monorepo Structure, Database Architecture, Challenges, Solution Pillars, System Topology, Myanmar RTAD OCR, Dual Verification, Offline-First Sync, Customer PWA, HQ Command Hub, Highway Simulator, Hardware Matrix, Financial Portal, Docker Deployment, API Reference, and Conclusion.
 
 ### Q: Financial portal shows "Login failed" but credentials are correct?
-> **A**: The backend may be rate-limited from too many login attempts. Restart the backend: `docker restart tollgate-rfid-backend-1`. The rate limiter resets on restart.
+> **A**: The backend may be rate-limited from too many login attempts. Restart the backend: `docker restart tollgate-rfid-backend-1`. The rate limiter resets on restart. Alternatively, use the admin reset endpoint: `POST /api/auth/reset-rate-limiters` with a SUPER_ADMIN token.
+
+---
+
+## 9. UI/UX Features
+
+### Error Boundaries
+All 3 portals (Admin, Customer, Financial) have Error Boundary components that catch JavaScript render errors and display a graceful fallback UI with a "Reload Page" button instead of crashing the entire application.
+
+### Toast Notifications
+- **Admin Portal**: Use `useToast()` hook — `addToast('success', 'Message')` for success/error/info/warning toasts
+- **Financial Portal**: Same `useToast()` API
+- **Customer Portal**: Uses `showToast('success', 'Message')` event-based system
+
+Toasts auto-dismiss after 4 seconds and can be manually closed.
+
+### Skeleton Loading
+Instead of bare "Loading..." text, pages now show animated skeleton placeholders that match the layout:
+- `CardSkeleton` — for KPI cards and summary widgets
+- `TableSkeleton` — for data tables with rows
+- `ChartSkeleton` — for chart areas
+- `DashboardSkeleton` — full dashboard layout skeleton
+
+### Rate Limiter Management
+Admin users can reset all in-memory rate limiters without restarting the backend:
+```
+POST /api/auth/reset-rate-limiters
+Authorization: Bearer <SUPER_ADMIN_TOKEN>
+```
