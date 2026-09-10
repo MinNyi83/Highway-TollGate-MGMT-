@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Database, HardDrive, Cpu, MemoryStick, Download, RefreshCw } from 'lucide-react';
 import api from '../lib/api';
+import { DashboardSkeleton } from '../components/Skeleton';
 
 export default function SystemHealth() {
   const { data: health, isLoading, refetch } = useQuery({
@@ -27,7 +28,7 @@ export default function SystemHealth() {
     }
   };
 
-  if (isLoading) return <div className="text-center py-8">Loading...</div>;
+  if (isLoading) return <DashboardSkeleton />;
 
   return (
     <div>

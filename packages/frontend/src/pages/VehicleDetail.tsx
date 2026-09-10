@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, Car } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../lib/api';
+import { CardSkeleton } from '../components/Skeleton';
 
 interface VehicleDetail {
   id: string;
@@ -44,7 +45,7 @@ export default function VehicleDetailPage() {
   });
 
   if (isLoading) {
-    return <div className="text-center py-8">Loading...</div>;
+    return <CardSkeleton />;
   }
 
   if (!vehicle) {

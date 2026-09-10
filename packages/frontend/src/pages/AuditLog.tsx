@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import api from '../lib/api';
 import { Shield } from 'lucide-react';
+import { TableSkeleton } from '../components/Skeleton';
 
 interface AuditEntry {
   id: string;
@@ -21,7 +22,7 @@ export default function AuditLog() {
     },
   });
 
-  if (isLoading) return <div className="text-center py-8">Loading...</div>;
+  if (isLoading) return <TableSkeleton />;
 
   return (
     <div>
