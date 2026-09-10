@@ -1,11 +1,11 @@
 import { Router, Request, Response } from 'express';
 import { authMiddleware } from '../../middleware/auth';
-import { customerPrisma as prisma } from '../../config/database';
+import { customerPrisma, hqPrisma } from '../../config/database';
 const router = Router();
 
 router.get('/account', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const account = await prisma.account.findFirst({
+    const account = await customerPrisma.account.findFirst({
       where: { userId: req.user!.userId },
       include: {
         user: { select: { id: true, email: true, name: true } },
@@ -30,7 +30,7 @@ router.get('/account', authMiddleware, async (req: Request, res: Response) => {
 
 router.get('/vehicles', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const tags = await prisma.rFIDTag.findMany({
+    const tags = await customerPrisma.rFIDTag.findMany({
       where: { account: { userId: req.user!.userId } },
       include: {
         vehicle: {
@@ -48,15 +48,36 @@ router.get('/vehicles', authMiddleware, async (req: Request, res: Response) => {
   }
 });
 
+router.get('/my-vehicles', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const tags = await customerPrisma.rFIDTag.findMany({
+      where: { account: { userId: req.user!.userId } },
+      include: {
+        vehicle: true,
+      },
+    });
+
+    const vehicles = tags.map((t) => ({
+      ...t.vehicle,
+      rfidTag: { tagNumber: t.tagNumber, status: t.status },
+    }));
+    res.json(vehicles);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 router.get('/toll-events', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const events = await prisma.tollEvent.findMany({
+    const tags = await customerPrisma.rFIDTag.findMany({
+      where: { account: { userId: req.user!.userId } },
+      select: { vehicleId: true },
+    });
+    const vehicleIds = tags.map(t => t.vehicleId).filter(Boolean);
+
+    const events = await hqPrisma.tollEvent.findMany({
       where: {
-        vehicle: {
-          rfidTags: {
-            some: { account: { userId: req.user!.userId } },
-          },
-        },
+        vehicleId: { in: vehicleIds },
       },
       include: {
         vehicle: { select: { plateNumber: true, make: true, model: true } },
@@ -76,7 +97,7 @@ router.get('/toll-events', authMiddleware, async (req: Request, res: Response) =
 
 router.get('/transactions', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const account = await prisma.account.findFirst({
+    const account = await customerPrisma.account.findFirst({
       where: { userId: req.user!.userId },
     });
 
@@ -85,7 +106,7 @@ router.get('/transactions', authMiddleware, async (req: Request, res: Response) 
       return;
     }
 
-    const transactions = await prisma.transaction.findMany({
+    const transactions = await hqPrisma.transaction.findMany({
       where: { accountId: account.id },
       include: {
         event: {
@@ -107,13 +128,15 @@ router.get('/transactions', authMiddleware, async (req: Request, res: Response) 
 
 router.get('/violations', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const violations = await prisma.violation.findMany({
+    const tags = await customerPrisma.rFIDTag.findMany({
+      where: { account: { userId: req.user!.userId } },
+      select: { vehicleId: true },
+    });
+    const vehicleIds = tags.map(t => t.vehicleId).filter(Boolean);
+
+    const violations = await hqPrisma.violation.findMany({
       where: {
-        vehicle: {
-          rfidTags: {
-            some: { account: { userId: req.user!.userId } },
-          },
-        },
+        vehicleId: { in: vehicleIds },
       },
       include: {
         vehicle: { select: { plateNumber: true, make: true, model: true } },
@@ -155,7 +178,7 @@ router.post('/topup', authMiddleware, async (req: Request, res: Response) => {
 
 router.get('/topup-history', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const account = await prisma.account.findFirst({
+    const account = await customerPrisma.account.findFirst({
       where: { userId: req.user!.userId },
     });
 
@@ -164,7 +187,7 @@ router.get('/topup-history', authMiddleware, async (req: Request, res: Response)
       return;
     }
 
-    const topups = await prisma.transaction.findMany({
+    const topups = await hqPrisma.transaction.findMany({
       where: { accountId: account.id, type: 'TOPUP' },
       orderBy: { createdAt: 'desc' },
       take: 50,
@@ -178,7 +201,7 @@ router.get('/topup-history', authMiddleware, async (req: Request, res: Response)
 
 router.get('/dashboard', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const account = await prisma.account.findFirst({
+    const account = await customerPrisma.account.findFirst({
       where: { userId: req.user!.userId },
     });
 
@@ -187,23 +210,26 @@ router.get('/dashboard', authMiddleware, async (req: Request, res: Response) => 
       return;
     }
 
-    const vehicleCount = await prisma.rFIDTag.count({
+    const tags = await customerPrisma.rFIDTag.findMany({
       where: { accountId: account.id },
+      select: { vehicleId: true },
+    });
+    const vehicleIds = tags.map(t => t.vehicleId).filter(Boolean);
+    const vehicleCount = tags.length;
+
+    const eventCount = await hqPrisma.tollEvent.count({
+      where: { vehicleId: { in: vehicleIds } },
     });
 
-    const eventCount = await prisma.tollEvent.count({
-      where: { vehicle: { rfidTags: { some: { accountId: account.id } } } },
-    });
-
-    const violationCount = await prisma.violation.count({
+    const violationCount = await hqPrisma.violation.count({
       where: {
-        vehicle: { rfidTags: { some: { accountId: account.id } } },
+        vehicleId: { in: vehicleIds },
         status: { not: 'PAID' },
       },
     });
 
-    const recentEvents = await prisma.tollEvent.findMany({
-      where: { vehicle: { rfidTags: { some: { accountId: account.id } } } },
+    const recentEvents = await hqPrisma.tollEvent.findMany({
+      where: { vehicleId: { in: vehicleIds } },
       include: {
         plaza: { select: { name: true } },
         vehicle: { select: { plateNumber: true } },
