@@ -388,7 +388,7 @@ POST /api/financial/integrations/webhooks/trigger
 - **Myanmar/English Toggle**: i18n support with correct financial terminology.
 - **Excel & PDF Export**: All pages support Excel export via SheetJS and PDF export via jsPDF.
 - **Approval Workflow**: Monthly reconciliation with Submit → Approve/Reject flow.
-- **Copyright Protection**: Watermarks, footer, login watermarks, meta tags.
+- **Copyright Protection**: Watermarks (login + dashboard), footer, login watermarks, meta tags.
 - **34 Backend Endpoints**: Under `/api/financial/*` using `hqPrisma` client.
 - **API Integration Layer**: Connects to external ERP, accounting, banking, and government systems.
 - **Supported Integrations**: SAP, Oracle, Dynamics 365, QuickBooks, Wave, Xero, FreshBooks, CBM, KBZ, Ayeyarwady, UAB, AYA, MyCO, IRD, Myanmar Tax, Customs.

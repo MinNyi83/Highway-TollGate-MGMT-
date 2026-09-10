@@ -1,11 +1,11 @@
 ---
 schema_version: 1
 id: M007
-title: Financial System Enhancement - 35 Pages, 34 API Endpoints, Integration Layer
+title: Financial System Enhancement - 35 Pages, 34 API Endpoints, Integration Layer, Copyright Protection
 status: completed
 requirement: R000
 confirmed_at: 2026-09-10T00:21:00Z
-verified_at: 2026-09-10T00:51:00Z
+verified_at: 2026-09-10T01:10:00Z
 verification_approved_hash: sha256:39e63e142cdbbc18eb73b471d6c771d3189798614cac348ca1ed3c73d4355d1c
 acceptance_criteria:
   - id: AC001
@@ -17,6 +17,8 @@ acceptance_criteria:
   - id: AC004
     text: API Integration Layer with ERP, accounting, banking, government adapters
   - id: AC005
+    text: Copyright Protection with watermarks on login and dashboard
+  - id: AC006
     text: Documentation updated
 verification:
   - id: CT001
@@ -38,14 +40,18 @@ verification:
   - id: CT005
     criterion: AC005
     type: command
+    command: "grep -q 'NYIMIN' packages/financial-portal/src/components/Watermark.tsx"
+  - id: CT006
+    criterion: AC006
+    type: command
     command: "test -f README.md && test -f USER_GUIDE.md && test -f .agents/skills/tollgate-operations/SKILL.md"
 base_branch: master
-base_revision: 2c0243f
+base_revision: 4a47f8b
 ---
 
 ## Objective
 
-Enhance the financial reporting system with 35 pages, 34 API endpoints, and API integration layer for external software connectivity.
+Enhance the financial reporting system with 35 pages, 34 API endpoints, API integration layer, and copyright protection.
 
 ## Scope
 
@@ -54,6 +60,7 @@ Enhance the financial reporting system with 35 pages, 34 API endpoints, and API 
 - Add PDF export capability
 - Add API Integration Layer (ERP, accounting, banking, government adapters)
 - Add Webhook Manager and Plugin Manager
+- Add Copyright Protection with watermarks
 - Update documentation
 
 ## Non-Goals
@@ -66,3 +73,4 @@ Enhance the financial reporting system with 35 pages, 34 API endpoints, and API 
 - 2026-09-10: Created milestone for financial system enhancement
 - 2026-09-10: Updated to 27 pages and 25 API endpoints
 - 2026-09-10: Updated to 35 pages, 34 API endpoints, integration layer
+- 2026-09-10: Added copyright protection with watermarks

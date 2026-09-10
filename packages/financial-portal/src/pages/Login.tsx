@@ -34,7 +34,21 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-command relative overflow-hidden">
       <div className="absolute top-20 left-20 w-72 h-72 bg-brand rounded-full opacity-20 blur-3xl" />
       <div className="absolute bottom-20 right-20 w-96 h-96 bg-brand rounded-full opacity-20 blur-3xl" />
-      <div className="absolute bottom-4 left-4 text-[10px] text-white/20 select-none pointer-events-none">© 2026 nyimin</div>
+      
+      {/* Login Watermark */}
+      <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden opacity-[0.02] select-none">
+        <div className="absolute -rotate-30 top-1/4 left-1/4 text-6xl font-bold text-white whitespace-nowrap">
+          NYIMIN © 2026
+        </div>
+        <div className="absolute -rotate-30 top-2/4 left-1/4 text-6xl font-bold text-white whitespace-nowrap">
+          NYIMIN © 2026
+        </div>
+        <div className="absolute -rotate-30 top-3/4 left-1/4 text-6xl font-bold text-white whitespace-nowrap">
+          NYIMIN © 2026
+        </div>
+      </div>
+
+      <div className="absolute bottom-4 left-4 text-[10px] text-white/20 select-none pointer-events-none">© 2026 nyimin. All rights reserved.</div>
       <div className="absolute top-4 right-4 text-[10px] text-white/20 select-none pointer-events-none">Licensed Software - Unauthorized Use Prohibited</div>
 
       <div className="relative z-10 glass-card rounded-2xl p-10 w-full max-w-md">

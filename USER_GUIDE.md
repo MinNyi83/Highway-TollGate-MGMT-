@@ -311,6 +311,12 @@ If a driver's physical windshield RFID sticker is damaged or not yet delivered:
 - Government: MyCO, IRD, Myanmar Tax, Customs
 - Webhook management with HMAC signatures
 
+#### Copyright Protection & Watermarks
+- **Login Watermark**: Diagonal watermark with "NYIMIN © 2026" text
+- **Dashboard Watermark**: Persistent watermark across all pages
+- **Footer**: Copyright notice with version number
+- **Meta Tags**: Copyright and license information in HTML head
+
 ### Financial Terminology
 | Term | Meaning |
 |---|---|

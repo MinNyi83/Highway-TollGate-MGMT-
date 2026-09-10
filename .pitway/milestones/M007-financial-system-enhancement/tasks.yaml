@@ -74,6 +74,25 @@ tasks:
       - packages/backend/src/modules/financial/integrations/
 
   - id: T005
+    objective: Copyright Protection
+    status: completed
+    depends_on:
+      - T002
+    acceptance_criteria:
+      - Copyright Protection with watermarks on login and dashboard
+    verification:
+      strategy: command
+      detail: "grep -q 'NYIMIN' packages/financial-portal/src/components/Watermark.tsx"
+    result:
+      summary: Copyright protection implemented with watermarks
+      evidence: Verified via code review
+    usage:
+      total_tokens: 0
+    relevant_files:
+      - packages/financial-portal/src/components/Watermark.tsx
+      - packages/financial-portal/src/pages/Login.tsx
+
+  - id: T006
     objective: Documentation Update
     status: completed
     depends_on:

@@ -107,6 +107,7 @@ A distributed, enterprise-grade highway toll management system with RFID + ANPR 
 - **Excel & PDF Export**: All pages support Excel export via SheetJS and PDF export via jsPDF.
 - **Approval Workflow**: Monthly reconciliation with Submit → Approve/Reject flow.
 - **Real-Time Alerts**: Dashboard alerts for traffic drops, revenue changes, pending settlements.
+- **Copyright Protection**: Watermarks (login + dashboard), footer, meta tags.
 - **34 Backend Endpoints**: Under `/api/financial/*` using `hqPrisma` client.
 - **API Integration Layer**: Connects to external ERP, accounting, banking, and government systems.
 - **Supported Integrations**: SAP, Oracle, Dynamics 365, QuickBooks, Wave, Xero, FreshBooks, CBM, KBZ, Ayeyarwady, UAB, AYA, MyCO, IRD, Myanmar Tax, Customs.
