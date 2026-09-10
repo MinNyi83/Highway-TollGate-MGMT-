@@ -102,12 +102,14 @@ A distributed, enterprise-grade highway toll management system with RFID + ANPR 
 - **Prepaid Wallet & Receipts**: Instant balance top-up via KBZPay, WavePay, and MMQR.
 
 ### 6. Financial Portal (Port 8081)
-- **27 Pages**: Dashboard, Daily Collection, Revenue by Region, Wallet Deposits, Vehicle Registration, Pass-Through Volume, Revenue Remittance, Financial Reconciliation, Official Receipts, Fiscal Year Report, Comparison Report, Plaza Performance, Violation Analytics, Revenue Forecast, Revenue Heatmap, Transaction Search, Settlement Pipeline, Audit Trail, Wallet Analytics, Revenue by Vehicle, Customer Spending, Revenue by Payment Method, Loyalty Analytics, Financial Reports Generator.
+- **35 Pages**: Dashboard, Daily Collection, Revenue by Region, Wallet Deposits, Vehicle Registration, Pass-Through Volume, Revenue Remittance, Financial Reconciliation, Official Receipts, Fiscal Year Report, Comparison Report, Plaza Performance, Violation Analytics, Revenue Forecast, Revenue Heatmap, Transaction Search, Settlement Pipeline, Audit Trail, Wallet Analytics, Revenue by Vehicle, Customer Spending, Revenue by Payment Method, Loyalty Analytics, Financial Reports Generator, Budget Tracker, Cost Allocation, Revenue Sharing, Debt Management, Cash Flow, Financial Ratios, Vendor Payments, Tax Withholding.
 - **Myanmar/English Toggle**: i18n support with correct financial terminology.
 - **Excel & PDF Export**: All pages support Excel export via SheetJS and PDF export via jsPDF.
 - **Approval Workflow**: Monthly reconciliation with Submit → Approve/Reject flow.
 - **Real-Time Alerts**: Dashboard alerts for traffic drops, revenue changes, pending settlements.
-- **25 Backend Endpoints**: Under `/api/financial/*` using `hqPrisma` client.
+- **34 Backend Endpoints**: Under `/api/financial/*` using `hqPrisma` client.
+- **API Integration Layer**: Connects to external ERP, accounting, banking, and government systems.
+- **Supported Integrations**: SAP, Oracle, Dynamics 365, QuickBooks, Wave, Xero, FreshBooks, CBM, KBZ, Ayeyarwady, UAB, AYA, MyCO, IRD, Myanmar Tax, Customs.
 
 ---
 

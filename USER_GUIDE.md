@@ -264,6 +264,53 @@ If a driver's physical windshield RFID sticker is damaged or not yet delivered:
 - Revenue, fines, trips, and transactions summary
 - PDF export capability
 
+#### Budget Tracker
+- Budget vs actual spending by region
+- Utilization percentage with progress bars
+- Variance analysis (over/under budget)
+
+#### Cost Allocation
+- Shared costs distributed across regions
+- Categories: Maintenance, Staff, Equipment, Utilities, Insurance, Other
+- Cost breakdown visualization
+
+#### Revenue Sharing
+- Distribution to stakeholders: Government (60%), Operations (20%), Maintenance (10%), Reserve (5%), Tech (5%)
+- Monthly revenue breakdown
+- Partner payment tracking
+
+#### Debt Management
+- Active loans with principal, interest rate, monthly payment
+- Repayment progress tracking
+- Remaining debt and term visualization
+
+#### Cash Flow Forecasting
+- 12-month revenue, operating expenses, debt service, CapEx
+- Net cash flow and closing balance
+- Trend analysis
+
+#### Financial Ratios
+- Profitability: Net margin, ROA, ROE
+- Liquidity: Current ratio, Quick ratio
+- Efficiency: Asset turnover
+
+#### Vendor Payments
+- Vendor list with categories and total paid
+- Pending payments with priority levels
+- Payment history
+
+#### Tax Withholding
+- Corporate Tax (22%), Income Tax (5%), Social Security (2%)
+- Tax breakdown visualization
+- Monthly tax summary
+
+#### API Integration Layer
+- ERP: SAP, Oracle, Dynamics 365
+- Accounting: QuickBooks, Wave, Xero, FreshBooks
+- Banking: CBM, KBZ, Ayeyarwady, UAB, AYA
+- Government: MyCO, IRD, Myanmar Tax, Customs
+- Webhook management with HMAC signatures
+
 ### Financial Terminology
 | Term | Meaning |
 |---|---|
