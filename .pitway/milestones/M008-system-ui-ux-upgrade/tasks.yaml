@@ -59,7 +59,7 @@ tasks:
       total_tokens: 0
   - id: T003
     objective: Add Skeleton Loading to All Portals
-    status: ready
+    status: review
     depends_on:
       - T001
     acceptance_criteria:
@@ -77,6 +77,7 @@ tasks:
     result:
       summary: Pending
       evidence: Pending
+    attempts: 1
     usage:
       total_tokens: 0
   - id: T004
