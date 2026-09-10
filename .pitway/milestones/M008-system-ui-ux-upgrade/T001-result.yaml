@@ -1,0 +1,2 @@
+summary: "ErrorBoundary component created in all 3 portals. Routes wrapped in App.tsx."
+evidence: "Verified: ErrorBoundary component exists in frontend, customer-portal, and financial-portal. All App.tsx files updated to wrap routes in ErrorBoundary."
