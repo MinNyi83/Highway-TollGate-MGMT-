@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAuthStore } from './stores/authStore';
 import { LanguageProvider } from './hooks/useLanguage';
 import { ThemeProvider } from './hooks/useTheme';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import TollHistory from './pages/TollHistory';
@@ -25,21 +26,23 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <LanguageProvider>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/toll-history" element={<TollHistory />} />
-                <Route path="/violations" element={<Violations />} />
-                <Route path="/account" element={<Account />} />
-                <Route path="/my-vehicles" element={<MyVehicles />} />
-                <Route path="/fleet" element={<FleetDashboard />} />
-                <Route path="/settings" element={<Settings />} />
-              </Route>
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </BrowserRouter>
+          <ErrorBoundary>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/toll-history" element={<TollHistory />} />
+                  <Route path="/violations" element={<Violations />} />
+                  <Route path="/account" element={<Account />} />
+                  <Route path="/my-vehicles" element={<MyVehicles />} />
+                  <Route path="/fleet" element={<FleetDashboard />} />
+                  <Route path="/settings" element={<Settings />} />
+                </Route>
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </BrowserRouter>
+          </ErrorBoundary>
         </LanguageProvider>
       </ThemeProvider>
     </QueryClientProvider>

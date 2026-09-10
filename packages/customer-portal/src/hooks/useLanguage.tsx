@@ -90,7 +90,7 @@ const translations = {
     confirmPassword: 'စကားဝှက်အတည်ပြု',
     language: 'ဘာသာစကား',
     tollHistory: 'တံတားခွန်မှတ်တမ်း',
-    registeredVaters: 'မှတ်ပုံတင်ထားသောယာဉ်',
+    registeredVehicles: 'မှတ်ပုံတင်ထားသောယာဉ်',
     accountTopUp: 'အကောင့်နှင့်ငွေဖြည့်',
     availableBalance: 'ရရှိနိုင်သောငွေလက်ကျန်',
     manualTopUp: 'စာရွက်ဖြင့်',

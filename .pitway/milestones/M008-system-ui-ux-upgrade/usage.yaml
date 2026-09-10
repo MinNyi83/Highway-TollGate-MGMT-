@@ -1,0 +1,7 @@
+schema_version: 1
+planning:
+  total_tokens: 0
+  attempts: 1
+qa:
+  total_tokens: 0
+  attempts: 1
