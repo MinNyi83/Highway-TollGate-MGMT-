@@ -1,20 +1,22 @@
 ---
 schema_version: 1
 id: M007
-title: Financial System Enhancement - 27 Pages & 25 API Endpoints
+title: Financial System Enhancement - 35 Pages, 34 API Endpoints, Integration Layer
 status: completed
 requirement: R000
 confirmed_at: 2026-09-10T00:21:00Z
-verified_at: 2026-09-10T00:21:00Z
+verified_at: 2026-09-10T00:51:00Z
 verification_approved_hash: sha256:39e63e142cdbbc18eb73b471d6c771d3189798614cac348ca1ed3c73d4355d1c
 acceptance_criteria:
   - id: AC001
-    text: All 25 financial API endpoints return 200
+    text: All 34 financial API endpoints return 200
   - id: AC002
-    text: All 27 financial portal pages load correctly
+    text: All 35 financial portal pages load correctly
   - id: AC003
     text: All 6 login accounts work
   - id: AC004
+    text: API Integration Layer with ERP, accounting, banking, government adapters
+  - id: AC005
     text: Documentation updated
 verification:
   - id: CT001
@@ -29,27 +31,38 @@ verification:
     criterion: AC003
     type: command
     command: "curl -s -X POST http://localhost:3000/api/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"fin.admin@tollgate.com\",\"password\":\"password123\"}' | grep -q token"
+  - id: CT004
+    criterion: AC004
+    type: command
+    command: "curl -s http://localhost:3000/api/financial/integrations/status | grep -q totalPlugins"
+  - id: CT005
+    criterion: AC005
+    type: command
+    command: "test -f README.md && test -f USER_GUIDE.md && test -f .agents/skills/tollgate-operations/SKILL.md"
 base_branch: master
-base_revision: 103b181
+base_revision: 2c0243f
 ---
 
 ## Objective
 
-Enhance the financial reporting system with 27 pages and 25 API endpoints for comprehensive toll revenue analysis.
+Enhance the financial reporting system with 35 pages, 34 API endpoints, and API integration layer for external software connectivity.
 
 ## Scope
 
 - Add 15 new financial API endpoints
 - Create 17 new financial portal pages
 - Add PDF export capability
+- Add API Integration Layer (ERP, accounting, banking, government adapters)
+- Add Webhook Manager and Plugin Manager
 - Update documentation
 
 ## Non-Goals
 
 - Infrastructure changes
-- Database schema changes
+- Database schema changes (beyond webhook tables)
 
 ## Change Log
 
 - 2026-09-10: Created milestone for financial system enhancement
 - 2026-09-10: Updated to 27 pages and 25 API endpoints
+- 2026-09-10: Updated to 35 pages, 34 API endpoints, integration layer
