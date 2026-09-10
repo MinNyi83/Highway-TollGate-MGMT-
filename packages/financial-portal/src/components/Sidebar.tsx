@@ -21,6 +21,13 @@ import {
   CreditCard,
   Star,
   FileBarChart,
+  Target,
+  PieChart,
+  Share2,
+  Landmark,
+  Banknote,
+  Activity,
+  Building,
 } from 'lucide-react';
 import { useLanguage } from '../i18n';
 
@@ -48,6 +55,14 @@ const navItems = [
   { to: '/revenue-by-payment', icon: CreditCard, label: 'Revenue by Payment', labelMyanmar: 'ငွေပေးချေမှု အလိုက် ဝင်ငွေ' },
   { to: '/loyalty-analytics', icon: Star, label: 'Loyalty Analytics', labelMyanmar: 'သစာရှိမှု ခွဲခြမ်းစိတ်ဖြာ' },
   { to: '/reports', icon: FileBarChart, label: 'Financial Reports', labelMyanmar: 'ဘဏ္ဍာရေး အစီရင်ခံစာ' },
+  { to: '/budget-tracker', icon: Target, label: 'Budget Tracker', labelMyanmar: 'ဘတ်ဂျက် ခြေရာခံ' },
+  { to: '/cost-allocation', icon: PieChart, label: 'Cost Allocation', labelMyanmar: 'ကုန်ကျစရိတ် ခွဲဝေ' },
+  { to: '/revenue-sharing', icon: Share2, label: 'Revenue Sharing', labelMyanmar: 'ဝင်ငွေ ခွဲဝေ' },
+  { to: '/debt-management', icon: Landmark, label: 'Debt Management', labelMyanmar: 'အကြွေး စီမံခန့်ခွဲမှု' },
+  { to: '/cash-flow', icon: Banknote, label: 'Cash Flow', labelMyanmar: 'ငွေစီးဆင်းမှု' },
+  { to: '/financial-ratios', icon: Activity, label: 'Financial Ratios', labelMyanmar: 'ဘဏ္ဍာရေး အချိုးအစား' },
+  { to: '/vendor-payments', icon: Building, label: 'Vendor Payments', labelMyanmar: 'ရောင်းချသူ ပေးချေမှု' },
+  { to: '/tax-withholding', icon: Receipt, label: 'Tax Withholding', labelMyanmar: 'အခွန်ထိန်း' },
   { to: '/audit-log', icon: Shield, label: 'Audit Trail', labelMyanmar: 'စစ်ဆေးမှု မှတ်တမ်း' },
 ];
 

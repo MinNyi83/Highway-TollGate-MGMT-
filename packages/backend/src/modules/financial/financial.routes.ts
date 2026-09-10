@@ -1327,4 +1327,274 @@ router.get('/dashboard/monthly-trend', authMiddleware, async (_req: Request, res
   }
 });
 
+router.get('/budget-tracker', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { hqPrisma } = await import('../../config/database');
+    const { startDate, endDate } = req.query;
+    const start = startDate ? new Date(startDate as string) : new Date(new Date().setMonth(new Date().getMonth() - 12));
+    const end = endDate ? new Date(endDate as string) : new Date();
+
+    const regions = await hqPrisma.region.findMany({ orderBy: { name: 'asc' } });
+    const budgets = [
+      { region: 'Mandalay', budget: 50000000, category: 'Operations' },
+      { region: 'Yangon', budget: 80000000, category: 'Operations' },
+      { region: 'Naypyidaw', budget: 40000000, category: 'Operations' },
+      { region: 'Shan', budget: 35000000, category: 'Operations' },
+      { region: 'Bagan', budget: 25000000, category: 'Operations' },
+    ];
+
+    const collections = await hqPrisma.dailyCollection.groupBy({
+      by: ['plazaId'],
+      where: { collectionDate: { gte: start, lte: end } },
+      _sum: { totalRevenue: true },
+    });
+
+    const plazaRegionMap: Record<string, string> = {};
+    (await hqPrisma.tollPlaza.findMany({ select: { id: true, name: true, regionId: true } })).forEach(p => {
+      const region = regions.find(r => r.id === p.regionId);
+      plazaRegionMap[p.id] = region?.name || 'Unknown';
+    });
+
+    const actualByRegion: Record<string, number> = {};
+    collections.forEach(c => {
+      const region = plazaRegionMap[c.plazaId] || 'Unknown';
+      actualByRegion[region] = (actualByRegion[region] || 0) + Number(c._sum.totalRevenue || 0);
+    });
+
+    const result = budgets.map(b => ({
+      region: b.region,
+      budget: b.budget,
+      actual: actualByRegion[b.region] || 0,
+      variance: (actualByRegion[b.region] || 0) - b.budget,
+      utilization: b.budget > 0 ? ((actualByRegion[b.region] || 0) / b.budget) * 100 : 0,
+      category: b.category,
+    }));
+
+    res.json({ period: { start: start.toISOString().split('T')[0], end: end.toISOString().split('T')[0] }, items: result, summary: { totalBudget: result.reduce((s, r) => s + r.budget, 0), totalActual: result.reduce((s, r) => s + r.actual, 0) } });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch budget tracker' });
+  }
+});
+
+router.get('/cost-allocation', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { hqPrisma } = await import('../../config/database');
+    const regions = await hqPrisma.region.findMany({ orderBy: { name: 'asc' } });
+    const costCategories = ['Maintenance', 'Staff', 'Equipment', 'Utilities', 'Insurance', 'Other'];
+    const totalCosts = [12000000, 8000000, 5000000, 3000000, 2000000, 1000000];
+
+    const plazaCounts: Record<string, number> = {};
+    const plazas = await hqPrisma.tollPlaza.findMany({ select: { regionId: true } });
+    plazas.forEach(p => { plazaCounts[p.regionId] = (plazaCounts[p.regionId] || 0) + 1; });
+    const totalPlazas = plazas.length || 1;
+
+    const allocations = regions.map(r => {
+      const share = (plazaCounts[r.id] || 0) / totalPlazas;
+      return {
+        regionId: r.id,
+        region: r.name,
+        share,
+        costs: costCategories.map((cat, i) => ({
+          category: cat,
+          allocated: Math.round(totalCosts[i] * share),
+          total: totalCosts[i],
+        })),
+        totalAllocated: Math.round(totalCosts.reduce((s, c) => s + c, 0) * share),
+      };
+    });
+
+    res.json({ categories: costCategories, totalCosts: totalCosts.reduce((s, c) => s + c, 0), allocations, costBreakdown: costCategories.map((cat, i) => ({ category: cat, total: totalCosts[i] })) });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch cost allocation' });
+  }
+});
+
+router.get('/revenue-sharing', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { hqPrisma } = await import('../../config/database');
+    const { startDate, endDate } = req.query;
+    const start = startDate ? new Date(startDate as string) : new Date(new Date().setMonth(new Date().getMonth() - 12));
+    const end = endDate ? new Date(endDate as string) : new Date();
+
+    const collections = await hqPrisma.dailyCollection.groupBy({
+      by: ['collectionDate'],
+      where: { collectionDate: { gte: start, lte: end } },
+      _sum: { totalRevenue: true },
+    });
+
+    const totalRevenue = collections.reduce((s, c) => s + Number(c._sum.totalRevenue || 0), 0);
+
+    const partners = [
+      { name: 'Government (60%)', share: 0.60, amount: Math.round(totalRevenue * 0.60) },
+      { name: 'Operations (20%)', share: 0.20, amount: Math.round(totalRevenue * 0.20) },
+      { name: 'Maintenance Fund (10%)', share: 0.10, amount: Math.round(totalRevenue * 0.10) },
+      { name: 'Emergency Reserve (5%)', share: 0.05, amount: Math.round(totalRevenue * 0.05) },
+      { name: 'Technology Upgrade (5%)', share: 0.05, amount: Math.round(totalRevenue * 0.05) },
+    ];
+
+    const monthlyBreakdown = collections.map(c => {
+      const month = c.collectionDate.toISOString().slice(0, 7);
+      return { month, revenue: Number(c._sum.totalRevenue || 0) };
+    });
+
+    res.json({ period: { start: start.toISOString().split('T')[0], end: end.toISOString().split('T')[0] }, totalRevenue, partners, monthlyBreakdown });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch revenue sharing' });
+  }
+});
+
+router.get('/debt-management', authMiddleware, async (_req: Request, res: Response) => {
+  try {
+    const debts = [
+      { id: 'DEBT-001', name: 'Highway Expansion Loan', principal: 500000000, interestRate: 0.05, term: 60, remainingMonths: 48, monthlyPayment: 9424632, startDate: '2025-01-01', type: 'Infrastructure' },
+      { id: 'DEBT-002', name: 'RFID System Equipment', principal: 120000000, interestRate: 0.04, term: 36, remainingMonths: 24, monthlyPayment: 3527056, startDate: '2025-06-01', type: 'Equipment' },
+      { id: 'DEBT-003', name: 'Plaza Construction', principal: 200000000, interestRate: 0.06, term: 48, remainingMonths: 36, monthlyPayment: 4701618, startDate: '2025-03-01', type: 'Construction' },
+    ];
+
+    const totalPrincipal = debts.reduce((s, d) => s + d.principal, 0);
+    const totalMonthly = debts.reduce((s, d) => s + d.monthlyPayment, 0);
+    const totalInterest = debts.reduce((s, d) => s + (d.principal * d.interestRate * (d.term / 12)), 0);
+    const totalRemaining = debts.reduce((s, d) => s + (d.monthlyPayment * d.remainingMonths), 0);
+
+    res.json({ debts, summary: { totalPrincipal, totalMonthlyPayment: totalMonthly, totalInterestCost: totalInterest, totalRemainingDebt: totalRemaining, debtCount: debts.length } });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch debt management' });
+  }
+});
+
+router.get('/cash-flow', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { hqPrisma } = await import('../../config/database');
+    const months = 12;
+    const today = new Date();
+    const monthlyData = [];
+
+    for (let i = months - 1; i >= 0; i--) {
+      const d = new Date(today);
+      d.setMonth(d.getMonth() - i);
+      const monthStr = d.toISOString().slice(0, 7);
+
+      const collections = await hqPrisma.dailyCollection.findMany({
+        where: { collectionDate: { gte: new Date(`${monthStr}-01`), lt: new Date(`${monthStr}-31`) } },
+      });
+
+      const revenue = collections.reduce((s, c) => s + Number(c.totalRevenue || 0), 0);
+      const operatingExpense = revenue * 0.35;
+      const debtService = revenue * 0.15;
+      const netCashFlow = revenue - operatingExpense - debtService;
+      const openingBalance = i === months - 1 ? 100000000 : 0;
+
+      monthlyData.push({ month: monthStr, revenue, operatingExpense, debtService, capitalExpenditure: revenue * 0.1, netCashFlow, closingBalance: openingBalance + netCashFlow });
+    }
+
+    for (let i = 1; i < monthlyData.length; i++) {
+      monthlyData[i].closingBalance = monthlyData[i - 1].closingBalance + monthlyData[i].netCashFlow;
+    }
+
+    res.json({ months: monthlyData, summary: { totalRevenue: monthlyData.reduce((s, m) => s + m.revenue, 0), totalExpenses: monthlyData.reduce((s, m) => s + m.operatingExpense, 0), netCashFlow: monthlyData[monthlyData.length - 1].closingBalance - 100000000 } });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch cash flow' });
+  }
+});
+
+router.get('/financial-ratios', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { hqPrisma } = await import('../../config/database');
+    const { startDate, endDate } = req.query;
+    const start = startDate ? new Date(startDate as string) : new Date(new Date().setMonth(new Date().getMonth() - 12));
+    const end = endDate ? new Date(endDate as string) : new Date();
+
+    const collections = await hqPrisma.dailyCollection.findMany({
+      where: { collectionDate: { gte: start, lte: end } },
+    });
+
+    const totalRevenue = collections.reduce((s, c) => s + Number(c.totalRevenue || 0), 0);
+    const operatingExpenses = totalRevenue * 0.35;
+    const netIncome = totalRevenue - operatingExpenses;
+    const currentAssets = 150000000;
+    const currentLiabilities = 80000000;
+    const totalAssets = 500000000;
+    const totalEquity = totalAssets - 200000000;
+
+    const ratios = {
+      profitability: {
+        netProfitMargin: totalRevenue > 0 ? ((netIncome / totalRevenue) * 100) : 0,
+        returnOnAssets: totalAssets > 0 ? ((netIncome / totalAssets) * 100) : 0,
+        returnOnEquity: totalEquity > 0 ? ((netIncome / totalEquity) * 100) : 0,
+      },
+      liquidity: {
+        currentRatio: currentLiabilities > 0 ? (currentAssets / currentLiabilities) : 0,
+        quickRatio: currentLiabilities > 0 ? ((currentAssets * 0.8) / currentLiabilities) : 0,
+      },
+      efficiency: {
+        assetTurnover: totalAssets > 0 ? (totalRevenue / totalAssets) : 0,
+        revenuePerPlaza: collections.length > 0 ? (totalRevenue / Math.max(collections.length, 1)) : 0,
+      },
+    };
+
+    res.json({ period: { start: start.toISOString().split('T')[0], end: end.toISOString().split('T')[0] }, revenue: totalRevenue, expenses: operatingExpenses, netIncome, ratios });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch financial ratios' });
+  }
+});
+
+router.get('/vendor-payments', authMiddleware, async (_req: Request, res: Response) => {
+  try {
+    const vendors = [
+      { id: 'VND-001', name: 'RFID Equipment Co.', category: 'Equipment', totalPaid: 45000000, payments: 12, lastPayment: '2026-08-15', status: 'Active' },
+      { id: 'VND-002', name: 'Myanmar Telecom Services', category: 'Telecom', totalPaid: 18000000, payments: 24, lastPayment: '2026-09-01', status: 'Active' },
+      { id: 'VND-003', name: 'Highway Construction Ltd.', category: 'Construction', totalPaid: 120000000, payments: 8, lastPayment: '2026-07-20', status: 'Active' },
+      { id: 'VND-004', name: 'Security Services Group', category: 'Security', totalPaid: 24000000, payments: 12, lastPayment: '2026-09-05', status: 'Active' },
+      { id: 'VND-005', name: 'IT Solutions Myanmar', category: 'IT', totalPaid: 32000000, payments: 6, lastPayment: '2026-08-30', status: 'Active' },
+      { id: 'VND-006', name: 'Fuel & Energy Corp.', category: 'Utilities', totalPaid: 15000000, payments: 24, lastPayment: '2026-09-08', status: 'Active' },
+    ];
+
+    const pendingPayments = [
+      { id: 'PAY-001', vendor: 'RFID Equipment Co.', amount: 5000000, dueDate: '2026-09-15', category: 'Equipment', priority: 'High' },
+      { id: 'PAY-002', vendor: 'Myanmar Telecom Services', amount: 1500000, dueDate: '2026-09-30', category: 'Telecom', priority: 'Medium' },
+      { id: 'PAY-003', vendor: 'Security Services Group', amount: 2000000, dueDate: '2026-10-05', category: 'Security', priority: 'Medium' },
+    ];
+
+    res.json({ vendors, pendingPayments, summary: { totalVendors: vendors.length, totalPaid: vendors.reduce((s, v) => s + v.totalPaid, 0), pendingAmount: pendingPayments.reduce((s, p) => s + p.amount, 0), pendingCount: pendingPayments.length } });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch vendor payments' });
+  }
+});
+
+router.get('/tax-withholding', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { hqPrisma } = await import('../../config/database');
+    const { startDate, endDate } = req.query;
+    const start = startDate ? new Date(startDate as string) : new Date(new Date().setMonth(new Date().getMonth() - 12));
+    const end = endDate ? new Date(endDate as string) : new Date();
+
+    const collections = await hqPrisma.dailyCollection.findMany({
+      where: { collectionDate: { gte: start, lte: end } },
+    });
+
+    const totalRevenue = collections.reduce((s, c) => s + Number(c.totalRevenue || 0), 0);
+    const corporateTax = totalRevenue * 0.22;
+    const incomeTax = totalRevenue * 0.05;
+    const socialSecurity = totalRevenue * 0.02;
+
+    const monthlyBreakdown = collections.map(c => ({
+      month: c.collectionDate.toISOString().slice(0, 7),
+      revenue: Number(c.totalRevenue || 0),
+      corporateTax: Number(c.totalRevenue || 0) * 0.22,
+      incomeTax: Number(c.totalRevenue || 0) * 0.05,
+      socialSecurity: Number(c.totalRevenue || 0) * 0.02,
+    }));
+
+    const taxSummary = [
+      { type: 'Corporate Tax (22%)', amount: corporateTax, rate: 0.22 },
+      { type: 'Income Tax (5%)', amount: incomeTax, rate: 0.05 },
+      { type: 'Social Security (2%)', amount: socialSecurity, rate: 0.02 },
+    ];
+
+    res.json({ period: { start: start.toISOString().split('T')[0], end: end.toISOString().split('T')[0] }, totalRevenue, totalTax: corporateTax + incomeTax + socialSecurity, taxSummary, monthlyBreakdown });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch tax withholding' });
+  }
+});
+
 export default router;

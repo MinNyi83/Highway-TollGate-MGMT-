@@ -28,6 +28,14 @@ import CustomerSpending from './pages/CustomerSpending';
 import RevenueByPayment from './pages/RevenueByPayment';
 import LoyaltyAnalytics from './pages/LoyaltyAnalytics';
 import FinancialReports from './pages/FinancialReports';
+import BudgetTracker from './pages/BudgetTracker';
+import CostAllocation from './pages/CostAllocation';
+import RevenueSharing from './pages/RevenueSharing';
+import DebtManagement from './pages/DebtManagement';
+import CashFlow from './pages/CashFlow';
+import FinancialRatios from './pages/FinancialRatios';
+import VendorPayments from './pages/VendorPayments';
+import TaxWithholding from './pages/TaxWithholding';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -75,6 +83,14 @@ function App() {
                       <Route path="/revenue-by-payment" element={<RevenueByPayment />} />
                       <Route path="/loyalty-analytics" element={<LoyaltyAnalytics />} />
                       <Route path="/reports" element={<FinancialReports />} />
+                      <Route path="/budget-tracker" element={<BudgetTracker />} />
+                      <Route path="/cost-allocation" element={<CostAllocation />} />
+                      <Route path="/revenue-sharing" element={<RevenueSharing />} />
+                      <Route path="/debt-management" element={<DebtManagement />} />
+                      <Route path="/cash-flow" element={<CashFlow />} />
+                      <Route path="/financial-ratios" element={<FinancialRatios />} />
+                      <Route path="/vendor-payments" element={<VendorPayments />} />
+                      <Route path="/tax-withholding" element={<TaxWithholding />} />
                       <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                   </Layout>
