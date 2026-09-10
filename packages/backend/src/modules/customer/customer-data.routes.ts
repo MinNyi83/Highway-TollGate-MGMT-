@@ -59,7 +59,7 @@ router.get('/my-vehicles', authMiddleware, async (req: Request, res: Response) =
 
     const vehicles = tags.map((t) => ({
       ...t.vehicle,
-      rfidTag: { tagNumber: t.tagNumber, status: t.status },
+      rfidTag: { tagUid: t.tagUid, status: t.status },
     }));
     res.json(vehicles);
   } catch (error) {
