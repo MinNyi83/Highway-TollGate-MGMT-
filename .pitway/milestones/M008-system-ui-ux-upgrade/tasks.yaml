@@ -1,0 +1,168 @@
+schema_version: 1
+tasks:
+  - id: T001
+    objective: Add Error Boundary to All 3 Portals
+    status: ready
+    depends_on: []
+    acceptance_criteria:
+      - ErrorBoundary component created in each portal
+      - Routes wrapped in ErrorBoundary in App.tsx
+      - Graceful fallback UI shown on render errors
+    relevant_files:
+      - packages/frontend/src/components/ErrorBoundary.tsx
+      - packages/frontend/src/App.tsx
+      - packages/customer-portal/src/components/ErrorBoundary.tsx
+      - packages/customer-portal/src/App.tsx
+      - packages/financial-portal/src/components/ErrorBoundary.tsx
+      - packages/financial-portal/src/App.tsx
+    verification:
+      strategy: command
+      detail: grep -rq ErrorBoundary packages/frontend/src/
+        packages/customer-portal/src/ packages/financial-portal/src/
+    result:
+      summary: Pending
+      evidence: Pending
+    usage:
+      total_tokens: 0
+  - id: T002
+    objective: Add Toast Notification System to Admin and Financial Portals
+    status: waiting
+    depends_on:
+      - T001
+    acceptance_criteria:
+      - Toast component and ToastProvider created in admin portal
+      - Toast component and ToastProvider created in financial portal
+      - showToast called on mutations (violation approve/reject, settlement,
+        etc.)
+      - Customer portal Toast.tsx activated (already exists, just unused)
+    relevant_files:
+      - packages/frontend/src/components/Toast.tsx
+      - packages/frontend/src/components/ToastProvider.tsx
+      - packages/financial-portal/src/components/Toast.tsx
+      - packages/financial-portal/src/components/ToastProvider.tsx
+    verification:
+      strategy: command
+      detail: grep -rq showToast packages/frontend/src/ packages/customer-portal/src/
+        packages/financial-portal/src/
+    result:
+      summary: Pending
+      evidence: Pending
+    usage:
+      total_tokens: 0
+  - id: T003
+    objective: Add Skeleton Loading to All Portals
+    status: waiting
+    depends_on:
+      - T001
+    acceptance_criteria:
+      - Skeleton components created or activated in each portal
+      - All bare Loading text replaced with skeleton components
+      - Customer portal Skeleton.tsx activated (already exists, just unused)
+    relevant_files:
+      - packages/frontend/src/components/Skeleton.tsx
+      - packages/customer-portal/src/components/Skeleton.tsx
+      - packages/financial-portal/src/components/Skeleton.tsx
+    verification:
+      strategy: command
+      detail: grep -rq Skeleton packages/frontend/src/pages/
+        packages/customer-portal/src/pages/ packages/financial-portal/src/pages/
+    result:
+      summary: Pending
+      evidence: Pending
+    usage:
+      total_tokens: 0
+  - id: T004
+    objective: Add isError Handling to All useQuery Calls
+    status: waiting
+    depends_on:
+      - T001
+    acceptance_criteria:
+      - isError and error states handled on all useQuery calls
+      - Error UI shown when API calls fail
+      - Error boundary catches unhandled errors
+    relevant_files:
+      - packages/frontend/src/pages/*.tsx
+      - packages/customer-portal/src/pages/*.tsx
+      - packages/financial-portal/src/pages/*.tsx
+    verification:
+      strategy: command
+      detail: grep -r isError packages/financial-portal/src/pages/ | head -5
+    result:
+      summary: Pending
+      evidence: Pending
+    usage:
+      total_tokens: 0
+  - id: T005
+    objective: Clean Up Dead Code and Fix i18n
+    status: ready
+    depends_on: []
+    acceptance_criteria:
+      - leaflet types removed from frontend and customer-portal package.json
+      - Unused Skeleton.tsx and Toast.tsx in customer portal activated
+      - 14 financial portal pages fixed to use i18n system
+      - Typo registeredVaters fixed in customer portal useLanguage.tsx
+    relevant_files:
+      - packages/frontend/package.json
+      - packages/customer-portal/package.json
+      - packages/customer-portal/src/hooks/useLanguage.tsx
+      - packages/financial-portal/src/pages/*.tsx
+    verification:
+      strategy: command
+      detail: grep -q leaflet packages/frontend/package.json || echo PASS
+    result:
+      summary: Pending
+      evidence: Pending
+    usage:
+      total_tokens: 0
+  - id: T006
+    objective: Accessibility and Design Consistency
+    status: waiting
+    depends_on:
+      - T002
+      - T003
+    acceptance_criteria:
+      - ARIA labels added to icon-only buttons
+      - ApprovalModal gets focus trapping, escape-key, aria-modal
+      - glass-card styling standardized across all pages
+      - DataTable used consistently instead of inline tables
+    relevant_files:
+      - packages/financial-portal/src/components/ApprovalModal.tsx
+      - packages/financial-portal/src/pages/*.tsx
+      - packages/frontend/src/pages/*.tsx
+    verification:
+      strategy: manual
+      detail: Visual inspection of all portals
+    result:
+      summary: Pending
+      evidence: Pending
+    usage:
+      total_tokens: 0
+  - id: T007
+    objective: Deploy Test and Update Documentation
+    status: waiting
+    depends_on:
+      - T001
+      - T002
+      - T003
+      - T004
+      - T005
+      - T006
+    acceptance_criteria:
+      - All changes committed and pushed
+      - Deployed to Kali Linux server
+      - All portals accessible (ports 80, 8080, 8081)
+      - All API endpoints still working
+      - SKILL.md, README.md, USER_GUIDE.md updated
+    relevant_files:
+      - README.md
+      - USER_GUIDE.md
+      - .agents/skills/tollgate-operations/SKILL.md
+    verification:
+      strategy: command
+      detail: curl -s -o /dev/null -w '%{http_code}' http://localhost:3000/api/health
+        | grep -q 200
+    result:
+      summary: Pending
+      evidence: Pending
+    usage:
+      total_tokens: 0
