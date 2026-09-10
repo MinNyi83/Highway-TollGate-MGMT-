@@ -1,0 +1,2 @@
+summary: "Skeleton loading components created in admin and financial portals. Key pages updated to use skeletons."
+evidence: "Skeleton.tsx created in frontend and financial-portal with CardSkeleton, TableSkeleton, ChartSkeleton, DashboardSkeleton. SystemHealth, AuditLog, VehicleDetail pages updated."
