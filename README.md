@@ -122,6 +122,8 @@ A distributed, enterprise-grade highway toll management system with RFID + ANPR 
 - **Helmet.js**: Content Security Policy enabled in production
 - **JWT**: Environment-configurable secret with Bearer token auth
 - **Validation**: Zod schemas with detailed error messages
+- **Security Headers**: X-Frame-Options, X-Content-Type-Options, X-XSS-Protection, Referrer-Policy, Content-Security-Policy, Strict-Transport-Security
+- **HTTP Warning**: System runs on HTTP by default. For production, enable HTTPS with SSL certificates.
 
 ### Performance Optimizations
 - **Database Indexes**: 23 indexes on high-query columns across vehicles, accounts, toll_events, transactions, violations
