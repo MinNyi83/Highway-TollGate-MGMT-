@@ -1,0 +1,2 @@
+summary: "Toast notification system added to admin and financial portals. Customer portal Toast already active."
+evidence: "Toast.tsx created in frontend and financial-portal with ToastProvider and useToast hook. App.tsx updated in both portals. Customer portal Layout.tsx already includes ToastContainer."
