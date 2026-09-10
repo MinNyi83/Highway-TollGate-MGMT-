@@ -77,4 +77,13 @@
   .status-rejected {
     @apply status-badge bg-crimson-100 text-crimson-800 dark:bg-crimson-900/30 dark:text-crimson-400;
   }
+
+  .animate-slide-in {
+    animation: slideIn 0.3s ease-out;
+  }
+
+  @keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
 }
