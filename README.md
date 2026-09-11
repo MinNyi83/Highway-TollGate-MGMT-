@@ -56,7 +56,7 @@ A distributed, enterprise-grade highway toll management system with RFID + ANPR 
 | **HQ Admin Command Hub** | `80` | `http://<HOST>` | Highway administration dashboard, operator console, telemetry |
 | **Dahua Solution Presentation** | `80` | `http://<HOST>/presentation.html` | 17-slide executive deck + 3D interactive web portal |
 | **Customer Portal (PWA)** | `8080` | `http://<HOST>:8080` | Driver digital wallet, vehicle manager, virtual RFID pass |
-| **Financial Portal** | `8081` | `http://<HOST>:8081` | Government ministry financial reporting, 24 pages |
+| **Financial Portal** | `8081` | `http://<HOST>:8081` | Government ministry financial reporting, 35 pages |
 | **HQ Central Backend API** | `3000` | `http://<HOST>:3000` | Central REST API, OCR engine, settlement service, WebSockets |
 | **API Documentation** | `3000` | `http://<HOST>:3000/api-docs` | Swagger UI for API exploration |
 | **File Storage Server** | `5000` | `http://<HOST>:5000` | Vehicle photos, ANPR captures, violation proofs |
@@ -138,6 +138,12 @@ A distributed, enterprise-grade highway toll management system with RFID + ANPR 
 - **i18n System**: English/Myanmar translations for all 35 financial portal page titles
 - **Accessibility**: ARIA labels on icon-only buttons, focus trapping on modals, Escape key support
 - **Rate Limiter Reset**: Admin endpoint `POST /api/auth/reset-rate-limiters` to clear in-memory rate limits
+- **Command-Palette + Floating Rail Layout**: Slim glassmorphic icon rail (64px) with Cmd+K fuzzy search command palette across all portals
+- **Mobile Navigation**: Hamburger menu + bottom tab bar on admin hub and financial portal; bottom tab bar on customer portal
+- **Dark Mode**: Class-based dark/light toggle with OS preference detection, localStorage persistence, and FOUC prevention via inline `<script>` in `index.html`
+- **Small Watermarks**: Subtle "NYIMIN © 2026" diagonal text overlay on all 3 portals (text-2xl, 2% opacity)
+- **Scrollable Floating Rail**: Overflow-auto with thin scrollbar for portals with many navigation items
+- **Financial Portal Rail Grouping**: 33 navigation items grouped by category (Dashboard, Revenue, Settlement, Reports, Analytics, Finance, Search, Compliance) with section dividers
 
 ---
 

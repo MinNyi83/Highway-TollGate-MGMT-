@@ -58,7 +58,18 @@ The system is deployed as a distributed stack with cloud HQ coordination and edg
 
 ### Theme Customization (Dark / Light Mode)
 - **Top Header Toggle**: Click the **Sun / Moon** icon in the top header bar to switch between sleek command-center dark mode and clean daylight mode.
+- **OS Preference Detection**: First-time visitors automatically get the theme matching their OS preference.
+- **Persistent**: Theme choice is saved to localStorage and restored on next visit.
+- **No Flash**: Inline script in `index.html` prevents flash of wrong theme on page load.
 - **Adaptive Glassmorphism**: Cards, live telemetry charts, and operator action panels smoothly adapt their contrast and lighting.
+
+---
+
+### Command-Palette + Floating Rail Layout
+All portals use a modern navigation layout:
+- **Floating Rail**: Slim glassmorphic icon rail (64px wide) centered vertically on the left edge. Hover any icon to see the page label tooltip.
+- **Command Palette**: Press **Cmd+K** (Mac) or **Ctrl+K** (Windows) to open the fuzzy search command palette. Type to search pages, then click or press Enter to navigate.
+- **Mobile Navigation**: On phones, tap the **hamburger menu** (top-left) for full navigation, or use the **bottom tab bar** for quick access to key pages.
 
 ---
 

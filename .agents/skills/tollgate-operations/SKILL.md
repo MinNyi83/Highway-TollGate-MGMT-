@@ -464,3 +464,49 @@ POST /api/auth/reset-rate-limiters
 Authorization: Bearer <SUPER_ADMIN_TOKEN>
 Response: { success: true, message: "All rate limiters reset", results: { auth: 1, global: 1, strict: 1 } }
 ```
+
+### Command-Palette + Floating Rail Layout
+All 3 portals use a modern Command-Palette + Floating Rail layout:
+- **FloatingRail**: Slim glassmorphic icon rail (64px wide) positioned at left center, vertically centered
+- **CommandPalette**: Fuzzy search with Cmd+K / Ctrl+K keyboard shortcut, grouped results
+- **Financial Portal**: 33 nav items grouped by category (Dashboard, Revenue, Settlement, Reports, Analytics, Finance, Search, Compliance) with section dividers
+- **Overflow handling**: All rails have `overflow-auto` + `max-h-[calc(100vh-3rem)]` + thin scrollbar
+
+### Mobile Navigation
+- **Admin Hub & Financial Portal**: Hamburger menu (top-left) + bottom tab bar (4 items)
+- **Customer Portal**: Bottom tab bar (6 items) with safe-area-bottom for iOS
+- **All portals**: Responsive padding `p-4 md:p-6 pb-24 md:pb-6` for bottom bar clearance
+
+### Dark Mode
+- **Strategy**: Tailwind `darkMode: 'class'` across all portals
+- **FOUC Prevention**: Inline `<script>` in all `index.html` reads `localStorage('theme')` before React mounts
+- **OS Preference**: `window.matchMedia('(prefers-color-scheme: dark)')` detection on first visit
+- **Persistence**: `localStorage.setItem('theme', 'dark'|'light')` on every toggle
+- **Components with dark mode**: Layout, FloatingRail, CommandPalette, Watermark, NotificationPanel, Skeleton, Toast, NotificationBell, Settings page
+
+### Watermarks
+All 3 portals display a subtle "NYIMIN © 2026" diagonal text overlay:
+- Text size: `text-2xl` (smaller than previous `text-5xl`)
+- Opacity: `0.02` (very subtle)
+- Font: `font-serif font-semibold`
+- Position: 10 instances in a 2-column grid across the viewport
+
+### Key Files
+| File | Purpose |
+|---|---|
+| `packages/frontend/src/components/FloatingRail.tsx` | Admin hub floating rail with overflow |
+| `packages/frontend/src/components/Layout.tsx` | Admin hub layout with mobile nav |
+| `packages/frontend/src/components/CommandPalette.tsx` | Admin hub command palette |
+| `packages/frontend/src/components/Watermark.tsx` | Admin hub watermark |
+| `packages/frontend/src/components/NotificationPanel.tsx` | Admin hub notifications (dark mode) |
+| `packages/customer-portal/src/components/FloatingRail.tsx` | Customer portal floating rail |
+| `packages/customer-portal/src/components/Layout.tsx` | Customer portal layout with mobile bottom tab |
+| `packages/customer-portal/src/hooks/useTheme.tsx` | Customer portal theme hook |
+| `packages/customer-portal/src/components/Skeleton.tsx` | Customer portal skeletons (dark mode) |
+| `packages/customer-portal/src/components/Toast.tsx` | Customer portal toasts (dark mode) |
+| `packages/customer-portal/src/components/NotificationBell.tsx` | Customer portal notifications (dark mode) |
+| `packages/customer-portal/src/pages/Settings.tsx` | Settings page (dark mode) |
+| `packages/financial-portal/src/components/FloatingRail.tsx` | Financial portal grouped rail |
+| `packages/financial-portal/src/components/Layout.tsx` | Financial portal layout with mobile nav |
+| `packages/financial-portal/src/components/CommandPalette.tsx` | Financial portal command palette |
+| `packages/financial-portal/src/components/Watermark.tsx` | Financial portal watermark |
