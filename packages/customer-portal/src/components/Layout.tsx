@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { CommandPalette, FloatingRail, Watermark } from '@tollgate/shared';
+import CommandPalette from './CommandPalette';
+import FloatingRail from './FloatingRail';
+import Watermark from './Watermark';
 import { useAuthStore } from '../stores/authStore';
 import { useTheme } from '../hooks/useTheme';
 import NotificationBell from './NotificationBell';
