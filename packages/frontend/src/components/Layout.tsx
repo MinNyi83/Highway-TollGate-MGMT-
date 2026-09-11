@@ -8,7 +8,7 @@ import { useAuthStore } from '../stores/authStore';
 import {
   LayoutDashboard, DollarSign, Car, MapPin, Activity, CreditCard,
   AlertTriangle, BarChart3, Users, Cpu, Settings, PlayCircle,
-  Presentation, Shield, HeartPulse, Sun, Moon, Command, Radio, LogOut,
+  Presentation, Shield, HeartPulse, Sun, Moon, Command,
 } from 'lucide-react';
 
 const allNavItems = [

@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Radio, LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 
 interface RailItem {
   to: string;

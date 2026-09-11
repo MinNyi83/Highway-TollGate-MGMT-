@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, ArrowRight, Command } from 'lucide-react';
+import { Search, ArrowRight } from 'lucide-react';
 
 interface CommandItem {
   id: string;
