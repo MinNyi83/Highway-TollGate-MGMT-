@@ -71,7 +71,7 @@ export default function Sidebar({ collapsed = false }: { collapsed: boolean }) {
 
   return (
     <aside
-      className={`${collapsed ? 'w-16' : 'w-64'} bg-slate-900 dark:bg-slate-950 border-r border-white/10 min-h-screen transition-all duration-300 flex flex-col`}
+      className={`${collapsed ? 'w-16' : 'w-64'} bg-gradient-to-b from-navy-900 to-navy-800 border-r border-navy-700/40 min-h-screen transition-all duration-300 flex flex-col`}
     >
       <div className={`${collapsed ? 'p-4' : 'p-5'} transition-all duration-300`}>
         <div className="flex items-center gap-3">
@@ -80,7 +80,7 @@ export default function Sidebar({ collapsed = false }: { collapsed: boolean }) {
           </div>
           {!collapsed && (
             <div>
-              <h1 className="font-bold text-lg text-white">TollGate</h1>
+              <h1 className="font-bold font-serif text-lg text-white">TollGate</h1>
               <p className="text-xs text-gray-400">ဘဏ္ဍာရေးစနစ်</p>
             </div>
           )}
@@ -97,7 +97,7 @@ export default function Sidebar({ collapsed = false }: { collapsed: boolean }) {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                   isActive
-                    ? 'bg-brand-700 text-white shadow-lg shadow-brand-500/25'
+                    ? 'bg-gold-500/10 text-gold-400 border-l-[3px] border-gold-500 pl-3'
                     : 'text-gray-400 hover:text-white hover:bg-white/5'
                 }`
               }
@@ -113,7 +113,7 @@ export default function Sidebar({ collapsed = false }: { collapsed: boolean }) {
       </nav>
 
       {!collapsed && (
-        <div className="p-4 border-t border-white/10 text-xs text-gray-500">
+        <div className="p-4 border-t border-navy-700/40 text-xs text-gray-500">
           <p>TollGate RFID Pass v1.0</p>
           <p className="mt-0.5 text-[10px] text-gray-600">Financial System</p>
         </div>

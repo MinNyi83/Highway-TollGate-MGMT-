@@ -38,7 +38,7 @@ export default function Layout() {
     <div className="flex min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-200">
       <Sidebar collapsed={collapsed} />
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="bg-white/90 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/10 h-14 flex items-center justify-between px-6 sticky top-0 z-40 transition-colors duration-200 shadow-sm">
+        <header className="bg-white/90 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200/60 dark:border-navy-700/40 h-14 flex items-center justify-between px-6 sticky top-0 z-40 transition-colors duration-200 shadow-sm">
           <button
             onClick={() => setCollapsed(!collapsed)}
             className="p-2 text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg transition-colors"
@@ -91,7 +91,9 @@ export default function Layout() {
         </header>
 
         <main className="flex-1 overflow-auto bg-slate-100/60 dark:bg-slate-950 p-6 transition-colors duration-200">
-          <Outlet />
+          <div className="animate-fade-in">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

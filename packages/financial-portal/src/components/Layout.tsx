@@ -46,7 +46,7 @@ export default function Layout({ children }: LayoutProps) {
       <Watermark />
       <Sidebar collapsed={collapsed} />
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="bg-white/90 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/10 h-14 flex items-center justify-between px-6 sticky top-0 z-40 transition-colors duration-200 shadow-sm">
+        <header className="bg-white/90 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200/60 dark:border-navy-700/40 h-14 flex items-center justify-between px-6 sticky top-0 z-40 transition-colors duration-200 shadow-sm">
           <button
             onClick={() => setCollapsed(!collapsed)}
             className="p-2 text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg transition-colors"
@@ -88,13 +88,15 @@ export default function Layout({ children }: LayoutProps) {
         </header>
 
         <main className="flex-1 overflow-auto bg-slate-100/60 dark:bg-slate-950 p-6 transition-colors duration-200">
-          {children || <Outlet />}
+          <div className="animate-fade-in">
+            {children || <Outlet />}
+          </div>
         </main>
 
-        <footer className="border-t border-slate-200 dark:border-white/10 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm px-6 py-3">
+        <footer className="border-t border-slate-200/60 dark:border-navy-700/40 bg-white/50 dark:bg-navy-900/50 backdrop-blur-sm px-6 py-3">
           <div className="flex items-center justify-between text-xs text-slate-400 dark:text-slate-500">
             <span>© 2026 nyimin. All rights reserved.</span>
-            <span>TollGate RFID Pass Financial System v1.0</span>
+            <span className="font-serif text-gold-500">TollGate RFID Pass Financial System v1.0</span>
           </div>
         </footer>
       </div>

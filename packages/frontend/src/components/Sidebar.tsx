@@ -43,7 +43,7 @@ export default function Sidebar({ collapsed = false }: { collapsed?: boolean }) 
   const visibleItems = navItems.filter((item) => item.roles.includes(userRole));
 
   return (
-    <aside className={`${collapsed ? 'w-16' : 'w-64'} bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-white/10 min-h-screen transition-all duration-300 flex flex-col`}>
+    <aside className={`${collapsed ? 'w-16' : 'w-64'} bg-gradient-to-b from-navy-900 to-navy-800 border-r border-navy-700/40 min-h-screen transition-all duration-300 flex flex-col`}>
       {/* Logo */}
       <div className={`${collapsed ? 'p-4' : 'p-5'} transition-all duration-300`}>
         <div className="flex items-center gap-3">
@@ -52,7 +52,7 @@ export default function Sidebar({ collapsed = false }: { collapsed?: boolean }) 
           </div>
           {!collapsed && (
             <div>
-              <h1 className="font-bold text-lg text-slate-900 dark:text-white">TollGate</h1>
+              <h1 className="font-bold font-serif text-lg text-white">TollGate</h1>
               <p className="text-xs text-slate-500 dark:text-gray-400">Command Hub</p>
             </div>
           )}
@@ -86,8 +86,8 @@ export default function Sidebar({ collapsed = false }: { collapsed?: boolean }) 
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                   isActive
-                    ? 'bg-brand-600 text-white shadow-lg shadow-brand-500/25'
-                    : 'text-slate-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5'
+                    ? 'bg-gold-500/10 text-gold-400 border-l-[3px] border-gold-500 pl-3'
+                    : 'text-gray-400 hover:text-white hover:bg-white/5'
                 }`
               }
               title={collapsed ? item.label : undefined}
@@ -101,9 +101,9 @@ export default function Sidebar({ collapsed = false }: { collapsed?: boolean }) 
 
       {/* Footer */}
       {!collapsed && (
-        <div className="p-4 border-t border-slate-200 dark:border-white/10 text-xs text-slate-400 dark:text-gray-500">
+        <div className="p-4 border-t border-navy-700/40 text-xs text-gray-500">
           <p>TollGate RFID Pass v1.0</p>
-          <p className="mt-0.5 text-[10px] text-slate-400 dark:text-gray-600">Enterprise Highway OS</p>
+          <p className="mt-0.5 text-[10px] text-gray-600">Enterprise Highway OS</p>
         </div>
       )}
     </aside>

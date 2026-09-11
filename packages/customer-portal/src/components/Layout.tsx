@@ -51,15 +51,15 @@ export default function Layout() {
       <ToastContainer />
 
       {/* Top Bar - Mobile */}
-      <header className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-800 px-4 py-3 flex items-center justify-between md:hidden transition-colors">
+      <header className="bg-gradient-to-b from-navy-900 to-navy-800 dark:bg-navy-950 text-white border-b border-navy-700/40 px-4 py-3 flex items-center justify-between md:hidden transition-colors">
         <div className="flex items-center gap-2">
-          <Car className="text-blue-600 dark:text-blue-400" size={20} />
-          <span className="font-bold">TollGate</span>
+          <Car className="text-gold-500" size={20} />
+          <span className="font-bold font-serif">TollGate</span>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={toggleTheme}
-            className="p-1.5 text-gray-600 dark:text-gray-300 hover:text-blue-600 rounded-lg"
+              className="p-2 text-gray-500 dark:text-gray-300 hover:text-gold-500 rounded-lg"
             title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
           >
             {theme === 'dark' ? <Sun size={18} className="text-amber-400" /> : <Moon size={18} />}
@@ -72,11 +72,11 @@ export default function Layout() {
       </header>
 
       {menuOpen && (
-        <div className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white md:hidden border-b border-gray-200 dark:border-gray-700">
+        <div className="bg-navy-800 dark:bg-navy-900 text-white md:hidden border-b border-navy-700/40">
           <div className="p-4">
-            <p className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">{user?.name}</p>
-            <p className="text-xs text-gray-500 mb-3">{user?.email}</p>
-            <button onClick={handleLogout} className="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm font-medium">
+            <p className="text-sm font-medium text-white mb-1">{user?.name}</p>
+            <p className="text-xs text-gray-400 mb-3">{user?.email}</p>
+            <button onClick={handleLogout} className="flex items-center gap-2 text-gold-400 text-sm font-medium">
               <LogOut size={16} />
               Sign Out
             </button>
@@ -86,13 +86,13 @@ export default function Layout() {
 
       <div className="flex flex-1">
         {/* Desktop Sidebar */}
-        <aside className={`${collapsed ? 'w-16' : 'w-64'} hidden md:flex bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-r border-gray-200 dark:border-gray-800 min-h-screen p-4 flex-col transition-all duration-300`}>
+        <aside className={`${collapsed ? 'w-16' : 'w-64'} hidden md:flex bg-gradient-to-b from-navy-900 to-navy-800 text-white border-r border-navy-700/40 min-h-screen p-4 flex-col transition-all duration-300`}>
           <div className={`${collapsed ? 'mb-4' : 'mb-8'} transition-all duration-300`}>
             <div className={`flex items-center ${collapsed ? 'justify-center' : 'gap-2'} mb-1`}>
-              <Car className="text-blue-600 dark:text-blue-400 flex-shrink-0" size={collapsed ? 20 : 24} />
-              {!collapsed && <h1 className="text-xl font-bold">TollGate</h1>}
+              <Car className="text-gold-500 flex-shrink-0" size={collapsed ? 20 : 24} />
+              {!collapsed && <h1 className="text-xl font-bold font-serif text-white">TollGate</h1>}
             </div>
-            {!collapsed && <p className="text-gray-500 dark:text-gray-400 text-sm">Customer Portal</p>}
+            {!collapsed && <p className="text-gray-400 text-sm">Customer Portal</p>}
           </div>
           <nav className="flex-1">
             {filteredNavItems.map((item) => (
@@ -105,8 +105,8 @@ export default function Layout() {
                 className={({ isActive }) =>
                   `flex items-center ${collapsed ? 'justify-center' : 'gap-3'} px-3 py-2 rounded-md mb-1 transition-colors font-medium ${
                     isActive
-                      ? 'bg-blue-600 text-white shadow-sm'
-                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
+                      ? 'bg-gold-500/10 text-gold-400 border-l-[3px] border-gold-500 pl-3'
+                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white'
                   }`
                 }
               >
@@ -116,12 +116,12 @@ export default function Layout() {
             ))}
           </nav>
           {!collapsed && (
-            <div className="border-t border-gray-200 dark:border-gray-800 pt-4">
+            <div className="border-t border-navy-700/40 pt-4">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate">{user?.name}</p>
+                <p className="text-sm font-medium text-white truncate">{user?.name}</p>
                 <NotificationBell />
               </div>
-              <button onClick={handleLogout} className="flex items-center gap-2 text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 text-sm">
+              <button onClick={handleLogout} className="flex items-center gap-2 text-gray-500 dark:text-gray-400 hover:text-gold-500 text-sm">
                 <LogOut size={16} />
                 Sign Out
               </button>
@@ -131,7 +131,7 @@ export default function Layout() {
 
         <div className="flex-1 flex flex-col min-w-0">
           {/* Desktop Header with Collapse & Dark Mode Toggle */}
-          <header className="hidden md:flex bg-white dark:bg-gray-800/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 h-16 items-center justify-between px-6 transition-colors shadow-sm">
+          <header className="hidden md:flex bg-white dark:bg-gray-800/90 backdrop-blur-md border-b border-gray-200/60 dark:border-navy-700/40 h-16 items-center justify-between px-6 transition-colors shadow-sm">
             <button
               onClick={() => setCollapsed(!collapsed)}
               className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
@@ -152,13 +152,15 @@ export default function Layout() {
           </header>
 
           <main className="flex-1 p-4 md:p-8 overflow-auto pb-24 md:pb-8">
-            <Outlet />
+            <div className="animate-fade-in">
+              <Outlet />
+            </div>
           </main>
         </div>
       </div>
 
       {/* Bottom Tab Bar - Mobile */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-2 py-1 flex justify-around items-center z-50">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-gradient-to-b from-navy-900 to-navy-800 border-t border-navy-700/40 px-2 py-1 flex justify-around items-center z-50">
         {filteredNavItems.map((item) => (
           <NavLink
             key={item.to}
@@ -166,7 +168,7 @@ export default function Layout() {
             end={item.to === '/'}
             className={({ isActive }) =>
               `flex flex-col items-center gap-1 py-2 px-2 rounded-lg transition-colors ${
-                isActive ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-gray-500 dark:text-gray-400'
+                isActive ? 'text-gold-500 dark:text-gold-400 font-semibold' : 'text-gray-500 dark:text-gray-400'
               }`
             }
           >
