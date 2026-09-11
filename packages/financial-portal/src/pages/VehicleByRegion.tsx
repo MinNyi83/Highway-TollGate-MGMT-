@@ -13,7 +13,7 @@ import ErrorState from '../components/ErrorState';
 import { exportToExcel } from '../utils/excel';
 
 export default function VehicleByRegion() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const [regionId, setRegionId] = useState('');
 
