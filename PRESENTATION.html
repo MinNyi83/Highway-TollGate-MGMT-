@@ -154,7 +154,7 @@ h2.section::before { content: ''; width: 4px; height: 22px; background: linear-g
       <div class="stats" style="background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(16,185,129,0.05)); border-color: rgba(16,185,129,0.25);">
         <div class="stat"><div class="stat-num">8</div><div class="stat-label">Docker Containers</div></div>
         <div class="stat"><div class="stat-num">15</div><div class="stat-label">Myanmar Regions</div></div>
-        <div class="stat"><div class="stat-num">20+</div><div class="stat-label">Financial API Endpoints</div></div>
+        <div class="stat"><div class="stat-num">34</div><div class="stat-label">Financial API Endpoints</div></div>
         <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Offline-First Uptime</div></div>
       </div>
 
@@ -744,42 +744,52 @@ Password (all): password123
     <div>
       <div class="badge green">FINANCIAL SYSTEM · MINISTRY REPORTING</div>
       <h2 class="section">Financial Portal & Government Reporting</h2>
-      <p class="desc">Standalone financial reporting system with Myanmar/English language support, Excel exports, and approval workflows.</p>
+      <p class="desc">Standalone financial reporting system with 35 pages, Myanmar/English i18n, grouped navigation, mobile support, dark mode, and approval workflows.</p>
 
       <div class="grid-3">
         <div class="card">
-          <h3>10 Financial Reports</h3>
+          <h3>35 Financial Pages</h3>
           <ul class="list">
+            <li>Dashboard & KPI Overview</li>
             <li>Daily Collection Statement</li>
-            <li>Toll Revenue by Region</li>
-            <li>Wallet Deposits by Region</li>
-            <li>Vehicle Registration</li>
+            <li>Revenue by Region / Vehicle / Payment</li>
+            <li>Wallet Deposits & Analytics</li>
             <li>Pass-Through Volume</li>
-            <li>Revenue Remittance</li>
-            <li>Monthly Reconciliation</li>
-            <li>Official Receipts</li>
-            <li>Fiscal Year Report</li>
+            <li>Revenue Remittance & Settlement Pipeline</li>
+            <li>Financial Reconciliation & Official Receipts</li>
+            <li>Fiscal Year & Comparison Reports</li>
+            <li>Plaza Performance & Violation Analytics</li>
+            <li>Revenue Forecast & Heatmap</li>
+            <li>Transaction Search & Audit Trail</li>
+            <li>Budget Tracker & Cost Allocation</li>
+            <li>Cash Flow & Financial Ratios</li>
+            <li>Vendor Payments & Tax Withholding</li>
           </ul>
         </div>
         <div class="card">
-          <h3>System Features</h3>
+          <h3>UI/UX Features</h3>
           <ul class="list">
-            <li>Myanmar/English language toggle</li>
-            <li>Excel export on all pages</li>
+            <li>Command-Palette (Cmd+K) fuzzy search</li>
+            <li>Grouped Floating Rail navigation</li>
+            <li>Mobile hamburger menu + bottom tab bar</li>
+            <li>Dark/Light mode with FOUC prevention</li>
+            <li>Myanmar/English i18n toggle</li>
+            <li>Excel & PDF export on all pages</li>
             <li>Approval workflow (Submit → Approve)</li>
-            <li>Role-based access (3 roles)</li>
-            <li>Copyright watermarks</li>
-            <li>20+ REST API endpoints</li>
-            <li>Correct financial terminology</li>
+            <li>Subtle "NYIMIN © 2026" watermark</li>
+            <li>Error boundaries & toast notifications</li>
+            <li>Skeleton loading & error state handling</li>
           </ul>
         </div>
         <div class="card">
-          <h3>Financial Terminology</h3>
+          <h3>Technical Details</h3>
           <div class="spec-grid">
+            <div class="spec"><div class="spec-label">Pages</div><div class="spec-value">35 total</div></div>
+            <div class="spec"><div class="spec-label">API Endpoints</div><div class="spec-value">34 REST APIs</div></div>
+            <div class="spec"><div class="spec-label">Roles</div><div class="spec-value">3 (Admin/Manager/Viewer)</div></div>
+            <div class="spec"><div class="spec-label">Languages</div><div class="spec-value">EN / MY</div></div>
             <div class="spec"><div class="spec-label">Revenue</div><div class="spec-value">Toll charges (INCOME)</div></div>
             <div class="spec"><div class="spec-label">Deposits</div><div class="spec-value">Customer liabilities</div></div>
-            <div class="spec"><div class="spec-label">Fiscal Year</div><div class="spec-value">April – March</div></div>
-            <div class="spec"><div class="spec-label">Regions</div><div class="spec-value">15 Myanmar</div></div>
           </div>
           <div class="code-block" style="margin-top: 8px;">
 Login: fin.admin@tollgate.com<br>
