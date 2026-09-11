@@ -57,7 +57,7 @@ export default function Layout() {
   }, []);
 
   const userRole = user?.role || 'VIEWER';
-  const filteredItems = allNavItems.filter((item) => item.roles.includes(userRole));
+  const filteredItems = allNavItems.filter((item) => userRole === 'SUPER_ADMIN' || item.roles.includes(userRole));
   const railItems = filteredItems.map(({ roles, ...rest }) => rest);
 
   const cmdItems = filteredItems.map((item) => ({
