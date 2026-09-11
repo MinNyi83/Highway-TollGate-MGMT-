@@ -7,8 +7,10 @@ import RegionFilter from '../components/RegionFilter';
 import { formatMMK } from '../utils/format';
 import { exportToPDF } from '../utils/exportPDF';
 import ErrorState from '../components/ErrorState';
+import { useLanguage } from '../i18n';
 
 export default function FinancialReports() {
+  const { t } = useLanguage();
   const [startDate, setStartDate] = useState(() => {
     const d = new Date();
     d.setMonth(d.getMonth() - 1);
@@ -51,7 +53,7 @@ export default function FinancialReports() {
         <div>
           <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
             <FileBarChart className="w-6 h-6 text-teal-600" />
-            Financial Reports Generator
+            {t('page.financialReports')}
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Generate custom financial reports</p>
         </div>

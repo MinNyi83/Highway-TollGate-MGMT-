@@ -6,8 +6,10 @@ import { formatMMK, formatDate } from '../utils/format';
 import ExportButton from '../components/ExportButton';
 import ErrorState from '../components/ErrorState';
 import { exportToPDF } from '../utils/exportPDF';
+import { useLanguage } from '../i18n';
 
 export default function TransactionSearch() {
+  const { t } = useLanguage();
   const [plate, setPlate] = useState('');
   const [startDate, setStartDate] = useState(() => {
     const d = new Date();
@@ -60,7 +62,7 @@ export default function TransactionSearch() {
         <div>
           <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
             <Search className="w-6 h-6 text-cyan-600" />
-            Transaction Search
+            {t('page.transactions')}
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Search and filter toll transactions</p>
         </div>

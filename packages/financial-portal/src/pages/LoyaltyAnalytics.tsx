@@ -3,8 +3,10 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { Star, Award } from 'lucide-react';
 import api from '../api/client';
 import ErrorState from '../components/ErrorState';
+import { useLanguage } from '../i18n';
 
 export default function LoyaltyAnalytics() {
+  const { t } = useLanguage();
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['loyalty-analytics'],
     queryFn: async () => {
@@ -22,7 +24,7 @@ export default function LoyaltyAnalytics() {
       <div>
         <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
           <Star className="w-6 h-6 text-yellow-600" />
-          Customer Loyalty Analytics
+          {t('page.loyaltyAnalytics')}
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Loyalty points distribution and top performers</p>
       </div>

@@ -5,8 +5,10 @@ import api from '../api/client';
 import DateRangePicker from '../components/DateRangePicker';
 import { formatMMK } from '../utils/format';
 import ErrorState from '../components/ErrorState';
+import { useLanguage } from '../i18n';
 
 export default function FinancialRatios() {
+  const { t } = useLanguage();
   const [startDate, setStartDate] = useState(() => {
     const d = new Date();
     d.setMonth(d.getMonth() - 12);
@@ -41,7 +43,7 @@ export default function FinancialRatios() {
       <div>
         <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
           <Activity className="w-6 h-6 text-indigo-600" />
-          Financial Ratios
+          {t('page.financialRatios')}
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Profitability, liquidity, and efficiency metrics</p>
       </div>

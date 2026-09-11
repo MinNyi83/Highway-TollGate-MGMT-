@@ -3,8 +3,10 @@ import { Banknote } from 'lucide-react';
 import api from '../api/client';
 import { formatMMK } from '../utils/format';
 import ErrorState from '../components/ErrorState';
+import { useLanguage } from '../i18n';
 
 export default function CashFlow() {
+  const { t } = useLanguage();
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['cash-flow'],
     queryFn: async () => {
@@ -23,7 +25,7 @@ export default function CashFlow() {
       <div>
         <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
           <Banknote className="w-6 h-6 text-emerald-600" />
-          Cash Flow Forecasting
+          {t('page.cashFlow')}
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">12-month cash flow projections and analysis</p>
       </div>

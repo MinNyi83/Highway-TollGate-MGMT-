@@ -3,8 +3,10 @@ import { Landmark } from 'lucide-react';
 import api from '../api/client';
 import { formatMMK } from '../utils/format';
 import ErrorState from '../components/ErrorState';
+import { useLanguage } from '../i18n';
 
 export default function DebtManagement() {
+  const { t } = useLanguage();
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['debt-management'],
     queryFn: async () => {
@@ -23,7 +25,7 @@ export default function DebtManagement() {
       <div>
         <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
           <Landmark className="w-6 h-6 text-amber-600" />
-          Debt Management
+          {t('page.debtManagement')}
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Loans, interest, and repayment schedules</p>
       </div>

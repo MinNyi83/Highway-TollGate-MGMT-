@@ -11,8 +11,6 @@ import RegionFilter from '../components/RegionFilter';
 import ExportButton from '../components/ExportButton';
 import { formatMMK } from '../utils/format';
 import { useLanguage } from '../i18n';
-import en from '../i18n/en';
-import my from '../i18n/my';
 import api from '../api/client';
 import ErrorState from '../components/ErrorState';
 import { exportToExcel } from '../utils/excel';
@@ -20,8 +18,7 @@ import { exportToExcel } from '../utils/excel';
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899'];
 
 export default function TopUpByRegion() {
-  const { language } = useLanguage();
-  const t = (key: string) => (language === 'my' ? (my as any) : (en as any))[key] ?? key;
+  const { t } = useLanguage();
 
   const [startDate, setStartDate] = useState(() => {
     const d = new Date();

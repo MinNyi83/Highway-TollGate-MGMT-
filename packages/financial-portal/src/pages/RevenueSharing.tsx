@@ -5,8 +5,10 @@ import api from '../api/client';
 import DateRangePicker from '../components/DateRangePicker';
 import { formatMMK } from '../utils/format';
 import ErrorState from '../components/ErrorState';
+import { useLanguage } from '../i18n';
 
 export default function RevenueSharing() {
+  const { t } = useLanguage();
   const [startDate, setStartDate] = useState(() => {
     const d = new Date();
     d.setMonth(d.getMonth() - 12);
@@ -33,7 +35,7 @@ export default function RevenueSharing() {
       <div>
         <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
           <Share2 className="w-6 h-6 text-green-600" />
-          Revenue Sharing
+          {t('page.revenueSharing')}
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Revenue distribution to partners and stakeholders</p>
       </div>

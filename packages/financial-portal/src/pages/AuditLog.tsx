@@ -6,8 +6,7 @@ import { useLanguage } from '../i18n';
 import ErrorState from '../components/ErrorState';
 
 export default function AuditLog() {
-  const { language } = useLanguage();
-  const t = (key: string) => key;
+  const { t } = useLanguage();
 
   const { data: logs, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['audit-logs'],
@@ -30,7 +29,7 @@ export default function AuditLog() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Audit Trail</h1>
+        <h1 className="text-2xl font-bold text-slate-800 dark:text-white">{t('page.auditLog')}</h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Financial action history and compliance log</p>
       </div>
 

@@ -3,8 +3,10 @@ import { GitBranch, Clock, CheckCircle, ArrowRight } from 'lucide-react';
 import api from '../api/client';
 import { formatMMK } from '../utils/format';
 import ErrorState from '../components/ErrorState';
+import { useLanguage } from '../i18n';
 
 export default function SettlementPipeline() {
+  const { t } = useLanguage();
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['settlement-pipeline'],
     queryFn: async () => {
@@ -24,7 +26,7 @@ export default function SettlementPipeline() {
       <div>
         <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
           <GitBranch className="w-6 h-6 text-orange-600" />
-          Settlement Pipeline
+          {t('page.settlementPipeline')}
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Track revenue transfer status in real-time</p>
       </div>

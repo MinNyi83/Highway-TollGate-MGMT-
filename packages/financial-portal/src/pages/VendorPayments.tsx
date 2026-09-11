@@ -3,8 +3,10 @@ import { Building } from 'lucide-react';
 import api from '../api/client';
 import { formatMMK } from '../utils/format';
 import ErrorState from '../components/ErrorState';
+import { useLanguage } from '../i18n';
 
 export default function VendorPayments() {
+  const { t } = useLanguage();
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['vendor-payments'],
     queryFn: async () => {
@@ -24,7 +26,7 @@ export default function VendorPayments() {
       <div>
         <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
           <Building className="w-6 h-6 text-violet-600" />
-          Vendor Payments
+          {t('page.vendorPayments')}
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Expense tracking and vendor management</p>
       </div>

@@ -6,10 +6,12 @@ import api from '../api/client';
 import DateRangePicker from '../components/DateRangePicker';
 import { formatMMK } from '../utils/format';
 import ErrorState from '../components/ErrorState';
+import { useLanguage } from '../i18n';
 
 const COLORS = ['#2563eb', '#f59e0b', '#ef4444', '#10b981', '#8b5cf6', '#ec4899'];
 
 export default function ViolationAnalytics() {
+  const { t } = useLanguage();
   const [startDate, setStartDate] = useState(() => {
     const d = new Date();
     d.setMonth(d.getMonth() - 1);
@@ -32,7 +34,7 @@ export default function ViolationAnalytics() {
       <div>
         <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
           <AlertTriangle className="w-6 h-6 text-amber-600" />
-          Violation Analytics
+          {t('page.violations')}
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Analyze violations by type and region</p>
       </div>

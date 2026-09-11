@@ -6,10 +6,12 @@ import api from '../api/client';
 import DateRangePicker from '../components/DateRangePicker';
 import { formatMMK } from '../utils/format';
 import ErrorState from '../components/ErrorState';
+import { useLanguage } from '../i18n';
 
 const COLORS = ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
 export default function RevenueByVehicle() {
+  const { t } = useLanguage();
   const [startDate, setStartDate] = useState(() => {
     const d = new Date();
     d.setMonth(d.getMonth() - 1);
@@ -34,7 +36,7 @@ export default function RevenueByVehicle() {
       <div>
         <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
           <Car className="w-6 h-6 text-violet-600" />
-          Revenue by Vehicle Type
+          {t('page.revenueByVehicle')}
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Analyze revenue contribution by vehicle class</p>
       </div>

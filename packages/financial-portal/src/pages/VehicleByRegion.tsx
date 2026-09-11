@@ -8,15 +8,12 @@ import DataTable from '../components/DataTable';
 import RegionFilter from '../components/RegionFilter';
 import ExportButton from '../components/ExportButton';
 import { useLanguage } from '../i18n';
-import en from '../i18n/en';
-import my from '../i18n/my';
 import api from '../api/client';
 import ErrorState from '../components/ErrorState';
 import { exportToExcel } from '../utils/excel';
 
 export default function VehicleByRegion() {
-  const { language } = useLanguage();
-  const t = (key: string) => (language === 'my' ? (my as any) : (en as any))[key] ?? key;
+  const { t } = useLanguage();
 
   const [regionId, setRegionId] = useState('');
 

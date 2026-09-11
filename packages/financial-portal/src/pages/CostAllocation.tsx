@@ -3,8 +3,10 @@ import { PieChart } from 'lucide-react';
 import api from '../api/client';
 import { formatMMK } from '../utils/format';
 import ErrorState from '../components/ErrorState';
+import { useLanguage } from '../i18n';
 
 export default function CostAllocation() {
+  const { t } = useLanguage();
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['cost-allocation'],
     queryFn: async () => {
@@ -24,7 +26,7 @@ export default function CostAllocation() {
       <div>
         <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
           <PieChart className="w-6 h-6 text-indigo-600" />
-          Cost Allocation
+          {t('page.costAllocation')}
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Shared costs distributed across regions</p>
       </div>

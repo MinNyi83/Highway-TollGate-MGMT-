@@ -5,8 +5,10 @@ import { TrendingUp } from 'lucide-react';
 import api from '../api/client';
 import { formatMMK } from '../utils/format';
 import ErrorState from '../components/ErrorState';
+import { useLanguage } from '../i18n';
 
 export default function RevenueForecast() {
+  const { t } = useLanguage();
   const [months, setMonths] = useState(6);
 
   const { data, isLoading, isError, error, refetch } = useQuery({
@@ -33,7 +35,7 @@ export default function RevenueForecast() {
       <div>
         <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
           <TrendingUp className="w-6 h-6 text-purple-600" />
-          Revenue Forecast
+          {t('page.revenueForecast')}
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Projected revenue based on historical trends</p>
       </div>

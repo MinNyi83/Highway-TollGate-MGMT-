@@ -4,10 +4,12 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import api from '../api/client';
 import { formatMMK } from '../utils/format';
 import ErrorState from '../components/ErrorState';
+import { useLanguage } from '../i18n';
 
 const COLORS = ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
 export default function WalletAnalytics() {
+  const { t } = useLanguage();
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['wallet-analytics'],
     queryFn: async () => {
@@ -23,7 +25,7 @@ export default function WalletAnalytics() {
       <div>
         <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
           <Wallet className="w-6 h-6 text-emerald-600" />
-          Wallet Analytics
+          {t('page.walletAnalytics')}
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Customer wallet balances and top-up patterns</p>
       </div>

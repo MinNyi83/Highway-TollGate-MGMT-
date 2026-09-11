@@ -4,6 +4,7 @@ import { Grid, Clock, Calendar } from 'lucide-react';
 import api from '../api/client';
 import { formatMMK } from '../utils/format';
 import ErrorState from '../components/ErrorState';
+import { useLanguage } from '../i18n';
 
 function HeatmapCell({ value, max }: { value: number; max: number }) {
   const intensity = max > 0 ? value / max : 0;
@@ -25,6 +26,7 @@ function HeatmapCell({ value, max }: { value: number; max: number }) {
 }
 
 export default function RevenueHeatmap() {
+  const { t } = useLanguage();
   const [days, setDays] = useState(30);
 
   const { data, isLoading, isError, error, refetch } = useQuery({
@@ -47,7 +49,7 @@ export default function RevenueHeatmap() {
       <div>
         <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
           <Grid className="w-6 h-6 text-indigo-600" />
-          Revenue Heatmap
+          {t('page.revenueHeatmap')}
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Traffic patterns by hour and day of week</p>
       </div>

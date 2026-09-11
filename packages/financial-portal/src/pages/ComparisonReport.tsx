@@ -7,8 +7,7 @@ import { useLanguage } from '../i18n';
 import ErrorState from '../components/ErrorState';
 
 export default function ComparisonReport() {
-  const { language } = useLanguage();
-  const t = (key: string) => key;
+  const { t } = useLanguage();
 
   const { data: comparison, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['comparison-report'],
@@ -30,7 +29,7 @@ export default function ComparisonReport() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Comparison Report</h1>
+        <h1 className="text-2xl font-bold text-slate-800 dark:text-white">{t('page.comparisonReport')}</h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Year-over-year revenue comparison</p>
       </div>
 
