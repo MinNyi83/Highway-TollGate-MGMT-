@@ -3,8 +3,9 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import CommandPalette from './CommandPalette';
 import FloatingRail from './FloatingRail';
 import Watermark from './Watermark';
+import ThemePicker from './ThemePicker';
+import { useThemeContext } from '../contexts/ThemeContext';
 import { useAuthStore } from '../stores/authStore';
-import { useTheme } from '../hooks/useTheme';
 import NotificationBell from './NotificationBell';
 import ToastContainer from './Toast';
 import {
@@ -24,7 +25,7 @@ const allNavItems = [
 
 export default function Layout() {
   const { user, logout } = useAuthStore();
-  const { theme, toggleTheme } = useTheme();
+  const { darkMode, toggleDarkMode } = useThemeContext();
   const navigate = useNavigate();
   const [cmdOpen, setCmdOpen] = useState(false);
   const isEnterprise = user?.customerType === 'ENTERPRISE';
@@ -52,17 +53,20 @@ export default function Layout() {
       <ToastContainer />
 
       {/* Mobile Header */}
-      <header className="md:hidden sticky top-0 z-40 bg-white/80 dark:bg-navy-800/80 backdrop-blur-xl border-b border-gray-200/40 dark:border-navy-600/30 px-4 py-3 flex items-center justify-between shadow-sm">
-        <div className="flex items-center gap-2">
-          <Car className="text-gold-500" size={20} />
-          <span className="font-bold font-serif text-sm">TollGate</span>
+      <header className="md:hidden sticky top-0 z-40 h-14 px-4 flex items-center justify-between bg-white/80 dark:bg-[var(--surface)]/80 backdrop-blur-xl border-b-2 border-[var(--accent-border)] shadow-sm">
+        <div className="flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[var(--accent)] to-[var(--accent-hover)] flex items-center justify-center shadow-sm">
+            <Car size={14} className="text-white" />
+          </div>
+          <span className="font-bold font-serif text-sm text-[var(--accent-text)]">TollGate</span>
         </div>
-        <div className="flex items-center gap-2">
-          <button onClick={() => setCmdOpen(true)} className="p-2 text-gray-500 dark:text-gray-400">
+        <div className="flex items-center gap-1.5">
+          <button onClick={() => setCmdOpen(true)} className="p-2 text-gray-500 dark:text-gray-400 hover:text-[var(--accent)] rounded-lg transition-colors">
             <Command size={18} />
           </button>
-          <button onClick={toggleTheme} className="p-2 text-gray-500 dark:text-gray-400">
-            {theme === 'dark' ? <Sun size={18} className="text-amber-400" /> : <Moon size={18} />}
+          <ThemePicker />
+          <button onClick={toggleDarkMode} className="p-2 text-gray-500 dark:text-gray-400 hover:text-[var(--accent)] rounded-lg transition-colors">
+            {darkMode === 'dark' ? <Sun size={18} className="text-amber-400" /> : <Moon size={18} />}
           </button>
           <NotificationBell />
         </div>
@@ -72,27 +76,32 @@ export default function Layout() {
       <FloatingRail items={railItems} logo="TG" onLogout={handleLogout} />
 
       <div className="md:ml-24 flex flex-col min-h-screen">
-        <header className="hidden md:flex sticky top-0 z-40 bg-white/80 dark:bg-navy-800/80 backdrop-blur-xl border-b border-gray-200/40 dark:border-navy-600/30 h-14 items-center justify-between px-6 shadow-sm transition-colors duration-300">
-          <div className="flex items-center gap-2 text-gray-400 dark:text-gray-500">
-            <Car size={18} className="text-gold-500" />
-            <span className="font-serif font-semibold text-sm">TollGate</span>
-            <span className="text-[10px]">Customer Portal</span>
+        <header className="hidden md:flex sticky top-0 z-40 h-14 items-center justify-between px-6 bg-white/80 dark:bg-[var(--surface)]/80 backdrop-blur-xl border-b-2 border-[var(--accent-border)] shadow-sm transition-all duration-300">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[var(--accent)] to-[var(--accent-hover)] flex items-center justify-center shadow-sm">
+              <Car size={14} className="text-white" />
+            </div>
+            <div>
+              <span className="font-serif font-bold text-sm text-[var(--accent-text)]">TollGate</span>
+              <span className="text-[10px] text-gray-400 dark:text-gray-500 ml-1.5">Customer Portal</span>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <button
               onClick={() => setCmdOpen(true)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-navy-700/50 border border-gray-200/60 dark:border-navy-600/30 text-gray-500 dark:text-gray-400 hover:border-gold-500/30 transition-all text-sm"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-white/5 border border-gray-200/60 dark:border-white/10 text-gray-500 dark:text-gray-400 hover:border-[var(--accent-border)] hover:text-[var(--accent-text)] transition-all text-sm"
             >
               <Command size={14} />
               <span className="hidden sm:inline text-xs">Search</span>
-              <kbd className="hidden sm:inline text-[10px] font-mono px-1.5 py-0.5 bg-white dark:bg-navy-800 rounded border border-gray-200 dark:border-navy-600">⌘K</kbd>
+              <kbd className="hidden sm:inline text-[10px] font-mono px-1.5 py-0.5 bg-white dark:bg-navy-800 rounded border border-gray-200 dark:border-navy-600 text-gray-400">⌘K</kbd>
             </button>
-            <button onClick={toggleTheme} className="p-2 text-gray-500 dark:text-gray-400 hover:text-gold-500 rounded-lg transition-colors">
-              {theme === 'dark' ? <Sun size={18} className="text-amber-400" /> : <Moon size={18} />}
+            <ThemePicker />
+            <button onClick={toggleDarkMode} className="p-2 text-gray-500 dark:text-gray-400 hover:text-[var(--accent)] rounded-lg transition-colors">
+              {darkMode === 'dark' ? <Sun size={18} className="text-amber-400" /> : <Moon size={18} />}
             </button>
             <NotificationBell />
-            <div className="flex items-center gap-2 pl-2 border-l border-gray-200/60 dark:border-navy-600/30">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-gold-500 flex items-center justify-center">
+            <div className="flex items-center gap-2 pl-2 border-l border-gray-200/60 dark:border-white/10">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent-hover)] flex items-center justify-center">
                 <span className="text-xs font-bold text-white">{user?.name?.charAt(0) || 'U'}</span>
               </div>
               <div className="hidden lg:block">
@@ -114,7 +123,7 @@ export default function Layout() {
       </div>
 
       {/* Mobile Bottom Tab Bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-navy-800/90 backdrop-blur-xl border-t border-gray-200/40 dark:border-navy-600/30 px-2 py-1 flex justify-around items-center safe-area-bottom shadow-lg">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-navy-800/90 backdrop-blur-xl border-t border-gray-200/40 dark:border-white/10 px-2 py-1 flex justify-around items-center safe-area-bottom shadow-lg">
         {filteredNavItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -125,7 +134,7 @@ export default function Layout() {
               className={({ isActive }) =>
                 `flex flex-col items-center gap-1 py-2 px-2 rounded-lg transition-all ${
                   isActive
-                    ? 'text-gold-500 dark:text-gold-400 font-semibold'
+                    ? 'text-[var(--accent-text)] font-semibold'
                     : 'text-gray-500 dark:text-gray-400'
                 }`
               }

@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { LanguageProvider } from './i18n';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ToastProvider } from './components/Toast';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -51,9 +52,10 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <LanguageProvider>
-        <ErrorBoundary>
-          <ToastProvider>
+      <ThemeProvider>
+        <LanguageProvider>
+          <ErrorBoundary>
+            <ToastProvider>
             <BrowserRouter>
               <Routes>
                 <Route path="/login" element={<Login />} />
@@ -105,7 +107,8 @@ function App() {
             </BrowserRouter>
           </ToastProvider>
         </ErrorBoundary>
-      </LanguageProvider>
+        </LanguageProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

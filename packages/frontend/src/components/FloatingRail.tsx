@@ -18,12 +18,12 @@ interface FloatingRailProps {
 
 export default function FloatingRail({ items, logo = 'TG', logoIcon: LogoIcon, footer, onLogout, className = '' }: FloatingRailProps) {
   return (
-    <aside className={`fixed left-4 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col items-center w-14 max-h-[calc(100vh-3rem)] rounded-2xl bg-white/80 dark:bg-navy-800/80 backdrop-blur-xl border border-slate-200/40 dark:border-navy-600/30 shadow-classical-lg transition-all duration-300 ${className}`}>
+    <aside className={`fixed left-4 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col items-center w-14 max-h-[calc(100vh-3rem)] rounded-2xl bg-white/80 dark:bg-[var(--surface)]/80 backdrop-blur-xl border border-slate-200/40 dark:border-white/10 shadow-classical-lg transition-all duration-300 ${className}`}>
       <div className="py-3 shrink-0">
         {LogoIcon ? (
-          <LogoIcon size={22} className="text-gold-500" />
+          <LogoIcon size={22} className="text-[var(--accent)]" />
         ) : (
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-cyan-500 flex items-center justify-center shadow-sm">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--accent)] to-[var(--accent-hover)] flex items-center justify-center shadow-sm">
             <span className="text-white font-bold text-[10px] font-serif">{logo}</span>
           </div>
         )}
@@ -40,7 +40,7 @@ export default function FloatingRail({ items, logo = 'TG', logoIcon: LogoIcon, f
               className={({ isActive }) =>
                 `group relative w-10 h-10 flex items-center justify-center rounded-xl transition-all duration-200 shrink-0 ${
                   isActive
-                    ? 'bg-gold-500/15 text-gold-500 shadow-sm shadow-gold-500/10'
+                    ? 'bg-[var(--accent-bg)] text-[var(--accent-text)] shadow-sm'
                     : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/5'
                 }`
               }
@@ -55,7 +55,7 @@ export default function FloatingRail({ items, logo = 'TG', logoIcon: LogoIcon, f
       </nav>
 
       {onLogout && (
-        <div className="py-2 shrink-0 border-t border-slate-200/40 dark:border-navy-600/30 w-full flex justify-center">
+        <div className="py-2 shrink-0 border-t border-slate-200/40 dark:border-white/10 w-full flex justify-center">
           <button
             onClick={onLogout}
             className="w-10 h-10 flex items-center justify-center rounded-xl text-slate-400 hover:text-crimson-500 hover:bg-crimson-500/10 transition-all"

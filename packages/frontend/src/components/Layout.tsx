@@ -4,6 +4,8 @@ import CommandPalette from './CommandPalette';
 import FloatingRail from './FloatingRail';
 import Watermark from './Watermark';
 import NotificationPanel from './NotificationPanel';
+import ThemePicker from './ThemePicker';
+import { useThemeContext } from '../contexts/ThemeContext';
 import { useAuthStore } from '../stores/authStore';
 import {
   LayoutDashboard, DollarSign, Car, MapPin, Activity, CreditCard,
@@ -38,28 +40,10 @@ const mobileTabItems = [
 
 export default function Layout() {
   const { user, logout } = useAuthStore();
+  const { darkMode, toggleDarkMode } = useThemeContext();
   const navigate = useNavigate();
   const [cmdOpen, setCmdOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [dark, setDark] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('theme');
-      if (stored) return stored === 'dark';
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-    return true;
-  });
-
-  useEffect(() => {
-    const root = document.documentElement;
-    if (dark) {
-      root.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      root.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  }, [dark]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -90,43 +74,49 @@ export default function Layout() {
       <FloatingRail items={railItems} logo="TG" logoIcon={Radio} onLogout={handleLogout} />
 
       <div className="md:ml-24 flex flex-col min-h-screen">
-        <header className="sticky top-0 z-40 bg-white/80 dark:bg-navy-800/80 backdrop-blur-xl border-b border-slate-200/40 dark:border-navy-600/30 h-14 flex items-center justify-between px-4 md:px-6 shadow-sm transition-colors duration-300">
+        <header className="sticky top-0 z-40 h-14 flex items-center justify-between px-4 md:px-6 transition-all duration-300 bg-white/80 dark:bg-[var(--surface)]/80 backdrop-blur-xl border-b-2 border-[var(--accent-border)] shadow-sm">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 text-slate-500 dark:text-slate-400 hover:text-gold-500 rounded-lg transition-colors"
+              className="md:hidden p-2 text-slate-500 dark:text-slate-400 hover:text-[var(--accent)] rounded-lg transition-colors"
             >
               {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
-            <div className="hidden md:flex items-center gap-2 text-slate-400 dark:text-slate-500">
-              <Radio size={18} className="text-gold-500" />
-              <span className="font-serif font-semibold text-sm">TollGate</span>
-              <span className="text-[10px] text-slate-400">Command Hub</span>
+            <div className="hidden md:flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[var(--accent)] to-[var(--accent-hover)] flex items-center justify-center shadow-sm">
+                <Radio size={14} className="text-white" />
+              </div>
+              <div>
+                <span className="font-serif font-bold text-sm text-[var(--accent-text)]">TollGate</span>
+                <span className="text-[10px] text-slate-400 dark:text-slate-500 ml-1.5">Command Hub</span>
+              </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <button
               onClick={() => setCmdOpen(true)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-navy-700/50 border border-slate-200/60 dark:border-navy-600/30 text-slate-500 dark:text-slate-400 hover:border-gold-500/30 transition-all text-sm"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200/60 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:border-[var(--accent-border)] hover:text-[var(--accent-text)] transition-all text-sm"
             >
               <Command size={14} />
               <span className="hidden sm:inline text-xs">Search</span>
-              <kbd className="hidden sm:inline text-[10px] font-mono px-1.5 py-0.5 bg-white dark:bg-navy-800 rounded border border-slate-200 dark:border-navy-600">⌘K</kbd>
+              <kbd className="hidden sm:inline text-[10px] font-mono px-1.5 py-0.5 bg-white dark:bg-navy-800 rounded border border-slate-200 dark:border-navy-600 text-slate-400">⌘K</kbd>
             </button>
 
             <NotificationPanel />
 
+            <ThemePicker />
+
             <button
-              onClick={() => setDark(!dark)}
-              className="p-2 text-slate-500 dark:text-slate-400 hover:text-gold-500 rounded-lg transition-colors"
-              title={dark ? 'Light mode' : 'Dark mode'}
+              onClick={toggleDarkMode}
+              className="p-2 text-slate-500 dark:text-slate-400 hover:text-[var(--accent)] rounded-lg transition-colors"
+              title={darkMode === 'dark' ? 'Light mode' : 'Dark mode'}
             >
-              {dark ? <Sun size={18} className="text-amber-400" /> : <Moon size={18} />}
+              {darkMode === 'dark' ? <Sun size={18} className="text-amber-400" /> : <Moon size={18} />}
             </button>
 
-            <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-slate-200/60 dark:border-navy-600/30">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-gold-500 flex items-center justify-center shadow-sm">
+            <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-slate-200/60 dark:border-white/10">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent-hover)] flex items-center justify-center shadow-sm">
                 <span className="text-xs font-bold text-white">{user?.name?.charAt(0) || 'U'}</span>
               </div>
               <div className="hidden lg:block">
@@ -151,7 +141,7 @@ export default function Layout() {
                     className={({ isActive }) =>
                       `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                         isActive
-                          ? 'bg-gold-500/15 text-gold-600 dark:text-gold-400'
+                          ? 'bg-[var(--accent-bg)] text-[var(--accent-text)]'
                           : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5'
                       }`
                     }
@@ -161,7 +151,7 @@ export default function Layout() {
                   </NavLink>
                 );
               })}
-              <div className="border-t border-slate-200/40 dark:border-navy-600/30 my-3" />
+              <div className="border-t border-slate-200/40 dark:border-white/10 my-3" />
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-crimson-500 hover:bg-crimson-500/10 w-full transition-all"
@@ -179,7 +169,7 @@ export default function Layout() {
         </main>
       </div>
 
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-navy-800/90 backdrop-blur-xl border-t border-slate-200/40 dark:border-navy-600/30 safe-area-bottom">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-navy-800/90 backdrop-blur-xl border-t border-slate-200/40 dark:border-white/10 safe-area-bottom">
         <div className="flex items-center justify-around py-2">
           {mobileTabItems.map((item) => {
             const Icon = item.icon;
@@ -191,7 +181,7 @@ export default function Layout() {
                 className={({ isActive }) =>
                   `flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg transition-all ${
                     isActive
-                      ? 'text-gold-500'
+                      ? 'text-[var(--accent-text)]'
                       : 'text-slate-400 dark:text-slate-500'
                   }`
                 }

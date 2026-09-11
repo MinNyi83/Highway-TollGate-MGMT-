@@ -6,6 +6,13 @@
   font-family: 'Inter', 'Noto Sans Myanmar', sans-serif;
   line-height: 1.5;
   font-weight: 400;
+  --accent: #d4a574;
+  --accent-hover: #c8a87c;
+  --accent-text: #d4a574;
+  --accent-border: rgba(212, 165, 116, 0.3);
+  --accent-bg: rgba(212, 165, 116, 0.15);
+  --surface: #1f2a38;
+  --surface-hover: #2e3f54;
 }
 
 body {
