@@ -37,10 +37,10 @@ export default function ToastContainer() {
   };
 
   const bgColors = {
-    success: 'bg-green-50 border-green-200',
-    error: 'bg-red-50 border-red-200',
-    warning: 'bg-yellow-50 border-yellow-200',
-    info: 'bg-blue-50 border-blue-200',
+    success: 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-700/50',
+    error: 'bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-700/50',
+    warning: 'bg-yellow-50 dark:bg-yellow-900/30 border-yellow-200 dark:border-yellow-700/50',
+    info: 'bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-700/50',
   };
 
   return (
@@ -51,8 +51,8 @@ export default function ToastContainer() {
           className={`flex items-center gap-3 p-3 rounded-lg border shadow-lg ${bgColors[toast.type]} animate-slide-in`}
         >
           {icons[toast.type]}
-          <p className="text-sm flex-1">{toast.message}</p>
-          <button onClick={() => setToasts((prev) => prev.filter((t) => t.id !== toast.id))} className="text-gray-400 hover:text-gray-600">
+          <p className="text-sm flex-1 text-slate-800 dark:text-slate-200">{toast.message}</p>
+          <button onClick={() => setToasts((prev) => prev.filter((t) => t.id !== toast.id))} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
             <X size={14} />
           </button>
         </div>

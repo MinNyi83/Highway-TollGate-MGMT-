@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, ReactNode } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate, NavLink } from 'react-router-dom';
 import CommandPalette from './CommandPalette';
 import FloatingRail from './FloatingRail';
 import Watermark from './Watermark';
@@ -11,8 +11,15 @@ import {
   Building2, ClipboardCheck, Receipt, Calendar, Shield, BarChart3,
   MapPin, AlertTriangle, TrendingUp, Grid, Search, GitBranch,
   CreditCard, Star, FileBarChart, Target, PieChart, Share2,
-  Landmark, Banknote, Activity, Building, Sun, Moon, Command, LogOut,
+  Landmark, Banknote, Activity, Building, Sun, Moon, Command, LogOut, Menu, X,
 } from 'lucide-react';
+
+const mobileTabItems = [
+  { to: '/', icon: LayoutDashboard, label: 'Home' },
+  { to: '/revenue-by-region', icon: DollarSign, label: 'Revenue' },
+  { to: '/daily-collection', icon: FileText, label: 'Daily' },
+  { to: '/settlement', icon: Building2, label: 'Settle' },
+];
 
 const allNavItems = [
   { to: '/', icon: LayoutDashboard, label: 'Financial Dashboard', labelMyanmar: 'ဘဏ္ဍာရေး ဒေသခွဲ', category: 'Dashboard' },
@@ -58,6 +65,7 @@ export default function Layout({ children }: LayoutProps) {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
   const [cmdOpen, setCmdOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dark, setDark] = useState(() => {
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('theme');
@@ -89,7 +97,7 @@ export default function Layout({ children }: LayoutProps) {
     return () => window.removeEventListener('keydown', handler);
   }, []);
 
-  const railItems = allNavItems.map(({ labelMyanmar, category, ...rest }) => rest);
+  const railItems = allNavItems.map(({ labelMyanmar, ...rest }) => rest);
   const cmdItems = allNavItems.map((item) => ({
     ...item,
     id: item.to,
@@ -105,10 +113,16 @@ export default function Layout({ children }: LayoutProps) {
       <FloatingRail items={railItems} logo="TG" onLogout={handleLogout} />
 
       <div className="md:ml-24 flex flex-col min-h-screen">
-        <header className="sticky top-0 z-40 bg-white/80 dark:bg-navy-800/80 backdrop-blur-xl border-b border-slate-200/40 dark:border-navy-600/30 h-14 flex items-center justify-between px-6 shadow-sm transition-colors duration-300">
-          <div className="flex items-center gap-2 text-slate-400 dark:text-slate-500">
+        <header className="sticky top-0 z-40 bg-white/80 dark:bg-navy-800/80 backdrop-blur-xl border-b border-slate-200/40 dark:border-navy-600/30 h-14 flex items-center justify-between px-4 md:px-6 shadow-sm transition-colors duration-300">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 text-slate-500 dark:text-slate-400 hover:text-gold-500 rounded-lg transition-colors"
+            >
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
             <span className="font-serif font-semibold text-sm text-gold-500">TollGate</span>
-            <span className="text-[10px]">Financial System</span>
+            <span className="hidden sm:inline text-[10px] text-slate-400 dark:text-slate-500">Financial System</span>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -138,7 +152,42 @@ export default function Layout({ children }: LayoutProps) {
           </div>
         </header>
 
-        <main className="flex-1 p-4 md:p-6 overflow-auto transition-colors duration-300">
+        {mobileMenuOpen && (
+          <div className="md:hidden fixed inset-0 top-14 z-30 bg-white/95 dark:bg-navy-900/95 backdrop-blur-xl overflow-y-auto">
+            <nav className="p-4 space-y-1">
+              {allNavItems.slice(0, 15).map((item) => {
+                const Icon = item.icon;
+                return (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    end={item.to === '/'}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                        isActive
+                          ? 'bg-gold-500/15 text-gold-600 dark:text-gold-400'
+                          : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5'
+                      }`
+                    }
+                  >
+                    <Icon size={18} />
+                    {language === 'my' ? item.labelMyanmar : item.label}
+                  </NavLink>
+                );
+              })}
+              <div className="border-t border-slate-200/40 dark:border-navy-600/30 my-3" />
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-crimson-500 hover:bg-crimson-500/10 w-full transition-all"
+              >
+                Logout
+              </button>
+            </nav>
+          </div>
+        )}
+
+        <main className="flex-1 p-4 md:p-6 pb-24 md:pb-6 overflow-auto transition-colors duration-300">
           <div className="animate-fade-in">
             {children || <Outlet />}
           </div>
@@ -151,6 +200,31 @@ export default function Layout({ children }: LayoutProps) {
           </div>
         </footer>
       </div>
+
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-navy-800/90 backdrop-blur-xl border-t border-slate-200/40 dark:border-navy-600/30 safe-area-bottom">
+        <div className="flex items-center justify-around py-2">
+          {mobileTabItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.to === '/'}
+                className={({ isActive }) =>
+                  `flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg transition-all ${
+                    isActive
+                      ? 'text-gold-500'
+                      : 'text-slate-400 dark:text-slate-500'
+                  }`
+                }
+              >
+                <Icon size={20} />
+                <span className="text-[10px] font-medium">{item.label}</span>
+              </NavLink>
+            );
+          })}
+        </div>
+      </nav>
 
       <CommandPalette items={cmdItems} isOpen={cmdOpen} onClose={() => setCmdOpen(false)} placeholder={language === 'my' ? 'ရှာဖွေရန်...' : 'Search pages, actions...'} />
     </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import CommandPalette from './CommandPalette';
 import FloatingRail from './FloatingRail';
 import Watermark from './Watermark';
@@ -8,7 +8,7 @@ import { useAuthStore } from '../stores/authStore';
 import {
   LayoutDashboard, DollarSign, Car, MapPin, Activity, CreditCard,
   AlertTriangle, BarChart3, Users, Cpu, Settings, PlayCircle,
-  Presentation, Shield, HeartPulse, Sun, Moon, Command, Radio,
+  Presentation, Shield, HeartPulse, Sun, Moon, Command, Radio, Menu, X,
 } from 'lucide-react';
 
 const allNavItems = [
@@ -29,10 +29,18 @@ const allNavItems = [
   { to: '/system-health', icon: HeartPulse, label: 'System Health', category: 'Navigation', roles: ['ADMIN'] },
 ];
 
+const mobileTabItems = [
+  { to: '/', icon: LayoutDashboard, label: 'Home' },
+  { to: '/vehicles', icon: Car, label: 'Vehicles' },
+  { to: '/toll-events', icon: Activity, label: 'Events' },
+  { to: '/reports', icon: BarChart3, label: 'Reports' },
+];
+
 export default function Layout() {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   const [cmdOpen, setCmdOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dark, setDark] = useState(() => {
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('theme');
@@ -65,13 +73,14 @@ export default function Layout() {
   }, []);
 
   const userRole = user?.role || 'VIEWER';
-  const railItems = allNavItems
-    .filter((item) => item.roles.includes(userRole))
-    .map(({ roles, ...rest }) => rest);
+  const filteredItems = allNavItems.filter((item) => item.roles.includes(userRole));
+  const railItems = filteredItems.map(({ roles, ...rest }) => rest);
 
-  const cmdItems = allNavItems
-    .filter((item) => item.roles.includes(userRole))
-    .map((item) => ({ ...item, id: item.to, path: item.to }));
+  const cmdItems = filteredItems.map((item) => ({
+    ...item,
+    id: item.to,
+    path: item.to,
+  }));
 
   const handleLogout = useCallback(() => { logout(); navigate('/login'); }, [logout, navigate]);
 
@@ -81,8 +90,14 @@ export default function Layout() {
       <FloatingRail items={railItems} logo="TG" logoIcon={Radio} onLogout={handleLogout} />
 
       <div className="md:ml-24 flex flex-col min-h-screen">
-        <header className="sticky top-0 z-40 bg-white/80 dark:bg-navy-800/80 backdrop-blur-xl border-b border-slate-200/40 dark:border-navy-600/30 h-14 flex items-center justify-between px-6 shadow-sm transition-colors duration-300">
+        <header className="sticky top-0 z-40 bg-white/80 dark:bg-navy-800/80 backdrop-blur-xl border-b border-slate-200/40 dark:border-navy-600/30 h-14 flex items-center justify-between px-4 md:px-6 shadow-sm transition-colors duration-300">
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 text-slate-500 dark:text-slate-400 hover:text-gold-500 rounded-lg transition-colors"
+            >
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
             <div className="hidden md:flex items-center gap-2 text-slate-400 dark:text-slate-500">
               <Radio size={18} className="text-gold-500" />
               <span className="font-serif font-semibold text-sm">TollGate</span>
@@ -110,7 +125,7 @@ export default function Layout() {
               {dark ? <Sun size={18} className="text-amber-400" /> : <Moon size={18} />}
             </button>
 
-            <div className="flex items-center gap-2 pl-2 border-l border-slate-200/60 dark:border-navy-600/30">
+            <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-slate-200/60 dark:border-navy-600/30">
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-gold-500 flex items-center justify-center shadow-sm">
                 <span className="text-xs font-bold text-white">{user?.name?.charAt(0) || 'U'}</span>
               </div>
@@ -122,12 +137,72 @@ export default function Layout() {
           </div>
         </header>
 
-        <main className="flex-1 p-4 md:p-6 overflow-auto transition-colors duration-300">
+        {mobileMenuOpen && (
+          <div className="md:hidden fixed inset-0 top-14 z-30 bg-white/95 dark:bg-navy-900/95 backdrop-blur-xl overflow-y-auto">
+            <nav className="p-4 space-y-1">
+              {filteredItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    end={item.to === '/'}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                        isActive
+                          ? 'bg-gold-500/15 text-gold-600 dark:text-gold-400'
+                          : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5'
+                      }`
+                    }
+                  >
+                    <Icon size={18} />
+                    {item.label}
+                  </NavLink>
+                );
+              })}
+              <div className="border-t border-slate-200/40 dark:border-navy-600/30 my-3" />
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-crimson-500 hover:bg-crimson-500/10 w-full transition-all"
+              >
+                Logout
+              </button>
+            </nav>
+          </div>
+        )}
+
+        <main className="flex-1 p-4 md:p-6 pb-24 md:pb-6 overflow-auto transition-colors duration-300">
           <div className="animate-fade-in">
             <Outlet />
           </div>
         </main>
       </div>
+
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-navy-800/90 backdrop-blur-xl border-t border-slate-200/40 dark:border-navy-600/30 safe-area-bottom">
+        <div className="flex items-center justify-around py-2">
+          {mobileTabItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.to === '/'}
+                className={({ isActive }) =>
+                  `flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg transition-all ${
+                    isActive
+                      ? 'text-gold-500'
+                      : 'text-slate-400 dark:text-slate-500'
+                  }`
+                }
+              >
+                <Icon size={20} />
+                <span className="text-[10px] font-medium">{item.label}</span>
+              </NavLink>
+            );
+          })}
+        </div>
+      </nav>
 
       <CommandPalette items={cmdItems} isOpen={cmdOpen} onClose={() => setCmdOpen(false)} placeholder="Search pages, actions..." />
     </div>

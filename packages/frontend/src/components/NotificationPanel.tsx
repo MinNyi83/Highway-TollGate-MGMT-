@@ -47,7 +47,7 @@ export default function NotificationPanel() {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 text-gray-500 hover:text-gray-700 relative"
+        className="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 relative transition-colors"
       >
         <Bell size={20} />
         {unreadCount > 0 && (
@@ -58,13 +58,13 @@ export default function NotificationPanel() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg z-50">
-          <div className="p-4 border-b flex justify-between items-center">
-            <h3 className="font-medium">Notifications</h3>
+        <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-navy-800 rounded-lg shadow-lg border border-slate-200/40 dark:border-navy-600/30 z-50">
+          <div className="p-4 border-b border-slate-200/40 dark:border-navy-600/30 flex justify-between items-center">
+            <h3 className="font-medium text-slate-800 dark:text-white">Notifications</h3>
             {unreadCount > 0 && (
               <button
                 onClick={() => markAllAsRead.mutate()}
-                className="text-sm text-blue-600 hover:underline flex items-center gap-1"
+                className="text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
               >
                 <CheckCheck size={14} />
                 Mark all read
@@ -73,24 +73,24 @@ export default function NotificationPanel() {
           </div>
           <div className="max-h-96 overflow-y-auto">
             {notifications?.length === 0 ? (
-              <div className="p-4 text-center text-gray-500">No notifications</div>
+              <div className="p-4 text-center text-slate-500 dark:text-slate-400">No notifications</div>
             ) : (
               notifications?.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`p-4 border-b hover:bg-gray-50 ${!notification.read ? 'bg-blue-50' : ''}`}
+                  className={`p-4 border-b border-slate-200/40 dark:border-navy-600/30 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors ${!notification.read ? 'bg-blue-50 dark:bg-blue-500/10' : ''}`}
                 >
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
-                      <p className="text-sm">{notification.message}</p>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-sm text-slate-800 dark:text-slate-200">{notification.message}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                         {new Date(notification.createdAt).toLocaleString()}
                       </p>
                     </div>
                     {!notification.read && (
                       <button
                         onClick={() => markAsRead.mutate(notification.id)}
-                        className="text-blue-600 hover:text-blue-800"
+                        className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
                       >
                         <Check size={16} />
                       </button>

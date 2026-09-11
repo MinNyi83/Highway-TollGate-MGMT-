@@ -107,6 +107,10 @@ body {
     width: 5px;
   }
 
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 3px;
+  }
+
   .custom-scrollbar::-webkit-scrollbar-track {
     @apply bg-transparent;
   }
@@ -121,6 +125,10 @@ body {
 
   .hover-lift:hover {
     transform: translateY(-2px);
+  }
+
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   @keyframes shimmer {

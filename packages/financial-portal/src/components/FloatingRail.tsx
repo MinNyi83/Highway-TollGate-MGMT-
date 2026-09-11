@@ -1,10 +1,16 @@
 import { NavLink } from 'react-router-dom';
-import { Radio, LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 
 interface RailItem {
   to: string;
   icon: any;
   label: string;
+  category?: string;
+}
+
+interface RailGroup {
+  label: string;
+  items: RailItem[];
 }
 
 interface FloatingRailProps {
@@ -16,10 +22,23 @@ interface FloatingRailProps {
   className?: string;
 }
 
+function groupItems(items: RailItem[]): RailGroup[] {
+  const grouped: Record<string, RailItem[]> = {};
+  for (const item of items) {
+    const cat = item.category || 'Other';
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push(item);
+  }
+  const order = ['Dashboard', 'Revenue', 'Settlement', 'Reports', 'Analytics', 'Finance', 'Search', 'Compliance', 'Other'];
+  return order.filter((k) => grouped[k]?.length).map((k) => ({ label: k, items: grouped[k] }));
+}
+
 export default function FloatingRail({ items, logo = 'TG', logoIcon: LogoIcon, footer, onLogout, className = '' }: FloatingRailProps) {
+  const groups = groupItems(items);
+
   return (
-    <aside className={`fixed left-4 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col items-center w-14 py-4 rounded-2xl bg-white/80 dark:bg-navy-800/80 backdrop-blur-xl border border-slate-200/40 dark:border-navy-600/30 shadow-classical-lg transition-all duration-300 ${className}`}>
-      <div className="mb-4">
+    <aside className={`fixed left-4 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col items-center w-14 max-h-[calc(100vh-3rem)] rounded-2xl bg-white/80 dark:bg-navy-800/80 backdrop-blur-xl border border-slate-200/40 dark:border-navy-600/30 shadow-classical-lg transition-all duration-300 ${className}`}>
+      <div className="py-3 shrink-0">
         {LogoIcon ? (
           <LogoIcon size={22} className="text-gold-500" />
         ) : (
@@ -29,43 +48,52 @@ export default function FloatingRail({ items, logo = 'TG', logoIcon: LogoIcon, f
         )}
       </div>
 
-      <nav className="flex-1 flex flex-col items-center gap-1">
-        {items.map((item) => {
-          const Icon = item.icon;
-          return (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.to === '/'}
-              className={({ isActive }) =>
-                `group relative w-10 h-10 flex items-center justify-center rounded-xl transition-all duration-200 ${
-                  isActive
-                    ? 'bg-gold-500/15 text-gold-500 shadow-sm shadow-gold-500/10'
-                    : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/5'
-                }`
-              }
-            >
-              <Icon size={18} />
-              <div className="absolute left-full ml-3 px-2.5 py-1 bg-navy-800 dark:bg-navy-700 text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap shadow-lg z-50">
-                {item.label}
-              </div>
-            </NavLink>
-          );
-        })}
+      <nav className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden flex flex-col items-center gap-0.5 px-1 custom-scrollbar scrollbar-thin">
+        {groups.map((group, gi) => (
+          <div key={group.label} className="w-full">
+            {gi > 0 && (
+              <div className="my-1 mx-2 border-t border-slate-200/40 dark:border-navy-600/30" />
+            )}
+            {group.items.map((item) => {
+              const Icon = item.icon;
+              return (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.to === '/'}
+                  className={({ isActive }) =>
+                    `group relative w-10 h-10 flex items-center justify-center rounded-xl transition-all duration-200 mx-auto ${
+                      isActive
+                        ? 'bg-gold-500/15 text-gold-500 shadow-sm shadow-gold-500/10'
+                        : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/5'
+                    }`
+                  }
+                >
+                  <Icon size={18} />
+                  <div className="absolute left-full ml-3 px-2.5 py-1 bg-navy-800 dark:bg-navy-700 text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap shadow-lg z-50">
+                    {item.label}
+                  </div>
+                </NavLink>
+              );
+            })}
+          </div>
+        ))}
       </nav>
 
       {onLogout && (
-        <button
-          onClick={onLogout}
-          className="mt-2 w-10 h-10 flex items-center justify-center rounded-xl text-slate-400 hover:text-crimson-500 hover:bg-crimson-500/10 transition-all"
-          title="Logout"
-        >
-          <LogOut size={18} />
-        </button>
+        <div className="py-2 shrink-0 border-t border-slate-200/40 dark:border-navy-600/30 w-full flex justify-center">
+          <button
+            onClick={onLogout}
+            className="w-10 h-10 flex items-center justify-center rounded-xl text-slate-400 hover:text-crimson-500 hover:bg-crimson-500/10 transition-all"
+            title="Logout"
+          >
+            <LogOut size={18} />
+          </button>
+        </div>
       )}
 
       {footer && (
-        <div className="mt-2 pt-2 border-t border-slate-200/40 dark:border-navy-600/30">
+        <div className="py-2 shrink-0">
           {footer}
         </div>
       )}
