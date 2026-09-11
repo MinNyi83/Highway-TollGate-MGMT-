@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, ReactNode } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import CommandPalette from './CommandPalette';
 import FloatingRail from './FloatingRail';
@@ -49,7 +49,11 @@ const allNavItems = [
   { to: '/audit-log', icon: Shield, label: 'Audit Trail', labelMyanmar: 'စစ်ဆေးမှု မှတ်တမ်း', category: 'Compliance' },
 ];
 
-export default function Layout() {
+interface LayoutProps {
+  children?: ReactNode;
+}
+
+export default function Layout({ children }: LayoutProps) {
   const { user, logout } = useAuthStore();
   const { t, language } = useLanguage();
   const navigate = useNavigate();
@@ -136,7 +140,7 @@ export default function Layout() {
 
         <main className="flex-1 p-4 md:p-6 overflow-auto transition-colors duration-300">
           <div className="animate-fade-in">
-            <Outlet />
+            {children || <Outlet />}
           </div>
         </main>
 
