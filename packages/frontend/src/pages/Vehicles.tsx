@@ -74,7 +74,7 @@ export default function Vehicles() {
     queryKey: ['vehicles', search],
     queryFn: async () => {
       const response = await api.get('/vehicles');
-      return response.data;
+      return response.data.vehicles || response.data;
     },
   });
 
