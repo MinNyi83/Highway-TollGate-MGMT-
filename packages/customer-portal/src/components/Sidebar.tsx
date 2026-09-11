@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { LogOut } from 'lucide-react';
-import { useAuthStore } from '../../stores/authStore';
+import { useAuthStore } from '../stores/authStore';
 
 interface RailItem {
   to: string;
