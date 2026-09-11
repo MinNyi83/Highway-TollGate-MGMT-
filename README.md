@@ -143,12 +143,11 @@ A distributed, enterprise-grade highway toll management system with RFID + ANPR 
 - **i18n System**: English/Myanmar translations for all 35 financial portal page titles
 - **Accessibility**: ARIA labels on icon-only buttons, focus trapping on modals, Escape key support
 - **Rate Limiter Reset**: Admin endpoint `POST /api/auth/reset-rate-limiters` to clear in-memory rate limits
-- **Command-Palette + Floating Rail Layout**: Slim glassmorphic icon rail (64px) with Cmd+K fuzzy search command palette across all portals
+- **Command-Palette + Responsive Sidebar**: Full text sidebar (w-64) on desktop, slim icon rail (w-14) on tablet, hamburger + bottom tab on mobile
 - **Mobile Navigation**: Hamburger menu + bottom tab bar on admin hub and financial portal; bottom tab bar on customer portal
 - **Dark Mode**: Class-based dark/light toggle with OS preference detection, localStorage persistence, and FOUC prevention via inline `<script>` in `index.html`
+- **Customizable Color Themes**: 6 selectable themes (Navy Gold, Emerald Silver, Royal Purple, Ocean Blue, Crimson Gold, Monochrome) via Palette icon in topbar. Applied via CSS variables (`--accent`, `--accent-hover`, etc.)
 - **Small Watermarks**: Subtle "NYIMIN © 2026" diagonal text overlay on all 3 portals (text-2xl, 2% opacity)
-- **Scrollable Floating Rail**: Overflow-auto with thin scrollbar for portals with many navigation items
-- **Financial Portal Rail Grouping**: 33 navigation items grouped by category (Dashboard, Revenue, Settlement, Reports, Analytics, Finance, Search, Compliance) with section dividers
 
 ---
 

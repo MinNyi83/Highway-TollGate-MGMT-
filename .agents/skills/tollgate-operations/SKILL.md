@@ -485,6 +485,31 @@ All 3 portals use a modern Command-Palette + Floating Rail layout:
 - **Persistence**: `localStorage.setItem('theme', 'dark'|'light')` on every toggle
 - **Components with dark mode**: Layout, FloatingRail, CommandPalette, Watermark, NotificationPanel, Skeleton, Toast, NotificationBell, Settings page
 
+### Customizable Color Themes
+All 3 portals support 6 selectable color themes via the **Palette icon** in the topbar:
+- **Navy & Gold** (default) — navy backgrounds, gold accents
+- **Emerald & Silver** — emerald green accents
+- **Royal Purple** — deep purple accents
+- **Ocean Blue** — blue/cyan accents
+- **Crimson & Gold** — amber/gold accents
+- **Monochrome** — slate gray accents
+
+Theme selection is stored in `localStorage('colorTheme')` and applied via CSS variables (`--accent`, `--accent-hover`, `--accent-text`, `--accent-border`, `--accent-bg`, `--surface`).
+
+### Responsive Sidebar (Desktop + Tablet)
+- **Desktop (lg+)**: Full sidebar with text labels (w-64), user info card, logo, logout
+- **Tablet (md)**: Slim icon-only rail (w-14) with hover tooltips
+- **Mobile**: Hamburger menu + bottom tab bar (no sidebar)
+- All hardcoded `gold-500` references replaced with `var(--accent)` CSS variables
+
+### Topbar Styling
+All 3 portals share a consistent topbar design:
+- **Gradient logo icon** using accent color
+- **Accent-colored border-bottom** (`border-b-2 border-[var(--accent-border)]`)
+- **Glassmorphic background** with backdrop-blur
+- **ThemePicker** (palette icon), **Dark mode toggle** (sun/moon), **Command palette** (⌘K)
+- User avatar with gradient accent background
+
 ### Watermarks
 All 3 portals display a subtle "NYIMIN © 2026" diagonal text overlay:
 - Text size: `text-2xl` (smaller than previous `text-5xl`)
@@ -495,19 +520,24 @@ All 3 portals display a subtle "NYIMIN © 2026" diagonal text overlay:
 ### Key Files
 | File | Purpose |
 |---|---|
-| `packages/frontend/src/components/FloatingRail.tsx` | Admin hub floating rail with overflow |
+| `packages/frontend/src/components/Sidebar.tsx` | Admin hub responsive sidebar (full text desktop, icons tablet) |
 | `packages/frontend/src/components/Layout.tsx` | Admin hub layout with mobile nav |
 | `packages/frontend/src/components/CommandPalette.tsx` | Admin hub command palette |
 | `packages/frontend/src/components/Watermark.tsx` | Admin hub watermark |
 | `packages/frontend/src/components/NotificationPanel.tsx` | Admin hub notifications (dark mode) |
-| `packages/customer-portal/src/components/FloatingRail.tsx` | Customer portal floating rail |
+| `packages/frontend/src/contexts/ThemeContext.tsx` | Admin hub color theme context (6 themes) |
+| `packages/frontend/src/components/ThemePicker.tsx` | Admin hub color theme picker |
+| `packages/customer-portal/src/components/Sidebar.tsx` | Customer portal responsive sidebar |
 | `packages/customer-portal/src/components/Layout.tsx` | Customer portal layout with mobile bottom tab |
-| `packages/customer-portal/src/hooks/useTheme.tsx` | Customer portal theme hook |
+| `packages/customer-portal/src/contexts/ThemeContext.tsx` | Customer portal color theme context |
+| `packages/customer-portal/src/components/ThemePicker.tsx` | Customer portal color theme picker |
 | `packages/customer-portal/src/components/Skeleton.tsx` | Customer portal skeletons (dark mode) |
 | `packages/customer-portal/src/components/Toast.tsx` | Customer portal toasts (dark mode) |
 | `packages/customer-portal/src/components/NotificationBell.tsx` | Customer portal notifications (dark mode) |
 | `packages/customer-portal/src/pages/Settings.tsx` | Settings page (dark mode) |
-| `packages/financial-portal/src/components/FloatingRail.tsx` | Financial portal grouped rail |
+| `packages/financial-portal/src/components/Sidebar.tsx` | Financial portal responsive sidebar |
 | `packages/financial-portal/src/components/Layout.tsx` | Financial portal layout with mobile nav |
 | `packages/financial-portal/src/components/CommandPalette.tsx` | Financial portal command palette |
 | `packages/financial-portal/src/components/Watermark.tsx` | Financial portal watermark |
+| `packages/financial-portal/src/contexts/ThemeContext.tsx` | Financial portal color theme context |
+| `packages/financial-portal/src/components/ThemePicker.tsx` | Financial portal color theme picker |

@@ -63,13 +63,30 @@ The system is deployed as a distributed stack with cloud HQ coordination and edg
 - **No Flash**: Inline script in `index.html` prevents flash of wrong theme on page load.
 - **Adaptive Glassmorphism**: Cards, live telemetry charts, and operator action panels smoothly adapt their contrast and lighting.
 
+### Color Theme Picker
+Click the **Palette** icon in the top header bar to open the color theme selector:
+- **Navy & Gold** (default) — Classic navy backgrounds with gold accents
+- **Emerald & Silver** — Emerald green accents for a fresh look
+- **Royal Purple** — Deep purple accents for a premium feel
+- **Ocean Blue** — Blue/cyan accents for a cool, modern vibe
+- **Crimson & Gold** — Amber/gold accents with dark red tones
+- **Monochrome** — Clean slate gray for a minimal aesthetic
+
+Theme selection is saved to localStorage and persists across sessions. All components (sidebar, topbar, buttons, cards) instantly adapt to the selected accent color.
+
+### Responsive Sidebar
+- **Desktop (lg+)**: Full sidebar with text labels, user info card, and logo (w-64)
+- **Tablet (md)**: Slim icon-only rail (w-14) with hover tooltips for each icon
+- **Mobile**: Hamburger menu (top-left) + bottom tab bar for quick access
+
 ---
 
-### Command-Palette + Floating Rail Layout
-All portals use a modern navigation layout:
-- **Floating Rail**: Slim glassmorphic icon rail (64px wide) centered vertically on the left edge. Hover any icon to see the page label tooltip.
+### Responsive Sidebar
+All portals use a responsive sidebar navigation:
+- **Desktop (lg+)**: Full sidebar with text labels (w-64), user info card, logo, and logout. Dark navy gradient background with accent-colored active state.
+- **Tablet (md)**: Slim icon-only rail (w-14) with hover tooltips. Click any icon to navigate.
+- **Mobile**: Tap the **hamburger menu** (top-left) for full navigation, or use the **bottom tab bar** for quick access to key pages.
 - **Command Palette**: Press **Cmd+K** (Mac) or **Ctrl+K** (Windows) to open the fuzzy search command palette. Type to search pages, then click or press Enter to navigate.
-- **Mobile Navigation**: On phones, tap the **hamburger menu** (top-left) for full navigation, or use the **bottom tab bar** for quick access to key pages.
 
 ---
 
