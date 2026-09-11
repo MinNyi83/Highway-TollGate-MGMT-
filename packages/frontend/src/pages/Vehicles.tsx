@@ -215,7 +215,7 @@ export default function Vehicles() {
         </button>
       </div>
 
-      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 transition-colors overflow-hidden">
+      <div className="glass-card transition-colors overflow-hidden">
         <div className="p-4 border-b border-slate-200 dark:border-slate-800">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={20} />
@@ -294,8 +294,8 @@ export default function Vehicles() {
                           </>
                         ) : (
                           <>
-                            <button onClick={() => setEditingVehicle(vehicle)} className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-cyan-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" title="Edit"><Edit size={16} /></button>
-                            <button onClick={() => handleDelete(vehicle)} className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-crimson-600 dark:hover:text-crimson-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" title="Delete"><Trash2 size={16} /></button>
+                            <button onClick={() => setEditingVehicle(vehicle)} aria-label="Edit" className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-cyan-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" title="Edit"><Edit size={16} /></button>
+                            <button onClick={() => handleDelete(vehicle)} aria-label="Delete" className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-crimson-600 dark:hover:text-crimson-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" title="Delete"><Trash2 size={16} /></button>
                           </>
                         )}
                       </div>
@@ -476,7 +476,7 @@ function VehicleForm({ vehicle, onClose, onSubmit }: { vehicle?: Vehicle; onClos
               </button>
             )}
           </div>
-          <button onClick={onClose} className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg"><X size={20} /></button>
+          <button onClick={onClose} aria-label="Close" className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg"><X size={20} /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           <div className="grid grid-cols-2 gap-4">
@@ -581,7 +581,7 @@ function CsvImportModal({ onClose }: { onClose: () => void }) {
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl w-full max-w-md p-6 text-slate-900 dark:text-white">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-bold">Import Vehicles from CSV</h2>
-          <button onClick={onClose} className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg"><X size={20} /></button>
+          <button onClick={onClose} aria-label="Close" className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg"><X size={20} /></button>
         </div>
         {!result ? (
           <>

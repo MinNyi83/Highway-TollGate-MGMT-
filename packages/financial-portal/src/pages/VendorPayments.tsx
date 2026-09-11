@@ -32,22 +32,22 @@ export default function VendorPayments() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5">
+        <div className="glass-card p-5">
           <div className="text-sm text-slate-500">Total Vendors</div>
           <div className="text-2xl font-bold text-violet-600 mt-1">{summary.totalVendors || 0}</div>
         </div>
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5">
+        <div className="glass-card p-5">
           <div className="text-sm text-slate-500">Total Paid</div>
           <div className="text-2xl font-bold text-emerald-600 mt-1">{formatMMK(summary.totalPaid || 0)}</div>
         </div>
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5">
+        <div className="glass-card p-5">
           <div className="text-sm text-slate-500">Pending Payments</div>
           <div className="text-2xl font-bold text-amber-600 mt-1">{summary.pendingCount || 0} ({formatMMK(summary.pendingAmount || 0)})</div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div className="glass-card overflow-hidden">
           <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
             <h3 className="text-lg font-semibold text-slate-800 dark:text-white">Vendors</h3>
           </div>
@@ -77,7 +77,7 @@ export default function VendorPayments() {
           )}
         </div>
 
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div className="glass-card overflow-hidden">
           <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
             <h3 className="text-lg font-semibold text-slate-800 dark:text-white">Pending Payments</h3>
           </div>

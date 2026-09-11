@@ -311,6 +311,7 @@ export default function PlazaMapModal({ isOpen, onClose }: PlazaMapModalProps) {
 
             <button
               onClick={onClose}
+              aria-label="Close Map"
               className="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-white/10 transition-colors ml-2"
               title="Close Map"
             >

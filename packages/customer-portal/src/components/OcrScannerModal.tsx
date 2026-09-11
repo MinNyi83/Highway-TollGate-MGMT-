@@ -137,6 +137,7 @@ export default function OcrScannerModal({ isOpen, onClose, onApply }: OcrScanner
           </div>
           <button
             onClick={onClose}
+            aria-label="Close"
             className="text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-800 transition"
           >
             <X className="w-5 h-5" />

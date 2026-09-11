@@ -31,21 +31,21 @@ export default function CashFlow() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5">
+        <div className="glass-card p-5">
           <div className="text-sm text-slate-500">Total Revenue</div>
           <div className="text-2xl font-bold text-emerald-600 mt-1">{formatMMK(summary.totalRevenue || 0)}</div>
         </div>
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5">
+        <div className="glass-card p-5">
           <div className="text-sm text-slate-500">Total Expenses</div>
           <div className="text-2xl font-bold text-red-600 mt-1">{formatMMK(summary.totalExpenses || 0)}</div>
         </div>
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5">
+        <div className="glass-card p-5">
           <div className="text-sm text-slate-500">Net Cash Flow</div>
           <div className={`text-2xl font-bold mt-1 ${(summary.netCashFlow || 0) >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>{formatMMK(summary.netCashFlow || 0)}</div>
         </div>
       </div>
 
-      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <div className="glass-card overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
           <h3 className="text-lg font-semibold text-slate-800 dark:text-white">Monthly Cash Flow</h3>
         </div>

@@ -50,7 +50,7 @@ export default function ShiftSettlementModal({ isOpen, onClose }: ShiftSettlemen
               <p className="text-xs text-gray-400">Shift #04 • Cash Drawer Reconciliation & e-Tax Statement</p>
             </div>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-white p-1 rounded-lg hover:bg-white/10">
+          <button onClick={onClose} aria-label="Close" className="text-gray-400 hover:text-white p-1 rounded-lg hover:bg-white/10">
             <XCircle size={20} />
           </button>
         </div>

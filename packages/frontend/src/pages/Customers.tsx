@@ -303,7 +303,7 @@ export default function Customers() {
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/40" onClick={() => setShowTopUp(false)} />
           <div className="relative bg-white rounded-2xl w-full max-w-sm p-6 mx-4">
-            <button onClick={() => setShowTopUp(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+            <button onClick={() => setShowTopUp(false)} aria-label="Close" className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
               <X size={20} />
             </button>
             <h3 className="text-lg font-bold text-gray-900 mb-4">Top Up Balance</h3>
@@ -331,7 +331,7 @@ export default function Customers() {
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/40" onClick={() => setShowResetPassword(false)} />
           <div className="relative bg-white rounded-2xl w-full max-w-sm p-6 mx-4">
-            <button onClick={() => setShowResetPassword(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+            <button onClick={() => setShowResetPassword(false)} aria-label="Close" className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
               <X size={20} />
             </button>
             <h3 className="text-lg font-bold text-gray-900 mb-4">Reset Password</h3>
@@ -384,7 +384,7 @@ function CustomerForm({ customer, onClose, onSubmit }: { customer: any | null; o
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
       <div className="relative bg-white rounded-2xl w-full max-w-lg p-6 mx-4 max-h-[85vh] overflow-y-auto">
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+        <button onClick={onClose} aria-label="Close" className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
           <X size={20} />
         </button>
         <h3 className="text-lg font-bold text-gray-900 mb-4">{customer ? 'Edit Customer' : 'Add Customer'}</h3>

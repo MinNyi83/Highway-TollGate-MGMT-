@@ -196,7 +196,7 @@ export default function TollPlazas() {
             const offline = devices.filter((d) => d.status === 'OFFLINE' || d.status === 'ERROR').length;
 
             return (
-              <div key={plaza.id} className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 flex flex-col justify-between transition-colors">
+              <div key={plaza.id} className="glass-card p-6 flex flex-col justify-between transition-colors">
                 <div>
                   <div className="flex justify-between items-start mb-3">
                     <Link to={`/toll-plazas/${plaza.id}`} className="text-lg font-bold text-brand-600 dark:text-cyan-400 hover:underline">
@@ -276,7 +276,7 @@ export default function TollPlazas() {
       )}
 
       {plazas?.length === 0 && (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8 text-center text-slate-400 font-medium">No toll plazas found</div>
+        <div className="glass-card p-8 text-center text-slate-400 font-medium">No toll plazas found</div>
       )}
 
       {showModal && (
@@ -284,7 +284,7 @@ export default function TollPlazas() {
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl w-full max-w-md mx-4 text-slate-900 dark:text-white">
             <div className="flex justify-between items-center p-6 border-b border-slate-200 dark:border-slate-800">
               <h2 className="text-lg font-bold">{editingPlaza ? 'Edit Toll Plaza' : 'Add Toll Plaza'}</h2>
-              <button onClick={closeModal} className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><X size={20} /></button>
+              <button onClick={closeModal} aria-label="Close" className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><X size={20} /></button>
             </div>
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               {error && <div className="bg-crimson-500/10 border border-crimson-500/30 text-crimson-600 dark:text-crimson-400 px-3 py-2 rounded-xl text-xs font-semibold">{error}</div>}
@@ -428,7 +428,7 @@ function RealPlazasMapView({ plazas }: { plazas: TollPlaza[]; onEdit?: (plaza: T
   }, [plazas]);
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden p-4 space-y-3">
+    <div className="glass-card overflow-hidden p-4 space-y-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <MapPin className="text-brand-600 dark:text-cyan-400" size={18} />

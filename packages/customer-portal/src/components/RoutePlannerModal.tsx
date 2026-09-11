@@ -192,7 +192,7 @@ export default function RoutePlannerModal({ isOpen, onClose }: RoutePlannerModal
               <p className="text-[10px] text-blue-100">Live GPS highway route, toll fees & travel estimates</p>
             </div>
           </div>
-          <button onClick={onClose} className="text-white/80 hover:text-white p-1">
+          <button onClick={onClose} aria-label="Close" className="text-white/80 hover:text-white p-1">
             <XCircle size={20} />
           </button>
         </div>

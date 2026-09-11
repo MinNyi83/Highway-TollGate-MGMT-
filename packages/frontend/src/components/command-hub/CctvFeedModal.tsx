@@ -75,7 +75,7 @@ export default function CctvFeedModal({ isOpen, onClose }: CctvFeedModalProps) {
               <p className="text-xs text-gray-400">Yangon 0-Mile Plaza • Real-Time Neural OCR Inference</p>
             </div>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-white p-1 rounded-lg hover:bg-white/10">
+          <button onClick={onClose} aria-label="Close" className="text-gray-400 hover:text-white p-1 rounded-lg hover:bg-white/10">
             <XCircle size={20} />
           </button>
         </div>

@@ -33,7 +33,7 @@ export default function AuditLog() {
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Financial action history and compliance log</p>
       </div>
 
-      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <div className="glass-card overflow-hidden">
         {isLoading ? (
           <div className="p-8 text-center text-slate-500">Loading audit logs...</div>
         ) : !logs?.length ? (
