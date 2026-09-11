@@ -529,6 +529,18 @@ Instead of bare "Loading..." text, pages now show animated skeleton placeholders
 - `ChartSkeleton` — for chart areas
 - `DashboardSkeleton` — full dashboard layout skeleton
 
+### Error State Handling
+All data-fetching pages (useQuery calls) now display a user-friendly error state when API calls fail, with a "Retry" button to refetch data.
+
+### Internationalization (i18n)
+The Financial Portal supports English and Myanmar languages. All 35 page titles are translated. Toggle languages from the language switcher in the sidebar.
+
+### Accessibility
+- **ARIA labels** on all icon-only buttons (Close, Refresh, Download, etc.)
+- **Focus trapping** on modal dialogs (Tab cycles within modal)
+- **Escape key** closes modals
+- **Screen reader support** with `role="dialog"` and `aria-modal="true"`
+
 ### Rate Limiter Management
 Admin users can reset all in-memory rate limiters without restarting the backend:
 ```

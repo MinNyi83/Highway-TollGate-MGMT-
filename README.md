@@ -132,8 +132,11 @@ A distributed, enterprise-grade highway toll management system with RFID + ANPR 
 
 ### UI/UX Infrastructure
 - **Error Boundaries**: All 3 portals catch render errors with graceful fallback UI
+- **Error State Handling**: All 76 useQuery calls show error UI with retry button on failure
 - **Toast Notifications**: Success/error feedback on mutations (admin, financial, customer portals)
 - **Skeleton Loading**: Card, table, chart, and dashboard skeleton components replace bare "Loading..." text
+- **i18n System**: English/Myanmar translations for all 35 financial portal page titles
+- **Accessibility**: ARIA labels on icon-only buttons, focus trapping on modals, Escape key support
 - **Rate Limiter Reset**: Admin endpoint `POST /api/auth/reset-rate-limiters` to clear in-memory rate limits
 
 ---
