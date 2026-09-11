@@ -4,6 +4,10 @@ export enum UserRole {
   VIEWER = 'VIEWER',
 }
 
+export { default as CommandPalette } from './components/CommandPalette';
+export { default as FloatingRail } from './components/FloatingRail';
+export { default as Watermark } from './components/Watermark';
+
 export enum VehicleClass {
   MOTORCYCLE = 'MOTORCYCLE',
   SEDAN = 'SEDAN',
