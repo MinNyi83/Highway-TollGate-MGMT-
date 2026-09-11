@@ -15,23 +15,28 @@ A distributed, enterprise-grade highway toll management system with RFID + ANPR 
 ┌─────────────────────────────────────────────────────────────────┐
 │                        CLOUD (HQ)                               │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐  │
-│  │  HQ Command  │  │  Customer    │  │  HQ Database         │  │
-│  │  Hub (Admin) │  │  Portal PWA  │  │  (PostgreSQL :5432)  │  │
-│  │  (Port 80)   │  │  (Port 8080) │  │  vehicles, events,   │  │
-│  └──────┬───────┘  └──────┬───────┘  │  violations, plazas  │  │
-│         │                  │          └──────────┬───────────┘  │
+│  │  HQ Command  │  │  Customer    │  │  Financial Portal    │  │
+│  │  Hub (Admin) │  │  Portal PWA  │  │  (Port 8081)         │  │
+│  │  (Port 80)   │  │  (Port 8080) │  │  35 pages, i18n      │  │
+│  └──────┬───────┘  └──────┬───────┘  └──────────┬───────────┘  │
+│         │                  │                     │               │
 │  ┌──────┴──────────────────┴─────────────────────┴───────────┐  │
 │  │              HQ API Server (Node.js/Express)               │  │
 │  │  ┌─────────────┐  ┌──────────────┐  ┌──────────────────┐  │  │
 │  │  │  hqPrisma   │  │customerPrisma│  │  plazaPrisma     │  │  │
+│  │  │  :5432      │  │  :5433       │  │  :5434           │  │  │
 │  │  └──────┬──────┘  └──────┬───────┘  └───────┬──────────┘  │  │
 │  └─────────┼────────────────┼───────────────────┼─────────────┘  │
 │            │                │                   │                │
 │  ┌─────────▼──────┐  ┌─────▼────────┐  ┌──────▼────────────┐  │
 │  │  HQ DB (:5432) │  │Customer DB   │  │ Plaza DB          │  │
 │  │  tollgate       │  │(:5433)       │  │ (:5434)           │  │
-│  │                 │  │tollgate_     │  │ tollgate_plaza     │  │
-│  │                 │  │customer      │  │                    │  │
+│  │  27 tables      │  │tollgate_     │  │ tollgate_plaza     │  │
+│  │  vehicles,      │  │customer      │  │ plaza_config       │  │
+│  │  events,        │  │ 9 tables     │  │ sync_queue         │  │
+│  │  financial,     │  │ users,       │  │ local_events       │  │
+│  │  reports        │  │ accounts,    │  │                    │  │
+│  │                 │  │ wallets      │  │                    │  │
 │  └────────────────┘  └──────────────┘  └────────────────────┘  │
 └───────────────────────────┬─────────────────────────────────────┘
                             │ Internet / VPN / 4G
