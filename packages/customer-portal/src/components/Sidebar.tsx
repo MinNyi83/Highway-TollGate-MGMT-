@@ -39,7 +39,7 @@ export default function Sidebar({ items, logo = 'TG', logoIcon: LogoIcon, onLogo
           )}
           <div className="hidden lg:block overflow-hidden">
             <h1 className="font-bold font-serif text-base text-white leading-tight">TollGate</h1>
-            <p className="text-[10px] text-slate-500">Command Hub</p>
+            <p className="text-[10px] text-slate-500">Customer Portal</p>
           </div>
         </div>
       </div>
@@ -53,7 +53,7 @@ export default function Sidebar({ items, logo = 'TG', logoIcon: LogoIcon, onLogo
             </div>
             <div className="min-w-0">
               <p className="text-xs font-semibold text-white truncate">{user.name}</p>
-              <p className="text-[10px] text-slate-500 uppercase font-medium">{user.role}</p>
+              <p className="text-[10px] text-slate-500 truncate">{user.email}</p>
             </div>
           </div>
         </div>
@@ -73,13 +73,12 @@ export default function Sidebar({ items, logo = 'TG', logoIcon: LogoIcon, onLogo
                   isActive
                     ? 'bg-[var(--accent-bg)] text-[var(--accent-text)] shadow-sm'
                     : 'text-slate-400 hover:text-white hover:bg-white/5'
-                } ${false ? 'px-3 py-2.5' : 'justify-center lg:justify-start px-2 lg:px-3 py-2.5'}`
+                } justify-center lg:justify-start px-2 lg:px-3 py-2.5`
               }
               title={item.label}
             >
               <Icon size={20} className="shrink-0" />
               <span className="hidden lg:block truncate">{item.label}</span>
-              {/* Tooltip for tablet (icon-only mode) */}
               <div className="lg:hidden absolute left-full ml-3 px-2.5 py-1 bg-navy-700 text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap shadow-lg z-50">
                 {item.label}
               </div>
@@ -104,7 +103,7 @@ export default function Sidebar({ items, logo = 'TG', logoIcon: LogoIcon, onLogo
         )}
         <div className="hidden lg:block px-4 pb-3 text-[10px] text-slate-600">
           <p>TollGate RFID Pass v1.0</p>
-          <p className="mt-0.5 text-slate-700">Enterprise Highway OS</p>
+          <p className="mt-0.5 text-slate-700">Customer Portal</p>
         </div>
       </div>
     </aside>

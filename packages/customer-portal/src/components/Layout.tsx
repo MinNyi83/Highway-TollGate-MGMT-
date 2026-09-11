@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import CommandPalette from './CommandPalette';
-import FloatingRail from './FloatingRail';
+import Sidebar from './Sidebar';
 import Watermark from './Watermark';
 import ThemePicker from './ThemePicker';
 import { useThemeContext } from '../contexts/ThemeContext';
@@ -72,10 +72,10 @@ export default function Layout() {
         </div>
       </header>
 
-      {/* Desktop Floating Rail */}
-      <FloatingRail items={railItems} logo="TG" onLogout={handleLogout} />
+      {/* Desktop Sidebar */}
+      <Sidebar items={railItems} logo="TG" onLogout={handleLogout} />
 
-      <div className="md:ml-24 flex flex-col min-h-screen">
+      <div className="md:ml-14 lg:ml-64 flex flex-col min-h-screen">
         <header className="hidden md:flex sticky top-0 z-40 h-14 items-center justify-between px-6 bg-white/80 dark:bg-[var(--surface)]/80 backdrop-blur-xl border-b-2 border-[var(--accent-border)] shadow-sm transition-all duration-300">
           <div className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[var(--accent)] to-[var(--accent-hover)] flex items-center justify-center shadow-sm">

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import CommandPalette from './CommandPalette';
-import FloatingRail from './FloatingRail';
+import Sidebar from './Sidebar';
 import Watermark from './Watermark';
 import NotificationPanel from './NotificationPanel';
 import ThemePicker from './ThemePicker';
@@ -71,9 +71,9 @@ export default function Layout() {
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-navy-900 text-slate-900 dark:text-slate-100 transition-colors duration-300">
       <Watermark />
-      <FloatingRail items={railItems} logo="TG" logoIcon={Radio} onLogout={handleLogout} />
+      <Sidebar items={railItems} logo="TG" logoIcon={Radio} onLogout={handleLogout} />
 
-      <div className="md:ml-24 flex flex-col min-h-screen">
+      <div className="md:ml-14 lg:ml-64 flex flex-col min-h-screen">
         <header className="sticky top-0 z-40 h-14 flex items-center justify-between px-4 md:px-6 transition-all duration-300 bg-white/80 dark:bg-[var(--surface)]/80 backdrop-blur-xl border-b-2 border-[var(--accent-border)] shadow-sm">
           <div className="flex items-center gap-3">
             <button
