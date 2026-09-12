@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lane Controller &amp; Peripherals — TollGate RFID Pass</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f172a;--surface:#1e293b;--border:#334155;--accent:#3b82f6;--accent2:#8b5cf6;--green:#10b981;--amber:#f59e0b;--red:#ef4444;--cyan:#06b6d4;--pink:#ec4899;--text:#f1f5f9;--muted:#94a3b8;--dim:#64748b;--radius:16px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;}
+a{color:var(--accent);text-decoration:none;}
+a:hover{text-decoration:underline;}
+
+/* Header */
+.header{position:sticky;top:0;z-index:100;background:rgba(15,23,42,0.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;}
+.logo{display:flex;align-items:center;gap:12px;}
+.logo-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;}
+.logo-icon svg{width:22px;height:22px;fill:white;}
+.logo-text{font-size:18px;font-weight:700;}
+.logo-sub{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.nav{display:flex;gap:8px;align-items:center;}
+.nav a{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;color:var(--muted);transition:all 0.2s;}
+.nav a:hover,.nav a.active{background:rgba(59,130,246,0.1);color:var(--accent);text-decoration:none;}
+.back-link{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;color:var(--accent);background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);transition:all 0.2s;}
+.back-link:hover{background:rgba(59,130,246,0.15);text-decoration:none;}
+
+/* Hero */
+.hero{padding:60px 32px 40px;text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(59,130,246,0.12) 0%,transparent 60%);}
+.hero h1{font-size:2.6rem;font-weight:800;background:linear-gradient(135deg,#60a5fa,#a78bfa,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;}
+.hero p{font-size:1.05rem;color:var(--muted);max-width:680px;margin:0 auto 24px;}
+.hero-badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.badge{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid;}
+.badge-blue{background:rgba(59,130,246,0.1);border-color:rgba(59,130,246,0.3);color:#60a5fa;}
+.badge-green{background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.3);color:#34d399;}
+.badge-purple{background:rgba(139,92,246,0.1);border-color:rgba(139,92,246,0.3);color:#a78bfa;}
+.badge-amber{background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.3);color:#fbbf24;}
+.badge-red{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.3);color:#f87171;}
+.badge-cyan{background:rgba(6,182,212,0.1);border-color:rgba(6,182,212,0.3);color:#22d3ee;}
+
+/* Container */
+.container{max-width:1100px;margin:0 auto;padding:40px 32px;}
+
+/* Section Headers */
+.section-block{margin-bottom:56px;}
+.section-header{display:flex;align-items:center;gap:14px;margin-bottom:8px;}
+.section-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px;}
+.section-icon.blue{background:rgba(59,130,246,0.15);}
+.section-icon.green{background:rgba(16,185,129,0.15);}
+.section-icon.purple{background:rgba(139,92,246,0.15);}
+.section-icon.amber{background:rgba(245,158,11,0.15);}
+.section-icon.red{background:rgba(239,68,68,0.15);}
+.section-icon.cyan{background:rgba(6,182,212,0.15);}
+.section-icon.pink{background:rgba(236,72,153,0.15);}
+.section-title{font-size:1.5rem;font-weight:700;}
+.section-sub{color:var(--muted);margin-bottom:24px;max-width:700px;}
+
+/* Cards */
+.grid{display:grid;gap:20px;}
+.grid-2{grid-template-columns:repeat(2,1fr);}
+.grid-3{grid-template-columns:repeat(3,1fr);}
+.grid-4{grid-template-columns:repeat(4,1fr);}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;transition:all 0.3s;}
+.card:hover{border-color:rgba(59,130,246,0.5);transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,0.3);}
+.card-header{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+.card-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.card-icon svg{width:26px;height:26px;}
+.card-icon.blue{background:rgba(59,130,246,0.15);}
+.card-icon.green{background:rgba(16,185,129,0.15);}
+.card-icon.purple{background:rgba(139,92,246,0.15);}
+.card-icon.amber{background:rgba(245,158,11,0.15);}
+.card-icon.red{background:rgba(239,68,68,0.15);}
+.card-icon.cyan{background:rgba(6,182,212,0.15);}
+.card-icon.pink{background:rgba(236,72,153,0.15);}
+.card h3{font-size:1.05rem;font-weight:600;}
+.card .model{font-size:12px;color:var(--dim);margin-top:2px;}
+.card p{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:12px;}
+.tags{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:500;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);color:#60a5fa;}
+.tag.green{background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.2);color:#34d399;}
+.tag.amber{background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.2);color:#fbbf24;}
+.tag.red{background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.2);color:#f87171;}
+.tag.purple{background:rgba(139,92,246,0.08);border-color:rgba(139,92,246,0.2);color:#a78bfa;}
+.tag.cyan{background:rgba(6,182,212,0.08);border-color:rgba(6,182,212,0.2);color:#22d3ee;}
+
+/* Table */
+.table-wrap{overflow-x:auto;margin:20px 0;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;padding:12px 16px;background:rgba(59,130,246,0.08);border-bottom:2px solid var(--border);font-weight:600;color:var(--accent);white-space:nowrap;}
+td{padding:10px 16px;border-bottom:1px solid var(--border);color:var(--muted);}
+tr:hover td{background:rgba(59,130,246,0.03);}
+td code{font-family:'JetBrains Mono',monospace;font-size:12px;background:rgba(59,130,246,0.1);padding:2px 6px;border-radius:4px;color:#60a5fa;}
+
+/* Code */
+pre{background:#0c1222;border:1px solid var(--border);border-radius:12px;padding:20px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.7;color:#94a3b8;margin:16px 0;}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;background:rgba(59,130,246,0.1);padding:2px 6px;border-radius:4px;color:#60a5fa;}
+pre code{background:none;padding:0;color:inherit;}
+pre .comment{color:#475569;}
+pre .keyword{color:#a78bfa;}
+pre .string{color:#34d399;}
+pre .highlight{color:#60a5fa;}
+pre .warning{color:#fbbf24;}
+pre .error{color:#f87171;}
+
+/* Diagram */
+.diagram{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:32px;margin:20px 0;text-align:center;}
+.diagram-title{font-size:14px;font-weight:600;color:var(--accent);margin-bottom:16px;}
+.diagram pre{text-align:left;display:inline-block;background:transparent;border:none;padding:0;font-size:12px;color:var(--muted);line-height:1.5;}
+
+/* Serial wiring diagram */
+.wiring-box{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:stretch;margin:20px 0;}
+.wire-panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;font-size:13px;}
+.wire-panel h4{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:12px;}
+.wire-panel .pin{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(51,65,85,0.5);font-family:'JetBrains Mono',monospace;font-size:11px;}
+.wire-panel .pin span:first-child{color:var(--dim);}
+.wire-panel .pin span:last-child{color:var(--text);font-weight:600;}
+.wire-conn{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 16px;gap:8px;}
+.wire-line{width:2px;height:16px;border-radius:1px;}
+.wire-line.red{background:#ef4444;}
+.wire-line.green{background:#10b981;}
+.wire-line.blue{background:#3b82f6;}
+.wire-line.yellow{background:#f59e0b;}
+.wire-line.black{background:#475569;}
+.wire-line.white{background:#e2e8f0;}
+.wire-line.purple{background:#a78bfa;}
+.wire-line.gray{background:#64748b;}
+.wire-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+/* Specs grid */
+.specs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:16px 0;}
+.spec-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.spec-item .label{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;}
+.spec-item .value{font-size:15px;font-weight:700;color:var(--text);margin-top:4px;}
+.spec-item .value.accent{color:#60a5fa;}
+
+/* Step flow */
+.steps{display:flex;flex-direction:column;gap:12px;margin:20px 0;}
+.step{display:flex;gap:16px;align-items:flex-start;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:12px;}
+.step-num{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step-content h4{font-size:14px;font-weight:600;margin-bottom:4px;}
+.step-content p{font-size:13px;color:var(--muted);margin:0;}
+
+/* Alert boxes */
+.alert{padding:16px 20px;border-radius:12px;margin:16px 0;font-size:13px;line-height:1.6;}
+.alert-info{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);color:#93c5fd;}
+.alert-warn{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);color:#fde68a;}
+.alert-danger{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#fca5a5;}
+.alert-success{background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);color:#6ee7b7;}
+.alert strong{color:var(--text);}
+
+/* GPIO Pin CSS Grid */
+.gpio-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;margin:20px 0;}
+.gpio-pin{padding:6px 4px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;text-align:center;border:1px solid var(--border);transition:all 0.2s;position:relative;}
+.gpio-pin:hover{transform:scale(1.08);z-index:2;}
+.gpio-pin .pin-num{font-size:9px;color:var(--dim);display:block;margin-bottom:1px;}
+.gpio-pin .pin-label{font-size:8px;color:var(--dim);display:block;margin-top:1px;}
+.gpio-unused{background:rgba(51,65,85,0.3);color:#475569;}
+.gpio-power{background:rgba(239,68,68,0.2);border-color:rgba(239,68,68,0.4);color:#fca5a5;}
+.gpio-ground{background:rgba(100,116,139,0.2);border-color:rgba(100,116,139,0.4);color:#94a3b8;}
+.gpio-used{background:rgba(16,185,129,0.2);border-color:rgba(16,185,129,0.5);color:#6ee7b7;}
+.gpio-input{background:rgba(59,130,246,0.2);border-color:rgba(59,130,246,0.5);color:#93c5fd;}
+.gpio-output{background:rgba(245,158,11,0.2);border-color:rgba(245,158,11,0.5);color:#fde68a;}
+.gpio-uart{background:rgba(139,92,246,0.2);border-color:rgba(139,92,246,0.5);color:#c4b5fd;}
+.gpio-legend{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0;font-size:11px;}
+.gpio-legend span{display:flex;align-items:center;gap:5px;}
+.gpio-legend-dot{width:10px;height:10px;border-radius:3px;}
+
+/* Wiring Diagram CSS */
+.wiring-css{display:grid;grid-template-columns:1fr 80px 1fr;gap:0;align-items:start;margin:20px 0;}
+.wiring-device{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;}
+.wiring-device h4{font-size:13px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.wiring-conn{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:0;padding-top:50px;}
+.wire-dash{width:60px;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));margin:6px 0;}
+.wire-label{font-size:9px;color:var(--dim);text-align:center;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;}
+.wire-row{display:flex;align-items:center;gap:6px;margin:4px 0;}
+.wire-color{width:60px;height:3px;border-radius:2px;flex-shrink:0;}
+.wire-from,.wire-to{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);flex:1;}
+.wire-to{text-align:right;}
+
+/* Timeline */
+.timeline{position:relative;padding-left:32px;margin:20px 0;}
+.timeline::before{content:'';position:absolute;left:12px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--accent),var(--accent2),var(--green));}
+.timeline-item{position:relative;margin-bottom:24px;padding:16px 20px;background:var(--surface);border:1px solid var(--border);border-radius:12px;}
+.timeline-item::before{content:'';position:absolute;left:-26px;top:20px;width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);z-index:1;}
+.timeline-item.green::before{background:var(--green);}
+.timeline-item.amber::before{background:var(--amber);}
+.timeline-item.red::before{background:var(--red);}
+.timeline-item .tl-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.timeline-item .tl-freq{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;}
+.timeline-item .tl-freq.blue{color:#60a5fa;}
+.timeline-item .tl-freq.green{color:#34d399;}
+.timeline-item .tl-freq.amber{color:#fbbf24;}
+.timeline-item .tl-freq.red{color:#f87171;}
+.timeline-item p{font-size:13px;color:var(--muted);margin:0;}
+
+/* Footer */
+.footer{text-align:center;padding:40px 32px;color:var(--dim);font-size:13px;border-top:1px solid var(--border);margin-top:40px;}
+
+@media(max-width:768px){
+  .hero h1{font-size:1.8rem;}
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr;}
+  .nav{display:none;}
+  .wiring-box{grid-template-columns:1fr;gap:12px;}
+  .wiring-css{grid-template-columns:1fr;gap:12px;}
+  .gpio-grid{grid-template-columns:repeat(4,1fr);}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+    </div>
+    <div>
+      <div class="logo-text">TollGate RFID Pass</div>
+      <div class="logo-sub">Lane Controller &amp; Peripherals Guide</div>
+    </div>
+  </div>
+  <nav class="nav">
+    <a href="index.html" class="back-link">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      Back to Docs
+    </a>
+    <a href="#overview">Overview</a>
+    <a href="#rpi-specs">RPi Specs</a>
+    <a href="#gpio">GPIO</a>
+    <a href="#loop-detector">Loop</a>
+    <a href="#led-light">LED</a>
+    <a href="#intercom">Intercom</a>
+    <a href="#ticket">Ticket</a>
+    <a href="#software">Software</a>
+    <a href="#testing">Testing</a>
+    <a href="#bom">BOM</a>
+  </nav>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <h1>🎛️ Lane Controller &amp; Peripherals</h1>
+  <p>Complete Raspberry Pi 4 edge gateway installation guide covering GPIO mapping, vehicle loop detectors, LED traffic lights, intercom systems, ticket dispensers, and full lane integration.</p>
+  <div class="hero-badges">
+    <span class="badge badge-green">🍓 Raspberry Pi 4</span>
+    <span class="badge badge-blue">GPIO 40-pin</span>
+    <span class="badge badge-purple">🐳 Docker + systemd</span>
+    <span class="badge badge-amber">🔧 Per-Lane Setup</span>
+    <span class="badge badge-cyan">📡 6 Peripherals</span>
+  </div>
+</section>
+
+<div class="container">
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 1: SYSTEM OVERVIEW                                         -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="overview">
+    <div class="section-header">
+      <div class="section-icon blue">🏗️</div>
+      <h2 class="section-title">System Overview — Full Lane Architecture</h2>
+    </div>
+    <p class="section-sub">Each toll lane operates as an autonomous unit managed by a Raspberry Pi 4 edge controller. The RPi bridges all lane peripherals to the central HQ server via HTTPS REST API.</p>
+
+    <div class="diagram">
+      <div class="diagram-title">COMPLETE TOLL LANE ARCHITECTURE — GANTRY &amp; CONTROLLER TOPOLOGY</div>
+      <pre>
+ ┌─────────────────────────────────────────────────────────────────────────────────────┐
+ │                              🛣️  TOLL PLAZA — LANE N                               │
+ │                                                                                     │
+ │  ╔══════════════════════════════════════════════════════════════════════════════════╗ │
+ │  ║                           GANTRY STRUCTURE (overhead)                           ║ │
+ │  ║                                                                                 ║ │
+ │  ║  ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐                  ║ │
+ │  ║  │ 📡 RFID  │    │ 🚦 LED   │    │ 📷 ANPR  │    │ 🔊Intercom│                  ║ │
+ │  ║  │ READER   │    │ TRAFFIC  │    │ CAMERA   │    │ SPEAKER   │                  ║ │
+ │  ║  │ (TCP:5000)│    │ LIGHT    │    │ (RTSP)   │    │ + MIC     │                  ║ │
+ │  ║  └────┬─────┘    └────┬─────┘    └────┬─────┘    └────┬─────┘                  ║ │
+ │  ║       │               │               │               │                          ║ │
+ │  ╚═══════╪═══════════════╪═══════════════╪═══════════════╪════════════════════════╝ │
+ │          │ Ethernet      │ GPIO          │ Ethernet      │ GPIO                     │
+ │          │               │               │               │                          │
+ │  ╔═══════╪═══════════════╪═══════════════╪═══════════════╪════════════════════════╗ │
+ │  ║       ▼               ▼               ▼               ▼                        ║ │
+ │  ║  ┌─────────────────────────────────────────────────────────────────────────┐    ║ │
+ │  ║  │                    🍓 RASPBERRY PI 4 (Edge Controller)                  │    ║ │
+ │  ║  │                                                                         │    ║ │
+ │  ║  │   ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐              │    ║ │
+ │  ║  │   │ ETH0     │  │ ETH1     │  │ GPIO 40  │  │ USB 3.0  │              │    ║ │
+ │  ║  │   │ RFID     │  │ HQ/API   │  │ PERIPH.  │  │ SERIAL   │              │    ║ │
+ │  ║  │   │ Network  │  │ Uplink   │  │ Bus      │  │ Devices  │              │    ║ │
+ │  ║  │   └──────────┘  └──────────┘  └────┬─────┘  └──────────┘              │    ║ │
+ │  ║  │                                     │                                  │    ║ │
+ │  ║  └─────────────────────────────────────┼──────────────────────────────────┘    ║ │
+ │  ║                                        │                                       ║ │
+ │  ╚════════════════════════════════════════╪════════════════════════════════════════╝ │
+ │                                           │                                         │
+ │         ┌─────────────────────────────────┼─────────────────────────────────┐       │
+ │         │                                 │                                 │       │
+ │         ▼                                 ▼                                 ▼       │
+ │  ┌──────────────┐               ┌──────────────┐               ┌──────────────┐    │
+ │  │ 🔄 VEHICLE   │               │ 🎫 TICKET    │               │ 🚧 BARRIER   │    │
+ │  │ LOOP         │               │ DISPENSER    │               │ GATE         │    │
+ │  │ DETECTOR    │               │ (UART)       │               │ (Relay)      │    │
+ │  │ (GPIO IN)   │               │              │               │              │    │
+ │  └──────────────┘               └──────────────┘               └──────────────┘    │
+ │                                                                                     │
+ │  ─────────────────────────────────── ROAD SURFACE ──────────────────────────────    │
+ │                                                                                     │
+ │  ┌────────┐                    ┌────────┐                                          │
+ │  │ LOOP A │ ◀── 50m cable ──▶ │ LOOP B │   ← Inductive wire loops in asphalt      │
+ │  └────────┘                    └────────┘                                           │
+ └─────────────────────────────────────────────────────────────────────────────────────┘
+
+ ┌───────────────────── DATA FLOW ─────────────────────────────────────┐
+ │                                                                      │
+ │  1. Vehicle enters lane → Loop Detector A triggers (GPIO HIGH)       │
+ │  2. LED traffic light turns RED → barrier remains closed             │
+ │  3. RFID reader reads tag → TCP:5000 → RPi processes                 │
+ │  4. RPi validates tag balance → deducts toll via HQ API              │
+ │  5. If valid: LED turns GREEN → barrier opens via relay              │
+ │  6. Vehicle passes Loop B → barrier closes → LED turns RED           │
+ │  7. If no tag: Intercom activates → operator assists driver          │
+ │  8. All events logged locally → synced to HQ PostgreSQL              │
+ │                                                                      │
+ └──────────────────────────────────────────────────────────────────────┘
+      </pre>
+    </div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin:24px 0 12px;">Peripheral Connection Summary</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Peripheral</th><th>Interface</th><th>RPi Connection</th><th>Protocol</th><th>Power</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>📡 RFID Reader</strong></td><td>Ethernet</td><td>USB-Ether (ETH0)</td><td>TCP/IP port 5000</td><td>PoE 802.3af</td></tr>
+          <tr><td><strong>🔄 Loop Detector</strong></td><td>GPIO Input</td><td>GPIO 17 / GPIO 27</td><td>3.3V logic HIGH/LOW</td><td>12V AC (separate)</td></tr>
+          <tr><td><strong>🚦 LED Traffic Light</strong></td><td>GPIO Output</td><td>GPIO 22 / 23 / 24</td><td>3.3V → MOSFET relay</td><td>12V DC via relay</td></tr>
+          <tr><td><strong>🔊 Intercom</strong></td><td>USB / GPIO I2S</td><td>USB port or I2S DAC</td><td>Pulse-audio / I2S</td><td>5V USB or 12V</td></tr>
+          <tr><td><strong>🎫 Ticket Dispenser</strong></td><td>UART Serial</td><td>GPIO 14/15 (UART)</td><td>RS232 @ 9600 baud</td><td>12V DC motor</td></tr>
+          <tr><td><strong>🚧 Barrier Gate</strong></td><td>GPIO + Relay</td><td>GPIO 25 → Relay</td><td>NO/NC contact</td><td>24V AC motor</td></tr>
+          <tr><td><strong>📷 ANPR Camera</strong></td><td>Ethernet</td><td>USB-Ether (ETH1)</td><td>RTSP stream</td><td>PoE</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 2: RASPBERRY PI 4 SPECS                                   -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="rpi-specs">
+    <div class="section-header">
+      <div class="section-icon green">🍓</div>
+      <h2 class="section-title">Raspberry Pi 4 Specifications</h2>
+    </div>
+    <p class="section-sub">The RPi 4 Model B is the core edge controller for each lane. Its quad-core CPU, GPIO bus, and dual Ethernet make it ideal for real-time peripheral control.</p>
+
+    <div class="specs-grid">
+      <div class="spec-item">
+        <div class="label">Processor</div>
+        <div class="value accent">BCM2711</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">CPU</div>
+        <div class="value accent">Quad-core A72</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Clock Speed</div>
+        <div class="value accent">1.8 GHz</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">RAM</div>
+        <div class="value accent">4 GB LPDDR4</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Storage</div>
+        <div class="value accent">64 GB microSD A2</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">GPIO</div>
+        <div class="value accent">40-pin header</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Ethernet</div>
+        <div class="value accent">2× GbE</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">USB</div>
+        <div class="value accent">2× USB 3.0 + 2× 2.0</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Video</div>
+        <div class="value accent">2× micro-HDMI</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Power</div>
+        <div class="value accent">5V/3A USB-C</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Operating Temp</div>
+        <div class="value accent">-20°C to +70°C</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">PoE Ready</div>
+        <div class="value accent">Yes (via HAT)</div>
+      </div>
+    </div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin:24px 0 12px;">Recommended Configuration</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Component</th><th>Specification</th><th>Purpose</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Board</strong></td><td>Raspberry Pi 4 Model B (4GB)</td><td>Main controller</td></tr>
+          <tr><td><strong>microSD</strong></td><td>Samsung EVO A2 64GB</td><td>OS + Docker images</td></tr>
+          <tr><td><strong>Case</strong></td><td>FLIRC passive cooled aluminum</td><td>Heat dissipation</td></tr>
+          <tr><td><strong>PSU</strong></td><td>CanaKit 3.5A USB-C (or PoE HAT)</td><td>Reliable power</td></tr>
+          <tr><td><strong>Ethernet Adapter</strong></td><td>USB 3.0 to Gigabit Ether (AX88179)</td><td>Dual NIC for RFID + HQ</td></tr>
+          <tr><td><strong>USB-Serial</strong></td><td>CP2102 USB-to-TTL adapter</td><td>Ticket dispenser / debug</td></tr>
+          <tr><td><strong>MicroSD Writer</strong></td><td>Any USB-A reader</td><td>Initial OS flashing</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert alert-info">
+      <strong>💡 Dual Ethernet:</strong> Use the built-in ETH0 for the RFID reader network (VLAN 10) and a USB-Ether adapter for the HQ uplink (VLAN 1). This physically isolates the sensor network from the production network.
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 3: GPIO PIN MAPPING                                        -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="gpio">
+    <div class="section-header">
+      <div class="section-icon purple">🔌</div>
+      <h2 class="section-title">GPIO Pin Mapping — All 40 Pins</h2>
+    </div>
+    <p class="section-sub">Complete BCM GPIO pin mapping for the Raspberry Pi 4. Color-coded by function — highlighted pins are used by the TollGate lane controller system.</p>
+
+    <div class="gpio-legend">
+      <span><div class="gpio-legend-dot" style="background:rgba(239,68,68,0.5);"></div> 3.3V Power</span>
+      <span><div class="gpio-legend-dot" style="background:rgba(100,116,139,0.5);"></div> Ground</span>
+      <span><div class="gpio-legend-dot" style="background:rgba(16,185,129,0.5);"></div> TollGate Used</span>
+      <span><div class="gpio-legend-dot" style="background:rgba(59,130,246,0.5);"></div> Input Signal</span>
+      <span><div class="gpio-legend-dot" style="background:rgba(245,158,11,0.5);"></div> Output Signal</span>
+      <span><div class="gpio-legend-dot" style="background:rgba(139,92,246,0.5);"></div> UART/SPI/I2C</span>
+      <span><div class="gpio-legend-dot" style="background:rgba(51,65,85,0.5);"></div> Unused</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:20px 0;">
+      <!-- Left Column: Physical Pins 1-40 (odd on left, even on right) -->
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px;">← PHYSICAL PIN LAYOUT →</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.8;color:var(--muted);">
+          <div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;">
+            <span style="width:50px;color:var(--dim);">Pin 1</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.4);color:#fca5a5;font-weight:600;">3.3V</span>
+            <span style="color:var(--dim);margin:0 8px;">│</span>
+            <span style="width:50px;color:var(--dim);">Pin 2</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.4);color:#fca5a5;font-weight:600;">5V</span>
+          </div>
+          <div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;">
+            <span style="width:50px;color:var(--dim);">Pin 3</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(16,185,129,0.2);border:1px solid rgba(16,185,129,0.5);color:#6ee7b7;font-weight:600;">GPIO 2 <span style="font-size:9px;color:var(--dim);">SDA</span></span>
+            <span style="color:var(--dim);margin:0 8px;">│</span>
+            <span style="width:50px;color:var(--dim);">Pin 4</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.4);color:#fca5a5;font-weight:600;">5V</span>
+          </div>
+          <div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;">
+            <span style="width:50px;color:var(--dim);">Pin 5</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(16,185,129,0.2);border:1px solid rgba(16,185,129,0.5);color:#6ee7b7;font-weight:600;">GPIO 3 <span style="font-size:9px;color:var(--dim);">SCL</span></span>
+            <span style="color:var(--dim);margin:0 8px;">│</span>
+            <span style="width:50px;color:var(--dim);">Pin 6</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(100,116,139,0.2);border:1px solid rgba(100,116,139,0.4);color:#94a3b8;font-weight:600;">GND</span>
+          </div>
+          <div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;">
+            <span style="width:50px;color:var(--dim);">Pin 7</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(245,158,11,0.2);border:1px solid rgba(245,158,11,0.5);color:#fde68a;font-weight:600;">GPIO 4 <span style="font-size:9px;color:var(--dim);">TICKET</span></span>
+            <span style="color:var(--dim);margin:0 8px;">│</span>
+            <span style="width:50px;color:var(--dim);">Pin 8</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(16,185,129,0.2);border:1px solid rgba(16,185,129,0.5);color:#6ee7b7;font-weight:600;">GPIO 14 <span style="font-size:9px;color:var(--dim);">TXD</span></span>
+          </div>
+          <div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;">
+            <span style="width:50px;color:var(--dim);">Pin 9</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(100,116,139,0.2);border:1px solid rgba(100,116,139,0.4);color:#94a3b8;font-weight:600;">GND</span>
+            <span style="color:var(--dim);margin:0 8px;">│</span>
+            <span style="width:50px;color:var(--dim);">Pin 10</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(16,185,129,0.2);border:1px solid rgba(16,185,129,0.5);color:#6ee7b7;font-weight:600;">GPIO 15 <span style="font-size:9px;color:var(--dim);">RXD</span></span>
+          </div>
+          <div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;">
+            <span style="width:50px;color:var(--dim);">Pin 11</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(59,130,246,0.2);border:1px solid rgba(59,130,246,0.5);color:#93c5fd;font-weight:600;">GPIO 17 <span style="font-size:9px;color:var(--dim);">LOOP_A</span></span>
+            <span style="color:var(--dim);margin:0 8px;">│</span>
+            <span style="width:50px;color:var(--dim);">Pin 12</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(59,130,246,0.2);border:1px solid rgba(59,130,246,0.5);color:#93c5fd;font-weight:600;">GPIO 18 <span style="font-size:9px;color:var(--dim);">LOOP_B</span></span>
+          </div>
+          <div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;">
+            <span style="width:50px;color:var(--dim);">Pin 13</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(245,158,11,0.2);border:1px solid rgba(245,158,11,0.5);color:#fde68a;font-weight:600;">GPIO 27 <span style="font-size:9px;color:var(--dim);">LED_RED</span></span>
+            <span style="color:var(--dim);margin:0 8px;">│</span>
+            <span style="width:50px;color:var(--dim);">Pin 14</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(100,116,139,0.2);border:1px solid rgba(100,116,139,0.4);color:#94a3b8;font-weight:600;">GND</span>
+          </div>
+          <div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;">
+            <span style="width:50px;color:var(--dim);">Pin 15</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(245,158,11,0.2);border:1px solid rgba(245,158,11,0.5);color:#fde68a;font-weight:600;">GPIO 22 <span style="font-size:9px;color:var(--dim);">LED_YEL</span></span>
+            <span style="color:var(--dim);margin:0 8px;">│</span>
+            <span style="width:50px;color:var(--dim);">Pin 16</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(245,158,11,0.2);border:1px solid rgba(245,158,11,0.5);color:#fde68a;font-weight:600;">GPIO 23 <span style="font-size:9px;color:var(--dim);">LED_GRN</span></span>
+          </div>
+          <div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;">
+            <span style="width:50px;color:var(--dim);">Pin 17</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.4);color:#fca5a5;font-weight:600;">3.3V</span>
+            <span style="color:var(--dim);margin:0 8px;">│</span>
+            <span style="width:50px;color:var(--dim);">Pin 18</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(245,158,11,0.2);border:1px solid rgba(245,158,11,0.5);color:#fde68a;font-weight:600;">GPIO 24 <span style="font-size:9px;color:var(--dim);">BARRIER</span></span>
+          </div>
+          <div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;">
+            <span style="width:50px;color:var(--dim);">Pin 19</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(139,92,246,0.2);border:1px solid rgba(139,92,246,0.5);color:#c4b5fd;font-weight:600;">GPIO 10 <span style="font-size:9px;color:var(--dim);">MOSI</span></span>
+            <span style="color:var(--dim);margin:0 8px;">│</span>
+            <span style="width:50px;color:var(--dim);">Pin 20</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(100,116,139,0.2);border:1px solid rgba(100,116,139,0.4);color:#94a3b8;font-weight:600;">GND</span>
+          </div>
+          <div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;">
+            <span style="width:50px;color:var(--dim);">Pin 21</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(139,92,246,0.2);border:1px solid rgba(139,92,246,0.5);color:#c4b5fd;font-weight:600;">GPIO 9 <span style="font-size:9px;color:var(--dim);">MISO</span></span>
+            <span style="color:var(--dim);margin:0 8px;">│</span>
+            <span style="width:50px;color:var(--dim);">Pin 22</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(59,130,246,0.2);border:1px solid rgba(59,130,246,0.5);color:#93c5fd;font-weight:600;">GPIO 25 <span style="font-size:9px;color:var(--dim);">INTERCOM</span></span>
+          </div>
+          <div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;">
+            <span style="width:50px;color:var(--dim);">Pin 23</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(139,92,246,0.2);border:1px solid rgba(139,92,246,0.5);color:#c4b5fd;font-weight:600;">GPIO 11 <span style="font-size:9px;color:var(--dim);">SCLK</span></span>
+            <span style="color:var(--dim);margin:0 8px;">│</span>
+            <span style="width:50px;color:var(--dim);">Pin 24</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.4);color:#fca5a5;font-weight:600;">3.3V</span>
+          </div>
+          <div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;">
+            <span style="width:50px;color:var(--dim);">Pin 25</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(100,116,139,0.2);border:1px solid rgba(100,116,139,0.4);color:#94a3b8;font-weight:600;">GND</span>
+            <span style="color:var(--dim);margin:0 8px;">│</span>
+            <span style="width:50px;color:var(--dim);">Pin 26</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(139,92,246,0.2);border:1px solid rgba(139,92,246,0.5);color:#c4b5fd;font-weight:600;">GPIO 8 <span style="font-size:9px;color:var(--dim);">CE0</span></span>
+          </div>
+          <div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;">
+            <span style="width:50px;color:var(--dim);">Pin 27</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(51,65,85,0.3);color:#475569;font-weight:600;">GPIO 0 <span style="font-size:9px;">ID_SD</span></span>
+            <span style="color:var(--dim);margin:0 8px;">│</span>
+            <span style="width:50px;color:var(--dim);">Pin 28</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(51,65,85,0.3);color:#475569;font-weight:600;">GPIO 1 <span style="font-size:9px;">ID_SC</span></span>
+          </div>
+          <div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;">
+            <span style="width:50px;color:var(--dim);">Pin 29</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(51,65,85,0.3);color:#475569;font-weight:600;">GPIO 5</span>
+            <span style="color:var(--dim);margin:0 8px;">│</span>
+            <span style="width:50px;color:var(--dim);">Pin 30</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(100,116,139,0.2);border:1px solid rgba(100,116,139,0.4);color:#94a3b8;font-weight:600;">GND</span>
+          </div>
+          <div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;">
+            <span style="width:50px;color:var(--dim);">Pin 31</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(51,65,85,0.3);color:#475569;font-weight:600;">GPIO 6</span>
+            <span style="color:var(--dim);margin:0 8px;">│</span>
+            <span style="width:50px;color:var(--dim);">Pin 32</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(51,65,85,0.3);color:#475569;font-weight:600;">GPIO 12</span>
+          </div>
+          <div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;">
+            <span style="width:50px;color:var(--dim);">Pin 33</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(51,65,85,0.3);color:#475569;font-weight:600;">GPIO 13</span>
+            <span style="color:var(--dim);margin:0 8px;">│</span>
+            <span style="width:50px;color:var(--dim);">Pin 34</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(100,116,139,0.2);border:1px solid rgba(100,116,139,0.4);color:#94a3b8;font-weight:600;">GND</span>
+          </div>
+          <div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;">
+            <span style="width:50px;color:var(--dim);">Pin 35</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(51,65,85,0.3);color:#475569;font-weight:600;">GPIO 19</span>
+            <span style="color:var(--dim);margin:0 8px;">│</span>
+            <span style="width:50px;color:var(--dim);">Pin 36</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(51,65,85,0.3);color:#475569;font-weight:600;">GPIO 16</span>
+          </div>
+          <div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;">
+            <span style="width:50px;color:var(--dim);">Pin 37</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(51,65,85,0.3);color:#475569;font-weight:600;">GPIO 26</span>
+            <span style="color:var(--dim);margin:0 8px;">│</span>
+            <span style="width:50px;color:var(--dim);">Pin 38</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(51,65,85,0.3);color:#475569;font-weight:600;">GPIO 20</span>
+          </div>
+          <div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;">
+            <span style="width:50px;color:var(--dim);">Pin 39</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(100,116,139,0.2);border:1px solid rgba(100,116,139,0.4);color:#94a3b8;font-weight:600;">GND</span>
+            <span style="color:var(--dim);margin:0 8px;">│</span>
+            <span style="width:50px;color:var(--dim);">Pin 40</span>
+            <span style="padding:3px 8px;border-radius:4px;background:rgba(51,65,85,0.3);color:#475569;font-weight:600;">GPIO 21</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px;">TOLLGATE PIN ASSIGNMENTS</div>
+        <div class="table-wrap" style="margin:0;">
+          <table style="font-size:11px;">
+            <thead>
+              <tr><th>BCM</th><th>Physical</th><th>Function</th><th>Direction</th><th>Peripheral</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>GPIO 2</code></td><td>3</td><td>I2C SDA</td><td>Bi-dir</td><td>OLED display (optional)</td></tr>
+              <tr><td><code>GPIO 3</code></td><td>5</td><td>I2C SCL</td><td>Output</td><td>OLED display (optional)</td></tr>
+              <tr><td><code>GPIO 4</code></td><td>7</td><td>Ticket Enable</td><td>Output</td><td>Ticket dispenser trigger</td></tr>
+              <tr><td><code>GPIO 14</code></td><td>8</td><td>UART TXD</td><td>Output</td><td>Ticket dispenser data</td></tr>
+              <tr><td><code>GPIO 15</code></td><td>10</td><td>UART RXD</td><td>Input</td><td>Ticket dispenser response</td></tr>
+              <tr><td><code>GPIO 17</code></td><td>11</td><td>Loop Detector A</td><td>Input</td><td>Entry loop (vehicle detected)</td></tr>
+              <tr><td><code>GPIO 18</code></td><td>12</td><td>Loop Detector B</td><td>Input</td><td>Exit loop (vehicle cleared)</td></tr>
+              <tr><td><code>GPIO 27</code></td><td>13</td><td>LED Red</td><td>Output</td><td>LED traffic light (red)</td></tr>
+              <tr><td><code>GPIO 22</code></td><td>15</td><td>LED Yellow</td><td>Output</td><td>LED traffic light (yellow)</td></tr>
+              <tr><td><code>GPIO 23</code></td><td>16</td><td>LED Green</td><td>Output</td><td>LED traffic light (green)</td></tr>
+              <tr><td><code>GPIO 24</code></td><td>18</td><td>Barrier Relay</td><td>Output</td><td>Barrier gate open/close</td></tr>
+              <tr><td><code>GPIO 25</code></td><td>22</td><td>Intercom PTT</td><td>Output</td><td>Intercom push-to-talk relay</td></tr>
+              <tr style="background:rgba(59,130,246,0.08);"><td colspan="5"><strong>Total: 13 pins used</strong> — 5 input, 6 output, 2 I2C</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert alert-warn">
+      <strong>⚠️ Important:</strong> All GPIO logic is 3.3V. Never connect 5V or 12V signals directly to GPIO pins. Use MOSFETs, optocouplers, or relay modules for higher voltage peripherals. Always share a common ground between the RPi and peripheral devices.
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 4: GPIO WIRING DIAGRAM                                     -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="wiring-diagram">
+    <div class="section-header">
+      <div class="section-icon cyan">⚡</div>
+      <h2 class="section-title">GPIO Wiring Diagram — RPi to Peripherals</h2>
+    </div>
+    <p class="section-sub">Visual reference for all wiring connections from the Raspberry Pi GPIO header to each lane peripheral. Follow exact color coding to avoid wiring errors.</p>
+
+    <div class="diagram">
+      <div class="diagram-title">RASPBERRY PI GPIO → PERIPHERAL WIRING MAP</div>
+      <pre>
+                    ┌─────────────────────────────────────────────┐
+                    │          🍓 RASPBERRY PI 4 GPIO HEADER      │
+                    │                                             │
+                    │   ┌─────────────────────────────────┐       │
+                    │   │  Pin  7  GPIO 4  ───── TKT_EN  │       │
+                    │   │  Pin  8  GPIO 14 ───── TKT_TX  │       │
+                    │   │  Pin 10  GPIO 15 ───── TKT_RX  │       │
+                    │   │  Pin 11  GPIO 17 ───── LOOP_A  │       │
+                    │   │  Pin 12  GPIO 18 ───── LOOP_B  │       │
+                    │   │  Pin 13  GPIO 27 ───── LED_R   │       │
+                    │   │  Pin 15  GPIO 22 ───── LED_Y   │       │
+                    │   │  Pin 16  GPIO 23 ───── LED_G   │       │
+                    │   │  Pin 18  GPIO 24 ───── BARRIER │       │
+                    │   │  Pin 22  GPIO 25 ───── INTERCOM│       │
+                    │   └─────────────────────────────────┘       │
+                    └──────┬──────────┬──────────┬────────────────┘
+                           │          │          │
+              ┌────────────┘    ┌─────┘          └─────────────┐
+              │                 │                               │
+              ▼                 ▼                               ▼
+  ┌─────────────────────┐ ┌──────────┐          ┌──────────────────────────┐
+  │ 🔄 LOOP DETECTORS   │ │ 🚦 LED   │          │ 🎫 TICKET + 🔊 INTERCOM  │
+  │                     │ │ TRAFFIC  │          │                          │
+  │   ┌─────────────┐   │ │ LIGHT    │          │  ┌────────────────────┐  │
+  │   │ GPIO 17 ────┼───┤ │          │          │  │ GPIO 4  → Enable   │  │
+  │   │    ENTRY    │   │ │ GPIO 27 →┼─ Red     │  │ GPIO 14 → TX       │  │
+  │   │    LOOP     │   │ │ GPIO 22 →┼─ Yellow  │  │ GPIO 15 ← RX       │  │
+  │   │  (DETECTOR A)   │ │ GPIO 23 →┼─ Green   │  │                    │  │
+  │   └─────────────┘   │ │          │          │  │ GPIO 25 → PTT      │  │
+  │                     │ │ via MOSFET│          │  │   (Intercom)       │  │
+  │   ┌─────────────┐   │ │ relay    │          │  └────────────────────┘  │
+  │   │ GPIO 18 ────┼───┤ │ driver   │          │                          │
+  │   │    EXIT     │   │ │ board    │          │  via USB audio or       │
+  │   │    LOOP     │   │ │          │          │  I2S DAC module         │
+  │   │  (DETECTOR B)   │ └──────────┘          └──────────────────────────┘
+  │   └─────────────┘   │
+  │                     │       ┌──────────────────────────────┐
+  └─────────────────────┘       │ 🚧 BARRIER GATE              │
+                                │                              │
+                                │  GPIO 24 → Optocoupler       │
+                                │           → 24V AC relay     │
+                                │           → Barrier motor     │
+                                │                              │
+                                └──────────────────────────────┘
+      </pre>
+    </div>
+
+    <div class="grid grid-2" style="margin-top:24px;">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <h3>Input Wiring (Active HIGH)</h3>
+        </div>
+        <p>Loop detectors and serial RX use input pins. Each input has a 10k&Omega; pull-down resistor to GND to ensure stable LOW when no signal.</p>
+        <pre style="font-size:12px;margin-top:8px;"><code><span class="comment"># Physical wiring</span>
+GPIO 17 ──┬── Loop Detector A (entry)
+          └── 10kΩ pull-down to GND
+
+GPIO 18 ──┬── Loop Detector B (exit)
+          └── 10kΩ pull-down to GND
+
+GPIO 15 ──── USB-Serial RXD (ticket)
+            via CP2102 module</code></pre>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon amber">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
+          <h3>Output Wiring (MOSFET/Relay)</h3>
+        </div>
+        <p>Output pins drive MOSFETs or relay modules. Never sink more than 16mA per GPIO pin (max total 50mA across all GPIO).</p>
+        <pre style="font-size:12px;margin-top:8px;"><code><span class="comment"># Physical wiring</span>
+GPIO 27 ──┬── 1kΩ ── Gate of IRF520 MOSFET
+          └── MOSFET drives Red 12V LED
+
+GPIO 22 ──┬── 1kΩ ── Gate of IRF520 MOSFET
+          └── MOSFET drives Yellow 12V LED
+
+GPIO 23 ──┬── 1kΩ ── Gate of IRF520 MOSFET
+          └── MOSFET drives Green 12V LED
+
+GPIO 24 ──┬── Optocoupler (PC817)
+          └── Drives 24V barrier relay</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 5: VEHICLE LOOP DETECTOR                                   -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="loop-detector">
+    <div class="section-header">
+      <div class="section-icon green">🔄</div>
+      <h2 class="section-title">Vehicle Loop Detector — Installation &amp; Detection</h2>
+    </div>
+    <p class="section-sub">Inductive loop detectors embedded in the road surface sense vehicle presence by detecting changes in inductance. Two loops per lane provide entry and exit detection.</p>
+
+    <div class="diagram">
+      <div class="diagram-title">LOOP DETECTOR INSTALLATION — ROAD CROSS-SECTION</div>
+      <pre>
+    ←──────────────────── LANE DIRECTION ────────────────────→
+
+    ════════════════════════════════════════════════════════════  ← Road Surface
+    ┌─────────────────────────────────────────────────────────┐
+    │ ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ │  ← Asphalt
+    │                                                         │
+    │   ┌─────────────┐          ┌─────────────┐              │
+    │   │ ░░░░░░░░░░░ │          │ ░░░░░░░░░░░ │              │
+    │   │ ░ LOOP A  ░ │          │ ░ LOOP B  ░ │              │
+    │   │ ░ 1.5m×2m ░ │          │ ░ 1.5m×2m ░ │              │
+    │   │ ░ ENTRY   ░ │          │ ░ EXIT    ░ │              │
+    │   │ ░░░░░░░░░░░ │          │ ░░░░░░░░░░░ │              │
+    │   └──────┬──────┘          └──────┬──────┘              │
+    │          │                        │                     │
+    │   ┌──────┴────────────────────────┴──────┐              │
+    │   │    2-conductor shielded cable        │              │
+    │   │    (buried 2" below surface)         │              │
+    │   │    Route to junction box → controller│              │
+    │   └──────────────────────────────────────┘              │
+    └─────────────────────────────────────────────────────────┘
+
+    ┌─────────────────────────────────────────────────────────┐
+    │                  LOOP GEOMETRY SPECIFICATIONS            │
+    │                                                          │
+    │   ┌──────────────────────────────┐                      │
+    │   │                              │                      │
+    │   │     1.5m ────────┐           │  ← Saw cut groove   │
+    │   │                   │  2.0m    │    3-5mm wide        │
+    │   │                   │          │    30-50mm deep       │
+    │   │     ─────────────┘           │                      │
+    │   │                              │                      │
+    │   └──────────────────────────────┘                      │
+    │                                                          │
+    │   • 2-3 turns of insulated wire in groove               │
+    │   • Wire gauge: 1.5mm² (16 AWG) shielded                │
+    │   • Inductance: 100-300μH (no vehicle)                  │
+    │   • Detect threshold: ΔL > 10% from baseline            │
+    │   • Junction box: waterproof IP67, 5m from loop          │
+    └─────────────────────────────────────────────────────────┘
+      </pre>
+    </div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin:24px 0 12px;">Detection States &amp; Timing</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>State</th><th>GPIO Level</th><th>Inductance</th><th>Meaning</th><th>System Action</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-green" style="font-size:11px;">No Vehicle</span></td>
+            <td><code>LOW (0V)</code></td>
+            <td>Baseline (100-300μH)</td>
+            <td>Lane is empty</td>
+            <td>LED stays RED, barrier closed</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-red" style="font-size:11px;">Vehicle Detected (A)</span></td>
+            <td><code>HIGH (3.3V)</code></td>
+            <td>Increased by 15-40%</td>
+            <td>Vehicle entering lane</td>
+            <td>RFID reader activated, ticket dispensed</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-amber" style="font-size:11px;">Vehicle Exiting (B)</span></td>
+            <td><code>HIGH (3.3V)</code></td>
+            <td>Increased by 15-40%</td>
+            <td>Vehicle clearing lane</td>
+            <td>Barrier closes, transaction finalized</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-purple" style="font-size:11px;">Debounce Window</span></td>
+            <td>—</td>
+            <td>—</td>
+            <td>Transient noise rejection</td>
+            <td>200ms debounce filter applied in software</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-cyan" style="font-size:11px;">Double-Detection</span></td>
+            <td>—</td>
+            <td>—</td>
+            <td>Long vehicle (truck/bus)</td>
+            <td>Loop B stays HIGH until full clearance</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert alert-success">
+      <strong>✅ Calibration Tip:</strong> Before go-live, measure baseline inductance with no vehicles present. The detector module (e.g., D-TEK LD-100) auto-calibrates, but verify by counting 50 vehicles and checking zero missed triggers.
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 6: LED TRAFFIC LIGHT                                       -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="led-light">
+    <div class="section-header">
+      <div class="section-icon amber">🚦</div>
+      <h2 class="section-title">LED Traffic Light — Control Sequence</h2>
+    </div>
+    <p class="section-sub">Three-state LED traffic light system (Red/Yellow/Green) mounted on the gantry controls vehicle flow through each lane. Driven via GPIO through MOSFET relay boards.</p>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:12px;">Control Sequence Flow</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num" style="background:linear-gradient(135deg,#ef4444,#dc2626);">1</div>
+        <div class="step-content">
+          <h4 style="color:#fca5a5;">🔴 RED — Lane Closed (Default State)</h4>
+          <p>Barrier is closed. No vehicles may proceed. System waits for Loop A to detect approaching vehicle. GPIO 27 = HIGH.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num" style="background:linear-gradient(135deg,#f59e0b,#d97706);">2</div>
+        <div class="step-content">
+          <h4 style="color:#fde68a;">🟡 YELLOW — Processing (3-5 seconds)</h4>
+          <p>RFID tag read in progress. Toll validation and deduction happening. Ticket dispensing if needed. GPIO 22 = HIGH.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num" style="background:linear-gradient(135deg,#10b981,#059669);">3</div>
+        <div class="step-content">
+          <h4 style="color:#6ee7b7;">🟢 GREEN — Vehicle May Proceed</h4>
+          <p>Toll paid successfully. Barrier opens. Vehicle passes through. GPIO 23 = HIGH.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num" style="background:linear-gradient(135deg,#ef4444,#dc2626);">4</div>
+        <div class="step-content">
+          <h4 style="color:#fca5a5;">🔴 RED — Lane Re-Closed</h4>
+          <p>Loop B confirms vehicle cleared. Barrier closes. Return to idle state. All GPIO outputs LOW except GPIO 27 (RED).</p>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin:24px 0 12px;">State Table</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>GPIO 27 (Red)</th><th>GPIO 22 (Yellow)</th><th>GPIO 23 (Green)</th><th>State</th><th>Duration</th><th>Trigger</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span style="color:#f87171;font-weight:700;">● HIGH</span></td><td><span style="color:#475569;">● LOW</span></td><td><span style="color:#475569;">● LOW</span></td><td><strong>Lane Closed</strong></td><td>Idle</td><td>Default / Loop B clear</td></tr>
+          <tr><td><span style="color:#f87171;font-weight:700;">● HIGH</span></td><td><span style="color:#fbbf24;font-weight:700;">● HIGH</span></td><td><span style="color:#475569;">● LOW</span></td><td><strong>Processing</strong></td><td>3-5 sec</td><td>Loop A detects vehicle</td></tr>
+          <tr><td><span style="color:#475569;">● LOW</span></td><td><span style="color:#475569;">● LOW</span></td><td><span style="color:#34d399;font-weight:700;">● HIGH</span></td><td><strong>Vehicle May Proceed</strong></td><td>Until Loop B triggers</td><td>Toll paid successfully</td></tr>
+          <tr><td><span style="color:#f87171;font-weight:700;">● HIGH</span></td><td><span style="color:#475569;">● LOW</span></td><td><span style="color:#475569;">● LOW</span></td><td><strong>Re-Closed</strong></td><td>Idle</td><td>Loop B detects exit</td></tr>
+          <tr><td><span style="color:#fbbf24;font-weight:700;">● FLASH</span></td><td><span style="color:#fbbf24;font-weight:700;">● FLASH</span></td><td><span style="color:#f87171;font-weight:700;">● FLASH</span></td><td><strong>Error/Alert</strong></td><td>Until reset</td><td>Payment failure / fault</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert alert-info">
+      <strong>💡 Safety:</strong> If the system enters an error state, all lights flash simultaneously as a warning. The operator can reset via the intercom panel or remotely via the admin dashboard.
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 7: INTERCOM SYSTEM                                         -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="intercom">
+    <div class="section-header">
+      <div class="section-icon pink">🔊</div>
+      <h2 class="section-title">Intercom System — Two-Way Communication</h2>
+    </div>
+    <p class="section-sub">The intercom enables two-way voice communication between drivers and the plaza operator. Used when RFID payment fails or the driver requires manual assistance.</p>
+
+    <div class="diagram">
+      <div class="diagram-title">INTERCOM WIRING DIAGRAM</div>
+      <pre>
+    ┌──────────────────────────────────────────────────────────────────┐
+    │                                                                  │
+    │   🍓 RASPBERRY PI 4                     🔊 INTERCOM UNIT        │
+    │                                                                  │
+    │   ┌──────────────┐                    ┌──────────────────┐       │
+    │   │              │                    │  🎤 SPEAKER +    │       │
+    │   │   USB Port   │════════════════════│  🎙️ MICROPHONE   │       │
+    │   │  (USB Sound  │   3.5mm Audio      │  (Weatherproof)  │       │
+    │   │   Card)      │   Cable (5m max)   │  IP65 Rated     │       │
+    │   │              │                    │                  │       │
+    │   └──────────────┘                    └────────┬─────────┘       │
+    │                                                │                 │
+    │   ┌──────────────┐                    ┌────────┴─────────┐       │
+    │   │  GPIO 25     │────────────────────│  PTT Relay       │       │
+    │   │  (PTT Out)   │   2-core cable     │  (Push-to-Talk)  │       │
+    │   │              │                    │  12V coil relay   │       │
+    │   └──────────────┘                    └──────────────────┘       │
+    │                                                                  │
+    │   ┌──────────────┐                                            ┌─┴──────────┐
+    │   │  5V Power    │════════════════════════════════════════════│ 12V PSU     │
+    │   │  (USB bus)   │                                            │ (Intercom)  │
+    │   └──────────────┘                                            └────────────┘
+    │                                                                  │
+    └──────────────────────────────────────────────────────────────────┘
+
+    ══════════════════════════════════════════════════════════════════
+
+    ┌──────────────────────────────────────────────────────────────────┐
+    │                   ALTERNATIVE: I2S AUDIO MODULE                  │
+    │                                                                  │
+    │   🍓 RPi 4                                                🔊    │
+    │                                                                  │
+    │   GPIO 2  (SDA) ──────┐                                  ┌─────┤
+    │   GPIO 3  (SCL) ──────┤  ┌──────────┐                    │SPK │
+    │   GPIO 18 (BCLK) ─────┤  │  MAX98357A│  ┌──────────┐     │     │
+    │   GPIO 19 (LRC)  ─────┤  │  I2S DAC  │  │  PCM5102A │     │     │
+    │   GPIO 21 (DIN)  ─────┤  │  Amplifier│  │  Module   │     │     │
+    │                        │  └─────┬────┘  └─────┬────┘     │     │
+    │   GND ─────────────────┤        │             │          └─────┤
+    │                        └────────┴─────────────┴────────────────┘
+    └──────────────────────────────────────────────────────────────────┘
+      </pre>
+    </div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin:24px 0 12px;">Intercom Control Commands</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Command</th><th>GPIO Action</th><th>Effect</th><th>Duration</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>PTT_ON</code></td><td>GPIO 25 HIGH</td><td>Activates push-to-talk relay, opens microphone channel</td><td>Until PTT_OFF</td></tr>
+          <tr><td><code>PTT_OFF</code></td><td>GPIO 25 LOW</td><td>Deactivates relay, closes microphone channel</td><td>N/A</td></tr>
+          <tr><td><code>SPEAKER_ENABLE</code></td><td>USB audio active</td><td>Routes audio output to intercom speaker</td><td>Continuous</td></tr>
+          <tr><td><code>CALL_OPERATOR</code></td><td>GPIO 25 toggle (3 pulses)</td><td>Sends call signal to operator console</td><td>3 × 200ms pulses</td></tr>
+          <tr><td><code>EMERGENCY_STOP</code></td><td>GPIO 25 HOLD HIGH</td><td>Triggers emergency mode, all lights flash, barrier stops</td><td>Until manual reset</td></tr>
+          <tr><td><code>AUDIO_PLAY</code></td><td>USB / I2S</td><td>Plays pre-recorded message (e.g., "Please reverse")</td><td>Message length</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert alert-warn">
+      <strong>⚠️ Audio Latency:</strong> USB audio cards add 10-50ms latency. For real-time two-way communication, use the I2S DAC module (MAX98357A) which provides &lt;5ms latency directly on the GPIO header.
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 8: TICKET DISPENSER                                        -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="ticket">
+    <div class="section-header">
+      <div class="section-icon purple">🎫</div>
+      <h2 class="section-title">Ticket Dispenser — Wiring &amp; Data Format</h2>
+    </div>
+    <p class="section-sub">The ticket dispenser issues thermal-printed receipts with QR codes for drivers without RFID tags. Connected via UART serial at 9600 baud.</p>
+
+    <div class="wiring-box">
+      <div class="wire-panel">
+        <h4>🎫 Ticket Dispenser</h4>
+        <div class="pin"><span>VCC (Pin 1)</span><span>12V DC 2A</span></div>
+        <div class="pin"><span>GND (Pin 2)</span><span>⏚ Ground</span></div>
+        <div class="pin"><span>RXD (Pin 3)</span><span>← Data In</span></div>
+        <div class="pin"><span>TXD (Pin 4)</span><span>→ Data Out</span></div>
+        <div class="pin"><span>EN (Pin 5)</span><span>→ Enable</span></div>
+        <div class="pin" style="border-bottom:none;color:var(--dim);font-size:10px;margin-top:8px;">Thermal printer: ESC/POS protocol</div>
+      </div>
+      <div class="wire-conn">
+        <div style="display:flex;align-items:center;gap:4px;"><div class="wire-dot" style="background:#ef4444;"></div><div class="wire-line red"></div><div class="wire-dot" style="background:#ef4444;"></div></div>
+        <div style="display:flex;align-items:center;gap:4px;"><div class="wire-dot" style="background:#475569;"></div><div class="wire-line black"></div><div class="wire-dot" style="background:#475569;"></div></div>
+        <div style="display:flex;align-items:center;gap:4px;"><div class="wire-dot" style="background:#3b82f6;"></div><div class="wire-line blue"></div><div class="wire-dot" style="background:#3b82f6;"></div></div>
+        <div style="display:flex;align-items:center;gap:4px;"><div class="wire-dot" style="background:#10b981;"></div><div class="wire-line green"></div><div class="wire-dot" style="background:#10b981;"></div></div>
+        <div style="display:flex;align-items:center;gap:4px;"><div class="wire-dot" style="background:#f59e0b;"></div><div class="wire-line yellow"></div><div class="wire-dot" style="background:#f59e0b;"></div></div>
+      </div>
+      <div class="wire-panel">
+        <h4>🍓 Raspberry Pi 4 GPIO</h4>
+        <div class="pin"><span>12V PSU (external)</span><span>12V DC 2A</span></div>
+        <div class="pin"><span>GPIO 14 (GND)</span><span>⏚ Common GND</span></div>
+        <div class="pin"><span>GPIO 14 (TXD)</span><span>→ TX Out</span></div>
+        <div class="pin"><span>GPIO 15 (RXD)</span><span>← RX In</span></div>
+        <div class="pin"><span>GPIO 4</span><span>→ Enable Pin</span></div>
+        <div class="pin" style="border-bottom:none;color:var(--dim);font-size:10px;margin-top:8px;">UART via /dev/ttyAMA0 @ 9600 baud</div>
+      </div>
+    </div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin:24px 0 12px;">Ticket Data Format (JSON over UART)</h3>
+    <pre><code><span class="comment">// Ticket data sent to dispenser via UART JSON protocol</span>
+{
+  <span class="string">"cmd"</span>: <span class="string">"PRINT_TICKET"</span>,
+  <span class="string">"data"</span>: {
+    <span class="string">"ticket_id"</span>: <span class="string">"TKT-2026-0913-00042"</span>,
+    <span class="string">"plaza_id"</span>: <span class="string">"PLZ-001"</span>,
+    <span class="string">"lane_id"</span>: <span class="string">"LANE-03"</span>,
+    <span class="string">"plaza_name"</span>: <span class="string">"Yangon - Mandalay Expressway"</span>,
+    <span class="string">"entry_time"</span>: <span class="string">"2026-09-13T08:30:00+06:30"</span>,
+    <span class="string">"exit_time"</span>: <span class="string">"2026-09-13T10:45:00+06:30"</span>,
+    <span class="string">"vehicle_class"</span>: <span class="string">"2-AXLE"</span>,
+    <span class="string">"plate_number"</span>: <span class="string">"1ABC-2345"</span>,
+    <span class="string">"toll_amount"</span>: <span class="keyword">5000</span>,
+    <span class="string">"currency"</span>: <span class="string">"MMK"</span>,
+    <span class="string">"qr_code"</span>: <span class="string">"TOLL:PLZ001:TKT2026091300042:5000:AA3F"</span>,
+    <span class="string">"operator_id"</span>: <span class="string">"OP-102"</span>,
+    <span class="string">"timestamp"</span>: <span class="string">"2026-09-13T10:45:00+06:30"</span>
+  },
+  <span class="string">"options"</span>: {
+    <span class="string">"font_size"</span>: <span class="string">"NORMAL"</span>,
+    <span class="string">"qr_size"</span>: <span class="keyword">4</span>,
+    <span class="string">"cut_paper"</span>: <span class="keyword">true</span>,
+    <span class="string">"copies"</span>: <span class="keyword">1</span>
+  }
+}
+
+<span class="comment">// Response from dispenser</span>
+{
+  <span class="string">"status"</span>: <span class="string">"OK"</span>,
+  <span class="string">"ticket_id"</span>: <span class="string">"TKT-2026-0913-00042"</span>,
+  <span class="string">"printed"</span>: <span class="keyword">true</span>,
+  <span class="string">"paper_remaining"</span>: <span class="keyword">85</span>
+}</code></pre>
+
+    <div class="alert alert-info">
+      <strong>💡 ESC/POS Commands:</strong> The ticket dispenser uses the Epson ESC/POS protocol. Initialize with <code>0x1B 0x40</code> (reset), set font with <code>0x1B 0x21 0x00</code> (normal), and cut paper with <code>0x1D 0x56 0x01</code>. All commands sent over UART at 9600 baud.
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 9: SOFTWARE INSTALLATION                                   -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="software">
+    <div class="section-header">
+      <div class="section-icon blue">🐳</div>
+      <h2 class="section-title">Software Installation — OS, Docker &amp; systemd</h2>
+    </div>
+    <p class="section-sub">Complete software setup for the Raspberry Pi edge controller. From OS flashing to production Docker deployment with auto-restart on boot.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Flash Raspberry Pi OS Lite (64-bit)</h4>
+          <p>Use Raspberry Pi Imager or dd to write the OS image to the microSD card.</p>
+          <pre><code><span class="comment"># Download and flash (Linux/macOS)</span>
+wget <span class="string">https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2026-05-03/2026-05-03-raspios-bookworm-arm64-lite.img.xz</span>
+
+xz -d <span class="highlight">2026-05-03-raspios-bookworm-arm64-lite.img.xz</span>
+
+sudo dd bs=4M if=<span class="highlight">2026-05-03-raspios-bookworm-arm64-lite.img</span> \
+  of=/dev/sdX status=progress conv=fsync
+
+<span class="comment"># Enable SSH on first boot</span>
+touch /boot/ssh
+
+<span class="comment"># Configure WiFi (optional, for initial setup)</span>
+cat &gt; /boot/wpa_supplicant.conf &lt;&lt;EOF
+country=MM
+network={
+    ssid="TollGate-Setup"
+    psk="your-password"
+}
+EOF</code></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>System Configuration &amp; GPIO Setup</h4>
+          <p>Configure the OS for production use — disable unnecessary services, enable GPIO, set hostname.</p>
+          <pre><code><span class="comment"># SSH into Pi (default user: pi / raspberry)</span>
+ssh pi@raspberrypi.local
+
+<span class="comment"># Update system</span>
+sudo apt update && sudo apt upgrade -y
+
+<span class="comment"># Set hostname</span>
+sudo hostnamectl set-hostname <span class="string">"tollgate-lane-03"</span>
+
+<span class="comment"># Enable GPIO, I2C, UART interfaces</span>
+sudo raspi-config
+<span class="comment"># → Interface Options → I2C → Enable</span>
+<span class="comment"># → Interface Options → Serial Port →</span>
+<span class="comment">#     Login shell over serial: NO</span>
+<span class="comment">#     Serial port hardware: YES</span>
+<span class="comment"># → Interface Options → SPI → Enable</span>
+
+<span class="comment"># Add GPIO user permissions</span>
+sudo usermod -a -G gpio,i2c,spi,dialout <span class="highlight">pi</span>
+
+<span class="comment"># Disable swap (SD card longevity)</span>
+sudo dphys-swapfile swapoff
+sudo dphys-swapfile uninstall
+sudo systemctl disable dphys-swapfile
+
+<span class="comment"># Set GPU memory minimum (headless)</span>
+echo "gpu_mem=16" | sudo tee -a /boot/config.txt
+
+<span class="comment"># Enable hardware watchdog</span>
+echo "dtparam=watchdog=on" | sudo tee -a /boot/config.txt</code></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Docker Engine Installation</h4>
+          <p>Install Docker Engine for containerized deployment of the lane controller service.</p>
+          <pre><code><span class="comment"># Install Docker (official convenience script)</span>
+curl -fsSL <span class="string">https://get.docker.com</span> | sudo sh
+
+<span class="comment"># Add user to docker group</span>
+sudo usermod -aG docker <span class="highlight">pi</span>
+
+<span class="comment"># Verify installation</span>
+docker --version
+<span class="comment"># Docker version 27.x.x, build xxxxxxx</span>
+
+<span class="comment"># Enable Docker on boot</span>
+sudo systemctl enable docker
+sudo systemctl start docker
+
+<span class="comment"># Install Docker Compose</span>
+sudo apt install -y docker-compose-plugin
+
+<span class="comment"># Verify Compose</span>
+docker compose version
+<span class="comment"># Docker Compose version v2.29.x</span></code></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h4>Deploy Lane Controller Service</h4>
+          <p>Clone the TollGate repo, build the Docker image, and deploy with systemd auto-restart.</p>
+          <pre><code><span class="comment"># Clone repository</span>
+cd /home/pi
+git clone https://github.com/your-org/TollGate-RFID.git
+cd TollGate-RFID
+
+<span class="comment"># Build and deploy</span>
+docker compose -f docker-compose.plaza.yml up -d --build
+
+<span class="comment"># Verify running containers</span>
+docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
+<span class="comment"># NAMES                    STATUS          PORTS</span>
+<span class="comment"># tollgate-plaza-server    Up 2 minutes    0.0.0.0:4000->4000/tcp</span>
+
+<span class="comment"># Create systemd service for auto-restart</span>
+sudo tee /etc/systemd/system/tollgate-lane.service &gt; /dev/null &lt;&lt;'EOF'
+[Unit]
+Description=TollGate Lane Controller
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/home/pi/TollGate-RFID
+ExecStart=/usr/bin/docker compose -f docker-compose.plaza.yml up -d
+ExecStop=/usr/bin/docker compose -f docker-compose.plaza.yml down
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl enable tollgate-lane.service
+sudo systemctl start tollgate-lane.service</code></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <h4>GPIO Permissions (Docker Access)</h4>
+          <p>Allow Docker containers to access GPIO pins via the sysfs and gpiod interfaces.</p>
+          <pre><code><span class="comment"># Install GPIO library</span>
+sudo apt install -y python3-gpiozero python3-rpi.gpio
+
+<span class="comment"># Create udev rule for GPIO access</span>
+sudo tee /etc/udev/rules.d/99-gpio.rules &gt; /dev/null &lt;&lt;'EOF'
+SUBSYSTEM=="gpio", MODE="0666"
+SUBSYSTEM=="i2c", MODE="0666"
+SUBSYSTEM=="spidev", MODE="0666"
+EOF
+
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+
+<span class="comment"># Test GPIO access</span>
+python3 -c "import RPi.GPIO as GPIO; GPIO.setmode(GPIO.BCM); print('GPIO OK:', GPIO.get_board_info())"</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 10: TESTING                                                -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="testing">
+    <div class="section-header">
+      <div class="section-icon green">✅</div>
+      <h2 class="section-title">Testing — GPIO Verification Script</h2>
+    </div>
+    <p class="section-sub">Run this Python test script to verify all GPIO connections before deploying the lane controller to production. Tests each peripheral independently.</p>
+
+    <pre><code><span class="comment">#!/usr/bin/env python3</span>
+<span class="comment">"""
+TollGate Lane Controller — GPIO Test Script
+Verifies all peripheral connections before production deployment.
+Run: python3 test_gpio.py [--live]
+"""</span>
+
+<span class="keyword">import</span> sys
+<span class="keyword">import</span> time
+
+<span class="keyword">try</span>:
+    <span class="keyword">import</span> RPi.GPIO <span class="keyword">as</span> GPIO
+<span class="keyword">except</span> ImportError:
+    print(<span class="error">"ERROR: RPi.GPIO not installed. Run: pip3 install RPi.GPIO"</span>)
+    sys.exit(1)
+
+<span class="comment"># GPIO Pin Assignments (BCM numbering)</span>
+PINS = {
+    <span class="string">"loop_detector_a"</span>:  17,   <span class="comment"># Entry loop (INPUT)</span>
+    <span class="string">"loop_detector_b"</span>:  18,   <span class="comment"># Exit loop (INPUT)</span>
+    <span class="string">"led_red"</span>:          27,   <span class="comment"># Traffic light red (OUTPUT)</span>
+    <span class="string">"led_yellow"</span>:       22,   <span class="comment"># Traffic light yellow (OUTPUT)</span>
+    <span class="string">"led_green"</span>:        23,   <span class="comment"># Traffic light green (OUTPUT)</span>
+    <span class="string">"barrier_relay"</span>:    24,   <span class="comment"># Barrier gate relay (OUTPUT)</span>
+    <span class="string">"intercom_ptt"</span>:     25,   <span class="comment"># Intercom push-to-talk (OUTPUT)</span>
+    <span class="string">"ticket_enable"</span>:     4,   <span class="comment"># Ticket dispenser enable (OUTPUT)</span>
+}
+
+INPUT_PINS = [<span class="string">"loop_detector_a"</span>, <span class="string">"loop_detector_b"</span>]
+OUTPUT_PINS = [<span class="string">"led_red"</span>, <span class="string">"led_yellow"</span>, <span class="string">"led_green"</span>,
+               <span class="string">"barrier_relay"</span>, <span class="string">"intercom_ptt"</span>, <span class="string">"ticket_enable"</span>]
+
+<span class="keyword">def</span> <span class="highlight">setup</span>():
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setwarnings(<span class="keyword">False</span>)
+
+    <span class="keyword">for</span> pin_name <span class="keyword">in</span> INPUT_PINS:
+        GPIO.setup(PINS[pin_name], GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+
+    <span class="keyword">for</span> pin_name <span class="keyword">in</span> OUTPUT_PINS:
+        GPIO.setup(PINS[pin_name], GPIO.OUT)
+        GPIO.output(PINS[pin_name], GPIO.LOW)
+
+<span class="keyword">def</span> <span class="highlight">test_inputs</span>():
+    print(<span class="string">"\n═══ INPUT PIN TEST ═══"</span>)
+    <span class="keyword">for</span> pin_name <span class="keyword">in</span> INPUT_PINS:
+        pin = PINS[pin_name]
+        state = GPIO.input(pin)
+        status = <span class="string">"✅ LOW (idle)"</span> <span class="keyword">if</span> state == GPIO.LOW <span class="keyword">else</span> <span class="string">"⚠️  HIGH (triggered)"</span>
+        print(<span class="string">f"  GPIO {pin:2d} ({pin_name:20s}): {status}"</span>)
+
+<span class="keyword">def</span> <span class="highlight">test_leds</span>():
+    print(<span class="string">"\n═══ LED TRAFFIC LIGHT TEST ═══"</span>)
+    led_sequence = [
+        (<span class="string">"led_red"</span>,    <span class="string">"RED"</span>,    1),
+        (<span class="string">"led_yellow"</span>, <span class="string">"YELLOW"</span>, 1),
+        (<span class="string">"led_green"</span>,  <span class="string">"GREEN"</span>,  1),
+    ]
+    <span class="keyword">for</span> pin_name, color, duration <span class="keyword">in</span> led_sequence:
+        pin = PINS[pin_name]
+        GPIO.output(pin, GPIO.HIGH)
+        print(<span class="string">f"  GPIO {pin:2d} → {color:6s} ON"</span>)
+        time.sleep(duration)
+        GPIO.output(pin, GPIO.LOW)
+        print(<span class="string">f"  GPIO {pin:2d} → {color:6s} OFF"</span>)
+
+<span class="keyword">def</span> <span class="highlight">test_barrier</span>():
+    print(<span class="string">"\n═══ BARRIER RELAY TEST ═══"</span>)
+    pin = PINS[<span class="string">"barrier_relay"</span>]
+    GPIO.output(pin, GPIO.HIGH)
+    print(<span class="string">f"  GPIO {pin:2d} → BARRIER OPEN"</span>)
+    time.sleep(2)
+    GPIO.output(pin, GPIO.LOW)
+    print(<span class="string">f"  GPIO {pin:2d} → BARRIER CLOSE"</span>)
+
+<span class="keyword">def</span> <span class="highlight">test_intercom</span>():
+    print(<span class="string">"\n═══ INTERCOM PTT TEST ═══"</span>)
+    pin = PINS[<span class="string">"intercom_ptt"</span>]
+    <span class="keyword">for</span> i <span class="keyword">in</span> range(3):
+        GPIO.output(pin, GPIO.HIGH)
+        time.sleep(0.2)
+        GPIO.output(pin, GPIO.LOW)
+        time.sleep(0.1)
+    print(<span class="string">f"  GPIO {pin:2d} → PTT pulse × 3 (call signal)"</span>)
+
+<span class="keyword">def</span> <span class="highlight">test_ticket</span>():
+    print(<span class="string">"\n═══ TICKET DISPENSER TEST ═══"</span>)
+    pin = PINS[<span class="string">"ticket_enable"</span>]
+    GPIO.output(pin, GPIO.HIGH)
+    print(<span class="string">f"  GPIO {pin:2d} → TICKET ENABLED"</span>)
+    time.sleep(0.5)
+    GPIO.output(pin, GPIO.LOW)
+    print(<span class="string">f"  GPIO {pin:2d} → TICKET DISABLED"</span>)
+
+<span class="keyword">def</span> <span class="highlight">main</span>():
+    print(<span class="string">"╔══════════════════════════════════════════╗"</span>)
+    print(<span class="string">"║   TollGate GPIO Test Suite v1.0          ║"</span>)
+    print(<span class="string">"╚══════════════════════════════════════════╝"</span>)
+
+    setup()
+    test_inputs()
+    test_leds()
+    test_barrier()
+    test_intercom()
+    test_ticket()
+
+    print(<span class="string">"\n═══ ALL TESTS COMPLETE ═══"</span>)
+    GPIO.cleanup()
+
+<span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:
+    main()</code></pre>
+
+    <div class="alert alert-success">
+      <strong>✅ Expected Output:</strong> All GPIO pins should report LOW for inputs and toggle correctly for outputs. If any pin reads HIGH when it shouldn't, check wiring and pull-down resistors before proceeding.
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 11: TROUBLESHOOTING                                        -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="troubleshooting">
+    <div class="section-header">
+      <div class="section-icon red">🔧</div>
+      <h2 class="section-title">Troubleshooting Table</h2>
+    </div>
+    <p class="section-sub">Common issues encountered during lane controller installation and deployment. Most GPIO problems stem from wiring errors or permission issues.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Symptom</th><th>Likely Cause</th><th>Fix</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-red" style="font-size:11px;">GPIO permission denied</span></td>
+            <td>User not in gpio group, or Docker container lacks host GPIO access</td>
+            <td>Run <code>sudo usermod -aG gpio pi</code>, add <code>--device /dev/gpiomem</code> to Docker run</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-amber" style="font-size:11px;">Loop detector always HIGH</span></td>
+            <td>Missing pull-down resistor, or inductance too high</td>
+            <td>Add 10k&Omega; pull-down from GPIO to GND, recalibrate detector module</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-amber" style="font-size:11px;">LED lights not responding</span></td>
+            <td>MOSFET gate not driven, or wrong GPIO numbering (physical vs BCM)</td>
+            <td>Verify using BCM numbering in code, check MOSFET gate resistor (1k&Omega;)</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-red" style="font-size:11px;">Ticket dispenser no output</span></td>
+            <td>Baud rate mismatch, TX/RX swapped, or 12V power missing</td>
+            <td>Set dispenser to 9600 baud, swap TX/RX wires, verify 12V supply with multimeter</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-blue" style="font-size:11px;">Intercom has no audio</span></td>
+            <td>USB sound card not recognized, PulseAudio not running</td>
+            <td>Check <code>arecord -l</code> and <code>aplay -l</code>, install <code>pulseaudio</code>, restart service</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-amber" style="font-size:11px;">Barrier doesn't open/close</span></td>
+            <td>Relay coil voltage mismatch, optocoupler blown</td>
+            <td>Verify 24V AC supply, replace PC817 optocoupler, check relay click on GPIO toggle</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-red" style="font-size:11px;">Docker container crashes on boot</span></td>
+            <td>systemd service starts before GPIO is ready</td>
+            <td>Add <code>After=systemd-udev-settle.service</code> and <code>RestartSec=15</code> to service file</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-purple" style="font-size:11px;">RPi overheating / throttling</span></td>
+            <td>No heatsink, ambient temp too high, continuous CPU load</td>
+            <td>Add FLIRC aluminum case, monitor with <code>vcgencmd measure_temp</code>, add fan if >60°C</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-cyan" style="font-size:11px;">Serial garbled output</span></td>
+            <td>Baud rate mismatch, voltage level incompatible (5V vs 3.3V)</td>
+            <td>Set both ends to 9600 baud, add 3.3V↔5V level shifter if needed</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-amber" style="font-size:11px;">MicroSD card corruption</span></td>
+            <td>Power loss during write, excessive write cycles from logging</td>
+            <td>Use A2-rated microSD, enable read-only overlay, mount <code>/tmp</code> as tmpfs</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 12: BILL OF MATERIALS                                      -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="bom">
+    <div class="section-header">
+      <div class="section-icon amber">💰</div>
+      <h2 class="section-title">Bill of Materials — Per Lane Cost</h2>
+    </div>
+    <p class="section-sub">Complete cost breakdown for a single lane controller and all peripherals. Multiply by number of lanes for full plaza cost estimate.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Category</th><th>Item</th><th>Qty</th><th>Unit Cost (MMK)</th><th>Total (MMK)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td rowspan="4">🍓 Edge Controller</td><td>Raspberry Pi 4 Model B (4GB)</td><td>1</td><td>180,000</td><td>180,000</td></tr>
+          <tr><td>microSD 64GB A2 (Samsung EVO)</td><td>1</td><td>50,000</td><td>50,000</td></tr>
+          <tr><td>FLIRC Aluminum Case</td><td>1</td><td>60,000</td><td>60,000</td></tr>
+          <tr><td>USB-C 3.5A Power Supply</td><td>1</td><td>40,000</td><td>40,000</td></tr>
+          <tr><td rowspan="3">🔌 Network &amp; Serial</td><td>USB 3.0 Gigabit Ethernet Adapter</td><td>1</td><td>45,000</td><td>45,000</td></tr>
+          <tr><td>Cat6 Shielded Ethernet Cable (20m)</td><td>2</td><td>50,000</td><td>100,000</td></tr>
+          <tr><td>USB-to-TTL Serial Adapter (CP2102)</td><td>1</td><td>15,000</td><td>15,000</td></tr>
+          <tr><td rowspan="4">🔄 Loop Detector</td><td>Inductive Loop Detector Module (D-TEK LD-100)</td><td>2</td><td>80,000</td><td>160,000</td></tr>
+          <tr><td>Loop Wire (1.5mm² shielded, 20m)</td><td>1</td><td>30,000</td><td>30,000</td></tr>
+          <tr><td>Junction Box (IP67)</td><td>1</td><td>25,000</td><td>25,000</td></tr>
+          <tr><td>Saw Cut Groove (contractor)</td><td>1</td><td>50,000</td><td>50,000</td></tr>
+          <tr><td rowspan="3">🚦 LED Traffic Light</td><td>LED Traffic Light Module (Red/Yellow/Green)</td><td>1</td><td>120,000</td><td>120,000</td></tr>
+          <tr><td>IRF520 MOSFET Relay Module (3-ch)</td><td>1</td><td>25,000</td><td>25,000</td></tr>
+          <tr><td>12V DC 5A Power Supply (LED)</td><td>1</td><td>40,000</td><td>40,000</td></tr>
+          <tr><td rowspan="2">🔊 Intercom</td><td>Weatherproof Intercom Speaker+Mic (IP65)</td><td>1</td><td>85,000</td><td>85,000</td></tr>
+          <tr><td>USB Sound Card (C-Media)</td><td>1</td><td>10,000</td><td>10,000</td></tr>
+          <tr><td rowspan="2">🎫 Ticket Dispenser</td><td>Thermal Ticket Printer (ESC/POS)</td><td>1</td><td>150,000</td><td>150,000</td></tr>
+          <tr><td>Thermal Paper Rolls (58mm, 50-pack)</td><td>1</td><td>25,000</td><td>25,000</td></tr>
+          <tr><td rowspan="2">🚧 Barrier Gate</td><td>Boom Barrier Gate (24V AC, 3m arm)</td><td>1</td><td>350,000</td><td>350,000</td></tr>
+          <tr><td>PC817 Optocoupler + Relay Module</td><td>1</td><td>15,000</td><td>15,000</td></tr>
+          <tr><td>🔌 Power</td><td>12V DC 10A Power Supply (peripherals)</td><td>1</td><td>45,000</td><td>45,000</td></tr>
+          <tr><td>🔧 Enclosure</td><td>Weatherproof IP67 Cabinet (400×300×200mm)</td><td>1</td><td>80,000</td><td>80,000</td></tr>
+          <tr><td>🔧 Misc</td><td>Cable glands, ties, terminal blocks, fuses</td><td>1 set</td><td>30,000</td><td>30,000</td></tr>
+          <tr style="background:rgba(16,185,129,0.08);font-weight:700;"><td colspan="4">TOTAL PER LANE (CONTROLLER + PERIPHERALS)</td><td style="color:#34d399;">1,700,000 MMK</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid grid-2" style="margin-top:20px;">
+      <div class="alert alert-info" style="margin:0;">
+        <strong>💡 Cost Notes:</strong><br>
+        • Prices estimated September 2026 for Yangon market<br>
+        • Bulk orders (10+ lanes) typically receive 10-15% discount<br>
+        • Import duty: 5% + commercial tax 5% on electronics<br>
+        • Barrier gate is the most expensive single component
+      </div>
+      <div class="alert alert-success" style="margin:0;">
+        <strong>📊 Total Plaza Cost (4 lanes):</strong><br>
+        • Controller + peripherals: <strong>6,800,000 MMK</strong><br>
+        • RFID subsystem (per 01-rfid-reader.html): 19,520,000 MMK<br>
+        • <strong>Grand Total per 4-lane plaza: ~26,320,000 MMK</strong><br>
+        • Excludes: civil works, gantry structure, trenching
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer class="footer">
+  <p>TollGate RFID Pass — Enterprise Highway OS v1.0</p>
+  <p style="margin-top:4px;">Lane Controller &amp; Peripherals Guide • September 2026</p>
+</footer>
+
+</body>
+</html>
