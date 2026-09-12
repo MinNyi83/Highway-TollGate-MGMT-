@@ -102,12 +102,12 @@ export default function Simulator() {
 
   const { data: vehicles, isLoading: loadingVehicles, isError: isVehiclesError, error: vehiclesError, refetch: refetchVehicles } = useQuery<Vehicle[]>({
     queryKey: ['vehicles-list'],
-    queryFn: async () => (await api.get('/vehicles')).data,
+    queryFn: async () => { const d = (await api.get('/vehicles')).data; return d.vehicles || d; },
   });
 
   const { data: plazas, isLoading: loadingPlazas } = useQuery<TollPlaza[]>({
     queryKey: ['toll-plazas-list'],
-    queryFn: async () => (await api.get('/toll-plazas')).data,
+    queryFn: async () => { const d = (await api.get('/toll-plazas')).data; return d.tollPlazas || d.plazas || d; },
   });
 
   const stopContinuous = useCallback(() => {
