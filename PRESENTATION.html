@@ -980,6 +980,234 @@ GET /api/financial/reconciliation
     </div>
   </section>
 
+  <!-- Slide 18: Hardware Architecture -->
+  <section class="slide" id="slide-18">
+    <div class="slide-header">
+      <span class="badge green">Hardware</span>
+      <h1 class="slide-title">Hardware Architecture</h1>
+      <p class="slide-subtitle">Complete toll lane hardware setup with 3D visualization</p>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 16px;">
+      <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px;">
+        <h3 style="color: var(--accent-cyan); margin-bottom: 16px; font-size: 16px;">📡 Per-Lane Hardware</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div style="background: rgba(59,130,246,0.1); border-radius: 10px; padding: 12px;">
+            <div style="font-size: 1.5rem;">📡</div>
+            <div style="font-weight: 600; font-size: 13px;">UHF RFID Reader</div>
+            <div style="font-size: 11px; color: var(--text-muted);">TCP/IP, 3–12m range</div>
+          </div>
+          <div style="background: rgba(139,92,246,0.1); border-radius: 10px; padding: 12px;">
+            <div style="font-size: 1.5rem;">📷</div>
+            <div style="font-weight: 600; font-size: 13px;">ANPR Camera</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Hikvision ISAPI, >99%</div>
+          </div>
+          <div style="background: rgba(239,68,68,0.1); border-radius: 10px; padding: 12px;">
+            <div style="font-size: 1.5rem;">🔲</div>
+            <div style="font-weight: 600; font-size: 13px;">Barrier Gate</div>
+            <div style="font-size: 11px; color: var(--text-muted);">FAAC 640, 1.5–4s</div>
+          </div>
+          <div style="background: rgba(34,197,94,0.1); border-radius: 10px; padding: 12px;">
+            <div style="font-size: 1.5rem;">🍓</div>
+            <div style="font-weight: 600; font-size: 13px;">RPi 4 Controller</div>
+            <div style="font-size: 11px; color: var(--text-muted);">GPIO, Docker, Edge</div>
+          </div>
+          <div style="background: rgba(251,191,36,0.1); border-radius: 10px; padding: 12px;">
+            <div style="font-size: 1.5rem;">🔴</div>
+            <div style="font-weight: 600; font-size: 13px;">LED Signal</div>
+            <div style="font-size: 11px; color: var(--text-muted);">3-aspect, 150W</div>
+          </div>
+          <div style="background: rgba(236,72,153,0.1); border-radius: 10px; padding: 12px;">
+            <div style="font-size: 1.5rem;">📞</div>
+            <div style="font-weight: 600; font-size: 13px;">Intercom</div>
+            <div style="font-size: 11px; color: var(--text-muted);">2-way audio</div>
+          </div>
+          <div style="background: rgba(168,85,247,0.1); border-radius: 10px; padding: 12px;">
+            <div style="font-size: 1.5rem;">🎫</div>
+            <div style="font-weight: 600; font-size: 13px;">Ticket Dispenser</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Serial, auto-feed</div>
+          </div>
+          <div style="background: rgba(6,182,212,0.1); border-radius: 10px; padding: 12px;">
+            <div style="font-size: 1.5rem;">📺</div>
+            <div style="font-weight: 600; font-size: 13px;">LED Sign</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Variable message</div>
+          </div>
+        </div>
+      </div>
+      <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px;">
+        <h3 style="color: var(--accent-purple); margin-bottom: 16px; font-size: 16px;">🏗️ Plaza Infrastructure</h3>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.8; color: var(--text-muted);">
+          <div style="color: var(--accent-cyan);">┌─── OVERHEAD GANTRY (6m) ───┐</div>
+          <div style="color: var(--text-muted);">│ 📷 ANPR  📡 RFID  🔴🟡🟢 │</div>
+          <div style="color: var(--text-muted);">│ 📺 LED Sign              │</div>
+          <div style="color: var(--text-muted);">└──────────┬────────────────┘</div>
+          <div style="color: var(--text-muted);">           │ Wires/PoE</div>
+          <div style="color: var(--text-muted);">           ▼</div>
+          <div style="color: var(--accent-green);">┌─── LANE CONTROLLER ────────┐</div>
+          <div style="color: var(--text-muted);">│ 🍓 RPi 4 (GPIO/Serial)    │</div>
+          <div style="color: var(--text-muted);">│ 192.168.1.50              │</div>
+          <div style="color: var(--text-muted);">└──────────┬────────────────┘</div>
+          <div style="color: var(--text-muted);">           │</div>
+          <div style="color: var(--accent-amber);">┌─── TOLL LANE ─────────────┐</div>
+          <div style="color: var(--text-muted);">│ 🔲 Loop  🔲 Barrier       │</div>
+          <div style="color: var(--text-muted);">│ 📞 Intercom  🎫 Ticket    │</div>
+          <div style="color: var(--text-muted);">│ 🚗 → → → → → → → →      │</div>
+          <div style="color: var(--text-muted);">└───────────────────────────┘</div>
+        </div>
+        <div style="margin-top: 16px; padding: 12px; background: rgba(16,185,129,0.1); border-radius: 8px; border: 1px solid rgba(16,185,129,0.3);">
+          <div style="font-size: 12px; font-weight: 600; color: #10b981;">💰 Total per Plaza (4 lanes): 66.25M MMK</div>
+          <div style="font-size: 11px; color: var(--text-muted);">Including all hardware, cabling, gantry, and infrastructure</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 19: Vehicle Passage Flow -->
+  <section class="slide" id="slide-19">
+    <div class="slide-header">
+      <span class="badge green">Hardware</span>
+      <h1 class="slide-title">Vehicle Passage Flow</h1>
+      <p class="slide-subtitle">Complete toll processing sequence from detection to sync</p>
+    </div>
+    <div style="display: flex; gap: 12px; margin-top: 24px; overflow-x: auto; padding-bottom: 8px;">
+      <div style="flex: 0 0 120px; text-align: center;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; font-weight: 700; font-size: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px;">1</div>
+        <div style="font-size: 2rem;">🔲</div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Vehicle Detected<br><span style="font-size: 10px; color: var(--text-dim);">Loop Detector</span></div>
+      </div>
+      <div style="flex: 0 0 120px; text-align: center;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; font-weight: 700; font-size: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px;">2</div>
+        <div style="font-size: 2rem;">📡</div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">RFID Tag Read<br><span style="font-size: 10px; color: var(--text-dim);">UHF Reader</span></div>
+      </div>
+      <div style="flex: 0 0 120px; text-align: center;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; font-weight: 700; font-size: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px;">3</div>
+        <div style="font-size: 2rem;">📷</div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Plate Captured<br><span style="font-size: 10px; color: var(--text-dim);">ANPR Camera</span></div>
+      </div>
+      <div style="flex: 0 0 120px; text-align: center;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; font-weight: 700; font-size: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px;">4</div>
+        <div style="font-size: 2rem;">⚙️</div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Toll Processing<br><span style="font-size: 10px; color: var(--text-dim);">Match & Validate</span></div>
+      </div>
+      <div style="flex: 0 0 120px; text-align: center;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #10b981, #059669); color: white; font-weight: 700; font-size: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px;">5</div>
+        <div style="font-size: 2rem;">💰</div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Debit Account<br><span style="font-size: 10px; color: var(--text-dim);">1,000 MMK</span></div>
+      </div>
+      <div style="flex: 0 0 120px; text-align: center;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; font-weight: 700; font-size: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px;">6</div>
+        <div style="font-size: 2rem;">🔲</div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Barrier Opens<br><span style="font-size: 10px; color: var(--text-dim);">FAAC 640</span></div>
+      </div>
+      <div style="flex: 0 0 120px; text-align: center;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; font-weight: 700; font-size: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px;">7</div>
+        <div style="font-size: 2rem;">🟢</div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">LED Green<br><span style="font-size: 10px; color: var(--text-dim);">Proceed</span></div>
+      </div>
+      <div style="flex: 0 0 120px; text-align: center;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #06b6d4, #0891b2); color: white; font-weight: 700; font-size: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px;">8</div>
+        <div style="font-size: 2rem;">🚗</div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Vehicle Passes<br><span style="font-size: 10px; color: var(--text-dim);">Loop Clears</span></div>
+      </div>
+      <div style="flex: 0 0 120px; text-align: center;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #ec4899, #db2777); color: white; font-weight: 700; font-size: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px;">9</div>
+        <div style="font-size: 2rem;">📡</div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Sync to HQ<br><span style="font-size: 10px; color: var(--text-dim);">30s batch</span></div>
+      </div>
+    </div>
+    <div style="margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+      <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 16px;">
+        <div style="font-size: 14px; font-weight: 600; color: #10b981; margin-bottom: 8px;">✅ Happy Path</div>
+        <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6;">
+          RFID match + sufficient balance → Auto-open barrier → Green LED → Vehicle passes → Event saved → Sync to HQ
+        </div>
+      </div>
+      <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 16px;">
+        <div style="font-size: 14px; font-weight: 600; color: #f59e0b; margin-bottom: 8px;">⚠️ Mismatch</div>
+        <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6;">
+          RFID ≠ ANPR plate → Violation flagged → Red LED → Barrier stays closed → Operator alert → Manual review
+        </div>
+      </div>
+      <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 16px;">
+        <div style="font-size: 14px; font-weight: 600; color: #ef4444; margin-bottom: 8px;">❌ No RFID</div>
+        <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6;">
+          No tag detected → NO_RFID violation → Red LED → Barrier closed → SMS notification → Invoice generated
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 20: Network & Sync -->
+  <section class="slide" id="slide-20">
+    <div class="slide-header">
+      <span class="badge green">Hardware</span>
+      <h1 class="slide-title">Network Topology & Sync Protocol</h1>
+      <p class="slide-subtitle">Plaza-to-HQ communication with offline-first architecture</p>
+    </div>
+    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; margin-top: 16px;">
+      <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px;">
+        <h3 style="color: var(--accent-cyan); margin-bottom: 12px; font-size: 14px;">🌐 Network Topology</h3>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.7; color: var(--text-muted);">
+          <div style="color: var(--accent-cyan); text-align: center;">☁️ INTERNET / VPN</div>
+          <div style="text-align: center;">│</div>
+          <div style="color: var(--accent-green); text-align: center;">┌─── HQ SERVER ───┐</div>
+          <div style="text-align: center;">│ 192.168.100.101 │</div>
+          <div style="text-align: center;">│ :3000 :5432-34  │</div>
+          <div style="text-align: center;">│ :80 :8080 :8081 │</div>
+          <div style="text-align: center;">└────────┬────────┘</div>
+          <div style="text-align: center;">         │</div>
+          <div style="text-align: center;">    ┌────┼────┐</div>
+          <div style="text-align: center;">    │    │    │</div>
+          <div style="color: var(--accent-amber);">  ┌─┴─┐┌─┴─┐┌─┴─┐</div>
+          <div style="color: var(--text-muted);">  │P01││P02││P N│</div>
+          <div style="color: var(--text-muted);">  │RPi││RPi││RPi│</div>
+          <div style="color: var(--text-muted);">  │:4K││:4K││:4K│</div>
+          <div style="color: var(--text-muted);">  └─┬─┘└─┬─┘└─┬─┘</div>
+          <div style="text-align: center;">    │    │    │</div>
+          <div style="text-align: center;">  ┌─┴──┐┌─┴──┐┌─┴──┐</div>
+          <div style="color: var(--text-dim);">  │Lane││Lane││Lane│</div>
+          <div style="color: var(--text-dim);">  │1A-2B││1A-2B││1A-2B│</div>
+          <div style="color: var(--text-dim);">  └────┘└────┘└────┘</div>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 16px;">
+          <h3 style="color: var(--accent-green); font-size: 14px; margin-bottom: 8px;">📤 Push Sync (30s)</h3>
+          <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6;">
+            Plaza → HQ: TollEvents, VehicleChanges, RFIDTagChanges<br>
+            Batch: 50 items/cycle | Headers: X-Plaza-Id, X-Sync-Token<br>
+            Conflict: Last-write-wins
+          </div>
+        </div>
+        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 16px;">
+          <h3 style="color: var(--accent-purple); font-size: 14px; margin-bottom: 8px;">📥 Pull Sync (60s)</h3>
+          <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6;">
+            HQ → Plaza: TollRates, RFIDTags, VehicleUpdates<br>
+            Tables: LocalVehicle, RFIDTag, TollRate<br>
+            Auto-resume on reconnect
+          </div>
+        </div>
+        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 16px;">
+          <h3 style="color: var(--accent-amber); font-size: 14px; margin-bottom: 8px;">🔌 Offline Mode</h3>
+          <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6;">
+            Queue: 10,000 events max | Retry: 5x exponential<br>
+            Plaza operates independently: toll, barrier, RFID, ANPR<br>
+            Cleanup: completed > 24h deleted hourly
+          </div>
+        </div>
+        <div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); border-radius: 12px; padding: 16px;">
+          <h3 style="color: #10b981; font-size: 14px; margin-bottom: 8px;">🛡️ Security</h3>
+          <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6;">
+            Sync Token: X-Sync-Token header<br>
+            VPN: WireGuard recommended<br>
+            Auth: JWT Bearer tokens<br>
+            Rate Limiting: 100 req/min global
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <footer class="footer" id="deckFooter">

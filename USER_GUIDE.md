@@ -22,10 +22,11 @@
    - [Low Balance Alerts](#low-balance-alerts)
 4. [Toll Simulator (Canvas Multi-Lane Highway)](#toll-simulator-canvas-multi-lane-highway)
 5. [Plaza Edge Server (Offline-First Raspberry Pi)](#plaza-edge-server-offline-first-raspberry-pi)
-6. [API Reference](#api-reference)
-7. [Health & Monitoring](#health--monitoring)
-8. [Troubleshooting & FAQ](#troubleshooting--faq)
-9. [UI/UX Features](#uiux-features)
+6. [Hardware Installation](#6-hardware-installation)
+7. [API Reference](#api-reference)
+8. [Health & Monitoring](#health--monitoring)
+9. [Troubleshooting & FAQ](#troubleshooting--faq)
+10. [UI/UX Features](#uiux-features)
 
 ---
 
@@ -376,9 +377,104 @@ Each toll plaza operates an edge Raspberry Pi running an offline-first SQLite da
 - **Offline Resilience**: Even if the fiber/4G connection drops, toll booths continue scanning RFID tags, logging transactions, and lifting barriers with zero latency (< 80ms).
 - **Auto Resync**: Once internet connectivity resumes, the local `SyncService` pushes all buffered events in FIFO batches to HQ.
 
+### 5.1 Hardware per Plaza
+
+| Component | Qty | Purpose |
+|-----------|-----|---------|
+| Raspberry Pi 4 (4GB) | 1 | Plaza server (Docker host) |
+| Raspberry Pi 4 (4GB) | 4 | Lane controllers (1 per lane) |
+| microSD 64GB A2 | 5 | OS + data storage |
+| PoE HAT | 5 | Power over Ethernet |
+| USB-to-Serial Adapter | 4 | RFID reader connection |
+| GPIO Relay Module (8-ch) | 4 | Barrier, LED, intercom control |
+
+### 5.2 Hardware per Lane
+
+| Device | Connection | Protocol | Purpose |
+|--------|-----------|----------|---------|
+| UHF RFID Reader | TCP/IP or USB-Serial | Port 5000 / RS232 | Tag identification |
+| Hikvision ANPR Camera | Ethernet | ISAPI HTTP :80, RTSP :554 | Plate recognition |
+| FAAC 640 Barrier Gate | Serial/TCP | RS232 or TCP 5000 | Vehicle access control |
+| LED Traffic Light | GPIO | 3.3V Logic | Red/Yellow/Green signals |
+| Vehicle Loop Detector | GPIO | Digital Input | Vehicle presence detection |
+| Intercom System | GPIO | Audio/PTT | Driver-operator communication |
+| Ticket Dispenser | Serial | UART | Paper ticket issuance |
+| LED Sign | Serial/TCP | Port 5000 | Variable message display |
+
+### 5.3 Network Topology (per Plaza)
+
+```
+                    ┌──────────────────────┐
+                    │  PLAZA RPi Server    │
+                    │  192.168.1.10:4000   │
+                    └──────────┬───────────┘
+                               │ Ethernet
+              ┌────────────────┼────────────────┐
+              │                │                │
+        ┌─────┴─────┐   ┌─────┴─────┐   ┌─────┴─────┐
+        │  Lane 1A  │   │  Lane 1B  │   │  Lane 2A  │
+        │  RPi :50  │   │  RPi :51  │   │  RPi :52  │
+        └─────┬─────┘   └─────┬─────┘   └─────┬─────┘
+              │                │                │
+        ┌─────┼─────┐   ┌─────┼─────┐   ┌─────┼─────┐
+        │     │     │   │     │     │   │     │     │
+      📡    📷    🔲  📡    📷    🔲  📡    📷    🔲
+     RFID  ANPR  Bar  RFID  ANPR  Bar  RFID  ANPR  Bar
+```
+
+### 5.4 Sync Protocol
+
+| Direction | Interval | Data | Batch Size |
+|-----------|----------|------|------------|
+| Plaza → HQ (Push) | 30 seconds | TollEvents, VehicleChanges | 50 items |
+| HQ → Plaza (Pull) | 60 seconds | TollRates, RFIDTags, Updates | Full table |
+| Connectivity Check | 10 seconds | Ping HQ | 5s timeout |
+| Queue Cleanup | 1 hour | Delete completed > 24h | - |
+
+### 5.5 Offline Operation
+
+When network is disconnected, the plaza operates independently:
+- ✅ Toll calculation (local rates)
+- ✅ Barrier control (local GPIO)
+- ✅ RFID reading (local serial/TCP)
+- ✅ ANPR capture (local camera)
+- ✅ Event logging (SQLite queue)
+- ✅ LED signal control
+- Queue capacity: 10,000 events
+- Retry: 5 attempts with exponential backoff (5s → 15s → 45s → 135s → 405s)
+
 ---
 
-## 6. API Reference
+## 6. Hardware Installation
+
+For detailed hardware installation guides with network topology diagrams:
+
+| Guide | File | Description |
+|-------|------|-------------|
+| Hardware Overview | `docs/hardware/00-overview.md` | 3D diagrams, flow charts, BOM |
+| RFID Reader | `docs/hardware/01-rfid-reader.md` | UHF/Serial/ZKTeco setup |
+| ANPR Camera | `docs/hardware/02-anpr-camera.md` | Hikvision ISAPI integration |
+| Barrier Gate | `docs/hardware/03-barrier-gate.md` | FAAC 640 installation |
+| Lane Controller | `docs/hardware/04-lane-controller.md` | RPi GPIO, peripherals |
+| Plaza Server | `docs/server/01-raspberry-pi-plaza-server.md` | RPi edge server setup |
+| HQ Server | `docs/server/02-hq-server.md` | Central server deployment |
+| 3D Visualization | `docs/hardware/hardware-3d.html` | Interactive HTML diagram |
+
+### 6.1 Quick Hardware Summary (per Plaza, 4 lanes)
+
+| Category | Cost (MMK) |
+|----------|-----------|
+| RFID System (4 lanes) | 15,200,000 |
+| ANPR Cameras (4 lanes) | 18,300,000 |
+| Barrier Gates (4 lanes) | 17,800,000 |
+| Lane Controllers (4 lanes) | 2,320,000 |
+| Plaza Server (1x RPi) | 890,000 |
+| Infrastructure (gantry, cabling) | 5,800,000 |
+| **Total per Plaza** | **60,310,000** |
+
+---
+
+## 7. API Reference
 
 ### Authentication
 ```bash
@@ -447,7 +543,7 @@ Visit `http://<SERVER_IP>:3000/api-docs` for interactive Swagger UI documentatio
 
 ---
 
-## 7. Health & Monitoring
+## 8. Health & Monitoring
 
 ### Container Health Status
 ```bash
@@ -487,7 +583,7 @@ docker exec tollgate-rfid-db-1 pg_isready -U postgres
 
 ---
 
-## 8. Troubleshooting & FAQ
+## 9. Troubleshooting & FAQ
 
 ### Q: Why did a vehicle trigger an "Insufficient Balance" alert?
 > **A**: The vehicle's linked prepaid account has less than the toll rate for its class. The operator can click **"Instant Booth QR"** to accept immediate MMQR/KBZPay payment.
@@ -538,7 +634,7 @@ docker exec tollgate-rfid-db-1 pg_isready -U postgres
 
 ---
 
-## 9. UI/UX Features
+## 10. UI/UX Features
 
 ### Error Boundaries
 All 3 portals (Admin, Customer, Financial) have Error Boundary components that catch JavaScript render errors and display a graceful fallback UI with a "Reload Page" button instead of crashing the entire application.
