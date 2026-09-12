@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Barrier Gate Installation — TollGate RFID Pass</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f172a;--surface:#1e293b;--border:#334155;--accent:#3b82f6;--accent2:#8b5cf6;--green:#10b981;--amber:#f59e0b;--red:#ef4444;--text:#f1f5f9;--muted:#94a3b8;--dim:#64748b;--radius:16px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;}
+a{color:var(--accent);text-decoration:none;}
+a:hover{text-decoration:underline;}
+
+.header{position:sticky;top:0;z-index:100;background:rgba(15,23,42,0.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;}
+.logo{display:flex;align-items:center;gap:12px;}
+.logo-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;}
+.logo-icon svg{width:22px;height:22px;fill:white;}
+.logo-text{font-size:18px;font-weight:700;}
+.logo-sub{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.nav{display:flex;gap:8px;}
+.nav a{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;color:var(--muted);transition:all 0.2s;}
+.nav a:hover,.nav a.active{background:rgba(59,130,246,0.1);color:var(--accent);text-decoration:none;}
+
+.hero{padding:80px 32px 60px;text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(239,68,68,0.12) 0%,transparent 60%);}
+.hero h1{font-size:3rem;font-weight:800;background:linear-gradient(135deg,#f87171,#fb923c,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;}
+.hero p{font-size:1.1rem;color:var(--muted);max-width:700px;margin:0 auto 32px;}
+.hero-badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.badge{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid;}
+.badge-blue{background:rgba(59,130,246,0.1);border-color:rgba(59,130,246,0.3);color:#60a5fa;}
+.badge-green{background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.3);color:#34d399;}
+.badge-purple{background:rgba(139,92,246,0.1);border-color:rgba(139,92,246,0.3);color:#a78bfa;}
+.badge-amber{background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.3);color:#fbbf24;}
+.badge-red{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.3);color:#f87171;}
+
+.container{max-width:1200px;margin:0 auto;padding:40px 32px;}
+.section-title{font-size:1.5rem;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:10px;}
+.section-sub{color:var(--muted);margin-bottom:24px;}
+
+.table-wrap{overflow-x:auto;margin:20px 0;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;padding:12px 16px;background:rgba(59,130,246,0.08);border-bottom:2px solid var(--border);font-weight:600;color:var(--accent);white-space:nowrap;}
+td{padding:10px 16px;border-bottom:1px solid var(--border);color:var(--muted);}
+tr:hover td{background:rgba(59,130,246,0.03);}
+
+pre{background:#0c1222;border:1px solid var(--border);border-radius:12px;padding:20px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.7;color:#94a3b8;margin:16px 0;}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;background:rgba(59,130,246,0.1);padding:2px 6px;border-radius:4px;color:#60a5fa;}
+pre code{background:none;padding:0;color:inherit;}
+
+.diagram{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:32px;margin:20px 0;text-align:center;}
+.diagram-title{font-size:14px;font-weight:600;color:var(--accent);margin-bottom:16px;}
+.diagram pre{text-align:left;display:inline-block;background:transparent;border:none;padding:0;font-size:12px;color:var(--muted);}
+
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;transition:all 0.3s;}
+.card:hover{border-color:rgba(59,130,246,0.5);transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,0.3);}
+.card-header{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+.card-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.card-icon svg{width:26px;height:26px;}
+.card-icon.blue{background:rgba(59,130,246,0.15);}
+.card-icon.green{background:rgba(16,185,129,0.15);}
+.card-icon.purple{background:rgba(139,92,246,0.15);}
+.card-icon.amber{background:rgba(245,158,11,0.15);}
+.card-icon.red{background:rgba(239,68,68,0.15);}
+.card-icon.cyan{background:rgba(6,182,212,0.15);}
+.card h3{font-size:1.05rem;font-weight:600;}
+.card .model{font-size:12px;color:var(--dim);margin-top:2px;}
+.card p{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:12px;}
+.tags{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:500;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);color:#60a5fa;}
+.tag.green{background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.2);color:#34d399;}
+.tag.amber{background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.2);color:#fbbf24;}
+.tag.red{background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.2);color:#f87171;}
+
+.footer{text-align:center;padding:40px 32px;color:var(--dim);font-size:13px;border-top:1px solid var(--border);margin-top:40px;}
+
+/* State Machine Animation */
+.state-machine{position:relative;padding:40px 20px;overflow-x:auto;}
+.sm-container{display:flex;align-items:center;justify-content:center;gap:0;min-width:900px;position:relative;}
+.sm-state{position:relative;width:140px;text-align:center;z-index:2;}
+.sm-box{width:120px;height:120px;border-radius:50%;border:3px solid var(--border);display:flex;align-items:center;justify-content:center;flex-direction:column;margin:0 auto 10px;transition:all 0.4s;position:relative;background:var(--surface);}
+.sm-box.active{border-color:var(--green);box-shadow:0 0 24px rgba(16,185,129,0.4);animation:pulse-green 2s infinite;}
+.sm-box.idle{border-color:var(--dim);}
+.sm-box.opening{border-color:var(--amber);animation:pulse-amber 1s infinite;}
+.sm-box.open{border-color:var(--green);box-shadow:0 0 24px rgba(16,185,129,0.4);animation:pulse-green 2s infinite;}
+.sm-box.closing{border-color:var(--amber);animation:pulse-amber 1s infinite;}
+.sm-box.fault{border-color:var(--red);box-shadow:0 0 24px rgba(239,68,68,0.4);animation:pulse-red 1s infinite;}
+.sm-box .sm-icon{font-size:28px;margin-bottom:4px;}
+.sm-box .sm-label{font-size:11px;font-weight:600;color:var(--text);}
+.sm-box .sm-sub{font-size:9px;color:var(--dim);margin-top:2px;}
+.sm-state-label{font-size:12px;font-weight:600;color:var(--muted);}
+.sm-state-sub{font-size:10px;color:var(--dim);}
+
+@keyframes pulse-green{0%,100%{box-shadow:0 0 12px rgba(16,185,129,0.2);}50%{box-shadow:0 0 30px rgba(16,185,129,0.5);}}
+@keyframes pulse-amber{0%,100%{box-shadow:0 0 12px rgba(245,158,11,0.2);}50%{box-shadow:0 0 30px rgba(245,158,11,0.5);}}
+@keyframes pulse-red{0%,100%{box-shadow:0 0 12px rgba(239,68,68,0.2);}50%{box-shadow:0 0 30px rgba(239,68,68,0.5);}}
+
+.sm-arrow{position:absolute;top:50px;z-index:1;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.sm-arrow-line{width:60px;height:3px;background:var(--border);position:relative;}
+.sm-arrow-line::after{content:'';position:absolute;right:-1px;top:-4px;border:5px solid transparent;border-left:8px solid var(--border);}
+.sm-arrow-label{font-size:9px;color:var(--dim);white-space:nowrap;position:absolute;top:-16px;}
+
+/* Clearance zones */
+.zone-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin:20px 0;}
+.zone-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;}
+.zone-card .zone-value{font-size:28px;font-weight:800;margin:8px 0 4px;}
+.zone-card .zone-label{font-size:12px;color:var(--dim);}
+.zone-card.blue .zone-value{color:#60a5fa;}
+.zone-card.green .zone-value{color:#34d399;}
+.zone-card.amber .zone-value{color:#fbbf24;}
+.zone-card.red .zone-value{color:#f87171;}
+
+.footer-links{display:flex;gap:16px;justify-content:center;margin-top:16px;}
+.footer-links a{font-size:13px;color:var(--dim);transition:color 0.2s;}
+.footer-links a:hover{color:var(--accent);text-decoration:none;}
+
+@media(max-width:768px){
+  .hero h1{font-size:2rem;}
+  .card-grid{grid-template-columns:1fr;}
+  .nav{display:none;}
+  .sm-container{min-width:auto;flex-wrap:wrap;justify-content:center;}
+  .sm-arrow{display:none;}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    <a href="index.html" style="text-decoration:none;display:flex;align-items:center;gap:12px;">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+      </div>
+      <div>
+        <div class="logo-text">TollGate RFID Pass</div>
+        <div class="logo-sub">Hardware Documentation</div>
+      </div>
+    </a>
+  </div>
+  <nav class="nav">
+    <a href="#overview">Overview</a>
+    <a href="#control-arch">Control</a>
+    <a href="#state-machine">State Machine</a>
+    <a href="#protocols">Protocols</a>
+    <a href="#installation">Install</a>
+    <a href="#safety">Safety</a>
+    <a href="#wiring">Wiring</a>
+    <a href="#testing">Testing</a>
+    <a href="#maintenance">Maint</a>
+    <a href="#bom">BOM</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <p style="margin-bottom:8px;"><a href="index.html" style="font-size:13px;color:var(--dim);">← Back to Documentation Home</a></p>
+  <h1>🔲 Barrier Gate</h1>
+  <p>Complete installation guide for the FAAC 640 electromechanical boom barrier — serial/TCP/Modbus control, safety features, wiring diagrams, and maintenance schedules.</p>
+  <div class="hero-badges">
+    <span class="badge badge-red">🔲 FAAC 640</span>
+    <span class="badge badge-green">⚡ 1.5–4s Open</span>
+    <span class="badge badge-purple">🛡️ Auto-Reverse</span>
+    <span class="badge badge-amber">📡 RS232/TCP</span>
+    <span class="badge badge-blue">🔧 IP55 Rated</span>
+  </div>
+</section>
+
+<!-- ========== OVERVIEW ========== -->
+<div class="container" id="overview">
+  <h2 class="section-title">📋 Overview</h2>
+  <p class="section-sub">Supported barrier gate models and key specifications</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Model</th><th>Manufacturer</th><th>Type</th><th>Boom Length</th><th>Open Time</th><th>Motor</th><th>Duty Cycle</th><th>IP Rating</th><th>Price (MMK)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>FAAC 640</strong></td><td>FAAC S.p.A.</td><td>Electromechanical</td><td>3m / 4m / 6m</td><td>1.5–4s</td><td>24V DC Brushless</td><td>100%</td><td>IP55</td><td>3,500,000</td></tr>
+        <tr><td><strong>FAAC 640S</strong></td><td>FAAC S.p.A.</td><td>Electromechanical</td><td>4m / 6m / 8m</td><td>2–6s</td><td>24V DC Brushless</td><td>100%</td><td>IP55</td><td>4,200,000</td></tr>
+        <tr><td><strong>CAME GARD GT8</strong></td><td>CAME S.p.A.</td><td>Electromechanical</td><td>3m / 5m / 7m</td><td>2–5s</td><td>24V DC</td><td>80%</td><td>IP54</td><td>3,000,000</td></tr>
+        <tr><td><strong>BFT QUICO</strong></td><td>BFT Automation</td><td>Electromechanical</td><td>3m / 4.5m</td><td>3–5s</td><td>24V DC</td><td>80%</td><td>IP44</td><td>2,800,000</td></tr>
+        <tr><td><strong>NICE Robus</strong></td><td>NICE S.p.A.</td><td>Electromechanical</td><td>3m / 5m</td><td>2–4s</td><td>24V DC</td><td>100%</td><td>IP55</td><td>3,200,000</td></tr>
+        <tr><td><strong>Skill STX-4000</strong></td><td>Skill Technology</td><td>Hydraulic</td><td>4m / 6m / 8m</td><td>1.5–3s</td><td>220V AC Hydraulic</td><td>100%</td><td>IP56</td><td>5,500,000</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card-grid" style="margin-top:32px;">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon red">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div><h3>Primary Choice: FAAC 640</h3><div class="model">Recommended for TollGate deployments</div></div>
+      </div>
+      <p>Electromechanical drive with brushless motor, 100% duty cycle, integrated battery backup option, and dual safety photo-eye inputs. Supports RS232 serial and TCP/IP control natively.</p>
+      <div class="tags">
+        <span class="tag red">RS232 Serial</span>
+        <span class="tag amber">TCP/IP</span>
+        <span class="tag green">Modbus RTU</span>
+        <span class="tag">24V DC</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div><h3>Key Specifications</h3><div class="model">FAAC 640 with standard 3m boom</div></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Spec</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Supply Voltage</td><td>24V DC / 230V AC (adapter)</td></tr>
+            <tr><td>Motor Type</td><td>Brushless DC 150W</td></tr>
+            <tr><td>Open Time (3m)</td><td>1.5 seconds</td></tr>
+            <tr><td>Open Time (6m)</td><td>4.0 seconds</td></tr>
+            <tr><td>Boom Weight Max</td><td>15 kg</td></tr>
+            <tr><td>Operating Temp</td><td>-20°C to +55°C</td></tr>
+            <tr><td>Warranty</td><td>3 years / 1M cycles</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== CONTROL ARCHITECTURE ========== -->
+<div class="container" id="control-arch">
+  <h2 class="section-title">🔧 Control Architecture</h2>
+  <p class="section-sub">How the barrier gate integrates into the TollGate lane controller system</p>
+
+  <div class="diagram">
+    <div class="diagram-title">BARRIER GATE CONTROL ARCHITECTURE</div>
+    <pre>
+  ╔══════════════════════════════════════════════════════════════════════╗
+  ║                    TOLL GATE LANE SYSTEM                          ║
+  ╠══════════════════════════════════════════════════════════════════════╣
+  ║                                                                    ║
+  ║   ┌──────────────┐    ┌──────────────┐    ┌──────────────────┐    ║
+  ║   │   HQ Server   │◄──►│ Plaza Server  │◄──►│ Lane Controller  │    ║
+  ║   │ 192.168.100.  │    │ 192.168.1.1  │    │ 192.168.1.10    │    ║
+  ║   │ .101 :3000    │    │ :4000        │    │ RPi 4 (4GB)     │    ║
+  ║   └──────────────┘    └──────────────┘    └────────┬─────────┘    ║
+  ║                                                     │              ║
+  ║                              ┌──────────────────────┼─────────┐    ║
+  ║                              │                      │         │    ║
+  ║                   ┌──────────▼──────────┐  ┌───────▼──────┐  │    ║
+  ║                   │   Barrier Gate       │  │ GPIO Relay   │  │    ║
+  ║                   │  FAAC 640            │  │ Module (8ch) │  │    ║
+  ║                   │                      │  └───────┬──────┘  │    ║
+  ║                   │  ┌─────┐ ┌────────┐ │  ┌───────▼──────┐  │    ║
+  ║                   │  │ MCU │ │Motor   │ │  │ Loop Det.    │  │    ║
+  ║                   │  │     │ │Driver  │ │  │ LED Light    │  │    ║
+  ║                   │  └──┬──┘ └────────┘ │  │ Intercom     │  │    ║
+  ║                   └─────┼───────────────┘  └──────────────┘  │    ║
+  ║                         │                                      │    ║
+  ║              ┌──────────┼──────────┐                           │    ║
+  ║              │          │          │                           │    ║
+  ║         ┌────▼───┐ ┌────▼───┐ ┌────▼────┐                     │    ║
+  ║         │RS232   │ │TCP/IP  │ │Modbus   │                     │    ║
+  ║         │Serial  │ │Port    │ │RTU      │                     │    ║
+  ║         │9600baud│ │:5000   │ │485/232  │                     │    ║
+  ║         └────────┘ └────────┘ └─────────┘                     │    ║
+  ║                                                                │    ║
+  ║   ◄──────────────── 24V DC Power Supply ──────────────────────►│    ║
+  ║   ◄──────────────── Safety Photo-Eyes (2x) ──────────────────►│    ║
+  ║   ◄──────────────── Battery Backup (optional) ───────────────►│    ║
+  ╚══════════════════════════════════════════════════════════════════════╝
+    </pre>
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1"/></svg>
+        </div>
+        <div><h3>Serial Control (RS232)</h3><div class="model">Primary — Direct UART connection</div></div>
+      </div>
+      <p>Direct serial connection from RPi GPIO UART (TX/RX) through MAX232 level shifter to FAAC 640 control board. Lowest latency, highest reliability.</p>
+      <div class="tags">
+        <span class="tag">9600 baud</span>
+        <span class="tag">8N1</span>
+        <span class="tag">GPIO 14/15</span>
+        <span class="tag green">Recommended</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon amber">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg>
+        </div>
+        <div><h3>TCP/IP Control</h3><div class="model">Alternative — Ethernet via WIZnet module</div></div>
+      </div>
+      <p>TCP client connection from RPi to barrier gate's integrated WIZnet W5500 Ethernet module. Requires network infrastructure but supports remote control.</p>
+      <div class="tags">
+        <span class="tag amber">Port 5000</span>
+        <span class="tag">TCP Client</span>
+        <span class="tag">Static IP</span>
+        <span class="tag">Remote</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <div><h3>Modbus RTU Control</h3><div class="model">SCADA integration — RS485 bus</div></div>
+      </div>
+      <p>Modbus RTU over RS485 allows SCADA integration and multi-device bus topology. Each barrier assigned a unique slave ID (1–247).</p>
+      <div class="tags">
+        <span class="tag green">RS485</span>
+        <span class="tag">Slave ID: 1</span>
+        <span class="tag">9600 baud</span>
+        <span class="tag">SCADA</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== STATE MACHINE ========== -->
+<div class="container" id="state-machine">
+  <h2 class="section-title">⚡ Barrier State Machine</h2>
+  <p class="section-sub">CSS-animated state transitions — click the animation controls below to visualize</p>
+
+  <div class="diagram">
+    <div class="diagram-title">FAAC 640 STATE MACHINE — ANIMATED TRANSITIONS</div>
+    <div class="state-machine">
+      <div class="sm-container">
+        <!-- IDLE -->
+        <div class="sm-state">
+          <div class="sm-box active" id="sm-idle">
+            <span class="sm-icon">🔲</span>
+            <span class="sm-label">IDLE</span>
+            <span class="sm-sub">Boom Closed</span>
+          </div>
+          <div class="sm-state-label">State 0</div>
+          <div class="sm-state-sub">Motor OFF, LED Red</div>
+        </div>
+
+        <div class="sm-arrow"><div class="sm-arrow-label">OPEN CMD</div><div class="sm-arrow-line"></div></div>
+
+        <!-- OPENING -->
+        <div class="sm-state">
+          <div class="sm-box opening" id="sm-opening">
+            <span class="sm-icon">⏫</span>
+            <span class="sm-label">OPENING</span>
+            <span class="sm-sub">Motor Forward</span>
+          </div>
+          <div class="sm-state-label">State 1</div>
+          <div class="sm-state-sub">PWM Ramping, LED Yellow</div>
+        </div>
+
+        <div class="sm-arrow"><div class="sm-arrow-label">LIMIT SW</div><div class="sm-arrow-line"></div></div>
+
+        <!-- OPEN -->
+        <div class="sm-state">
+          <div class="sm-box open" id="sm-open">
+            <span class="sm-icon">🟢</span>
+            <span class="sm-label">OPEN</span>
+            <span class="sm-sub">Boom Raised</span>
+          </div>
+          <div class="sm-state-label">State 2</div>
+          <div class="sm-state-sub">Motor OFF, LED Green</div>
+        </div>
+
+        <div class="sm-arrow"><div class="sm-arrow-label">CLOSE CMD</div><div class="sm-arrow-line"></div></div>
+
+        <!-- CLOSING -->
+        <div class="sm-state">
+          <div class="sm-box closing" id="sm-closing">
+            <span class="sm-icon">⏬</span>
+            <span class="sm-label">CLOSING</span>
+            <span class="sm-sub">Motor Reverse</span>
+          </div>
+          <div class="sm-state-label">State 3</div>
+          <div class="sm-state-sub">PWM Ramping, LED Yellow</div>
+        </div>
+
+        <div class="sm-arrow"><div class="sm-arrow-label">LIMIT SW</div><div class="sm-arrow-line"></div></div>
+
+        <!-- FAULT -->
+        <div class="sm-state">
+          <div class="sm-box fault" id="sm-fault">
+            <span class="sm-icon">🚨</span>
+            <span class="sm-label">FAULT</span>
+            <span class="sm-sub">Auto-Reverse</span>
+          </div>
+          <div class="sm-state-label">State 4</div>
+          <div class="sm-state-sub">Motor Reverse, LED Flash</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;">
+      <button onclick="animateState()" style="padding:10px 24px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;border:none;font-weight:600;font-size:13px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+        ▶ Play State Animation
+      </button>
+      <button onclick="resetStates()" style="padding:10px 24px;border-radius:8px;background:var(--surface);color:var(--muted);border:1px solid var(--border);font-weight:600;font-size:13px;cursor:pointer;margin-left:8px;">
+        ↺ Reset
+      </button>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>State</th><th>Code</th><th>Motor</th><th>LED</th><th>Output</th><th>Transition Trigger</th><th>Timeout</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>IDLE</strong></td><td><code>0x00</code></td><td>OFF</td><td>🔴 Red</td><td>None</td><td>OPEN command received</td><td>—</td></tr>
+        <tr><td><strong>OPENING</strong></td><td><code>0x01</code></td><td>Forward (CW)</td><td>🟡 Yellow</td><td>PWM 0→100%</td><td>Upper limit switch hit OR current spike</td><td>8s</td></tr>
+        <tr><td><strong>OPEN</strong></td><td><code>0x02</code></td><td>OFF (held)</td><td>🟢 Green</td><td>Brake engaged</td><td>CLOSE command OR timeout</td><td>30s (config)</td></tr>
+        <tr><td><strong>CLOSING</strong></td><td><code>0x03</code></td><td>Reverse (CCW)</td><td>🟡 Yellow</td><td>PWM 0→100%</td><td>Lower limit switch hit OR photo-eye triggered</td><td>8s</td></tr>
+        <tr><td><strong>FAULT</strong></td><td><code>0xFF</code></td><td>Reverse (CCW)</td><td>🔴 Flashing</td><td>Error buzzer</td><td>Manual reset OR auto-retry (3 attempts)</td><td>5s</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ========== SERIAL COMMANDS ========== -->
+<div class="container" id="serial">
+  <h2 class="section-title">📡 Serial Command Protocol</h2>
+  <p class="section-sub">RS232 hex command set for FAAC 640 control — 9600 baud, 8N1</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Command</th><th>Hex Bytes</th><th>ASCII</th><th>Response</th><th>Description</th><th>Category</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>OPEN</strong></td><td><code>FF 01 01 01 02</code></td><td>—</td><td><code>FF 01 01 00 02</code></td><td>Open barrier (raise boom)</td><td><span class="tag green">Control</span></td></tr>
+        <tr><td><strong>CLOSE</strong></td><td><code>FF 01 02 01 03</code></td><td>—</td><td><code>FF 01 02 00 03</code></td><td>Close barrier (lower boom)</td><td><span class="tag green">Control</span></td></tr>
+        <tr><td><strong>STOP</strong></td><td><code>FF 01 03 01 04</code></td><td>—</td><td><code>FF 01 03 00 04</code></td><td>Emergency stop motor</td><td><span class="tag red">Emergency</span></td></tr>
+        <tr><td><strong>STATUS</strong></td><td><code>FF 01 04 01 05</code></td><td>—</td><td><code>FF 01 04 0X XX</code></td><td>Query current state</td><td><span class="tag amber">Query</span></td></tr>
+        <tr><td><strong>RESET</strong></td><td><code>FF 01 05 01 06</code></td><td>—</td><td><code>FF 01 05 00 06</code></td><td>Clear fault and reset</td><td><span class="tag red">Recovery</span></td></tr>
+        <tr><td><strong>SET_SPEED</strong></td><td><code>FF 01 06 02 SS CC</code></td><td>—</td><td><code>FF 01 06 00 CC</code></td><td>Set motor speed (SS: 00–64 hex = 0–100%)</td><td><span class="tag amber">Config</span></td></tr>
+        <tr><td><strong>SET_TIMEOUT</strong></td><td><code>FF 01 07 02 TT CC</code></td><td>—</td><td><code>FF 01 07 00 CC</code></td><td>Set close timeout (TT: seconds)</td><td><span class="tag amber">Config</span></td></tr>
+        <tr><td><strong>GET_VERSION</strong></td><td><code>FF 01 08 01 09</code></td><td>—</td><td><code>FF 01 08 0V VV</code></td><td>Firmware version query</td><td><span class="tag">Info</span></td></tr>
+        <tr><td><strong>GET_TEMP</strong></td><td><code>FF 01 09 01 0A</code></td><td>—</td><td><code>FF 01 09 0T TT</code></td><td>Motor temperature (0.1°C units)</td><td><span class="tag">Info</span></td></tr>
+        <tr><td><strong>GET_CYCLES</strong></td><td><code>FF 01 0A 01 0B</code></td><td>—</td><td><code>FF 01 0A 0C CCC</code></td><td>Total cycle count since install</td><td><span class="tag">Info</span></td></tr>
+        <tr><td><strong>HEARTBEAT</strong></td><td><code>FF 01 0B 01 0C</code></td><td>—</td><td><code>FF 01 0B 00 0C</code></td><td>Keep-alive ping (every 5s)</td><td><span class="tag">Info</span></td></tr>
+        <tr><td><strong>SYNC_OPEN</strong></td><td><code>FF 01 10 01 11</code></td><td>—</td><td><code>FF 01 10 00 11</code></td><td>Open with sync (multi-lane)</td><td><span class="tag green">Control</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <h3 style="margin-bottom:12px;">Packet Format</h3>
+      <pre><code>┌──────┬──────┬──────┬──────┬──────┐
+│ HEAD │ ADDR │ CMD  │ DATA │ CHK  │
+│ 0xFF │ 0x01 │ 0xXX │ ...  │ 0xXX │
+└──────┴──────┴──────┴──────┴──────┘
+
+HEAD  = Fixed header (0xFF)
+ADDR  = Device address (0x01 = primary)
+CMD   = Command byte
+DATA  = Payload (variable length)
+CHK   = XOR checksum of all previous bytes</code></pre>
+    </div>
+    <div class="card">
+      <h3 style="margin-bottom:12px;">Checksum Calculation</h3>
+      <pre><code>// XOR checksum example for OPEN command
+bytes = [0xFF, 0x01, 0x01, 0x01]
+chk = 0xFF ^ 0x01 ^ 0x01 ^ 0x01
+    = 0xFF
+    = 0x02  // after wrap
+
+// Final packet: FF 01 01 01 02
+
+// Node.js implementation
+function calcChecksum(buf) {
+  let chk = 0;
+  for (const b of buf) chk ^= b;
+  return chk & 0xFF;
+}</code></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ========== TCP / MODBUS ========== -->
+<div class="container" id="protocols">
+  <h2 class="section-title">🌐 TCP/IP &amp; Modbus Protocols</h2>
+  <p class="section-sub">Network control interfaces for remote barrier operation</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon amber">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg>
+        </div>
+        <div><h3>TCP/IP Protocol</h3><div class="model">Direct Ethernet control via WIZnet W5500</div></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Default IP</td><td><code>192.168.1.100</code></td></tr>
+            <tr><td>Subnet Mask</td><td><code>255.255.255.0</code></td></tr>
+            <tr><td>Gateway</td><td><code>192.168.1.1</code></td></tr>
+            <tr><td>TCP Port</td><td><code>5000</code></td></tr>
+            <tr><td>Protocol</td><td>TCP Client (barrier connects to controller)</td></tr>
+            <tr><td>Keepalive</td><td>5s heartbeat ping</td></tr>
+            <tr><td>Timeout</td><td>10s disconnect → auto-retry → FAULT state</td></tr>
+            <tr><td>Packet Format</td><td>Same as serial (FF ADDR CMD DATA CHK)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3 style="margin:16px 0 8px;">TCP Configuration Commands</h3>
+      <pre><code># Set barrier IP via serial config command
+FF 01 20 04 C0 A8 01 64   # Set IP: 192.168.1.100
+FF 01 21 04 FF FF FF 00   # Set Mask: 255.255.255.0
+FF 01 22 04 C0 A8 01 01   # Set Gateway: 192.168.1.1
+FF 01 23 02 13 88         # Set Port: 5000
+FF 01 24 01 01            # Enable DHCP
+FF 01 25 01 00            # Disable DHCP</code></pre>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <div><h3>Modbus RTU Protocol</h3><div class="model">SCADA integration via RS485 bus</div></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Physical Layer</td><td>RS485 (2-wire half-duplex)</td></tr>
+            <tr><td>Baud Rate</td><td>9600 (configurable: 4800/9600/19200)</td></tr>
+            <tr><td>Data Format</td><td>8N1 (8 data, No parity, 1 stop)</td></tr>
+            <tr><td>Slave ID</td><td>1 (range: 1–247)</td></tr>
+            <tr><td>Function Codes</td><td>0x03 (Read), 0x06 (Write Single), 0x10 (Write Multiple)</td></tr>
+            <tr><td>Polling Interval</td><td>100ms minimum</td></tr>
+            <tr><td>Max Devices</td><td>32 per RS485 bus</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3 style="margin:16px 0 8px;">Modbus Register Map</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Register</th><th>Address</th><th>Access</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>Control</td><td><code>40001</code></td><td>R/W</td><td>UINT16</td><td>0=Stop, 1=Open, 2=Close, 3=Reset</td></tr>
+            <tr><td>Status</td><td><code>30001</code></td><td>R</td><td>UINT16</td><td>0=Idle, 1=Opening, 2=Open, 3=Closing, 4=Fault</td></tr>
+            <tr><td>Speed</td><td><code>40002</code></td><td>R/W</td><td>UINT16</td><td>Motor speed 0–100 (%)</td></tr>
+            <tr><td>Cycle Count</td><td><code>30002</code></td><td>R</td><td>UINT32</td><td>Total open/close cycles</td></tr>
+            <tr><td>Motor Temp</td><td><code>30004</code></td><td>R</td><td>INT16</td><td>Temperature in 0.1°C units</td></tr>
+            <tr><td>Firmware</td><td><code>30006</code></td><td>R</td><td>UINT16</td><td>Firmware version (major.minor)</td></tr>
+            <tr><td>Close Timeout</td><td><code>40003</code></td><td>R/W</td><td>UINT16</td><td>Auto-close delay in seconds</td></tr>
+            <tr><td>Fault Code</td><td><code>30008</code></td><td>R</td><td>UINT16</td><td>Last fault code (0=none)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PHYSICAL INSTALLATION ========== -->
+<div class="container" id="installation">
+  <h2 class="section-title">🔧 Physical Installation</h2>
+  <p class="section-sub">Foundation, mounting, boom arm, and clearance zone specifications</p>
+
+  <div class="diagram">
+    <div class="diagram-title">MOUNTING LAYOUT — TOP VIEW</div>
+    <pre>
+                    ┌───────────────────────────────────────────────┐
+                    │              LANE WIDTH (3.5m)                │
+                    │◄─────────────────────────────────────────────►│
+                    │                                               │
+    ┌───────────────┼───────────────────────────────────────────────┼───────────────┐
+    │               │                                               │               │
+    │  ╔═══════════╗│    ┌──────────────────────────────────┐      │╔═══════════╗  │
+    │  ║ BARRIER   ║│    │         BOOM ARM (3m)            │      │║ BARRIER   ║  │
+    │  ║ GATE UNIT ║│    │   ════════════════════════════   │      │║ GATE UNIT ║  │
+    │  ║ (Left)    ║│    │   ▲                              │      │║ (Right)   ║  │
+    │  ╚═══════════╝│    │   │                              │      │╚═══════════╝  │
+    │       │       │    │   │  BOOM ARM                    │      │       │       │
+    │   ┌───┘       │    │   │  Cross-section:              │      │       └───┐   │
+    │   │ Foundation│    │   │  ┌────┐                      │      │Foundation │   │
+    │   │ 600x600   │    │   │  │████│ Aluminum            │      │ 600x600   │   │
+    │   │ x800mm    │    │   │  └────┘ 80x80mm            │      │ x800mm    │   │
+    │   └───┐       │    │   │                              │      │       ┌───┘   │
+    │       │       │    │   └──────────────────────────────┘      │       │       │
+    │  ╔═══════════╗│    └──────────────────────────────────┘      │╔═══════════╗  │
+    │  ║ PHOTO-EYE ║│            ◉ PHOTO-EYE                      │║ PHOTO-EYE ║  │
+    │  ║ (Emit)    ║│            ◉ (Receive)                      │║ (Return)  ║  │
+    │  ╚═══════════╝│                                               │╚═══════════╝  │
+    │               │                                               │               │
+    │  ◄── 600mm ──►│                                               │◄── 600mm ──► │
+    │  Clearance    │                                               │  Clearance    │
+    └───────────────┼───────────────────────────────────────────────┼───────────────┘
+                    │                                               │
+                    │           ◉ LOOP DETECTOR (In-ground)         │
+                    │         ┌─────────────────────┐               │
+                    │         │    Inductive Loop    │               │
+                    │         │    2m x 1m saw cut   │               │
+                    │         └─────────────────────┘               │
+                    │                                               │
+                    │◄─────────────── 4.5m ────────────────────────►│
+                    │              TOTAL LANE + CLEARANCE            │
+    </pre>
+  </div>
+
+  <div class="diagram">
+    <div class="diagram-title">SIDE VIEW — CLEARANCE ZONES</div>
+    <pre>
+                          ┌─────────────────────────────────────────┐
+                          │          GANTRY / OVERHEAD              │
+                          │    ┌─────┐  ┌─────┐  ┌─────┐          │
+                          │    │ 🔴  │  │ 🟡  │  │ 🟢  │  LED     │
+                          │    │ RED │  │YEL  │  │GRN  │  Signal   │
+                          │    └──┬──┘  └──┬──┘  └──┬──┘          │
+                          │       │        │        │               │
+                          │       └────────┼────────┘               │
+                          │                │                        │
+                          │          5.5m MIN clearance             │
+                          │          from ground to gantry          │
+                          │                │                        │
+    ┌─────────────────────┼────────────────┼────────────────────────┼──────────────────┐
+    │ GROUND LEVEL        │                │                        │                  │
+    │                     │                │                        │                  │
+    │  ╔═══════════╗      │                │                        │                  │
+    │  ║  BARRIER  ║      │          ══════╪══════                  │                  │
+    │  ║  GATE     ║      │          BOOM  │ ARM                    │                  │
+    │  ║  (closed) ║      │          (horizontal)                   │                  │
+    │  ╚═══════════╝      │                │                        │                  │
+    │    ▲ 3.2m height    │                │                        │                  │
+    │    │                │                │                        │                  │
+    │    │                │                │                        │                  │
+    │    │    ┌─────┐     │                │                   ┌────┴────┐             │
+    │    │    │MOTOR│     │                │                   │ PHOTO   │             │
+    │    │    │     │     │                │                   │ EYE     │             │
+    │    └────┤     ├─────┘                │                   │ (300mm) │             │
+    │         └─────┘     │                │                   └─────────┘             │
+    │  ◄── 600mm ──►     │                │               ◄── 300mm ──►              │
+    │  from lane edge     │                │               from boom path              │
+    └─────────────────────┼────────────────┼────────────────────────┼──────────────────┘
+                          │                │                        │
+                          │◄── 3.5m LANE ──►│                       │
+                          │                │                        │
+                          │◄─── 1.5m ──────►│                       │
+                          │    from barrier │                       │
+                          │    to loop detector                     │
+    </pre>
+  </div>
+
+  <h3 style="margin:24px 0 12px;">📐 Clearance Zone Specifications</h3>
+  <div class="zone-grid">
+    <div class="zone-card blue">
+      <div style="font-size:24px;">📐</div>
+      <div class="zone-value">600mm</div>
+      <div class="zone-label">Barrier Unit to Lane Edge</div>
+    </div>
+    <div class="zone-card green">
+      <div style="font-size:24px;">📏</div>
+      <div class="zone-value">5.5m</div>
+      <div class="zone-label">Min Overhead Clearance</div>
+    </div>
+    <div class="zone-card amber">
+      <div style="font-size:24px;">↔️</div>
+      <div class="zone-value">300mm</div>
+      <div class="zone-label">Photo-Eye to Boom Path</div>
+    </div>
+    <div class="zone-card red">
+      <div style="font-size:24px;">↕️</div>
+      <div class="zone-value">3.2m</div>
+      <div class="zone-label">Barrier Unit Height</div>
+    </div>
+    <div class="zone-card blue">
+      <div style="font-size:24px;">🛤️</div>
+      <div class="zone-value">1.5m</div>
+      <div class="zone-label">Barrier to Loop Detector</div>
+    </div>
+    <div class="zone-card green">
+      <div style="font-size:24px;">🔧</div>
+      <div class="zone-value">450mm</div>
+      <div class="zone-label">Service Access Clearance</div>
+    </div>
+  </div>
+
+  <div class="card-grid" style="margin-top:24px;">
+    <div class="card">
+      <h3 style="margin-bottom:12px;">Concrete Foundation</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Pit Dimensions</td><td>600 × 600 × 800mm (L×W×D)</td></tr>
+            <tr><td>Concrete Mix</td><td>M25 grade (1:1:2)</td></tr>
+            <tr><td>Rebar</td><td>4× 12mm rods + stirrups</td></tr>
+            <tr><td>Anchor Bolts</td><td>4× M16 × 200mm galvanized</td></tr>
+            <tr><td>Curing Time</td><td>7 days minimum before mounting</td></tr>
+            <tr><td>Drainage</td><td>20mm PVC pipe to side drain</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="margin-bottom:12px;">Boom Arm Assembly</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Component</th><th>Specification</th></tr></thead>
+          <tbody>
+            <tr><td>Material</td><td>Aluminum alloy 6061-T6</td></tr>
+            <tr><td>Cross-section</td><td>80 × 80mm square tube</td></tr>
+            <tr><td>Weight (3m)</td><td>4.2 kg</td></tr>
+            <tr><td>Weight (6m)</td><td>8.4 kg</td></tr>
+            <tr><td>Tip Clearance</td><td>Reflective tape + rubber cap</td></tr>
+            <tr><td>Anti-lift</td><td>Spring-loaded locking pin</td></tr>
+            <tr><td>Boom Type</td><td>Articulated (folding) for low-clearance</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SAFETY FEATURES ========== -->
+<div class="container" id="safety">
+  <h2 class="section-title">🛡️ Safety Features</h2>
+  <p class="section-sub">Built-in safety mechanisms to prevent vehicle damage and ensure operator safety</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon red">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div><h3>Auto-Reverse on Obstruction</h3><div class="model">Primary collision prevention</div></div>
+      </div>
+      <p>If the boom arm contacts an obstruction while closing, the motor current spikes above threshold (3A). The controller immediately reverses direction and opens the boom. Prevents vehicle damage and passenger injury.</p>
+      <div class="tags">
+        <span class="tag red">Current Spike Detection</span>
+        <span class="tag amber">&lt;50ms Response</span>
+        <span class="tag green">Auto-Recovery</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon amber">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div><h3>Safety Photo-Eyes (2×)</h3><div class="model">Infrared beam obstruction detection</div></div>
+      </div>
+      <p>Dual infrared photo-eye sensors at 300mm and 500mm height detect vehicle presence in the boom path. If beam is broken during closing cycle, barrier immediately reverses. Required by international safety standards.</p>
+      <div class="tags">
+        <span class="tag amber">Infrared 940nm</span>
+        <span class="tag">30m Range</span>
+        <span class="tag green">Fail-safe (NC)</span>
+        <span class="tag">IP67</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div><h3>Battery Backup</h3><div class="model">Emergency operation during power loss</div></div>
+      </div>
+      <p>12V 7Ah sealed lead-acid battery provides 50+ open/close cycles during power outage. Automatic switchover in &lt;10ms. Low-voltage cutoff at 10.5V prevents deep discharge damage.</p>
+      <div class="tags">
+        <span class="tag green">12V 7Ah SLA</span>
+        <span class="tag">50+ Cycles</span>
+        <span class="tag amber">Auto Switchover</span>
+        <span class="tag">Float Charge</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon purple">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div><h3>Motor Overheat Protection</h3><div class="model">NTC thermistor thermal cutoff</div></div>
+      </div>
+      <p>NTC thermistor embedded in motor winding monitors temperature. If motor exceeds 80°C, controller reduces PWM duty cycle. At 100°C, motor is locked out for 60s cooldown. Prevents permanent winding damage.</p>
+      <div class="tags">
+        <span class="tag">NTC 10kΩ</span>
+        <span class="tag amber">80°C Derate</span>
+        <span class="tag red">100°C Lockout</span>
+        <span class="tag green">60s Cooldown</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon cyan">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div><h3>Manual Release Handle</h3><div class="model">Mechanical override for emergency</div></div>
+      </div>
+      <p>Key-operated manual release handle on the barrier housing disengages the motor brake, allowing manual boom operation. Used during maintenance, power loss (no battery), or emergency evacuation.</p>
+      <div class="tags">
+        <span class="tag">Key-lock</span>
+        <span class="tag green">Brake Release</span>
+        <span class="tag amber">Emergency Only</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon red">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div><h3>Limit Switches (2×)</h3><div class="model">Upper and lower position detection</div></div>
+      </div>
+      <p>Spring-actuated microswitches detect fully open and fully closed positions. Prevents motor overrun and mechanical damage. Adjustable actuator arm allows fine-tuning of travel limits.</p>
+      <div class="tags">
+        <span class="tag red">NC Contacts</span>
+        <span class="tag">IP67 Sealed</span>
+        <span class="tag green">10M Cycles</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== WIRING DIAGRAMS ========== -->
+<div class="container" id="wiring">
+  <h2 class="section-title">⚡ Wiring Diagrams</h2>
+  <p class="section-sub">Complete electrical connections for the barrier gate system</p>
+
+  <div class="diagram">
+    <div class="diagram-title">POWER WIRING — 24V DC SYSTEM</div>
+    <pre>
+    ┌─────────────────────────────────────────────────────────────────────────────┐
+    │                         POWER DISTRIBUTION                                 │
+    └─────────────────────────────────────────────────────────────────────────────┘
+
+    ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+    │  230V AC     │     │  24V DC      │     │  12V SLA     │
+    │  Mains       │────►│  PSU 10A     │────►│  Battery     │
+    │  Supply      │     │  Mean Well   │     │  12V 7Ah     │
+    │  50/60Hz     │     │  NDR-120-24  │     │              │
+    └──────────────┘     └──────┬───────┘     └──────┬───────┘
+                                │                     │
+                    ┌───────────┴───────────┐         │
+                    │    Auto Switchover     │         │
+                    │    Relay Module        │◄────────┘
+                    │    (12V coil, 30A)    │
+                    └───────────┬───────────┘
+                                │
+                    ┌───────────┴───────────┐
+                    │    24V DC BUS         │
+                    │    (Battery-backed)   │
+                    └──┬────────┬────────┬──┘
+                       │        │        │
+              ┌────────┘        │        └────────┐
+              │                 │                 │
+    ┌─────────▼──────┐  ┌──────▼────────┐  ┌─────▼─────────┐
+    │  FAAC 640      │  │  RPi 4        │  │  Safety       │
+    │  Barrier Gate  │  │  Lane Control │  │  Photo-Eyes   │
+    │  24V DC IN     │  │  (via USB     │  │  24V DC IN    │
+    │  3A max        │  │   PSU)        │  │  50mA each    │
+    └────────────────┘  └───────────────┘  └───────────────┘
+    </pre>
+  </div>
+
+  <div class="diagram">
+    <div class="diagram-title">SIGNAL WIRING — RS232 SERIAL CONTROL</div>
+    <pre>
+    ┌──────────────────────────┐           ┌──────────────────────────┐
+    │    RPi 4 (GPIO)          │           │    FAAC 640 Control Board│
+    │                          │           │                          │
+    │  GPIO 14 (TXD)  ────────┼───┐   ┌───┼──── RXD Pin 3           │
+    │                          │   │   │   │                          │
+    │  GPIO 15 (RXD)  ────────┼───┼───┼───┼──── TXD Pin 5           │
+    │                          │   │   │   │                          │
+    │  GND (Pin 6)     ────────┼───┼───┼───┼──── GND Pin 7           │
+    │                          │   │   │   │                          │
+    │  (Optional)              │   │   │   │                          │
+    │  GPIO 18 (RTS)   ───────┼───┼───┼───┼──── CTS Pin 8           │
+    │  GPIO 23 (CTS)   ───────┼───┼───┼───┼──── RTS Pin 9           │
+    │                          │   │   │   │                          │
+    └──────────────────────────┘   │   │   └──────────────────────────┘
+                                   │   │
+                          ┌────────┘   └────────┐
+                          │  MAX232 Level       │
+                          │  Shifter            │
+                          │  ┌────────────┐     │
+                          └──┤ TTL ↔ RS232├─────┘
+                             └────────────┘
+                               │    │
+                          3.3V │    │ ±12V
+                               │    │
+                          ┌────┘    └────┐
+                          │  From RPi    │  To Barrier
+                          │  3.3V UART   │  ±12V RS232
+                          └──────────────┘
+
+    NOTE: Direct 3.3V→RS232 connection may work for short cables (&lt;2m).
+    Use MAX232/MAX3232 level shifter for reliable communication.
+    </pre>
+  </div>
+
+  <div class="diagram">
+    <div class="diagram-title">SAFETY WIRING — PHOTO-EYES & LIMIT SWITCHES</div>
+    <pre>
+    ┌──────────────────────────────────────────────────────────────────┐
+    │                    SAFETY CIRCUIT WIRING                        │
+    └──────────────────────────────────────────────────────────────────┘
+
+    24V DC ────────┬──────────────┬──────────────┬──────────────┬────
+                   │              │              │              │
+                   │         ┌────┴────┐    ┌────┴────┐    ┌───┴───┐
+                   │         │ PHOTO   │    │ PHOTO   │    │ LIMIT │
+                   │         │ EYE #1  │    │ EYE #2  │    │ SW    │
+                   │         │ (Emit)  │    │ (Recv)  │    │ (UP)  │
+                   │         │ NC      │    │ NC      │    │ NC    │
+                   │         └────┬────┘    └────┬────┘    └───┬───┘
+                   │              │              │              │
+                   │              └──────┬───────┘              │
+                   │                     │                      │
+                   │              ┌──────▼──────┐        ┌──────▼──────┐
+                   │              │  SAFETY     │        │  LIMIT      │
+                   │              │  RELAY       │        │  SWITCH     │
+                   │              │  (K1)        │        │  (K2)       │
+                   │              │  NC → NO     │        │  NC → NO    │
+                   │              └──────┬──────┘        └──────┬──────┘
+                   │                     │                      │
+                   │              ┌──────▼──────┐        ┌──────▼──────┐
+                   │              │  FAAC 640   │        │  FAAC 640   │
+                   │              │  Safety     │        │  Limit      │
+                   │              │  Input      │        │  Input      │
+                   │              │  (Pin 1-2)  │        │  (Pin 3-4)  │
+                   │              └──────┬──────┘        └──────┬──────┘
+                   │                     │                      │
+    GND ───────────┴─────────────────────┴──────────────────────┴────
+
+    WIRING RULES:
+    • Use shielded cable (STP Cat5e) for all safety wiring
+    • Maximum cable length: 50m for photo-eyes, 10m for limit switches
+    • NC (Normally Closed) configuration — fail-safe on wire break
+    • Add 100Ω termination resistor at each end of safety bus
+    • Test safety circuit before each power-on
+    </pre>
+  </div>
+</div>
+
+<!-- ========== TESTING ========== -->
+<div class="container" id="testing">
+  <h2 class="section-title">🧪 Testing &amp; Validation</h2>
+  <p class="section-sub">curl commands and test procedures to validate barrier gate operation</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h3 style="margin-bottom:12px;">Serial Command Tests</h3>
+      <pre><code># Open barrier via serial (Linux/Mac)
+echo -ne '\xFF\x01\x01\x01\x02' > /dev/ttyUSB0
+
+# Close barrier via serial
+echo -ne '\xFF\x01\x02\x01\x03' > /dev/ttyUSB0
+
+# Query status
+echo -ne '\xFF\x01\x04\x01\x05' > /dev/ttyUSB0
+xxd /dev/ttyUSB0
+
+# Python test script
+import serial
+ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+
+# OPEN command
+ser.write(b'\xFF\x01\x01\x01\x02')
+resp = ser.read(5)
+print(f"Response: {resp.hex()}")
+
+# STATUS query
+ser.write(b'\xFF\x01\x04\x01\x05')
+resp = ser.read(5)
+print(f"Status: 0x{resp[3]:02X}")</code></pre>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom:12px;">TCP Command Tests</h3>
+      <pre><code># Test TCP connection to barrier
+nc -zv 192.168.1.100 5000
+
+# Send OPEN command via TCP
+echo -ne '\xFF\x01\x01\x01\x02' | nc 192.168.1.100 5000
+
+# Send CLOSE command via TCP
+echo -ne '\xFF\x01\x02\x01\x03' | nc 192.168.1.100 5000
+
+# Send STATUS query via TCP
+echo -ne '\xFF\x01\x04\x01\x05' | nc 192.168.1.100 5000
+
+# Python TCP test
+import socket
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.connect(('192.168.1.100', 5000))
+
+# OPEN
+sock.send(b'\xFF\x01\x01\x01\x02')
+resp = sock.recv(10)
+print(f"Response: {resp.hex()}")
+
+# STATUS
+sock.send(b'\xFF\x01\x04\x01\x05')
+resp = sock.recv(10)
+state = resp[3]
+states = {0:'IDLE',1:'OPENING',2:'OPEN',3:'CLOSING',4:'FAULT'}
+print(f"State: {states.get(state, 'UNKNOWN')}")
+
+sock.close()</code></pre>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom:12px;">Modbus RTU Tests</h3>
+      <pre><code># Read status register via Modbus
+# Using modbus-cli (Ruby gem)
+mbpoll -m rtu -a 1 -b 9600 -p none -s 1 -t 4:0.00 /dev/ttyUSB0
+
+# Write OPEN command to control register
+mbpoll -m rtu -a 1 -b 9600 -p none -s 1 -t 4:0.00 \
+  /dev/ttyUSB0 1    # 1 = OPEN
+
+# Read cycle count (32-bit)
+mbpoll -m rtu -a 1 -b 9600 -p none -s 1 -t 4:0.002 \
+  /dev/ttyUSB0
+
+# Python pymodbus test
+from pymodbus.client import ModbusSerialClient
+client = ModbusSerialClient(
+    port='/dev/ttyUSB0',
+    baudrate=9600,
+    parity='N',
+    stopbits=1,
+    bytesize=8
+)
+client.connect()
+
+# Read status
+result = client.read_holding_registers(
+    address=30001, count=1, slave=1
+)
+print(f"Status: {result.registers[0]}")
+
+# Write OPEN command
+client.write_register(
+    address=40001, value=1, slave=1
+)
+
+client.close()</code></pre>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom:12px;">Plaza Server API Tests</h3>
+      <pre><code># Open barrier via plaza server API
+curl -X POST http://localhost:4000/api/lane/1/barrier/open \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json"
+
+# Close barrier
+curl -X POST http://localhost:4000/api/lane/1/barrier/close \
+  -H "Authorization: Bearer $TOKEN"
+
+# Query barrier status
+curl -s http://localhost:4000/api/lane/1/barrier/status \
+  -H "Authorization: Bearer $TOKEN" | python3 -m json.tool
+
+# Emergency stop
+curl -X POST http://localhost:4000/api/lane/1/barrier/stop \
+  -H "Authorization: Bearer $TOKEN"
+
+# Expected response:
+{
+  "success": true,
+  "data": {
+    "lane_id": 1,
+    "state": "OPEN",
+    "motor_temp": 42.5,
+    "cycle_count": 15234,
+    "last_fault": null,
+    "battery_voltage": 13.2
+  }
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px;">
+    <h3 style="margin-bottom:12px;">Pre-Installation Checklist</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Check Item</th><th>Method</th><th>Pass Criteria</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Foundation curing</td><td>Visual inspection + slump test</td><td>7+ days, no cracks, level ±2mm</td><td><span class="tag green">PASS/FAIL</span></td></tr>
+          <tr><td>2</td><td>Power supply voltage</td><td>Multimeter at barrier terminals</td><td>24.0V ±0.5V DC</td><td><span class="tag green">PASS/FAIL</span></td></tr>
+          <tr><td>3</td><td>Serial communication</td><td>Send STATUS command, check response</td><td>Valid 5-byte response within 100ms</td><td><span class="tag green">PASS/FAIL</span></td></tr>
+          <tr><td>4</td><td>Photo-eye function</td><td>Block beam, check motor reverse</td><td>Motor reverses within 50ms</td><td><span class="tag green">PASS/FAIL</span></td></tr>
+          <tr><td>5</td><td>Limit switches</td><td>Manually push boom, check stop</td><td>Motor stops at each limit</td><td><span class="tag green">PASS/FAIL</span></td></tr>
+          <tr><td>6</td><td>Auto-reverse test</td><td>Place obstacle under closing boom</td><td>Boom reverses without damage</td><td><span class="tag green">PASS/FAIL</span></td></tr>
+          <tr><td>7</td><td>Battery backup</td><td>Disconnect mains, trigger open/close</td><td>50+ cycles on battery</td><td><span class="tag green">PASS/FAIL</span></td></tr>
+          <tr><td>8</td><td>Manual release</td><td>Use key to release brake</td><td>Boom moves freely, re-engages on key release</td><td><span class="tag green">PASS/FAIL</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ========== MAINTENANCE ========== -->
+<div class="container" id="maintenance">
+  <h2 class="section-title">🔧 Maintenance Schedule</h2>
+  <p class="section-sub">Preventive maintenance intervals to ensure 10+ year barrier gate lifespan</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Interval</th><th>Task</th><th>Tools Required</th><th>Time Est.</th><th>Priority</th><th>Procedure</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Daily</strong></td><td>Visual inspection</td><td>None</td><td>2 min</td><td><span class="tag red">Critical</span></td><td>Check boom alignment, photo-eye LED indicators, LED traffic light operation, listen for abnormal motor sounds</td></tr>
+        <tr><td><strong>Weekly</strong></td><td>Clean photo-eye lenses</td><td>Microfiber cloth, IPA</td><td>5 min</td><td><span class="tag amber">High</span></td><td>Wipe both emitter and receiver lenses with isopropyl alcohol. Check alignment with laser level</td></tr>
+        <tr><td><strong>Weekly</strong></td><td>Test safety reverse</td><td>Cardboard box</td><td>2 min</td><td><span class="tag red">Critical</span></td><td>Place cardboard under closing boom, verify auto-reverse triggers within 50ms</td></tr>
+        <tr><td><strong>Monthly</strong></td><td>Lubricate boom pivot</td><td>White lithium grease</td><td>10 min</td><td><span class="tag amber">High</span></td><td>Apply white lithium grease to boom arm pivot point and limit switch actuators</td></tr>
+        <tr><td><strong>Monthly</strong></td><td>Check cable connections</td><td>Phillips screwdriver</td><td>10 min</td><td><span class="tag amber">High</span></td><td>Tighten all terminal block screws, check for corrosion, inspect cable insulation</td></tr>
+        <tr><td><strong>Monthly</strong></td><td>Battery test</td><td>Multimeter</td><td>5 min</td><td><span class="tag">Medium</span></td><td>Measure battery voltage under load. Replace if below 11.5V under load</td></tr>
+        <tr><td><strong>Quarterly</strong></td><td>Motor brush inspection</td><td>Hex key set</td><td>20 min</td><td><span class="tag">Medium</span></td><td>Remove motor cover, inspect brush wear. Replace if length &lt;5mm</td></tr>
+        <tr><td><strong>Quarterly</strong></td><td>Spring tension adjustment</td><td>Torque wrench</td><td>15 min</td><td><span class="tag">Medium</span></td><td>Adjust counterbalance spring to match boom arm weight</td></tr>
+        <tr><td><strong>Semi-Annual</strong></td><td>Firmware update</td><td>USB flash drive</td><td>15 min</td><td><span class="tag">Medium</span></td><td>Download latest firmware from FAAC portal, flash via USB, verify version</td></tr>
+        <tr><td><strong>Semi-Annual</strong></td><td>Full cycle test</td><td>Test log sheet</td><td>30 min</td><td><span class="tag">Medium</span></td><td>Run 100 open/close cycles, log timing and current draw. Compare to baseline</td></tr>
+        <tr><td><strong>Annual</strong></td><td>Bearing replacement</td><td>Bearing puller set</td><td>2 hrs</td><td><span class="tag">Medium</span></td><td>Replace main pivot bearings and motor bearings per manufacturer spec</td></tr>
+        <tr><td><strong>Annual</strong></td><td>Complete overhaul</td><td>Full tool kit</td><td>4 hrs</td><td><span class="tag">Medium</span></td><td>Disassemble, clean, replace wear items, recalibrate, full test cycle</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card-grid" style="margin-top:24px;">
+    <div class="card">
+      <h3 style="margin-bottom:12px;">Replacement Parts Inventory</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Part</th><th>Part Number</th><th>Qty/Unit</th><th>Stock Min</th></tr></thead>
+          <tbody>
+            <tr><td>Battery 12V 7Ah</td><td>FAAC 785010</td><td>1</td><td>2 per plaza</td></tr>
+            <tr><td>Motor Brush Set</td><td>FAAC 780120</td><td>1 set</td><td>2 per plaza</td></tr>
+            <tr><td>Photo-Eye Pair</td><td>FAAC 780500</td><td>1 pair</td><td>1 per plaza</td></tr>
+            <tr><td>Limit Switch</td><td>FAAC 780300</td><td>2</td><td>4 per plaza</td></tr>
+            <tr><td>Boom Arm (3m)</td><td>FAAC 786001</td><td>1</td><td>1 per plaza</td></tr>
+            <tr><td>Control Board</td><td>FAAC 780010</td><td>1</td><td>1 per plaza</td></tr>
+            <tr><td>Counterbalance Spring</td><td>FAAC 780400</td><td>1</td><td>2 per plaza</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom:12px;">Common Fault Codes</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Code</th><th>Fault</th><th>Likely Cause</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr><td><code>E01</code></td><td>Motor Overcurrent</td><td>Boom jammed, bearing seized</td><td>Lubricate, check for obstructions</td></tr>
+            <tr><td><code>E02</code></td><td>Motor Overheat</td><td>Continuous cycling, ambient temp</td><td>Wait 60s cooldown, reduce cycle rate</td></tr>
+            <tr><td><code>E03</code></td><td>Photo-Eye Fault</td><td>Dirty lens, misaligned, broken wire</td><td>Clean, realign, check wiring</td></tr>
+            <tr><td><code>E04</code></td><td>Limit Switch Timeout</td><td>Switch failure, boom imbalance</td><td>Test switch, adjust spring tension</td></tr>
+            <tr><td><code>E05</code></td><td>Battery Low</td><td>Old battery, charger failure</td><td>Replace battery, check charger</td></tr>
+            <tr><td><code>E06</code></td><td>Communication Lost</td><td>Cable disconnect, RPi hang</td><td>Check cables, restart RPi service</td></tr>
+            <tr><td><code>E07</code></td><td>Position Error</td><td>Encoder drift, mechanical play</td><td>Recalibrate, check gears</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== BILL OF MATERIALS ========== -->
+<div class="container" id="bom">
+  <h2 class="section-title">💰 Bill of Materials — Barrier Gate System</h2>
+  <p class="section-sub">Complete parts list and cost breakdown for a single barrier gate lane unit</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Category</th><th>Item</th><th>Part Number</th><th>Qty</th><th>Unit Cost (MMK)</th><th>Total (MMK)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td rowspan="3">🔲 Barrier</td><td>FAAC 640 Barrier Gate Unit</td><td>FAAC 640-3M</td><td>1</td><td>3,500,000</td><td>3,500,000</td></tr>
+        <tr><td>Boom Arm (3m Aluminum)</td><td>FAAC 786001</td><td>1</td><td>300,000</td><td>300,000</td></tr>
+        <tr><td>Boom Tip (Rubber + Reflective)</td><td>FAAC 786002</td><td>1</td><td>50,000</td><td>50,000</td></tr>
+        <tr><td rowspan="3">🛡️ Safety</td><td>Safety Photo-Eye Pair (IR)</td><td>FAAC 780500</td><td>1</td><td>250,000</td><td>250,000</td></tr>
+        <tr><td>Limit Switch (Upper)</td><td>FAAC 780300</td><td>1</td><td>45,000</td><td>45,000</td></tr>
+        <tr><td>Limit Switch (Lower)</td><td>FAAC 780300</td><td>1</td><td>45,000</td><td>45,000</td></tr>
+        <tr><td rowspan="3">⚡ Power</td><td>24V DC PSU (10A, Mean Well)</td><td>NDR-120-24</td><td>1</td><td>120,000</td><td>120,000</td></tr>
+        <tr><td>Battery 12V 7Ah SLA</td><td>FAAC 785010</td><td>1</td><td>400,000</td><td>400,000</td></tr>
+        <tr><td>Auto-Switchover Relay</td><td>OMRON MY4NJ</td><td>1</td><td>35,000</td><td>35,000</td></tr>
+        <tr><td rowspan="2">🔧 Control</td><td>MAX232 Level Shifter Module</td><td>MAX232CPE</td><td>1</td><td>15,000</td><td>15,000</td></tr>
+        <tr><td>Terminal Block (10-way)</td><td>Phoenix CLIPLINE</td><td>2</td><td>12,000</td><td>24,000</td></tr>
+        <tr><td rowspan="5">🔌 Wiring</td><td>STP Cat5e Cable (30m)</td><td>Belden 1585E</td><td>1</td><td>45,000</td><td>45,000</td></tr>
+        <tr><td>Power Cable 2.5mm² (10m)</td><td>Generic</td><td>1</td><td>25,000</td><td>25,000</td></tr>
+        <tr><td>Wire Ferrules + Heat Shrink</td><td>Assorted kit</td><td>1</td><td>15,000</td><td>15,000</td></tr>
+        <tr><td>Cable Glands (PG9/PG11)</td><td>IP68 rated</td><td>4</td><td>3,000</td><td>12,000</td></tr>
+        <tr><td>Cable Tray + Clips</td><td>Galvanized steel</td><td>1</td><td>20,000</td><td>20,000</td></tr>
+        <tr><td rowspan="3">🏗️ Mounting</td><td>Anchor Bolt M16×200mm (Galv)</td><td>ISO 898</td><td>4</td><td>8,000</td><td>32,000</td></tr>
+        <tr><td>Foundation Rebar (12mm)</td><td>ASTM A615</td><td>4m</td><td>12,000</td><td>48,000</td></tr>
+        <tr><td>Drainage Pipe PVC 20mm</td><td>Schedule 40</td><td>1m</td><td>5,000</td><td>5,000</td></tr>
+        <tr><td rowspan="2">🧰 Tools</td><td>Hex Key Set (Metric)</td><td>Bondhus</td><td>1</td><td>35,000</td><td>35,000</td></tr>
+        <tr><td>Torque Wrench (10–50Nm)</td><td>Generic</td><td>1</td><td>80,000</td><td>80,000</td></tr>
+        <tr style="background:rgba(239,68,68,0.08);font-weight:700;"><td colspan="5">TOTAL PER BARRIER GATE UNIT</td><td style="color:#f87171;">4,746,000 MMK</td></tr>
+        <tr style="background:rgba(59,130,246,0.08);font-weight:700;"><td colspan="5">TOTAL PER PLAZA (4 LANES)</td><td style="color:#60a5fa;">18,984,000 MMK</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card-grid" style="margin-top:24px;">
+    <div class="card">
+      <h3 style="margin-bottom:12px;">📦 Spare Parts Kit (Recommended)</h3>
+      <p style="margin-bottom:12px;">Keep these spares on-site for rapid replacement and minimal downtime.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Part</th><th>Qty</th><th>Cost (MMK)</th></tr></thead>
+          <tbody>
+            <tr><td>Battery 12V 7Ah</td><td>2</td><td>800,000</td></tr>
+            <tr><td>Motor Brush Set</td><td>2</td><td>120,000</td></tr>
+            <tr><td>Photo-Eye Pair</td><td>1</td><td>250,000</td></tr>
+            <tr><td>Limit Switch</td><td>4</td><td>180,000</td></tr>
+            <tr><td>Fuse Set (2A/5A/10A)</td><td>10</td><td>15,000</td></tr>
+            <tr><td>Terminal Block Spares</td><td>2</td><td>24,000</td></tr>
+            <tr style="font-weight:700;"><td colspan="2">SPARE KIT TOTAL</td><td style="color:#60a5fa;">1,389,000 MMK</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom:12px;">📊 Cost per Lane Analysis</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Component</th><th>Cost (MMK)</th><th>% of Total</th></tr></thead>
+          <tbody>
+            <tr><td>Barrier Gate Unit</td><td>3,850,000</td><td>81.1%</td></tr>
+            <tr><td>Safety System</td><td>340,000</td><td>7.2%</td></tr>
+            <tr><td>Power System</td><td>555,000</td><td>11.7%</td></tr>
+            <tr><td>Control & Wiring</td><td>121,000</td><td>2.5%</td></tr>
+            <tr><td>Mounting</td><td>85,000</td><td>1.8%</td></tr>
+            <tr><td>Tools (one-time)</td><td>115,000</td><td>2.4%</td></tr>
+            <tr style="font-weight:700;background:rgba(59,130,246,0.08);"><td colspan="2">GRAND TOTAL PER LANE</td><td style="color:#60a5fa;">4,746,000 MMK</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <p>TollGate RFID Pass — Enterprise Highway OS v1.0</p>
+  <p style="margin-top:4px;">Barrier Gate Installation Guide • September 2026</p>
+  <div class="footer-links">
+    <a href="index.html">← Documentation Home</a>
+    <a href="01-rfid-reader.html">RFID Reader</a>
+    <a href="02-anpr-camera.html">ANPR Camera</a>
+    <a href="04-lane-controller.html">Lane Controller</a>
+    <a href="05-plaza-server.html">Plaza Server</a>
+    <a href="06-hq-server.html">HQ Server</a>
+  </div>
+</footer>
+
+<script>
+function animateState() {
+  const states = ['sm-idle','sm-opening','sm-open','sm-closing','sm-idle'];
+  const boxes = states.map(id => document.getElementById(id));
+  let step = 0;
+
+  function next() {
+    boxes.forEach(b => b.classList.remove('active'));
+    boxes[step].classList.add('active');
+    if (step < states.length - 1) {
+      step++;
+      setTimeout(next, 1200);
+    }
+  }
+  next();
+}
+
+function resetStates() {
+  document.querySelectorAll('.sm-box').forEach(b => b.classList.remove('active'));
+  document.getElementById('sm-idle').classList.add('active');
+}
+</script>
+
+</body>
+</html>

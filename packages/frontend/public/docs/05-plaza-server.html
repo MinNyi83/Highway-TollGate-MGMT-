@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plaza Server Installation Guide — TollGate RFID Pass</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f172a;--surface:#1e293b;--border:#334155;--accent:#3b82f6;--accent2:#8b5cf6;--green:#10b981;--amber:#f59e0b;--red:#ef4444;--cyan:#06b6d4;--pink:#ec4899;--text:#f1f5f9;--muted:#94a3b8;--dim:#64748b;--radius:16px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;}
+a{color:var(--accent);text-decoration:none;}
+a:hover{text-decoration:underline;}
+
+/* Header */
+.header{position:sticky;top:0;z-index:100;background:rgba(15,23,42,0.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;}
+.logo{display:flex;align-items:center;gap:12px;}
+.logo-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;}
+.logo-icon svg{width:22px;height:22px;fill:white;}
+.logo-text{font-size:18px;font-weight:700;}
+.logo-sub{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.nav{display:flex;gap:8px;align-items:center;}
+.nav a{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;color:var(--muted);transition:all 0.2s;}
+.nav a:hover,.nav a.active{background:rgba(59,130,246,0.1);color:var(--accent);text-decoration:none;}
+.back-link{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;color:var(--accent);background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);transition:all 0.2s;}
+.back-link:hover{background:rgba(59,130,246,0.15);text-decoration:none;}
+
+/* Hero */
+.hero{padding:60px 32px 40px;text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(6,182,212,0.12) 0%,transparent 60%);}
+.hero h1{font-size:2.6rem;font-weight:800;background:linear-gradient(135deg,#22d3ee,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;}
+.hero p{font-size:1.05rem;color:var(--muted);max-width:680px;margin:0 auto 24px;}
+.hero-badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.badge{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid;}
+.badge-blue{background:rgba(59,130,246,0.1);border-color:rgba(59,130,246,0.3);color:#60a5fa;}
+.badge-green{background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.3);color:#34d399;}
+.badge-purple{background:rgba(139,92,246,0.1);border-color:rgba(139,92,246,0.3);color:#a78bfa;}
+.badge-amber{background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.3);color:#fbbf24;}
+.badge-red{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.3);color:#f87171;}
+.badge-cyan{background:rgba(6,182,212,0.1);border-color:rgba(6,182,212,0.3);color:#22d3ee;}
+
+/* Container */
+.container{max-width:1100px;margin:0 auto;padding:40px 32px;}
+
+/* Section Headers */
+.section-block{margin-bottom:56px;}
+.section-header{display:flex;align-items:center;gap:14px;margin-bottom:8px;}
+.section-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px;}
+.section-icon.blue{background:rgba(59,130,246,0.15);}
+.section-icon.green{background:rgba(16,185,129,0.15);}
+.section-icon.purple{background:rgba(139,92,246,0.15);}
+.section-icon.amber{background:rgba(245,158,11,0.15);}
+.section-icon.red{background:rgba(239,68,68,0.15);}
+.section-icon.cyan{background:rgba(6,182,212,0.15);}
+.section-icon.pink{background:rgba(236,72,153,0.15);}
+.section-title{font-size:1.5rem;font-weight:700;}
+.section-sub{color:var(--muted);margin-bottom:24px;max-width:700px;}
+
+/* Cards */
+.grid{display:grid;gap:20px;}
+.grid-2{grid-template-columns:repeat(2,1fr);}
+.grid-3{grid-template-columns:repeat(3,1fr);}
+.grid-4{grid-template-columns:repeat(4,1fr);}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;transition:all 0.3s;}
+.card:hover{border-color:rgba(59,130,246,0.5);transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,0.3);}
+.card-header{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+.card-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.card-icon svg{width:26px;height:26px;}
+.card-icon.blue{background:rgba(59,130,246,0.15);}
+.card-icon.green{background:rgba(16,185,129,0.15);}
+.card-icon.purple{background:rgba(139,92,246,0.15);}
+.card-icon.amber{background:rgba(245,158,11,0.15);}
+.card-icon.red{background:rgba(239,68,68,0.15);}
+.card-icon.cyan{background:rgba(6,182,212,0.15);}
+.card-icon.pink{background:rgba(236,72,153,0.15);}
+.card h3{font-size:1.05rem;font-weight:600;}
+.card .model{font-size:12px;color:var(--dim);margin-top:2px;}
+.card p{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:12px;}
+.tags{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:500;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);color:#60a5fa;}
+.tag.green{background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.2);color:#34d399;}
+.tag.amber{background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.2);color:#fbbf24;}
+.tag.red{background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.2);color:#f87171;}
+.tag.purple{background:rgba(139,92,246,0.08);border-color:rgba(139,92,246,0.2);color:#a78bfa;}
+.tag.cyan{background:rgba(6,182,212,0.08);border-color:rgba(6,182,212,0.2);color:#22d3ee;}
+
+/* Table */
+.table-wrap{overflow-x:auto;margin:20px 0;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;padding:12px 16px;background:rgba(59,130,246,0.08);border-bottom:2px solid var(--border);font-weight:600;color:var(--accent);white-space:nowrap;}
+td{padding:10px 16px;border-bottom:1px solid var(--border);color:var(--muted);}
+tr:hover td{background:rgba(59,130,246,0.03);}
+td code{font-family:'JetBrains Mono',monospace;font-size:12px;background:rgba(59,130,246,0.1);padding:2px 6px;border-radius:4px;color:#60a5fa;}
+
+/* Code */
+pre{background:#0c1222;border:1px solid var(--border);border-radius:12px;padding:20px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.7;color:#94a3b8;margin:16px 0;}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;background:rgba(59,130,246,0.1);padding:2px 6px;border-radius:4px;color:#60a5fa;}
+pre code{background:none;padding:0;color:inherit;}
+pre .comment{color:#475569;}
+pre .keyword{color:#a78bfa;}
+pre .string{color:#34d399;}
+pre .highlight{color:#60a5fa;}
+pre .warning{color:#fbbf24;}
+pre .error{color:#f87171;}
+
+/* Diagram */
+.diagram{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:32px;margin:20px 0;text-align:center;}
+.diagram-title{font-size:14px;font-weight:600;color:var(--accent);margin-bottom:16px;}
+.diagram pre{text-align:left;display:inline-block;background:transparent;border:none;padding:0;font-size:12px;color:var(--muted);line-height:1.5;}
+
+/* Sync Animation */
+.sync-container{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:40px 32px;margin:24px 0;overflow:hidden;min-height:260px;}
+.sync-title{position:relative;z-index:2;text-align:center;font-size:14px;font-weight:600;color:var(--accent);margin-bottom:32px;}
+.sync-flow{position:relative;display:flex;align-items:center;justify-content:space-between;z-index:2;padding:0 20px;}
+.sync-node{padding:16px 24px;border-radius:12px;font-size:13px;font-weight:600;text-align:center;min-width:120px;position:relative;z-index:2;}
+.sync-node.plaza{background:linear-gradient(135deg,rgba(6,182,212,0.3),rgba(6,182,212,0.1));border:1px solid rgba(6,182,212,0.4);color:#22d3ee;}
+.sync-node.hq{background:linear-gradient(135deg,rgba(139,92,246,0.3),rgba(139,92,246,0.1));border:1px solid rgba(139,92,246,0.4);color:#c4b5fd;}
+.sync-node .node-icon{font-size:28px;display:block;margin-bottom:6px;}
+.sync-node .node-label{font-size:11px;color:var(--dim);margin-top:4px;}
+
+.sync-track{position:absolute;top:50%;left:140px;right:140px;height:3px;background:rgba(255,255,255,0.06);border-radius:2px;z-index:1;transform:translateY(-50%);}
+
+/* Push packet */
+.sync-push{position:absolute;top:50%;left:140px;right:140px;height:40px;z-index:3;pointer-events:none;}
+.sync-push .packet{position:absolute;width:48px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;transform:translateY(-50%);top:0;}
+.sync-push .packet.push{background:linear-gradient(135deg,rgba(16,185,129,0.9),rgba(6,182,212,0.9));color:#0f172a;animation:pushFlow 4s linear infinite;}
+.sync-push .packet.pull{background:linear-gradient(135deg,rgba(139,92,246,0.9),rgba(59,130,246,0.9));color:white;animation:pullFlow 4s linear infinite;animation-delay:2s;}
+
+@keyframes pushFlow{
+  0%{left:0%;opacity:0;}
+  5%{opacity:1;}
+  90%{opacity:1;}
+  100%{left:calc(100% - 48px);opacity:0;}
+}
+@keyframes pullFlow{
+  0%{right:0%;left:auto;opacity:0;transform:translateY(-50%) scaleX(-1);}
+  5%{opacity:1;}
+  90%{opacity:1;}
+  100%{right:calc(100% - 48px);left:auto;opacity:0;transform:translateY(-50%) scaleX(-1);}
+}
+
+/* Push/Pull label */
+.sync-label-row{position:absolute;top:50%;left:140px;right:140px;z-index:4;display:flex;justify-content:space-around;transform:translateY(-50%);pointer-events:none;}
+.sync-label-row .sync-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:4px 10px;border-radius:4px;background:rgba(15,23,42,0.9);border:1px solid var(--border);}
+.sync-label-row .sync-label.push-label{color:#34d399;border-color:rgba(16,185,129,0.3);animation:labelPulse 4s ease-in-out infinite;}
+.sync-label-row .sync-label.pull-label{color:#a78bfa;border-color:rgba(139,92,246,0.3);animation:labelPulse 4s ease-in-out infinite;animation-delay:2s;}
+
+@keyframes labelPulse{0%,100%{opacity:0.4;}45%,55%{opacity:1;}}
+
+/* Sync legend */
+.sync-legend{display:flex;gap:20px;justify-content:center;margin-top:20px;position:relative;z-index:2;}
+.sync-legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);}
+.sync-legend-dot{width:10px;height:10px;border-radius:3px;}
+.sync-legend-dot.push-dot{background:#34d399;}
+.sync-legend-dot.pull-dot{background:#a78bfa;}
+
+/* Arrow connectors in sync */
+.sync-arrow{position:absolute;top:50%;z-index:2;transform:translateY(-50%);font-size:18px;color:var(--dim);}
+.sync-arrow.left{left:130px;}
+.sync-arrow.right{right:130px;}
+
+/* Step list */
+.step-list{counter-reset:step;list-style:none;padding:0;}
+.step-list li{counter-increment:step;display:flex;gap:16px;margin-bottom:20px;padding:16px 20px;background:var(--surface);border:1px solid var(--border);border-radius:12px;transition:all 0.2s;}
+.step-list li:hover{border-color:rgba(59,130,246,0.4);}
+.step-list li::before{content:counter(step);min-width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step-content{flex:1;}
+.step-content h4{font-size:14px;font-weight:600;margin-bottom:4px;}
+.step-content p{font-size:13px;color:var(--muted);}
+
+/* Callout */
+.callout{padding:16px 20px;border-radius:12px;margin:16px 0;font-size:13px;display:flex;gap:12px;align-items:flex-start;}
+.callout-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+.callout.info{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);color:#93c5fd;}
+.callout.warning{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);color:#fcd34d;}
+.callout.success{background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);color:#6ee7b7;}
+.callout.error{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#fca5a5;}
+
+/* Health endpoint */
+.health-response{background:#0c1222;border:1px solid var(--border);border-radius:12px;padding:20px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7;color:#94a3b8;margin:16px 0;overflow-x:auto;}
+.health-response .key{color:#22d3ee;}
+.health-response .str{color:#34d399;}
+.health-response .num{color:#fbbf24;}
+.health-response .bool{color:#a78bfa;}
+.health-response .null{color:#ef4444;}
+
+/* Queue visual */
+.queue-visual{display:flex;gap:12px;align-items:flex-start;margin:20px 0;flex-wrap:wrap;}
+.queue-item{padding:12px 16px;border-radius:10px;font-size:12px;font-weight:500;display:flex;align-items:center;gap:8px;border:1px solid;min-width:100px;text-align:center;}
+.queue-item.pending{background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.3);color:#fbbf24;}
+.queue-item.synced{background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.3);color:#34d399;}
+.queue-item.failed{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.3);color:#f87171;}
+.queue-arrow{color:var(--dim);font-size:16px;display:flex;align-items:center;padding-top:8px;}
+.queue-status-bar{display:flex;height:8px;border-radius:4px;overflow:hidden;background:rgba(255,255,255,0.06);margin:12px 0;}
+.queue-status-bar .seg{transition:width 0.5s;}
+.queue-status-bar .seg.pending-seg{background:var(--amber);}
+.queue-status-bar .seg.synced-seg{background:var(--green);}
+.queue-status-bar .seg.failed-seg{background:var(--red);}
+
+/* Admin panel mockup */
+.admin-mock{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:20px 0;}
+.admin-mock-bar{display:flex;align-items:center;gap:8px;padding:10px 16px;background:rgba(0,0,0,0.3);border-bottom:1px solid var(--border);}
+.admin-mock-dot{width:10px;height:10px;border-radius:50%;}
+.admin-mock-dot.r{background:#ef4444;}
+.admin-mock-dot.y{background:#f59e0b;}
+.admin-mock-dot.g{background:#10b981;}
+.admin-mock-url{flex:1;text-align:center;font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace;}
+.admin-mock-body{padding:20px;display:grid;grid-template-columns:160px 1fr;gap:16px;min-height:280px;}
+.admin-mock-sidebar{display:flex;flex-direction:column;gap:4px;}
+.admin-mock-sidebar a{padding:8px 12px;border-radius:6px;font-size:12px;color:var(--muted);transition:all 0.2s;}
+.admin-mock-sidebar a:hover,.admin-mock-sidebar a.active{background:rgba(59,130,246,0.1);color:var(--accent);text-decoration:none;}
+.admin-mock-main{display:flex;flex-direction:column;gap:12px;}
+.admin-mock-stat{display:flex;gap:12px;}
+.admin-mock-stat .stat{flex:1;padding:12px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid var(--border);}
+.admin-mock-stat .stat-val{font-size:22px;font-weight:700;}
+.admin-mock-stat .stat-label{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;}
+.admin-mock-chart{height:100px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid var(--border);display:flex;align-items:flex-end;padding:12px;gap:3px;}
+.admin-mock-chart .bar{flex:1;border-radius:3px 3px 0 0;background:linear-gradient(180deg,var(--accent),var(--accent2));min-height:8px;opacity:0.6;transition:opacity 0.2s;}
+.admin-mock-chart .bar:hover{opacity:1;}
+
+/* Footer */
+.footer{text-align:center;padding:40px 32px;color:var(--dim);font-size:13px;border-top:1px solid var(--border);margin-top:40px;}
+
+/* TOC sidebar */
+.toc-float{position:fixed;top:100px;right:32px;width:200px;z-index:50;display:flex;flex-direction:column;gap:4px;}
+.toc-float a{font-size:12px;color:var(--dim);padding:6px 12px;border-radius:6px;border-left:2px solid transparent;transition:all 0.2s;}
+.toc-float a:hover{color:var(--accent);border-left-color:var(--accent);background:rgba(59,130,246,0.05);text-decoration:none;}
+.toc-float a.active{color:var(--accent);border-left-color:var(--accent);background:rgba(59,130,246,0.08);}
+
+@media(max-width:768px){
+  .hero h1{font-size:2rem;}
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr;}
+  .nav{display:none;}
+  .toc-float{display:none;}
+  .sync-flow{flex-direction:column;gap:16px;}
+  .sync-track{display:none;}
+  .sync-push{display:none;}
+  .sync-arrow{display:none;}
+  .admin-mock-body{grid-template-columns:1fr;}
+  .admin-mock-sidebar{flex-direction:row;flex-wrap:wrap;}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M2 2h20v8H2zM2 14h20v8H2zM6 6h.01M6 18h.01"/></svg>
+    </div>
+    <div>
+      <div class="logo-text">TollGate RFID Pass</div>
+      <div class="logo-sub">Plaza Server Guide</div>
+    </div>
+  </div>
+  <nav class="nav">
+    <a href="index.html" class="back-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to Index
+    </a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h1>🍓 Plaza Server Installation</h1>
+  <p>Complete guide to deploying the Raspberry Pi edge server that manages toll lanes, syncs with HQ, and operates offline when needed.</p>
+  <div class="hero-badges">
+    <span class="badge badge-cyan">🍓 Raspberry Pi 4</span>
+    <span class="badge badge-green">🐳 Docker Containers</span>
+    <span class="badge badge-purple">🔄 Offline-First Sync</span>
+    <span class="badge badge-amber">📡 Edge Computing</span>
+  </div>
+</section>
+
+<!-- TOC -->
+<nav class="toc-float" id="toc">
+  <a href="#architecture">System Architecture</a>
+  <a href="#hardware">Hardware Requirements</a>
+  <a href="#network-topo">Network Topology</a>
+  <a href="#installation">Installation Steps</a>
+  <a href="#sync-protocol">Sync Protocol</a>
+  <a href="#offline">Offline Operation</a>
+  <a href="#monitoring">Monitoring &amp; Health</a>
+  <a href="#admin-panel">Admin Panel</a>
+  <a href="#troubleshooting">Troubleshooting</a>
+  <a href="#bom">Bill of Materials</a>
+</nav>
+
+<div class="container">
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SYSTEM ARCHITECTURE                            -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="section-block" id="architecture">
+  <div class="section-header">
+    <div class="section-icon cyan">🏗️</div>
+    <div>
+      <h2 class="section-title">System Architecture</h2>
+      <p class="section-sub">Docker container layout running on the Raspberry Pi 4 edge server</p>
+    </div>
+  </div>
+
+  <div class="diagram">
+    <div class="diagram-title">PLAZA SERVER — DOCKER CONTAINER ARCHITECTURE</div>
+    <pre>
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │                  🍓  RASPBERRY PI 4 (4GB RAM)                     │
+  │                  ─────────────────────────────                     │
+  │  OS: Raspberry Pi OS Lite (64-bit) · Docker 24.x · Docker Compose│
+  │                                                                     │
+  │  ┌───────────────────────────────────────────────────────────────┐  │
+  │  │                  docker-compose.yml                          │  │
+  │  │                                                               │  │
+  │  │  ┌──────────────────┐  ┌──────────────────┐                  │  │
+  │  │  │  plaza-api        │  │  plaza-sync      │                  │  │
+  │  │  │  (Node.js 20)     │  │  (Node.js 20)    │                  │  │
+  │  │  │  :4000            │  │  :4001           │                  │  │
+  │  │  │                   │  │                   │                  │  │
+  │  │  │  • REST API       │  │  • Push to HQ     │                  │  │
+  │  │  │  • GPIO control   │  │  • Pull from HQ   │                  │  │
+  │  │  │  • Lane manager   │  │  • Queue worker   │                  │  │
+  │  │  │  • Event handler  │  │  • Conflict res.  │                  │  │
+  │  │  └────────┬──────────┘  └────────┬──────────┘                  │  │
+  │  │           │                      │                              │  │
+  │  │  ┌────────▼──────────────────────▼──────────┐                  │  │
+  │  │  │           plaza-db (PostgreSQL 15)        │                  │  │
+  │  │  │           :5434                           │                  │  │
+  │  │  │                                            │                  │  │
+  │  │  │  • plaza_config    • sync_queue            │                  │  │
+  │  │  │  • sync_status     • local_toll_events     │                  │  │
+  │  │  │  • device_config                            │                  │  │
+  │  │  └────────────────────────────────────────────┘                  │  │
+  │  │                                                                   │  │
+  │  │  ┌──────────────────┐  ┌──────────────────┐                     │  │
+  │  │  │  redis (7.2)     │  │  nginx (alpine)  │                     │  │
+  │  │  │  :6379            │  │  :80/:443        │                     │  │
+  │  │  │  • Cache layer    │  │  • Reverse proxy  │                     │  │
+  │  │  │  • Pub/Sub        │  │  • SSL termination│                     │  │
+  │  │  └──────────────────┘  └──────────────────┘                     │  │
+  │  └───────────────────────────────────────────────────────────────┘  │
+  │                                                                     │
+  │  ┌─── HOST MOUNTS ──────────────────────────────────────────────┐  │
+  │  │  /opt/tollgate/config     → Container config                 │  │
+  │  │  /opt/tollgate/data       → Persistent DB volume             │  │
+  │  │  /opt/tollgate/logs       → Application logs                 │  │
+  │  │  /dev/gpio*               → GPIO passthrough (lane ctrl)     │  │
+  │  └──────────────────────────────────────────────────────────────┘  │
+  └─────────────────────────────────────────────────────────────────────┘
+    </pre>
+  </div>
+
+  <div class="grid grid-3" style="margin-top:24px;">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon cyan">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+        </div>
+        <div><h3>plaza-api</h3><div class="model">:4000 — Main API</div></div>
+      </div>
+      <p>Primary API service handling REST endpoints, GPIO lane control, toll event processing, and device communication.</p>
+      <div class="tags"><span class="tag cyan">Express.js</span><span class="tag">Prisma ORM</span><span class="tag green">GPIO</span></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        </div>
+        <div><h3>plaza-sync</h3><div class="model">:4001 — Sync Engine</div></div>
+      </div>
+      <p>Background sync worker managing push/pull operations, queue processing, and conflict resolution with HQ server.</p>
+      <div class="tags"><span class="tag green">Cron Jobs</span><span class="tag amber">Queue</span><span class="tag">Retry Logic</span></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon purple">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+        </div>
+        <div><h3>plaza-db</h3><div class="model">:5434 — PostgreSQL 15</div></div>
+      </div>
+      <p>Persistent data store for plaza config, sync queue, local toll events, and device state. Survives container restarts.</p>
+      <div class="tags"><span class="tag purple">PostgreSQL 15</span><span class="tag">Persistent Volume</span><span class="tag green">WAL</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- HARDWARE REQUIREMENTS                          -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="section-block" id="hardware">
+  <div class="section-header">
+    <div class="section-icon green">🔧</div>
+    <div>
+      <h2 class="section-title">Hardware Requirements</h2>
+      <p class="section-sub">Minimum and recommended hardware specifications for the plaza edge server</p>
+    </div>
+  </div>
+
+  <div class="grid grid-2">
+    <div class="card" style="border-color:rgba(16,185,129,0.3);">
+      <div class="card-header">
+        <div class="card-icon green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div><h3>Minimum Spec</h3><div class="model">Baseline for 1–2 lanes</div></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Component</th><th>Specification</th></tr></thead>
+          <tbody>
+            <tr><td>Board</td><td>Raspberry Pi 4 Model B (2GB)</td></tr>
+            <tr><td>Storage</td><td>32GB microSD A2 + USB SSD</td></tr>
+            <tr><td>Network</td><td>Gigabit Ethernet (built-in)</td></tr>
+            <tr><td>Power</td><td>USB-C 5V/3A (official adapter)</td></tr>
+            <tr><td>Case</td><td>Passive aluminum heatsink case</td></tr>
+            <tr><td>GPIO</td><td>40-pin header (direct connect)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card" style="border-color:rgba(59,130,246,0.3);">
+      <div class="card-header">
+        <div class="card-icon blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div><h3>Recommended Spec</h3><div class="model">Production 4-lane plaza</div></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Component</th><th>Specification</th></tr></thead>
+          <tbody>
+            <tr><td>Board</td><td>Raspberry Pi 4 Model B (4GB)</td></tr>
+            <tr><td>Storage</td><td>64GB microSD A2 + 256GB USB SSD</td></tr>
+            <tr><td>Network</td><td>Gigabit Ethernet + USB-Ethernet</td></tr>
+            <tr><td>Power</td><td>UPS HAT + official 5V/3A</td></tr>
+            <tr><td>Case</td><td>Active-cooled fan case (FLIRC)</td></tr>
+            <tr><td>GPIO</td><td>40-pin + GPIO expander (MCP23017)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout info" style="margin-top:20px;">
+    <span class="callout-icon">💡</span>
+    <div><strong>Storage Tip:</strong> Use a USB SSD as the primary Docker storage driver (<code>/var/lib/docker</code>) and microSD only for boot. This dramatically improves I/O performance and extends SD card lifespan. Configure via <code>/boot/firmware/cmdline.txt</code> with <code>dwc_otg.fiq_enable=1</code>.</div>
+  </div>
+
+  <div class="grid grid-4" style="margin-top:20px;">
+    <div class="card" style="text-align:center;padding:16px;">
+      <div style="font-size:28px;margin-bottom:8px;">🍓</div>
+      <div style="font-size:14px;font-weight:700;">RPi 4B</div>
+      <div style="font-size:11px;color:var(--dim);">4GB RAM · BCM2711</div>
+      <div class="tags" style="justify-content:center;margin-top:8px;"><span class="tag green">ARM Cortex-A72</span></div>
+    </div>
+    <div class="card" style="text-align:center;padding:16px;">
+      <div style="font-size:28px;margin-bottom:8px;">💾</div>
+      <div style="font-size:14px;font-weight:700;">64GB+ SSD</div>
+      <div style="font-size:11px;color:var(--dim);">USB 3.0 · ext4</div>
+      <div class="tags" style="justify-content:center;margin-top:8px;"><span class="tag amber">Primary Storage</span></div>
+    </div>
+    <div class="card" style="text-align:center;padding:16px;">
+      <div style="font-size:28px;margin-bottom:8px;">🔌</div>
+      <div style="font-size:14px;font-weight:700;">UPS HAT</div>
+      <div style="font-size:11px;color:var(--dim);">18650 Li-Ion</div>
+      <div class="tags" style="justify-content:center;margin-top:8px;"><span class="tag red">Power Backup</span></div>
+    </div>
+    <div class="card" style="text-align:center;padding:16px;">
+      <div style="font-size:28px;margin-bottom:8px;">🌡️</div>
+      <div style="font-size:14px;font-weight:700;">Active Cooler</div>
+      <div style="font-size:11px;color:var(--dim);">FLIRC case + fan</div>
+      <div class="tags" style="justify-content:center;margin-top:8px;"><span class="tag purple">Thermal Mgmt</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- NETWORK TOPOLOGY                               -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="section-block" id="network-topo">
+  <div class="section-header">
+    <div class="section-icon blue">📡</div>
+    <div>
+      <h2 class="section-title">Network Topology</h2>
+      <p class="section-sub">Plaza → HQ communication architecture and port mapping</p>
+    </div>
+  </div>
+
+  <div class="diagram">
+    <div class="diagram-title">PLAZA-TO-HQ NETWORK TOPOLOGY</div>
+    <pre>
+                         ☁️  INTERNET / VPN / 4G LTE
+                                    │
+                                    │  HTTPS (TLS 1.3)
+                                    │  Port 443 → :3000
+                                    │
+               ┌────────────────────┼────────────────────┐
+               │                    │                    │
+     ╔═════════╩════════════════════╧════════════════════╩═════════╗
+     ║                 HQ SERVER (192.168.100.101)                 ║
+     ║  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     ║
+     ║  │  API Gateway  │  │  plaza-db    │  │  Customer DB  │     ║
+     ║  │  :3000        │  │  :5434       │  │  :5433        │     ║
+     ║  │               │  │              │  │               │     ║
+     ║  │  /api/plaza/* │  │  sync_queue  │  │  accounts     │     ║
+     ║  │  /api/sync/*  │  │  toll_events │  │  rfid_tags    │     ║
+     ║  └──────┬───────┘  └──────────────┘  └──────────────┘     ║
+     ╚═════════╪══════════════════════════════════════════════════╝
+               │
+     ┌─────────┼─────────┬─────────────┐
+     │         │         │             │
+╔════╩════╗ ╔══╩════╗ ╔══╩════╗ ╔═════╩═════╗
+║Plaza 01 ║ ║Plaza 02║ ║Plaza 03║ ║  Plaza N  ║
+║ :4000   ║ ║ :4000 ║ ║ :4000 ║ ║  :4000    ║
+║ RPi 4B  ║ ║ RPi 4B║ ║ RPi 4B║ ║  RPi 4B   ║
+╚═══╦═════╝ ╚═══╦════╝ ╚═══╦════╝ ╚═════╦═════╝
+    │            │           │             │
+┌───┼───┐   ┌───┼───┐   ┌───┼───┐   ┌────┼────┐
+│   │   │   │   │   │   │   │   │   │    │    │
+📡  📷  🔲  📡  📷  🔲  📡  📷  🔲  📡   📷   🔲
+    </pre>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Connection</th><th>Protocol</th><th>Port</th><th>Direction</th><th>Frequency</th><th>Encryption</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Plaza → HQ</td><td>HTTPS REST</td><td>3000</td><td>Outbound</td><td>Every 30s (push)</td><td>TLS 1.3 + VPN</td></tr>
+        <tr><td>Plaza ← HQ</td><td>HTTPS REST</td><td>3000</td><td>Outbound</td><td>On-demand (pull)</td><td>TLS 1.3 + VPN</td></tr>
+        <tr><td>RFID Reader</td><td>TCP/IP</td><td>5000</td><td>Inbound</td><td>Continuous</td><td>VLAN Isolated</td></tr>
+        <tr><td>ANPR Camera</td><td>HTTP (ISAPI)</td><td>80</td><td>Outbound</td><td>On trigger</td><td>Basic Auth</td></tr>
+        <tr><td>ANPR Stream</td><td>RTSP</td><td>554</td><td>Outbound</td><td>Continuous</td><td>Digest Auth</td></tr>
+        <tr><td>Barrier Gate</td><td>RS232 / TCP</td><td>5000</td><td>Outbound</td><td>On command</td><td>Physical only</td></tr>
+        <tr><td>Lane Controller</td><td>GPIO</td><td>—</td><td>Physical</td><td>Interrupt-driven</td><td>N/A</td></tr>
+        <tr><td>Admin Panel</td><td>HTTPS</td><td>443</td><td>Inbound</td><td>On demand</td><td>TLS 1.3</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout warning">
+    <span class="callout-icon">⚠️</span>
+    <div><strong>Firewall Rules:</strong> The plaza server should ONLY allow outbound connections to the HQ IP on port 3000. All device connections (RFID, camera, barrier) must be on a separate VLAN. Never expose GPIO or serial interfaces to external networks.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- INSTALLATION STEPS                             -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="section-block" id="installation">
+  <div class="section-header">
+    <div class="section-icon amber">🍓</div>
+    <div>
+      <h2 class="section-title">Installation Steps</h2>
+      <p class="section-sub">Step-by-step setup from bare Raspberry Pi to running plaza server</p>
+    </div>
+  </div>
+
+  <!-- Step 1: OS Setup -->
+  <h3 style="font-size:1.1rem;font-weight:600;margin-bottom:12px;margin-top:32px;">
+    <span style="color:var(--accent);">Step 1:</span> Raspberry Pi OS Setup
+  </h3>
+  <ol class="step-list">
+    <li>
+      <div class="step-content">
+        <h4>Flash Raspberry Pi OS Lite (64-bit)</h4>
+        <p>Download from <code>raspberrypi.com/software</code>. Use Raspberry Pi Imager with SSH enabled and WiFi pre-configured.</p>
+        <pre><code><span class="comment"># On your workstation — flash SD card</span>
+rpi-imager --os raspios-lite-arm64 --storage /dev/sdX</code></pre>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <h4>First Boot &amp; System Update</h4>
+        <p>SSH into the Pi, update packages, and set timezone.</p>
+        <pre><code><span class="comment"># SSH in</span>
+ssh pi@&lt;PLAZA_IP&gt;
+
+<span class="comment"># Update system</span>
+sudo apt update && sudo apt upgrade -y
+
+<span class="comment"># Set timezone</span>
+sudo timedatectl set-timezone Asia/Yangon
+
+<span class="comment"># Set hostname</span>
+sudo hostnamectl set-hostname plaza-01
+
+<span class="comment"># Reboot</span>
+sudo reboot</code></pre>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <h4>Configure Static IP &amp; VLAN</h4>
+        <p>Assign static IP for the management network and create a VLAN for device isolation.</p>
+        <pre><code><span class="comment"># Edit dhcpcd config</span>
+sudo nano /etc/dhcpcd.conf</code></pre>
+        <pre><code><span class="comment"># Management network (eth0)</span>
+interface eth0
+static ip_address=192.168.100.51/24
+static routers=192.168.100.1
+static domain_name_servers=8.8.8.8
+
+<span class="comment"># Device VLAN (eth0.100)</span>
+interface eth0.100
+static ip_address=10.10.100.1/24</code></pre>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <h4>Expand Storage &amp; Optimize for SSD</h4>
+        <p>Move Docker root to USB SSD for performance and reliability.</p>
+        <pre><code><span class="comment"># Expand filesystem</span>
+sudo raspi-config --expand-rootfs
+
+<span class="comment"># Format SSD as ext4</span>
+sudo mkfs.ext4 /dev/sda1
+
+<span class="comment"># Mount SSD</span>
+sudo mkdir -p /mnt/ssd
+sudo mount /dev/sda1 /mnt/ssd
+
+<span class="comment"># Move Docker to SSD</span>
+sudo systemctl stop docker
+sudo mv /var/lib/docker /mnt/ssd/docker
+sudo ln -s /mnt/ssd/docker /var/lib/docker</code></pre>
+      </div>
+    </li>
+  </ol>
+
+  <!-- Step 2: Docker Installation -->
+  <h3 style="font-size:1.1rem;font-weight:600;margin-bottom:12px;margin-top:32px;">
+    <span style="color:var(--accent);">Step 2:</span> Docker &amp; Docker Compose
+  </h3>
+  <ol class="step-list">
+    <li>
+      <div class="step-content">
+        <h4>Install Docker via convenience script</h4>
+        <pre><code><span class="comment"># Install Docker</span>
+curl -fsSL https://get.docker.com | sh
+
+<span class="comment"># Add pi user to docker group</span>
+sudo usermod -aG docker pi
+
+<span class="comment"># Log out and back in, then verify</span>
+docker --version
+docker compose version</code></pre>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <h4>Configure Docker daemon</h4>
+        <p>Set logging driver, storage driver, and resource limits.</p>
+        <pre><code>sudo nano /etc/docker/daemon.json</code></pre>
+        <pre><code>{
+  <span class="string">"storage-driver"</span>: <span class="string">"overlay2"</span>,
+  <span class="string">"log-driver"</span>: <span class="string">"json-file"</span>,
+  <span class="string">"log-opts"</span>: {
+    <span class="string">"max-size"</span>: <span class="string">"10m"</span>,
+    <span class="string">"max-file"</span>: <span class="string">"3"</span>
+  },
+  <span class="string">"dns"</span>: [<span class="string">"8.8.8.8"</span>, <span class="string">"8.8.4.4"</span>],
+  <span class="string">"log-level"</span>: <span class="string">"warn"</span>
+}</code></pre>
+        <pre><code>sudo systemctl restart docker</code></pre>
+      </div>
+    </li>
+  </ol>
+
+  <!-- Step 3: Deploy Plaza Server -->
+  <h3 style="font-size:1.1rem;font-weight:600;margin-bottom:12px;margin-top:32px;">
+    <span style="color:var(--accent);">Step 3:</span> Deploy Plaza Server
+  </h3>
+  <ol class="step-list">
+    <li>
+      <div class="step-content">
+        <h4>Clone repository and configure</h4>
+        <pre><code><span class="comment"># Clone repo</span>
+cd /opt
+sudo git clone https://github.com/your-org/TollGate-RFID.git
+sudo chown -R pi:pi /opt/TollGate-RFID
+
+<span class="comment"># Create plaza config</span>
+cp packages/plaza-server/.env.example packages/plaza-server/.env
+nano packages/plaza-server/.env</code></pre>
+        <pre><code><span class="comment"># .env file</span>
+PLAZA_ID=plaza-01
+PLAZA_NAME=<span class="string">"Yangon Toll Plaza"</span>
+HQ_SERVER_URL=<span class="string">https://192.168.100.101:3000</span>
+HQ_API_KEY=<span class="string">your-api-key-here</span>
+SYNC_INTERVAL=30000
+POSTGRES_PASSWORD=<span class="string">secure-password-here</span>
+REDIS_PASSWORD=<span class="string">redis-password-here</span>
+NODE_ENV=production</code></pre>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <h4>Launch with Docker Compose</h4>
+        <pre><code><span class="comment"># Build and start all containers</span>
+cd /opt/TollGate-RFID
+docker compose -f packages/plaza-server/docker-compose.yml up -d --build
+
+<span class="comment"># Verify all containers running</span>
+docker ps --format <span class="string">"table {{.Names}}\t{{.Status}}\t{{.Ports}}"</span></code></pre>
+        <pre><code>NAMES                STATUS              PORTS
+plaza-api            Up 2 minutes        0.0.0.0:4000->4000/tcp
+plaza-sync           Up 2 minutes        4001/tcp
+plaza-db             Up 2 minutes        5434/tcp
+plaza-redis          Up 2 minutes        6379/tcp
+plaza-nginx          Up 2 minutes        0.0.0.0:80->80/tcp</code></pre>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <h4>Run database migrations</h4>
+        <pre><code><span class="comment"># Initialize plaza database schema</span>
+docker exec plaza-api npx prisma migrate deploy --schema=prisma/schema.plaza.prisma
+
+<span class="comment"># Seed initial plaza config</span>
+docker exec plaza-api npx prisma db seed</code></pre>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <h4>Verify deployment</h4>
+        <pre><code><span class="comment"># Health check</span>
+curl -s http://localhost:4000/api/health | python3 -m json.tool
+
+<span class="comment"># Expected output</span>
+{
+  <span class="string">"status"</span>: <span class="string">"healthy"</span>,
+  <span class="string">"plaza"</span>: <span class="string">"plaza-01"</span>,
+  <span class="string">"uptime"</span>: 120,
+  <span class="string">"db"</span>: <span class="string">"connected"</span>,
+  <span class="string">"hq_reachable"</span>: true
+}</code></pre>
+      </div>
+    </li>
+  </ol>
+
+  <div class="callout success">
+    <span class="callout-icon">✅</span>
+    <div><strong>Deployment Complete:</strong> The plaza server is now running. Connect RFID readers, ANPR cameras, and barrier gates to their respective interfaces. The admin panel is available at <code>https://&lt;PLAZA_IP&gt;</code>.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SYNC PROTOCOL                                  -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="section-block" id="sync-protocol">
+  <div class="section-header">
+    <div class="section-icon purple">🔄</div>
+    <div>
+      <h2 class="section-title">Sync Protocol</h2>
+      <p class="section-sub">Bidirectional data flow between plaza and HQ with conflict resolution</p>
+    </div>
+  </div>
+
+  <p style="color:var(--muted);font-size:14px;margin-bottom:20px;">The sync engine runs as a background container (<code>plaza-sync</code>), processing queued events and pulling updates from HQ. Data packets flow in real-time — watch the animation below.</p>
+
+  <!-- CSS-only animated sync diagram -->
+  <div class="sync-container">
+    <div class="sync-title">📡 BI-DIRECTIONAL SYNC PROTOCOL — LIVE DATA FLOW</div>
+    <div class="sync-flow">
+      <div class="sync-node plaza">
+        <span class="node-icon">🍓</span>
+        Plaza Server
+        <span class="node-label">:4000</span>
+      </div>
+      <div class="sync-track"></div>
+      <div class="sync-node hq">
+        <span class="node-icon">🏢</span>
+        HQ Server
+        <span class="node-label">:3000</span>
+      </div>
+    </div>
+    <div class="sync-push">
+      <div class="packet push">PUSH</div>
+      <div class="packet pull">PULL</div>
+    </div>
+    <div class="sync-label-row">
+      <span class="sync-label push-label">⬆ Toll Events · Device Status</span>
+      <span class="sync-label pull-label">⬇ Config Updates · Rate Tables</span>
+    </div>
+    <div class="sync-arrow left">◀</div>
+    <div class="sync-arrow right">▶</div>
+    <div class="sync-legend">
+      <div class="sync-legend-item"><div class="sync-legend-dot push-dot"></div>Push: Plaza → HQ (events, status)</div>
+      <div class="sync-legend-item"><div class="sync-legend-dot pull-dot"></div>Pull: HQ → Plaza (config, rates)</div>
+    </div>
+  </div>
+
+  <div class="grid grid-2" style="margin-top:24px;">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
+        </div>
+        <div><h3>Push (Plaza → HQ)</h3><div class="model">Event-driven, every 30s</div></div>
+      </div>
+      <p>Pushes new toll events, device status, and local anomalies to HQ. Uses optimistic locking with <code>last_modified</code> timestamps.</p>
+      <pre><code><span class="comment">// Push payload structure</span>
+{
+  <span class="string">"plaza_id"</span>: <span class="string">"plaza-01"</span>,
+  <span class="string">"events"</span>: [
+    {
+      <span class="string">"id"</span>: <span class="string">"evt_a1b2c3"</span>,
+      <span class="string">"rfid_tag"</span>: <span class="string">"AB:CD:EF:12"</span>,
+      <span class="string">"plate_number"</span>: <span class="string">"1K-1234"</span>,
+      <span class="string">"amount"</span>: <span class="num">5000</span>,
+      <span class="string">"timestamp"</span>: <span class="string">"2026-09-13T08:30:00Z"</span>,
+      <span class="string">"synced"</span>: <span class="bool">false</span>
+    }
+  ],
+  <span class="string">"device_status"</span>: { ... }
+}</code></pre>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon purple">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </div>
+        <div><h3>Pull (HQ → Plaza)</h3><div class="model">On-demand + periodic</div></div>
+      </div>
+      <p>Pulls configuration updates, toll rate changes, and account balances from HQ. Pulls also trigger conflict resolution for any modified records.</p>
+      <pre><code><span class="comment">// Pull response structure</span>
+{
+  <span class="string">"config"</span>: {
+    <span class="string">"toll_rates"</span>: [ ... ],
+    <span class="string">"plaza_settings"</span>: { ... },
+    <span class="string">"rfid_whitelist"</span>: [ ... ]
+  },
+  <span class="string">"accounts"</span>: [
+    {
+      <span class="string">"rfid_tag"</span>: <span class="string">"AB:CD:EF:12"</span>,
+      <span class="string">"balance"</span>: <span class="num">85000</span>,
+      <span class="string">"status"</span>: <span class="string">"active"</span>
+    }
+  ],
+  <span class="string">"conflicts"</span>: [ ... ]
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <span class="callout-icon">🔄</span>
+    <div><strong>Conflict Resolution:</strong> Uses Last-Write-Wins (LWW) strategy. When both plaza and HQ modify the same record, the <code>last_modified</code> timestamp determines the winner. Conflicts are logged and an admin notification is triggered for manual review if needed.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- OFFLINE OPERATION                              -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="section-block" id="offline">
+  <div class="section-header">
+    <div class="section-icon amber">💡</div>
+    <div>
+      <h2 class="section-title">Offline Operation</h2>
+      <p class="section-sub">Graceful degradation when HQ connection is unavailable</p>
+    </div>
+  </div>
+
+  <p style="color:var(--muted);font-size:14px;margin-bottom:20px;">The plaza server is designed as an <strong>offline-first edge node</strong>. It continues processing toll events even when the network to HQ is down. Events are queued locally and synced when connectivity is restored.</p>
+
+  <!-- Queue visualization -->
+  <h4 style="font-size:14px;font-weight:600;margin-bottom:12px;">Sync Queue Status</h4>
+  <div class="queue-visual">
+    <div class="queue-item pending">⏳ Pending<br><strong>12 events</strong></div>
+    <div class="queue-arrow">→</div>
+    <div class="queue-item pending">🔄 Syncing<br><strong>3 events</strong></div>
+    <div class="queue-arrow">→</div>
+    <div class="queue-item synced">✅ Synced<br><strong>1,847 events</strong></div>
+  </div>
+  <div class="queue-status-bar">
+    <div class="seg pending-seg" style="width:2%;"></div>
+    <div class="seg synced-seg" style="width:98%;"></div>
+  </div>
+  <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--dim);">
+    <span>Queue depth: 15 / 10,000 max</span>
+    <span>99.2% synced</span>
+  </div>
+
+  <div class="grid grid-2" style="margin-top:24px;">
+    <div class="card">
+      <h3 style="margin-bottom:12px;">📋 Offline Queue Behavior</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>State</th><th>Description</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td><span class="tag green">ONLINE</span></td><td>HQ reachable</td><td>Real-time push/pull</td></tr>
+            <tr><td><span class="tag amber">DEGRADED</span></td><td>High latency (&gt;5s)</td><td>Reduce sync frequency</td></tr>
+            <tr><td><span class="tag red">OFFLINE</span></td><td>HQ unreachable</td><td>Queue events locally</td></tr>
+            <tr><td><span class="tag purple">RECOVERING</span></td><td>Connection restored</td><td>Burst sync queue</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="margin-bottom:12px;">⚙️ Queue Configuration</h3>
+      <pre><code><span class="comment"># /opt/tollgate/config/sync.yaml</span>
+<span class="keyword">sync</span>:
+  <span class="keyword">interval_ms</span>: <span class="num">30000</span>
+  <span class="keyword">retry_backoff</span>: [<span class="num">1000</span>, <span class="num">5000</span>, <span class="num">30000</span>, <span class="num">60000</span>]
+  <span class="keyword">max_queue_size</span>: <span class="num">10000</span>
+  <span class="keyword">batch_size</span>: <span class="num">50</span>
+  <span class="keyword">conflict_strategy</span>: <span class="string">"last-write-wins"</span>
+  <span class="keyword">offline_capable</span>: <span class="bool">true</span>
+  <span class="keyword">local_cache_ttl</span>: <span class="num">3600</span></code></pre>
+    </div>
+  </div>
+
+  <div class="callout warning">
+    <span class="callout-icon">⚠️</span>
+    <div><strong>Storage Limit:</strong> The queue stores events in the local PostgreSQL database. At 500 bytes per event, the 10,000-event limit uses ~5MB. If the queue fills, oldest unsynced events are archived to disk. After 72 hours offline, a manual sync intervention is recommended.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- MONITORING & HEALTH                            -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="section-block" id="monitoring">
+  <div class="section-header">
+    <div class="section-icon red">📡</div>
+    <div>
+      <h2 class="section-title">Monitoring &amp; Health</h2>
+      <p class="section-sub">Health endpoints, system metrics, and real-time monitoring</p>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Endpoint</th><th>Method</th><th>Auth</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>/api/health</code></td><td>GET</td><td>No</td><td>Full health: DB status, latency, memory, CPU</td></tr>
+        <tr><td><code>/api/health/live</code></td><td>GET</td><td>No</td><td>Liveness probe — always 200 if process alive</td></tr>
+        <tr><td><code>/api/health/ready</code></td><td>GET</td><td>No</td><td>Readiness probe — 200 if DB connected &amp; sync OK</td></tr>
+        <tr><td><code>/api/health/metrics</code></td><td>GET</td><td>JWT</td><td>Detailed: queue depth, event count, storage</td></tr>
+        <tr><td><code>/api/status</code></td><td>GET</td><td>JWT</td><td>Device status: RFID, camera, barrier states</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4 style="font-size:14px;font-weight:600;margin:24px 0 12px;">Health Endpoint Response</h4>
+  <div class="health-response">
+    <span class="comment">// GET /api/health</span>
+    <br>{
+    <br>&nbsp;&nbsp;<span class="key">"status"</span>: <span class="str">"healthy"</span>,
+    <br>&nbsp;&nbsp;<span class="key">"plaza_id"</span>: <span class="str">"plaza-01"</span>,
+    <br>&nbsp;&nbsp;<span class="key">"plaza_name"</span>: <span class="str">"Yangon Toll Plaza"</span>,
+    <br>&nbsp;&nbsp;<span class="key">"uptime_seconds"</span>: <span class="num">86432</span>,
+    <br>&nbsp;&nbsp;<span class="key">"version"</span>: <span class="str">"1.2.0"</span>,
+    <br>&nbsp;&nbsp;<span class="key">"database"</span>: {
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"connected"</span>: <span class="bool">true</span>,
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"latency_ms"</span>: <span class="num">2.4</span>,
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"pool_active"</span>: <span class="num">3</span>,
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"pool_idle"</span>: <span class="num">7</span>
+    <br>&nbsp;&nbsp;},
+    <br>&nbsp;&nbsp;<span class="key">"sync"</span>: {
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"hq_reachable"</span>: <span class="bool">true</span>,
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"last_push"</span>: <span class="str">"2026-09-13T08:29:45Z"</span>,
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"last_pull"</span>: <span class="str">"2026-09-13T08:29:30Z"</span>,
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"queue_depth"</span>: <span class="num">0</span>,
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"status"</span>: <span class="str">"in_sync"</span>
+    <br>&nbsp;&nbsp;},
+    <br>&nbsp;&nbsp;<span class="key">"devices"</span>: {
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"rfid_reader"</span>: <span class="str">"connected"</span>,
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"anpr_camera"</span>: <span class="str">"connected"</span>,
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"barrier_gate"</span>: <span class="str">"idle"</span>,
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"loop_detector"</span>: <span class="str">"armed"</span>
+    <br>&nbsp;&nbsp;},
+    <br>&nbsp;&nbsp;<span class="key">"system"</span>: {
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"cpu_usage"</span>: <span class="num">12.5</span>,
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"memory_used_mb"</span>: <span class="num">847</span>,
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"memory_total_mb"</span>: <span class="num">3824</span>,
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"disk_used_gb"</span>: <span class="num">14.2</span>,
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"disk_total_gb"</span>: <span class="num">58.4</span>,
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"temp_celsius"</span>: <span class="num">48.2</span>
+    <br>&nbsp;&nbsp;}
+    <br>}
+  </div>
+
+  <div class="callout info">
+    <span class="callout-icon">📊</span>
+    <div><strong>Kubernetes Probes:</strong> Use <code>/api/health/live</code> for liveness and <code>/api/health/ready</code> for readiness probes. The ready endpoint returns 503 if the database is disconnected or sync queue depth exceeds 5,000 events.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- ADMIN PANEL                                    -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="section-block" id="admin-panel">
+  <div class="section-header">
+    <div class="section-icon pink">🖥️</div>
+    <div>
+      <h2 class="section-title">Admin Panel</h2>
+      <p class="section-sub">Local web-based dashboard for plaza management and monitoring</p>
+    </div>
+  </div>
+
+  <div class="admin-mock">
+    <div class="admin-mock-bar">
+      <div class="admin-mock-dot r"></div>
+      <div class="admin-mock-dot y"></div>
+      <div class="admin-mock-dot g"></div>
+      <div class="admin-mock-url">🔒 https://192.168.100.51/dashboard</div>
+    </div>
+    <div class="admin-mock-body">
+      <div class="admin-mock-sidebar">
+        <a href="#" class="active">📊 Dashboard</a>
+        <a href="#">🚗 Vehicles</a>
+        <a href="#">📡 Devices</a>
+        <a href="#">🔄 Sync</a>
+        <a href="#">📋 Logs</a>
+        <a href="#">⚙️ Settings</a>
+      </div>
+      <div class="admin-mock-main">
+        <div class="admin-mock-stat">
+          <div class="stat">
+            <div class="stat-val" style="color:#22d3ee;">1,847</div>
+            <div class="stat-label">Events Today</div>
+          </div>
+          <div class="stat">
+            <div class="stat-val" style="color:#34d399;">99.2%</div>
+            <div class="stat-label">Sync Rate</div>
+          </div>
+          <div class="stat">
+            <div class="stat-val" style="color:#a78bfa;">48.2°C</div>
+            <div class="stat-label">CPU Temp</div>
+          </div>
+          <div class="stat">
+            <div class="stat-val" style="color:#fbbf24;">14.2 GB</div>
+            <div class="stat-label">Disk Used</div>
+          </div>
+        </div>
+        <div class="admin-mock-chart">
+          <div class="bar" style="height:45%;"></div>
+          <div class="bar" style="height:62%;"></div>
+          <div class="bar" style="height:38%;"></div>
+          <div class="bar" style="height:85%;"></div>
+          <div class="bar" style="height:71%;"></div>
+          <div class="bar" style="height:55%;"></div>
+          <div class="bar" style="height:90%;"></div>
+          <div class="bar" style="height:48%;"></div>
+          <div class="bar" style="height:73%;"></div>
+          <div class="bar" style="height:65%;"></div>
+          <div class="bar" style="height:82%;"></div>
+          <div class="bar" style="height:40%;"></div>
+          <div class="bar" style="height:95%;"></div>
+          <div class="bar" style="height:68%;"></div>
+          <div class="bar" style="height:55%;"></div>
+          <div class="bar" style="height:78%;"></div>
+          <div class="bar" style="height:60%;"></div>
+          <div class="bar" style="height:88%;"></div>
+          <div class="bar" style="height:42%;"></div>
+          <div class="bar" style="height:72%;"></div>
+          <div class="bar" style="height:58%;"></div>
+          <div class="bar" style="height:80%;"></div>
+          <div class="bar" style="height:65%;"></div>
+          <div class="bar" style="height:50%;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-3" style="margin-top:20px;">
+    <div class="card">
+      <h3 style="font-size:14px;margin-bottom:8px;">🔐 Authentication</h3>
+      <p>JWT-based auth with 24h token expiry. Default credentials must be changed on first login.</p>
+      <pre><code><span class="comment"># Login</span>
+curl -X POST http://localhost:4000/api/auth/login \
+  -H <span class="string">"Content-Type: application/json"</span> \
+  -d <span class="string">'{"username":"admin","password":"changeme"}'</span></code></pre>
+    </div>
+    <div class="card">
+      <h3 style="font-size:14px;margin-bottom:8px;">📊 Real-time Updates</h3>
+      <p>WebSocket connection for live event streaming, device status, and sync progress indicators.</p>
+      <pre><code><span class="comment"># WebSocket endpoint</span>
+ws://localhost:4000/ws/events
+
+<span class="comment"># Subscribe to events</span>
+{ <span class="string">"type"</span>: <span class="string">"subscribe"</span>,
+  <span class="string">"channel"</span>: <span class="string">"toll_events"</span> }</code></pre>
+    </div>
+    <div class="card">
+      <h3 style="font-size:14px;margin-bottom:8px;">🖥️ Remote Access</h3>
+      <p>SSH tunnel or VPN access for remote administration. Never expose admin panel directly to internet.</p>
+      <pre><code><span class="comment"># SSH tunnel from workstation</span>
+ssh -L 8443:localhost:443 pi@<span class="highlight">&lt;PLAZA_IP&gt;</span>
+
+<span class="comment"># Access locally</span>
+open https://localhost:8443</code></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- TROUBLESHOOTING                                -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="section-block" id="troubleshooting">
+  <div class="section-header">
+    <div class="section-icon red">🔧</div>
+    <div>
+      <h2 class="section-title">Troubleshooting</h2>
+      <p class="section-sub">Common issues and their solutions</p>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Issue</th><th>Symptoms</th><th>Solution</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>DB connection refused</strong></td>
+          <td>API returns 500, <code>ECONNREFUSED</code></td>
+          <td>Run <code>docker restart plaza-db</code>. Check volume mount: <code>ls /mnt/ssd/docker/volumes/</code></td>
+        </tr>
+        <tr>
+          <td><strong>Sync stuck (queue depth growing)</strong></td>
+          <td>Queue depth &gt; 0 for &gt; 5 min</td>
+          <td>Check HQ reachability: <code>curl -s http://192.168.100.101:3000/api/health</code>. Restart sync: <code>docker restart plaza-sync</code></td>
+        </tr>
+        <tr>
+          <td><strong>RFID reader not detected</strong></td>
+          <td><code>device_status.rfid_reader: "disconnected"</code></td>
+          <td>Check VLAN config: <code>ping 10.10.100.10</code>. Verify port: <code>nc -zv 10.10.100.10 5000</code>. Restart RFID service.</td>
+        </tr>
+        <tr>
+          <td><strong>ANPR camera offline</strong></td>
+          <td>Camera status shows <code>disconnected</code></td>
+          <td>Check PoE switch: <code>ping 10.10.100.20</code>. Verify RTSP stream: <code>ffprobe rtsp://admin:pass@10.10.100.20:554</code></td>
+        </tr>
+        <tr>
+          <td><strong>Barrier gate unresponsive</strong></td>
+          <td>Barrier status: <code>error</code></td>
+          <td>Check serial cable: <code>ls /dev/ttyUSB*</code>. Verify baud rate in config. Power cycle barrier unit.</td>
+        </tr>
+        <tr>
+          <td><strong>High CPU temperature</strong></td>
+          <td>Temp &gt; 70°C, throttling active</td>
+          <td>Check fan: <code>vcgencmd measure_temp</code>. Ensure active cooling. Reduce sync frequency if sustained.</td>
+        </tr>
+        <tr>
+          <td><strong>Docker containers not starting</strong></td>
+          <td><code>docker ps</code> shows no containers</td>
+          <td>Check logs: <code>docker compose logs -f</code>. Verify disk space: <code>df -h</code>. Rebuild: <code>docker compose up -d --build</code></td>
+        </tr>
+        <tr>
+          <td><strong>SD card corruption</strong></td>
+          <td>Boot failures, read-only filesystem</td>
+          <td>Boot from SSD if configured. Re-flash SD card. Enable <code>dwc_otg.fiq_enable=1</code> in <code>/boot/firmware/cmdline.txt</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4 style="font-size:14px;font-weight:600;margin:24px 0 12px;">Diagnostic Commands</h4>
+  <pre><code><span class="comment"># System status</span>
+docker ps --format <span class="string">"table {{.Names}}\t{{.Status}}\t{{.Ports}}"</span>
+docker stats --no-stream --format <span class="string">"table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}"</span>
+
+<span class="comment"># Application logs</span>
+docker logs plaza-api --tail 50 --follow
+docker logs plaza-sync --tail 50 --follow
+
+<span class="comment"># Database inspection</span>
+docker exec plaza-db psql -U postgres -d tollgate_plaza -c <span class="string">"SELECT count(*) FROM sync_queue WHERE synced = false;"</span>
+
+<span class="comment"># Network diagnostics</span>
+ping -c 5 192.168.100.101   <span class="comment"># HQ server</span>
+nc -zv 10.10.100.10 5000     <span class="comment"># RFID reader</span>
+curl -s http://10.10.100.20/ISAPI/System/deviceInfo  <span class="comment"># ANPR camera</span>
+
+<span class="comment"># Hardware monitoring</span>
+vcgencmd measure_temp        <span class="comment"># CPU temperature</span>
+vcgencmd get_throttled       <span class="comment"># Throttle status (0 = OK)</span>
+df -h / /mnt/ssd             <span class="comment"># Disk usage</span>
+free -h                      <span class="comment"># Memory usage</span></code></pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- BILL OF MATERIALS                              -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="section-block" id="bom">
+  <div class="section-header">
+    <div class="section-icon amber">💰</div>
+    <div>
+      <h2 class="section-title">Bill of Materials</h2>
+      <p class="section-sub">Complete parts list for one plaza server unit</p>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Category</th><th>Item</th><th>Specification</th><th>Qty</th><th>Unit Cost (MMK)</th><th>Total (MMK)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td rowspan="4">🍓 Compute</td>
+          <td>Raspberry Pi 4 Model B</td><td>4GB RAM</td><td>1</td><td>350,000</td><td>350,000</td></tr>
+        <tr><td>microSD Card</td><td>64GB A2 Class</td><td>1</td><td>80,000</td><td>80,000</td></tr>
+        <tr><td>USB SSD</td><td>256GB Samsung T7</td><td>1</td><td>180,000</td><td>180,000</td></tr>
+        <tr><td>FLIRC Case</td><td>Aluminum passive cooling</td><td>1</td><td>90,000</td><td>90,000</td></tr>
+        <tr><td rowspan="3">🔌 Power</td>
+          <td>Official USB-C Adapter</td><td>5V/3A</td><td>1</td><td>35,000</td><td>35,000</td></tr>
+        <tr><td>UPS HAT</td><td>Waveshare UPS HAT (C)</td><td>1</td><td>120,000</td><td>120,000</td></tr>
+        <tr><td>18650 Battery</td><td>3.7V 3400mAh (×2)</td><td>2</td><td>25,000</td><td>50,000</td></tr>
+        <tr><td rowspan="3">🌐 Network</td>
+          <td>Ethernet Cable</td><td>Cat6 3m</td><td>2</td><td>10,000</td><td>20,000</td></tr>
+        <tr><td>USB-Ethernet Adapter</td><td>Realtek RTL8153</td><td>1</td><td>45,000</td><td>45,000</td></tr>
+        <tr><td>4G LTE Modem</td><td>Quectel EC25 (optional)</td><td>1</td><td>180,000</td><td>180,000</td></tr>
+        <tr><td rowspan="2">🛠️ Accessories</td>
+          <td>GPIO Ribbon Cable</td><td>40-pin 20cm</td><td>1</td><td>8,000</td><td>8,000</td></tr>
+        <tr><td>MCP23017 GPIO Expander</td><td>I2C 16-ch (optional)</td><td>1</td><td>15,000</td><td>15,000</td></tr>
+        <tr><td rowspan="2">📦 Enclosure</td>
+          <td>IP65 Weatherproof Box</td><td>300×200×150mm</td><td>1</td><td>85,000</td><td>85,000</td></tr>
+        <tr><td>DIN Rail Mount</td><td>35mm (for RPi)</td><td>1</td><td>12,000</td><td>12,000</td></tr>
+        <tr style="background:rgba(59,130,246,0.08);font-weight:700;"><td colspan="4">TOTAL PER PLAZA SERVER</td><td></td><td style="color:#60a5fa;">1,270,000 MMK</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout info" style="margin-top:20px;">
+    <span class="callout-icon">💡</span>
+    <div><strong>Cost Note:</strong> The plaza server is the most cost-effective component in the toll system at ~1.27M MMK per unit. Each server manages 4 lanes, compared to individual lane controllers at ~1.75M MMK each. For a 4-lane plaza, one RPi server replaces 4 lane controllers — saving over 5.7M MMK.</div>
+  </div>
+
+  <div class="grid grid-3" style="margin-top:20px;">
+    <div class="card" style="text-align:center;padding:16px;">
+      <div style="font-size:32px;font-weight:800;color:#60a5fa;">1.27M</div>
+      <div style="font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;">MMK per unit</div>
+    </div>
+    <div class="card" style="text-align:center;padding:16px;">
+      <div style="font-size:32px;font-weight:800;color:#34d399;">4 lanes</div>
+      <div style="font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;">Managed per server</div>
+    </div>
+    <div class="card" style="text-align:center;padding:16px;">
+      <div style="font-size:32px;font-weight:800;color:#a78bfa;">5.7M</div>
+      <div style="font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;">MMK saved vs lane controllers</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.container -->
+
+<footer class="footer">
+  <p>TollGate RFID Pass — Enterprise Highway OS v1.0</p>
+  <p style="margin-top:4px;">Plaza Server Installation Guide · September 2026</p>
+</footer>
+
+</body>
+</html>

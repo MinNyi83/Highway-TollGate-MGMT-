@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ANPR Camera Installation Guide — TollGate RFID Pass</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f172a;--surface:#1e293b;--border:#334155;--accent:#3b82f6;--accent2:#8b5cf6;--green:#10b981;--amber:#f59e0b;--red:#ef4444;--cyan:#06b6d4;--pink:#ec4899;--text:#f1f5f9;--muted:#94a3b8;--dim:#64748b;--radius:16px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;}
+a{color:var(--accent);text-decoration:none;}
+a:hover{text-decoration:underline;}
+
+/* Header */
+.header{position:sticky;top:0;z-index:100;background:rgba(15,23,42,0.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;}
+.logo{display:flex;align-items:center;gap:12px;}
+.logo-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;}
+.logo-icon svg{width:22px;height:22px;fill:white;}
+.logo-text{font-size:18px;font-weight:700;}
+.logo-sub{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.nav{display:flex;gap:8px;align-items:center;}
+.nav a{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;color:var(--muted);transition:all 0.2s;}
+.nav a:hover,.nav a.active{background:rgba(59,130,246,0.1);color:var(--accent);text-decoration:none;}
+.back-link{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;color:var(--accent);background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);transition:all 0.2s;}
+.back-link:hover{background:rgba(59,130,246,0.15);text-decoration:none;}
+
+/* Hero */
+.hero{padding:60px 32px 40px;text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(139,92,246,0.12) 0%,transparent 60%);}
+.hero h1{font-size:2.6rem;font-weight:800;background:linear-gradient(135deg,#a78bfa,#60a5fa,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;}
+.hero p{font-size:1.05rem;color:var(--muted);max-width:680px;margin:0 auto 24px;}
+.hero-badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.badge{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid;}
+.badge-blue{background:rgba(59,130,246,0.1);border-color:rgba(59,130,246,0.3);color:#60a5fa;}
+.badge-green{background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.3);color:#34d399;}
+.badge-purple{background:rgba(139,92,246,0.1);border-color:rgba(139,92,246,0.3);color:#a78bfa;}
+.badge-amber{background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.3);color:#fbbf24;}
+.badge-red{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.3);color:#f87171;}
+.badge-cyan{background:rgba(6,182,212,0.1);border-color:rgba(6,182,212,0.3);color:#22d3ee;}
+
+/* Container */
+.container{max-width:1100px;margin:0 auto;padding:40px 32px;}
+
+/* Section Headers */
+.section-block{margin-bottom:56px;}
+.section-header{display:flex;align-items:center;gap:14px;margin-bottom:8px;}
+.section-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px;}
+.section-icon.blue{background:rgba(59,130,246,0.15);}
+.section-icon.green{background:rgba(16,185,129,0.15);}
+.section-icon.purple{background:rgba(139,92,246,0.15);}
+.section-icon.amber{background:rgba(245,158,11,0.15);}
+.section-icon.red{background:rgba(239,68,68,0.15);}
+.section-icon.cyan{background:rgba(6,182,212,0.15);}
+.section-icon.pink{background:rgba(236,72,153,0.15);}
+.section-title{font-size:1.5rem;font-weight:700;}
+.section-sub{color:var(--muted);margin-bottom:24px;max-width:700px;}
+
+/* Cards */
+.grid{display:grid;gap:20px;}
+.grid-2{grid-template-columns:repeat(2,1fr);}
+.grid-3{grid-template-columns:repeat(3,1fr);}
+.grid-4{grid-template-columns:repeat(4,1fr);}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;transition:all 0.3s;}
+.card:hover{border-color:rgba(139,92,246,0.5);transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,0.3);}
+.card-header{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+.card-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.card-icon svg{width:26px;height:26px;}
+.card-icon.blue{background:rgba(59,130,246,0.15);}
+.card-icon.green{background:rgba(16,185,129,0.15);}
+.card-icon.purple{background:rgba(139,92,246,0.15);}
+.card-icon.amber{background:rgba(245,158,11,0.15);}
+.card-icon.red{background:rgba(239,68,68,0.15);}
+.card-icon.cyan{background:rgba(6,182,212,0.15);}
+.card-icon.pink{background:rgba(236,72,153,0.15);}
+.card h3{font-size:1.05rem;font-weight:600;}
+.card .model{font-size:12px;color:var(--dim);margin-top:2px;}
+.card p{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:12px;}
+.tags{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:500;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);color:#60a5fa;}
+.tag.green{background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.2);color:#34d399;}
+.tag.amber{background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.2);color:#fbbf24;}
+.tag.red{background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.2);color:#f87171;}
+.tag.purple{background:rgba(139,92,246,0.08);border-color:rgba(139,92,246,0.2);color:#a78bfa;}
+.tag.cyan{background:rgba(6,182,212,0.08);border-color:rgba(6,182,212,0.2);color:#22d3ee;}
+
+/* Table */
+.table-wrap{overflow-x:auto;margin:20px 0;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;padding:12px 16px;background:rgba(59,130,246,0.08);border-bottom:2px solid var(--border);font-weight:600;color:var(--accent);white-space:nowrap;}
+td{padding:10px 16px;border-bottom:1px solid var(--border);color:var(--muted);}
+tr:hover td{background:rgba(59,130,246,0.03);}
+td code{font-family:'JetBrains Mono',monospace;font-size:12px;background:rgba(59,130,246,0.1);padding:2px 6px;border-radius:4px;color:#60a5fa;}
+
+/* Code */
+pre{background:#0c1222;border:1px solid var(--border);border-radius:12px;padding:20px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.7;color:#94a3b8;margin:16px 0;}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;background:rgba(59,130,246,0.1);padding:2px 6px;border-radius:4px;color:#60a5fa;}
+pre code{background:none;padding:0;color:inherit;}
+pre .comment{color:#475569;}
+pre .keyword{color:#a78bfa;}
+pre .string{color:#34d399;}
+pre .highlight{color:#60a5fa;}
+pre .warning{color:#fbbf24;}
+pre .error{color:#f87171;}
+
+/* Diagram */
+.diagram{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:32px;margin:20px 0;text-align:center;}
+.diagram-title{font-size:14px;font-weight:600;color:var(--accent);margin-bottom:16px;}
+.diagram pre{text-align:left;display:inline-block;background:transparent;border:none;padding:0;font-size:12px;color:var(--muted);line-height:1.5;}
+
+/* CSS-Only Angle Diagram */
+.angle-diagram{position:relative;width:100%;height:340px;background:var(--bg);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:20px 0;}
+.angle-diagram .road{position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(to bottom,#1e293b,#0f172a);border-top:2px dashed #475569;}
+.angle-diagram .road-label{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:2px;}
+.angle-diagram .gantry{position:absolute;bottom:60px;left:50%;transform:translateX(-50%);width:4px;height:220px;background:linear-gradient(to top,#64748b,#475569);border-radius:2px;}
+.angle-diagram .gantry-arm{position:absolute;top:10px;left:0;right:0;height:4px;background:#64748b;border-radius:2px;}
+.angle-diagram .camera{position:absolute;top:30px;left:50%;transform:translateX(-50%);width:48px;height:32px;background:linear-gradient(135deg,#a78bfa,#7c3aed);border:2px solid #c4b5fd;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.angle-diagram .cam-label{position:absolute;top:68px;left:50%;transform:translateX(-50%);font-size:11px;color:#a78bfa;font-weight:600;white-space:nowrap;}
+.angle-diagram .beam{position:absolute;top:62px;left:50%;width:0;height:0;border-left:80px solid transparent;border-right:80px solid transparent;border-top:180px solid rgba(139,92,246,0.08);transform-origin:top center;transform:translateX(-50%) rotate(0deg);pointer-events:none;}
+.angle-diagram .beam-label{position:absolute;top:180px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--dim);background:var(--surface);padding:2px 8px;border-radius:4px;border:1px solid var(--border);}
+.angle-diagram .angle-line{position:absolute;top:62px;left:50%;width:2px;height:100px;background:var(--amber);transform-origin:top center;opacity:0.6;}
+.angle-diagram .angle-arc{position:absolute;top:62px;left:50%;width:60px;height:60px;border:2px dashed var(--amber);border-radius:50%;transform:translate(-50%,0);border-top-color:transparent;border-right-color:transparent;}
+.angle-diagram .angle-text{position:absolute;top:80px;left:calc(50% + 40px);font-size:12px;color:var(--amber);font-weight:700;}
+
+/* Wiring Diagram */
+.wiring-box{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:stretch;margin:20px 0;}
+.wire-panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;font-size:13px;}
+.wire-panel h4{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:12px;}
+.wire-panel .pin{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(51,65,85,0.5);font-family:'JetBrains Mono',monospace;font-size:11px;}
+.wire-panel .pin span:first-child{color:var(--dim);}
+.wire-panel .pin span:last-child{color:var(--text);font-weight:600;}
+.wire-conn{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 16px;gap:8px;}
+.wire-line{width:2px;height:16px;border-radius:1px;}
+.wire-line.red{background:#ef4444;}
+.wire-line.green{background:#10b981;}
+.wire-line.blue{background:#3b82f6;}
+.wire-line.yellow{background:#f59e0b;}
+.wire-line.black{background:#475569;}
+.wire-line.white{background:#e2e8f0;}
+.wire-line.purple{background:#a78bfa;}
+.wire-line.gray{background:#64748b;}
+.wire-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+/* Steps */
+.steps{display:flex;flex-direction:column;gap:12px;margin:20px 0;}
+.step{display:flex;gap:16px;align-items:flex-start;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:12px;}
+.step-num{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step-content h4{font-size:14px;font-weight:600;margin-bottom:4px;}
+.step-content p{font-size:13px;color:var(--muted);margin:0;}
+
+/* Alert boxes */
+.alert{padding:16px 20px;border-radius:12px;margin:16px 0;font-size:13px;line-height:1.6;}
+.alert-info{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);color:#93c5fd;}
+.alert-warn{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);color:#fde68a;}
+.alert-danger{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#fca5a5;}
+.alert-success{background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);color:#6ee7b7;}
+.alert strong{color:var(--text);}
+
+/* Specs grid */
+.specs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:16px 0;}
+.spec-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.spec-item .label{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;}
+.spec-item .value{font-size:15px;font-weight:700;color:var(--text);margin-top:4px;}
+.spec-item .value.accent{color:#60a5fa;}
+.spec-item .value.purple{color:#a78bfa;}
+
+/* Comparison */
+.comparison-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border);border-radius:12px;overflow:hidden;margin:16px 0;}
+.comparison-cell{background:var(--surface);padding:16px;}
+.comparison-cell.recommended{background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.3);}
+.comparison-cell h4{font-size:13px;font-weight:700;margin-bottom:8px;}
+.comparison-cell ul{list-style:none;padding:0;}
+.comparison-cell li{font-size:12px;color:var(--muted);padding:4px 0;display:flex;align-items:center;gap:6px;}
+.comparison-cell li::before{content:'\2713';color:var(--green);font-weight:bold;}
+.comparison-cell li.x::before{content:'\2717';color:var(--red);}
+
+/* Timeline */
+.timeline{position:relative;padding-left:32px;margin:20px 0;}
+.timeline::before{content:'';position:absolute;left:12px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--accent),var(--accent2),var(--green));}
+.timeline-item{position:relative;margin-bottom:24px;padding:16px 20px;background:var(--surface);border:1px solid var(--border);border-radius:12px;}
+.timeline-item::before{content:'';position:absolute;left:-26px;top:20px;width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);z-index:1;}
+.timeline-item.green::before{background:var(--green);}
+.timeline-item.amber::before{background:var(--amber);}
+.timeline-item.red::before{background:var(--red);}
+.timeline-item .tl-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.timeline-item .tl-freq{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;}
+.timeline-item .tl-freq.blue{color:#60a5fa;}
+.timeline-item .tl-freq.green{color:#34d399;}
+.timeline-item .tl-freq.amber{color:#fbbf24;}
+.timeline-item .tl-freq.red{color:#f87171;}
+.timeline-item p{font-size:13px;color:var(--muted);margin:0;}
+
+/* PoE Diagram */
+.poe-diagram{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:stretch;margin:20px 0;}
+.poe-device{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;}
+.poe-device h4{font-size:13px;font-weight:700;margin-bottom:12px;}
+.poe-device .poe-port{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;margin:4px 0;background:var(--bg);border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:11px;}
+.poe-cable{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 12px;gap:4px;}
+.poe-cable .cable-line{width:40px;height:3px;background:linear-gradient(90deg,#10b981,#3b82f6);border-radius:2px;}
+.poe-cable .cable-label{font-size:9px;color:var(--dim);writing-mode:vertical-lr;text-orientation:mixed;letter-spacing:1px;text-transform:uppercase;}
+
+/* Footer */
+.footer{text-align:center;padding:40px 32px;color:var(--dim);font-size:13px;border-top:1px solid var(--border);margin-top:40px;}
+
+@media(max-width:768px){
+  .hero h1{font-size:1.8rem;}
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr;}
+  .nav{display:none;}
+  .wiring-box,.poe-diagram{grid-template-columns:1fr;gap:12px;}
+  .comparison-row{grid-template-columns:1fr;}
+  .angle-diagram{height:400px;}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+    </div>
+    <div>
+      <div class="logo-text">TollGate RFID Pass</div>
+      <div class="logo-sub">ANPR Camera Installation Guide</div>
+    </div>
+  </div>
+  <nav class="nav">
+    <a href="index.html" class="back-link">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      Back to Docs
+    </a>
+    <a href="#overview">Overview</a>
+    <a href="#isapi">ISAPI</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#mounting">Mounting</a>
+    <a href="#poe">PoE</a>
+    <a href="#rtsp">RTSP</a>
+    <a href="#config">Config</a>
+    <a href="#backend">Backend</a>
+    <a href="#testing">Testing</a>
+    <a href="#troubleshooting">Troubleshooting</a>
+    <a href="#bom">BOM</a>
+  </nav>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <h1>📷 ANPR Camera Installation</h1>
+  <p>Complete field installation guide for Hikvision AI-powered ANPR cameras. Covers ISAPI integration, RTSP streaming, physical mounting, PoE wiring, and backend API configuration.</p>
+  <div class="hero-badges">
+    <span class="badge badge-purple">📷 4MP AI ANPR</span>
+    <span class="badge badge-green">>99% Plate Accuracy</span>
+    <span class="badge badge-blue">ISAPI + RTSP</span>
+    <span class="badge badge-amber">⏱ 25 min install</span>
+  </div>
+</section>
+
+<div class="container">
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 1: OVERVIEW                                               -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="overview">
+    <div class="section-header">
+      <div class="section-icon purple">📷</div>
+      <h2 class="section-title">Overview — Supported ANPR Camera Models</h2>
+    </div>
+    <p class="section-sub">TollGate supports Hikvision AcuSense and DeepinView ANPR camera families. All models use ISAPI protocol for plate recognition queries and RTSP for live video streaming. Model selection depends on lane speed, lighting conditions, and budget.</p>
+
+    <div class="grid grid-3" style="margin-bottom:24px;">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          </div>
+          <div>
+            <h3>DS-2CD7A46G0-IZHS</h3>
+            <div class="model">DeepinView 4MP Varifocal</div>
+          </div>
+        </div>
+        <p>Premium AI-powered ANPR camera with built-in deep learning algorithms. Best-in-class accuracy at highway speeds up to 120 km/h with IR illumination up to 50m.</p>
+        <div class="tags">
+          <span class="tag purple">ISAPI</span>
+          <span class="tag">4MP 2688×1520</span>
+          <span class="tag green">Recommended</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          </div>
+          <div>
+            <h3>DS-2CD7546G0-IZHS</h3>
+            <div class="model">AcuSense 4MP Bullet</div>
+          </div>
+        </div>
+        <p>Mid-range AcuSense camera with colorvu technology for 24/7 color imaging. Good balance of performance and cost for standard toll plaza deployments.</p>
+        <div class="tags">
+          <span class="tag">ISAPI</span>
+          <span class="tag">4MP 2560×1440</span>
+          <span class="tag amber">Mid-Range</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon amber">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          </div>
+          <div>
+            <h3>DS-2CD2T47G2-LS</h3>
+            <div class="model">ColorVu 4MP Turret</div>
+          </div>
+        </div>
+        <p>Budget-friendly ColorVu camera with F1.0 large aperture for excellent low-light performance. Requires external ANPR server for plate recognition processing.</p>
+        <div class="tags">
+          <span class="tag red">External ANPR</span>
+          <span class="tag">4MP 2560×1440</span>
+          <span class="tag">Budget</span>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:12px;">Model Specifications Comparison</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Specification</th>
+            <th>DS-2CD7A46G0-IZHS</th>
+            <th>DS-2CD7546G0-IZHS</th>
+            <th>DS-2CD2T47G2-LS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Resolution</strong></td>
+            <td>2688 × 1520 (4MP)</td>
+            <td>2560 × 1440 (4MP)</td>
+            <td>2560 × 1440 (4MP)</td>
+          </tr>
+          <tr>
+            <td><strong>ANPR Engine</strong></td>
+            <td>Built-in Deep Learning</td>
+            <td>Built-in AcuSense</td>
+            <td>External server required</td>
+          </tr>
+          <tr>
+            <td><strong>Plate Accuracy</strong></td>
+            <td>>99%</td>
+            <td>>97%</td>
+            <td>Depends on server</td>
+          </tr>
+          <tr>
+            <td><strong>Max Speed</strong></td>
+            <td>120 km/h</td>
+            <td>80 km/h</td>
+            <td>60 km/h (with server)</td>
+          </tr>
+          <tr>
+            <td><strong>Lens</strong></td>
+            <td>2.8–12mm motorized varifocal</td>
+            <td>2.8–12mm motorized varifocal</td>
+            <td>2.8mm fixed</td>
+          </tr>
+          <tr>
+            <td><strong>IR Range</strong></td>
+            <td>50m (EXIR 2.0)</td>
+            <td>40m (EXIR 2.0)</td>
+            <td>30m (ColorVu)</td>
+          </tr>
+          <tr>
+            <td><strong>Interface</strong></td>
+            <td>RJ-45 10/100 (PoE)</td>
+            <td>RJ-45 10/100 (PoE)</td>
+            <td>RJ-45 10/100 (PoE)</td>
+          </tr>
+          <tr>
+            <td><strong>Power</strong></td>
+            <td>PoE 802.3af (max 12.95W)</td>
+            <td>PoE 802.3af (max 12.95W)</td>
+            <td>PoE 802.3af (max 12W)</td>
+          </tr>
+          <tr>
+            <td><strong>IP Rating</strong></td>
+            <td>IP67</td>
+            <td>IP67</td>
+            <td>IP67</td>
+          </tr>
+          <tr>
+            <td><strong>Operating Temp</strong></td>
+            <td>-30°C to +60°C</td>
+            <td>-30°C to +60°C</td>
+            <td>-30°C to +60°C</td>
+          </tr>
+          <tr>
+            <td><strong>Default Ports</strong></td>
+            <td>80 (HTTP), 554 (RTSP), 443 (HTTPS)</td>
+            <td>80 (HTTP), 554 (RTSP), 443 (HTTPS)</td>
+            <td>80 (HTTP), 554 (RTSP), 443 (HTTPS)</td>
+          </tr>
+          <tr>
+            <td><strong>Approx Cost (MMK)</strong></td>
+            <td>4,500,000</td>
+            <td>3,200,000</td>
+            <td>1,800,000</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert alert-info">
+      <strong>💡 Recommendation:</strong> For highway toll plazas with speeds above 60 km/h, use the DS-2CD7A46G0-IZHS with built-in ANPR. Its deep learning engine processes plates on-device, reducing network bandwidth and backend load. For lower-speed plazas, the AcuSense model offers excellent value.
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 2: ISAPI INTEGRATION                                      -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="isapi">
+    <div class="section-header">
+      <div class="section-icon blue">🌐</div>
+      <h2 class="section-title">ISAPI Integration — Hikvision HTTP API</h2>
+    </div>
+    <p class="section-sub">Hikvision cameras use the ISAPI (Internet Surveillance API) protocol for device management, ANPR queries, and snapshot retrieval. All endpoints use HTTP Basic Authentication over HTTP/HTTPS.</p>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:12px;">ISAPI Endpoint Reference</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Endpoint</th><th>Method</th><th>Auth</th><th>Purpose</th><th>Content-Type</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>/ISAPI/System/deviceInfo</code></td><td>GET</td><td>Basic</td><td>Device serial, model, firmware version</td><td>application/xml</td></tr>
+          <tr><td><code>/ISAPI/Traffic/channels/{id}/anpr/picture/confirmed</code></td><td>GET</td><td>Basic</td><td>Retrieve confirmed ANPR plate captures</td><td>application/xml</td></tr>
+          <tr><td><code>/ISAPI/Streaming/channels/{id}/picture</code></td><td>GET</td><td>Basic</td><td>Get current frame snapshot (JPEG)</td><td>image/jpeg</td></tr>
+          <tr><td><code>/ISAPI/Streaming/channels</code></td><td>GET</td><td>Basic</td><td>List available streaming channels</td><td>application/xml</td></tr>
+          <tr><td><code>/ISAPI/AccessControl/RemoteControl/door/{id}</code></td><td>PUT</td><td>Basic</td><td>Open/close barrier gate relay</td><td>application/xml</td></tr>
+          <tr><td><code>/ISAPI/AccessControl/RemoteControl/led</code></td><td>PUT</td><td>Basic</td><td>Control traffic LED indicators</td><td>application/xml</td></tr>
+          <tr><td><code>/ISAPI/System/Network/interfaces</code></td><td>GET</td><td>Basic</td><td>Network interface configuration</td><td>application/xml</td></tr>
+          <tr><td><code>/ISAPI/System/time</code></td><td>PUT</td><td>Basic</td><td>Sync camera time via NTP</td><td>application/xml</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin:24px 0 12px;">ISAPI Authentication</h3>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">All ISAPI endpoints require HTTP Basic Authentication. The username and password are configured during camera initial setup via the Hikvision web interface.</p>
+
+    <pre><code><span class="comment"># curl example — get device info via ISAPI</span>
+curl -s -u <span class="string">"admin:YourPassword123"</span> \
+  http://<span class="highlight">192.168.10.60</span>/ISAPI/System/deviceInfo
+
+<span class="comment"># Response (XML):</span>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;DeviceInfoResponse&gt;
+  &lt;deviceID&gt;DS-2CD7A46G0-IZHS&lt;/deviceID&gt;
+  &lt;serialNumber&gt;DS-2CD7A46G0IZHS20260101AAGY00000&lt;/serialNumber&gt;
+  &lt;model&gt;DS-2CD7A46G0-IZHS&lt;/model&gt;
+  &lt;firmwareVersion&gt;V5.7.21&lt;/firmwareVersion&gt;
+  &lt;deviceStatus&gt;active&lt;/deviceStatus&gt;
+&lt;/DeviceInfoResponse&gt;</code></pre>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin:24px 0 12px;">ANPR Query via ISAPI</h3>
+    <pre><code><span class="comment"># Get confirmed ANPR plate captures</span>
+curl -s -u <span class="string">"admin:YourPassword123"</span> \
+  "http://<span class="highlight">192.168.10.60</span>/ISAPI/Traffic/channels/<span class="highlight">1</span>/anpr/picture/confirmed?searchID=<span class="highlight">1726000000000</span>&startIndex=0&count=10"
+
+<span class="comment"># Response includes plate recognition results:</span>
+&lt;TrafficPictureList&gt;
+  &lt;TrafficPicture&gt;
+    &lt;plateNumber&gt;<span class="string">1A/23456</span>&lt;/plateNumber&gt;
+    &lt;confidence&gt;<span class="highlight">98.5</span>&lt;/confidence&gt;
+    &lt;timeStamp&gt;2026-09-13T10:30:15+06:30&lt;/timeStamp&gt;
+    &lt;cameraID&gt;CH1&lt;/cameraID&gt;
+    &lt;imageUrl&gt;/Traffic/pictures/20260913/103015_plate.jpg&lt;/imageUrl&gt;
+  &lt;/TrafficPicture&gt;
+&lt;/TrafficPictureList&gt;</code></pre>
+
+    <div class="alert alert-warn">
+      <strong>⚠️ Note:</strong> The <code>searchID</code> parameter accepts a Unix timestamp in milliseconds. Use <code>Date.now()</code> in JavaScript or <code>$(date +%s%3N)</code> in bash to generate it. Results are paginated — use <code>startIndex</code> and <code>count</code> parameters to retrieve all plates.
+    </div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin:24px 0 12px;">Snapshot Retrieval</h3>
+    <pre><code><span class="comment"># Get a single JPEG snapshot from channel 1</span>
+curl -s -u <span class="string">"admin:YourPassword123"</span> \
+  http://<span class="highlight">192.168.10.60</span>/ISAPI/Streaming/channels/<span class="highlight">1</span>/picture \
+  -o snapshot.jpg
+
+<span class="comment"># Convert to base64 for API transport</span>
+curl -s -u <span class="string">"admin:YourPassword123"</span> \
+  http://<span class="highlight">192.168.10.60</span>/ISAPI/Streaming/channels/<span class="highlight">1</span>/picture \
+  | base64 > snapshot_base64.txt</code></pre>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 3: CAMERA ARCHITECTURE                                     -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="architecture">
+    <div class="section-header">
+      <div class="section-icon cyan">🌐</div>
+      <h2 class="section-title">Camera Architecture — Data Flow</h2>
+    </div>
+    <p class="section-sub">ANPR cameras operate as IP-based sensors in the 5-tier toll architecture. Plate recognition results are forwarded through the Raspberry Pi edge gateway to the central HQ server for cross-verification with RFID tag reads.</p>
+
+    <div class="diagram">
+      <div class="diagram-title">ANPR CAMERA → RPi EDGE → HQ SERVER TOPOLOGY</div>
+      <pre>
+ ┌──────────────────────────────────────────────────────────────────────────────┐
+ │                        🛣️  TOLL PLAZA LANE                                  │
+ │                                                                              │
+ │    ┌─────────────┐         ┌─────────────┐         ┌──────────────────┐     │
+ │    │  📷 ANPR    │  RTSP   │  🍓 RPi 4   │  HTTPS  │  🏢 HQ SERVER    │     │
+ │    │  CAMERA     │────────▶│  EDGE       │────────▶│  (192.168.100.101)│     │
+ │    │  :554/:80   │  ETH0   │  GATEWAY    │  VPN    │  :3000/api       │     │
+ │    └──────┬──────┘         │  :4000      │         │                  │     │
+ │           │                └──────┬──────┘         │  ┌────────────┐ │     │
+ │     ┌─────┴─────┐               │                 │  │ PostgreSQL  │ │     │
+ │     │           │               │ GPIO            │  │ :5432       │ │     │
+ │   ┌─┴─┐     ┌──┴──┐        ┌───┴───┐            │  └────────────┘ │     │
+ │   │PoE│     │ISAPI│        │SQLite │            └──────────────────┘     │
+ │   │SW │     │API  │        │ Local │                                     │
+ │   └───┘     └─────┘        │ Cache │            ┌──────────────────┐     │
+ │                             └───────┘            │  🌐 Admin Hub    │     │
+ │                                                   │  :80             │     │
+ │    Vehicle Approach ◀══════════════════════════   └──────────────────┘     │
+ │    (Plate captured by ANPR)                                                │
+ └──────────────────────────────────────────────────────────────────────────────┘
+
+ ┌─────────────────────── DATA FLOW ───────────────────────┐
+ │                                                          │
+ │  1. Vehicle approaches lane → loop detector triggers     │
+ │  2. ANPR camera captures plate → deep learning engine    │
+ │  3. Camera sends plate data via ISAPI HTTP → RPi         │
+ │  4. RPi cross-checks plate vs RFID tag → local SQLite    │
+ │  5. RPi syncs transaction → HQ API :3000 via VPN        │
+ │  6. HQ stores in PostgreSQL → dashboard updates          │
+ │                                                          │
+ └──────────────────────────────────────────────────────────┘
+      </pre>
+    </div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin:24px 0 12px;">Network Connection Summary</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Link</th><th>Protocol</th><th>Port</th><th>Direction</th><th>Bandwidth</th><th>Encryption</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>ANPR → RPi (Video)</td><td>RTSP</td><td>554</td><td>Camera → Edge</td><td>8 Mbps</td><td>Digest Auth</td></tr>
+          <tr><td>ANPR → RPi (API)</td><td>HTTP/HTTPS</td><td>80/443</td><td>Camera ↔ Edge</td><td>1 Mbps</td><td>Basic Auth</td></tr>
+          <tr><td>RPi → HQ</td><td>HTTPS REST</td><td>3000</td><td>Bi-directional</td><td>1 Mbps min</td><td>VPN + TLS</td></tr>
+          <tr><td>ANPR Snapshot</td><td>HTTP/ISAPI</td><td>80</td><td>Camera → Edge</td><td>0.5 Mbps</td><td>Basic Auth</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="specs-grid">
+      <div class="spec-item">
+        <div class="label">Default IP</div>
+        <div class="value purple">192.168.1.64</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">RTSP Port</div>
+        <div class="value purple">554</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">HTTP Port</div>
+        <div class="value purple">80</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">HTTPS Port</div>
+        <div class="value purple">443</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Max Streams</div>
+        <div class="value purple">2 (Main + Sub)</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">PoE Budget</div>
+        <div class="value purple">12.95W max</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 4: PHYSICAL MOUNTING                                      -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="mounting">
+    <div class="section-header">
+      <div class="section-icon amber">🔧</div>
+      <h2 class="section-title">Physical Mounting — Angle Optimization</h2>
+    </div>
+    <p class="section-sub">Correct camera angle is critical for >99% ANPR accuracy. A camera mounted too high or too low will produce distorted plates. Follow these specifications for optimal capture at vehicle speeds up to 120 km/h.</p>
+
+    <!-- CSS Angle Diagram — Overhead Mount -->
+    <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:4px;">Overhead (Gantry) Mount — Recommended</h3>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Camera mounted 4.5m–6m above road surface on gantry arm, tilted 15°–25° from vertical toward approaching traffic.</p>
+
+    <div class="angle-diagram">
+      <div class="road">
+        <div class="road-label">← Lane Direction (Vehicle Approach) →</div>
+      </div>
+      <div class="gantry">
+        <div class="gantry-arm"></div>
+        <div class="camera">📷</div>
+        <div class="cam-label">ANPR Camera — 4.5m–6m height</div>
+      </div>
+      <div class="beam"></div>
+      <div class="angle-line" style="transform:translateX(-50%) rotate(-20deg);"></div>
+      <div class="angle-arc" style="transform:translate(-50%,0) rotate(-20deg);"></div>
+      <div class="angle-text">15°–25°</div>
+      <div class="beam-label">Capture Zone — 3m × 4m lane coverage</div>
+    </div>
+
+    <div class="specs-grid">
+      <div class="spec-item">
+        <div class="label">Mounting Height</div>
+        <div class="value accent">4.5m – 6.0m</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Vertical Angle</div>
+        <div class="value accent">15° – 25°</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Horizontal Angle</div>
+        <div class="value accent">0° – 5° offset</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Capture Distance</div>
+        <div class="value accent">8m – 15m</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Lane Coverage</div>
+        <div class="value accent">3.0m – 3.75m</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Shutter Speed</div>
+        <div class="value accent">1/1000s min</div>
+      </div>
+    </div>
+
+    <!-- Side Mount Diagram -->
+    <h3 style="font-size:1.1rem;font-weight:700;margin:28px 0 4px;">Side (Pole) Mount — Alternative</h3>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Camera mounted on side pole at 2.5m–3.5m height, angled 30°–45° across the lane. Use only when gantry mounting is not possible.</p>
+
+    <div class="diagram">
+      <div class="diagram-title">SIDE MOUNT — CROSS-SECTION VIEW</div>
+      <pre>
+    ←── LANE DIRECTION ──→
+
+    ┌─────────────────────────────────────────────────────────────┐
+    │                                                             │
+    │        SIDE POLE                                            │
+    │        ┌──┐                                                 │
+    │        │  │ ← 2.5m–3.5m                                    │
+    │        │📷│ ← Camera at 30°–45° across lane                │
+    │        │  │                                                 │
+    │   ╔════╧══╧════╗                                            │
+    │   ║   POLE     ║                                            │
+    │   ║   MOUNT    ║                                            │
+    │   ╚════════════╝                                            │
+    │         │                                                   │
+    │         │  ←── 2m offset from lane edge                     │
+    │    ═════╪════════════════════════════════════                │
+    │         │         LANE (3.5m wide)                          │
+    │    ─────┼──────────────────────────────────── road surface  │
+    │                                                             │
+    │         ◀── Capture distance: 6m–10m ──▶                   │
+    │                                                             │
+    └─────────────────────────────────────────────────────────────┘
+
+    ⚠️  SIDE MOUNT LIMITATIONS:
+    • Lower accuracy at speeds >60 km/h (oblique angle)
+    • Requires wider field of view (2.8mm lens minimum)
+    • Plate perspective distortion at close range
+    • Not recommended for lanes >3.75m wide
+      </pre>
+    </div>
+
+    <div class="alert alert-warn">
+      <strong>⚠️ Critical Rules:</strong><br>
+      • Never mount the camera facing directly into the sun (use hood/shield if unavoidable)<br>
+      • Ensure the plate fills 15–25% of the frame width for optimal OCR<br>
+      • Avoid mounting where overhead signs or structures cast shadows on the plate zone<br>
+      • Maintain minimum 6m capture distance for vehicles traveling above 60 km/h
+    </div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin:24px 0 12px;">Mounting Hardware Specifications</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Component</th><th>Specification</th><th>Qty per Camera</th><th>Purpose</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Camera Housing</strong></td><td>IP67 rated aluminum, built-in sunshield</td><td>1</td><td>Weather protection, heat dissipation</td></tr>
+          <tr><td><strong>Pole Mount Bracket</strong></td><td>Stainless steel 304, adjustable tilt 0°–90°</td><td>1</td><td>Secure camera to pole/gantry</td></tr>
+          <tr><td><strong>Mounting Bolts</strong></td><td>M8 × 30mm stainless steel + lock nuts</td><td>4</td><td>Camera to bracket attachment</td></tr>
+          <tr><td><strong>Pole Clamp</strong></td><td>Adjustable 50mm–120mm diameter, stainless</td><td>1</td><td>Bracket to pole attachment</td></tr>
+          <tr><td><strong>Cable Gland</strong></td><td>PG11 IP68, cable diameter 6–10mm</td><td>2</td><td>Ethernet + power cable entry</td></tr>
+          <tr><td><strong>Conduit</strong></td><td>20mm flexible metal conduit, UV-resistant</td><td>1m</td><td>Cable protection from pole to camera</td></tr>
+          <tr><td><strong>Junction Box</strong></td><td>IP65 ABS, 100×80×50mm</td><td>1</td><td>PoE splitter + cable termination</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 5: POE WIRING                                             -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="poe">
+    <div class="section-header">
+      <div class="section-icon red">⚡</div>
+      <h2 class="section-title">PoE Wiring — Power over Ethernet</h2>
+    </div>
+    <p class="section-sub">All TollGate ANPR cameras use IEEE 802.3af PoE for single-cable data + power delivery. This simplifies installation and eliminates the need for separate power runs to each camera.</p>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:4px;">PoE Connection Diagram</h3>
+
+    <div class="poe-diagram">
+      <div class="poe-device" style="border-color:rgba(16,185,129,0.3);">
+        <h4 style="color:#34d399;">🌐 PoE Network Switch</h4>
+        <div class="poe-port"><span>Port 1</span><span style="color:#34d399;">ANPR Camera Lane 1</span></div>
+        <div class="poe-port"><span>Port 2</span><span style="color:#34d399;">ANPR Camera Lane 2</span></div>
+        <div class="poe-port"><span>Port 3</span><span style="color:#34d399;">ANPR Camera Lane 3</span></div>
+        <div class="poe-port"><span>Port 4</span><span style="color:#34d399;">ANPR Camera Lane 4</span></div>
+        <div class="poe-port"><span>Port 5</span><span>RPi Edge Gateway</span></div>
+        <div class="poe-port"><span>Port 6–8</span><span>RFID Readers</span></div>
+        <div style="margin-top:12px;font-size:11px;color:var(--dim);">
+          Total PoE Budget: 60W (4 × 12.95W cameras)
+        </div>
+      </div>
+
+      <div class="poe-cable">
+        <div class="cable-line"></div>
+        <div class="cable-label">Cat6 Shielded</div>
+        <div class="cable-line" style="background:linear-gradient(90deg,#f59e0b,#ef4444);"></div>
+        <div class="cable-label">Max 100m</div>
+        <div class="cable-line" style="background:linear-gradient(90deg,#a78bfa,#ec4899);"></div>
+        <div class="cable-label">802.3af PoE</div>
+      </div>
+
+      <div class="poe-device" style="border-color:rgba(139,92,246,0.3);">
+        <h4 style="color:#a78bfa;">📷 ANPR Camera</h4>
+        <div class="poe-port"><span>RJ-45 Port</span><span style="color:#a78bfa;">Data + Power IN</span></div>
+        <div class="poe-port"><span>PoE Class</span><span>Class 3 (12.95W)</span></div>
+        <div class="poe-port"><span>Power Status</span><span style="color:#34d399;">LED Green</span></div>
+        <div style="margin-top:16px;font-size:11px;color:var(--dim);">
+          12V DC NOT required (PoE only)
+        </div>
+      </div>
+    </div>
+
+    <div class="alert alert-danger">
+      <strong>⚡ CRITICAL:</strong> Never connect both PoE and external 12V DC power simultaneously. The camera's PoE circuitry can be damaged by voltage backfeeding. Use one power source only — PoE is recommended for all installations.
+    </div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin:24px 0 12px;">Ethernet Cable Pinout (T568B)</h3>
+    <div class="wiring-box">
+      <div class="wire-panel">
+        <h4>🌐 PoE Switch (RJ-45)</h4>
+        <div class="pin"><span>Pin 1 — White/Orange</span><span>TxData+</span></div>
+        <div class="pin"><span>Pin 2 — Orange</span><span>TxData-</span></div>
+        <div class="pin"><span>Pin 3 — White/Green</span><span>RxData+</span></div>
+        <div class="pin"><span>Pin 4 — Blue</span><span>VP (PoE +)</span></div>
+        <div class="pin"><span>Pin 5 — White/Blue</span><span>VP (PoE +)</span></div>
+        <div class="pin"><span>Pin 6 — Green</span><span>RxData-</span></div>
+        <div class="pin"><span>Pin 7 — White/Brown</span><span>VN (PoE -)</span></div>
+        <div class="pin"><span>Pin 8 — Brown</span><span>VN (PoE -)</span></div>
+      </div>
+      <div class="wire-conn">
+        <div style="display:flex;align-items:center;gap:4px;"><div class="wire-dot" style="background:#e2e8f0;"></div><div class="wire-line white"></div><div class="wire-dot" style="background:#e2e8f0;"></div></div>
+        <div style="display:flex;align-items:center;gap:4px;"><div class="wire-dot" style="background:#f59e0b;"></div><div class="wire-line yellow"></div><div class="wire-dot" style="background:#f59e0b;"></div></div>
+        <div style="display:flex;align-items:center;gap:4px;"><div class="wire-dot" style="background:#e2e8f0;"></div><div class="wire-line white"></div><div class="wire-dot" style="background:#e2e8f0;"></div></div>
+        <div style="display:flex;align-items:center;gap:4px;"><div class="wire-dot" style="background:#3b82f6;"></div><div class="wire-line blue"></div><div class="wire-dot" style="background:#3b82f6;"></div></div>
+        <div style="display:flex;align-items:center;gap:4px;"><div class="wire-dot" style="background:#e2e8f0;"></div><div class="wire-line white"></div><div class="wire-dot" style="background:#e2e8f0;"></div></div>
+        <div style="display:flex;align-items:center;gap:4px;"><div class="wire-dot" style="background:#10b981;"></div><div class="wire-line green"></div><div class="wire-dot" style="background:#10b981;"></div></div>
+        <div style="display:flex;align-items:center;gap:4px;"><div class="wire-dot" style="background:#e2e8f0;"></div><div class="wire-line white"></div><div class="wire-dot" style="background:#e2e8f0;"></div></div>
+        <div style="display:flex;align-items:center;gap:4px;"><div class="wire-dot" style="background:#64748b;"></div><div class="wire-line gray"></div><div class="wire-dot" style="background:#64748b;"></div></div>
+      </div>
+      <div class="wire-panel">
+        <h4>📷 ANPR Camera (RJ-45)</h4>
+        <div class="pin"><span>Pin 1 — White/Orange</span><span>TxData+</span></div>
+        <div class="pin"><span>Pin 2 — Orange</span><span>TxData-</span></div>
+        <div class="pin"><span>Pin 3 — White/Green</span><span>RxData+</span></div>
+        <div class="pin"><span>Pin 4 — Blue</span><span>VP (PoE +)</span></div>
+        <div class="pin"><span>Pin 5 — White/Blue</span><span>VP (PoE +)</span></div>
+        <div class="pin"><span>Pin 6 — Green</span><span>RxData-</span></div>
+        <div class="pin"><span>Pin 7 — White/Brown</span><span>VN (PoE -)</span></div>
+        <div class="pin"><span>Pin 8 — Brown</span><span>VN (PoE -)</span></div>
+      </div>
+    </div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin:24px 0 12px;">PoE Budget Planning</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Component</th><th>Max Power</th><th>Qty per Plaza</th><th>Total</th><th>PoE Class</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>ANPR Camera (DeepinView)</td><td>12.95W</td><td>4</td><td>51.8W</td><td>Class 3</td></tr>
+          <tr><td>ANPR Camera (AcuSense)</td><td>12.95W</td><td>0–4</td><td>0–51.8W</td><td>Class 3</td></tr>
+          <tr><td>RPi 4 Edge Gateway</td><td>15W (USB-C PD)</td><td>1</td><td>15W</td><td>N/A (non-PoE)</td></tr>
+          <tr><td>UHF RFID Reader</td><td>12W</td><td>4</td><td>48W</td><td>Class 3</td></tr>
+          <tr style="background:rgba(59,130,246,0.08);font-weight:700;"><td colspan="3">MAX TOTAL POE LOAD</td><td>115.6W</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert alert-info">
+      <strong>💡 Tip:</strong> Use a PoE switch with at least 30% headroom above your calculated load. For a 4-lane plaza with ANPR cameras and RFID readers, a 150W or 180W managed PoE switch is recommended. Unmanaged switches may not provide sufficient budget for simultaneous PoE delivery to all ports.
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 6: RTSP CONFIGURATION                                     -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="rtsp">
+    <div class="section-header">
+      <div class="section-icon green">📡</div>
+      <h2 class="section-title">RTSP Configuration — Video Streaming</h2>
+    </div>
+    <p class="section-sub">RTSP (Real Time Streaming Protocol) provides live video feeds from the ANPR camera. TollGate uses RTSP for real-time plate visualization and recording. All Hikvision cameras use Digest Authentication for RTSP access.</p>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:12px;">RTSP URL Format</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Stream Type</th><th>RTSP URL</th><th>Resolution</th><th>Bitrate</th><th>Purpose</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Main Stream</strong></td>
+            <td><code>rtsp://user:pass@IP:554/Streaming/Channels/101</code></td>
+            <td>2688×1520 (4MP)</td>
+            <td>4–8 Mbps</td>
+            <td>ANPR processing + recording</td>
+          </tr>
+          <tr>
+            <td><strong>Sub Stream</strong></td>
+            <td><code>rtsp://user:pass@IP:554/Streaming/Channels/102</code></td>
+            <td>704×576 (D1)</td>
+            <td>512 Kbps–1 Mbps</td>
+            <td>Live preview / low bandwidth</td>
+          </tr>
+          <tr>
+            <td><strong>HTTP Preview</strong></td>
+            <td><code>http://IP/Streaming/Channels/101/httpPreview</code></td>
+            <td>2688×1520 (4MP)</td>
+            <td>Variable</td>
+            <td>Browser-based preview</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert alert-info">
+      <strong>💡 Channel Numbering:</strong> Hikvision uses a 3-digit channel scheme: <code>101</code> = Channel 1 Main Stream, <code>102</code> = Channel 1 Sub Stream, <code>201</code> = Channel 2 Main Stream, etc. For single-camera ANPR, always use Channel 1 (101/102).
+    </div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin:24px 0 12px;">RTSP Stream Testing</h3>
+    <pre><code><span class="comment"># Test RTSP stream with ffplay (playback)</span>
+ffplay -rtsp_transport tcp \
+  rtsp://<span class="string">admin:YourPassword123</span>@<span class="highlight">192.168.10.60</span>:<span class="highlight">554</span>/Streaming/Channels/<span class="highlight">101</span>
+
+<span class="comment"># Test with VLC</span>
+vlc rtsp://<span class="string">admin:YourPassword123</span>@<span class="highlight">192.168.10.60</span>:<span class="highlight">554</span>/Streaming/Channels/<span class="highlight">101</span>
+
+<span class="comment"># Capture a single frame via FFmpeg</span>
+ffmpeg -rtsp_transport tcp -i \
+  rtsp://<span class="string">admin:YourPassword123</span>@<span class="highlight">192.168.10.60</span>:<span class="highlight">554</span>/Streaming/Channels/<span class="highlight">101</span> \
+  -frames:v 1 -q:v 2 capture.jpg
+
+<span class="comment"># Record 10-second clip for testing</span>
+ffmpeg -rtsp_transport tcp -i \
+  rtsp://<span class="string">admin:YourPassword123</span>@<span class="highlight">192.168.10.60</span>:<span class="highlight">554</span>/Streaming/Channels/<span class="highlight">101</span> \
+  -t 10 -c copy test_clip.mp4</code></pre>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin:24px 0 12px;">RTSP Performance Tuning</h3>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <h3>Transport Settings</h3>
+        </div>
+        <p>Always use <code>tcp</code> transport for toll lane RTSP. UDP can cause packet loss and frame corruption, especially on wireless bridges.</p>
+        <pre style="font-size:12px;margin-top:8px;"><code><span class="comment"># Camera web UI settings:</span>
+Network → Advanced → RTSP:
+  Transport Protocol: <span class="highlight">TCP</span>
+  RTSP Port: <span class="highlight">554</span>
+  Authentication: <span class="highlight">Digest</span>
+  Multicast: <span class="error">Disabled</span></code></pre>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon amber">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <h3>Video Settings for ANPR</h3>
+        </div>
+        <p>Optimize camera settings specifically for license plate capture. Fast shutter speed is more important than image quality.</p>
+        <pre style="font-size:12px;margin-top:8px;"><code><span class="comment"># Optimal ANPR video settings:</span>
+Resolution: <span class="highlight">2688×1520</span> (4MP)
+Frame Rate: <span class="highlight">25 fps</span>
+Bitrate Type: <span class="highlight">Variable</span>
+Max Bitrate: <span class="highlight">8 Mbps</span>
+I-Frame Interval: <span class="highlight">25</span> (= 1 second)
+Shutter Speed: <span class="highlight">1/1000s</span> minimum
+WDR: <span class="highlight">On</span> (for backlight compensation)</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 7: ANPR CONFIGURATION JSON                                -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="config">
+    <div class="section-header">
+      <div class="section-icon purple">⚙️</div>
+      <h2 class="section-title">ANPR Configuration JSON</h2>
+    </div>
+    <p class="section-sub">The TollGate backend stores ANPR camera configuration in a structured JSON format. This configuration is used by the Hikvision client service to connect to cameras and retrieve plate recognition results.</p>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:12px;">Camera Configuration Object</h3>
+    <pre><code>{
+  <span class="string">"cameras"</span>: [
+    {
+      <span class="string">"id"</span>: <span class="highlight">"anpr-lane-1"</span>,
+      <span class="string">"laneNumber"</span>: 1,
+      <span class="string">"model"</span>: <span class="string">"DS-2CD7A46G0-IZHS"</span>,
+      <span class="string">"connection"</span>: {
+        <span class="string">"protocol"</span>: <span class="string">"http"</span>,
+        <span class="string">"ipAddress"</span>: <span class="highlight">"192.168.10.60"</span>,
+        <span class="string">"port"</span>: 80,
+        <span class="string">"username"</span>: <span class="string">"admin"</span>,
+        <span class="string">"password"</span>: <span class="string">"${CAMERA_PASSWORD}"</span>,
+        <span class="string">"useHttps"</span>: false
+      },
+      <span class="string">"rtsp"</span>: {
+        <span class="string">"mainStream"</span>: <span class="string">"rtsp://admin:***@192.168.10.60:554/Streaming/Channels/101"</span>,
+        <span class="string">"subStream"</span>: <span class="string">"rtsp://admin:***@192.168.10.60:554/Streaming/Channels/102"</span>
+      },
+      <span class="string">"anpr"</span>: {
+        <span class="string">"enabled"</span>: true,
+        <span class="string">"channelId"</span>: 1,
+        <span class="string">"minConfidence"</span>: 85,
+        <span class="string">"plateFormat"</span>: <span class="string">"MY"</span>,
+        <span class="string">"captureInterval"</span>: 500,
+        <span class="string">"deduplicationWindow"</span>: 2000
+      },
+      <span class="string">"mounting"</span>: {
+        <span class="string">"type"</span>: <span class="string">"overhead"</span>,
+        <span class="string">"height"</span>: 5.0,
+        <span class="string">"verticalAngle"</span>: 20,
+        <span class="string">"horizontalAngle"</span>: 0
+      }
+    },
+    {
+      <span class="string">"id"</span>: <span class="highlight">"anpr-lane-2"</span>,
+      <span class="string">"laneNumber"</span>: 2,
+      <span class="string">"model"</span>: <span class="string">"DS-2CD7A46G0-IZHS"</span>,
+      <span class="string">"connection"</span>: {
+        <span class="string">"protocol"</span>: <span class="string">"http"</span>,
+        <span class="string">"ipAddress"</span>: <span class="highlight">"192.168.10.61"</span>,
+        <span class="string">"port"</span>: 80,
+        <span class="string">"username"</span>: <span class="string">"admin"</span>,
+        <span class="string">"password"</span>: <span class="string">"${CAMERA_PASSWORD}"</span>,
+        <span class="string">"useHttps"</span>: false
+      },
+      <span class="string">"rtsp"</span>: {
+        <span class="string">"mainStream"</span>: <span class="string">"rtsp://admin:***@192.168.10.61:554/Streaming/Channels/101"</span>,
+        <span class="string">"subStream"</span>: <span class="string">"rtsp://admin:***@192.168.10.61:554/Streaming/Channels/102"</span>
+      },
+      <span class="string">"anpr"</span>: {
+        <span class="string">"enabled"</span>: true,
+        <span class="string">"channelId"</span>: 1,
+        <span class="string">"minConfidence"</span>: 85,
+        <span class="string">"plateFormat"</span>: <span class="string">"MY"</span>,
+        <span class="string">"captureInterval"</span>: 500,
+        <span class="string">"deduplicationWindow"</span>: 2000
+      }
+    }
+  ],
+  <span class="string">"defaults"</span>: {
+    <span class="string">"pollInterval"</span>: 1000,
+    <span class="string">"retryAttempts"</span>: 3,
+    <span class="string">"timeout"</span>: 15000,
+    <span class="string">"syncToHQ"</span>: true
+  }
+}</code></pre>
+
+    <div class="grid grid-2" style="margin-top:20px;">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3>ANPR Settings Explained</h3>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Parameter</th><th>Value</th><th>Purpose</th></tr></thead>
+            <tbody>
+              <tr><td><code>minConfidence</code></td><td>85</td><td>Minimum plate confidence to accept (0–100)</td></tr>
+              <tr><td><code>plateFormat</code></td><td>MY</td><td>Myanmar plate format for OCR engine</td></tr>
+              <tr><td><code>captureInterval</code></td><td>500ms</td><td>Time between ISAPI ANPR polls</td></tr>
+              <tr><td><code>deduplicationWindow</code></td><td>2000ms</td><td>Ignore duplicate plate reads within window</td></tr>
+              <tr><td><code>channelId</code></td><td>1</td><td>Camera channel for ISAPI queries</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+          </div>
+          <h3>IP Address Assignment</h3>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Lane</th><th>Camera IP</th><th>VLAN</th><th>Camera ID</th></tr></thead>
+            <tbody>
+              <tr><td>Lane 1</td><td><code>192.168.10.60</code></td><td>10</td><td>anpr-lane-1</td></tr>
+              <tr><td>Lane 2</td><td><code>192.168.10.61</code></td><td>10</td><td>anpr-lane-2</td></tr>
+              <tr><td>Lane 3</td><td><code>192.168.10.62</code></td><td>10</td><td>anpr-lane-3</td></tr>
+              <tr><td>Lane 4</td><td><code>192.168.10.63</code></td><td>10</td><td>anpr-lane-4</td></tr>
+              <tr><td>RPi Gateway</td><td><code>192.168.10.1</code></td><td>10+1</td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 8: BACKEND INTEGRATION                                    -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="backend">
+    <div class="section-header">
+      <div class="section-icon green">🔗</div>
+      <h2 class="section-title">Backend Integration — API Commands</h2>
+    </div>
+    <p class="section-sub">The TollGate backend provides REST API endpoints for ANPR camera management, plate query, and toll event creation. These curl commands demonstrate how to test and integrate ANPR data with the central HQ server.</p>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:12px;">Device Management — Camera Registration</h3>
+    <pre><code><span class="comment"># Register an ANPR camera as a device</span>
+curl -X POST http://<span class="highlight">192.168.100.101</span>:<span class="highlight">3000</span>/api/devices \
+  -H <span class="string">"Authorization: Bearer $TOKEN"</span> \
+  -H <span class="string">"Content-Type: application/json"</span> \
+  -d '{
+    <span class="string">"plazaId"</span>: <span class="highlight">"plaza-yangon-01"</span>,
+    <span class="string">"type"</span>: <span class="string">"ANPR_CAMERA"</span>,
+    <span class="string">"name"</span>: <span class="string">"ANPR Lane 1"</span>,
+    <span class="string">"ipAddress"</span>: <span class="highlight">"192.168.10.60"</span>,
+    <span class="string">"port"</span>: 80,
+    <span class="string">"config"</span>: {
+      <span class="string">"username"</span>: <span class="string">"admin"</span>,
+      <span class="string">"password"</span>: <span class="string">"YourPassword123"</span>,
+      <span class="string">"useHttps"</span>: false,
+      <span class="string">"laneNumber"</span>: 1
+    }
+  }'
+
+<span class="comment"># Response:</span>
+{
+  <span class="string">"success"</span>: true,
+  <span class="string">"data"</span>: {
+    <span class="string">"id"</span>: <span class="highlight">"dev-anpr-001"</span>,
+    <span class="string">"type"</span>: <span class="string">"ANPR_CAMERA"</span>,
+    <span class="string">"status"</span>: <span class="string">"registered"</span>
+  }
+}</code></pre>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin:24px 0 12px;">Test Camera Connection</h3>
+    <pre><code><span class="comment"># Test ISAPI connection to the camera</span>
+curl -X POST http://<span class="highlight">192.168.100.101</span>:<span class="highlight">3000</span>/api/devices/test/ipcamera \
+  -H <span class="string">"Authorization: Bearer $TOKEN"</span> \
+  -H <span class="string">"Content-Type: application/json"</span> \
+  -d '{
+    <span class="string">"ipAddress"</span>: <span class="highlight">"192.168.10.60"</span>,
+    <span class="string">"port"</span>: 80,
+    <span class="string">"username"</span>: <span class="string">"admin"</span>,
+    <span class="string">"password"</span>: <span class="string">"YourPassword123"</span>
+  }'
+
+<span class="comment"># Response:</span>
+{
+  <span class="string">"success"</span>: true,
+  <span class="string">"data"</span>: {
+    <span class="string">"connected"</span>: true,
+    <span class="string">"serialNumber"</span>: <span class="highlight">"DS-2CD7A46G0IZHS20260101AAGY00000"</span>,
+    <span class="string">"model"</span>: <span class="string">"DS-2CD7A46G0-IZHS"</span>,
+    <span class="string">"firmwareVersion"</span>: <span class="string">"V5.7.21"</span>
+  }
+}</code></pre>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin:24px 0 12px;">Toll Event with ANPR Plate</h3>
+    <pre><code><span class="comment"># Create a toll event with both RFID tag and ANPR plate</span>
+curl -X POST http://<span class="highlight">192.168.100.101</span>:<span class="highlight">3000</span>/api/toll-events \
+  -H <span class="string">"Authorization: Bearer $TOKEN"</span> \
+  -H <span class="string">"Content-Type: application/json"</span> \
+  -d '{
+    <span class="string">"vehicleId"</span>: <span class="highlight">"veh-001"</span>,
+    <span class="string">"plazaId"</span>: <span class="highlight">"plaza-yangon-01"</span>,
+    <span class="string">"rfidTagId"</span>: <span class="string">"E200 3411 B802 0160 2260 1254"</span>,
+    <span class="string">"anprPlate"</span>: <span class="highlight">"1A/23456"</span>,
+    <span class="string">"laneNumber"</span>: 1,
+    <span class="string">"direction"</span>: <span class="string">"entry"</span>,
+    <span class="string">"amount"</span>: 2000
+  }'
+
+<span class="comment"># Response — note the cross-verification:</span>
+{
+  <span class="string">"success"</span>: true,
+  <span class="string">"data"</span>: {
+    <span class="string">"id"</span>: <span class="highlight">"evt-20260913-001"</span>,
+    <span class="string">"rfidTagId"</span>: <span class="string">"E200 3411 B802 0160 2260 1254"</span>,
+    <span class="string">"anprPlate"</span>: <span class="highlight">"1A/23456"</span>,
+    <span class="string">"plateVerified"</span>: true,
+    <span class="string">"amount"</span>: 2000,
+    <span class="string">"status"</span>: <span class="string">"completed"</span>
+  }
+}</code></pre>
+
+    <div class="alert alert-success">
+      <strong>✅ Cross-Verification:</strong> The backend automatically cross-checks the ANPR plate number against the vehicle's registered plate. If they don't match, a <code>RFID_ANPR_MISMATCH</code> violation is created for manual review. This prevents tag cloning and plate fraud.
+    </div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin:24px 0 12px;">Query ANPR Event History</h3>
+    <pre><code><span class="comment"># Get recent toll events with ANPR plates</span>
+curl -s http://<span class="highlight">192.168.100.101</span>:<span class="highlight">3000</span>/api/toll-events?limit=10 \
+  -H <span class="string">"Authorization: Bearer $TOKEN"</span> | python3 -m json.tool
+
+<span class="comment"># Search by plate number</span>
+curl -s "http://<span class="highlight">192.168.100.101</span>:<span class="highlight">3000</span>/api/toll-events?plate=<span class="highlight">1A/23456</span>&limit=5" \
+  -H <span class="string">"Authorization: Bearer $TOKEN"</span> | python3 -m json.tool
+
+<span class="comment"># Get device health status</span>
+curl -s http://<span class="highlight">192.168.100.101</span>:<span class="highlight">3000</span>/api/health/metrics \
+  -H <span class="string">"Authorization: Bearer $TOKEN"</span> | python3 -m json.tool</code></pre>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 9: TESTING & VERIFICATION                                 -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="testing">
+    <div class="section-header">
+      <div class="section-icon green">✅</div>
+      <h2 class="section-title">Testing &amp; Verification</h2>
+    </div>
+    <p class="section-sub">Verify each component before going live. Run these tests in order — skipping any step may cause silent failures during peak traffic.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Network Ping — Camera Reachability</h4>
+          <p>Confirm the ANPR camera responds on the network before configuring any software.</p>
+          <pre><code><span class="comment"># From RPi edge gateway</span>
+ping -c 5 <span class="highlight">192.168.10.60</span>
+
+<span class="comment"># Expected output:</span>
+<span class="string">64 bytes from 192.168.10.60: icmp_seq=1 ttl=64 time=0.89 ms</span></code></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>ISAPI Access — HTTP Service Check</h4>
+          <p>Verify the camera's web interface and ISAPI endpoints are accessible.</p>
+          <pre><code><span class="comment"># Check HTTP port 80 is open</span>
+nc -zv <span class="highlight">192.168.10.60</span> <span class="highlight">80</span>
+
+<span class="comment"># Test ISAPI device info endpoint</span>
+curl -s -u <span class="string">"admin:YourPassword123"</span> \
+  http://<span class="highlight">192.168.10.60</span>/ISAPI/System/deviceInfo
+
+<span class="comment"># Expected: XML with serial number and model</span></code></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>RTSP Stream — Video Feed Test</h4>
+          <p>Verify the RTSP stream is accessible and produces clean video.</p>
+          <pre><code><span class="comment"># Capture a single frame via FFmpeg</span>
+ffmpeg -rtsp_transport tcp -i \
+  rtsp://<span class="string">admin:YourPassword123</span>@<span class="highlight">192.168.10.60</span>:<span class="highlight">554</span>/Streaming/Channels/<span class="highlight">101</span> \
+  -frames:v 1 -q:v 2 /tmp/test_frame.jpg
+
+<span class="comment"># Verify the image file was created and is valid</span>
+file /tmp/test_frame.jpg
+<span class="comment"># Expected: JPEG image data, 2688 x 1520, 8-bit</span></code></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h4>ANPR Plate Test — Functional Verification</h4>
+          <p>Drive a vehicle with a known plate through the lane and verify it is captured correctly.</p>
+          <pre><code><span class="comment"># Query the latest ANPR results via ISAPI</span>
+curl -s -u <span class="string">"admin:YourPassword123"</span> \
+  "http://<span class="highlight">192.168.10.60</span>/ISAPI/Traffic/channels/<span class="highlight">1</span>/anpr/picture/confirmed?searchID=$(date +%s%3N)&startIndex=0&count=5"
+
+<span class="comment"># Expected: XML with plate numbers and confidence scores</span></code></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <h4>Backend Integration — Full Pipeline Test</h4>
+          <p>Submit a toll event via the API and verify it appears in the HQ database.</p>
+          <pre><code><span class="comment"># Submit test toll event with ANPR plate</span>
+curl -X POST http://localhost:3000/api/toll-events \
+  -H <span class="string">"Authorization: Bearer $TOKEN"</span> \
+  -H <span class="string">"Content-Type: application/json"</span> \
+  -d '{
+    <span class="string">"vehicleId"</span>: <span class="highlight">"test-vehicle"</span>,
+    <span class="string">"plazaId"</span>: <span class="highlight">"plaza-yangon-01"</span>,
+    <span class="string">"anprPlate"</span>: <span class="string">"TEST/0001"</span>,
+    <span class="string">"laneNumber"</span>: 1,
+    <span class="string">"direction"</span>: <span class="string">"entry"</span>,
+    <span class="string">"amount"</span>: 1000
+  }'
+
+<span class="comment"># Verify in event list</span>
+curl -s http://localhost:3000/api/toll-events?limit=1 \
+  -H <span class="string">"Authorization: Bearer $TOKEN"</span> | python3 -m json.tool</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 10: TROUBLESHOOTING                                       -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="troubleshooting">
+    <div class="section-header">
+      <div class="section-icon red">🔧</div>
+      <h2 class="section-title">Troubleshooting</h2>
+    </div>
+    <p class="section-sub">Common ANPR camera issues and their resolutions. Most problems are caused by incorrect IP configuration, PoE power issues, or camera angle misalignment.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Symptom</th><th>Likely Cause</th><th>Fix</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-red" style="font-size:11px;">Camera unreachable</span></td>
+            <td>Wrong IP, PoE port dead, cable fault</td>
+            <td>Check PoE switch port LED, swap cable, factory reset camera via reset button (hold 10s)</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-amber" style="font-size:11px;">ISAPI 401 Unauthorized</span></td>
+            <td>Wrong username/password, HTTP digest mismatch</td>
+            <td>Reset camera to factory defaults, reconfigure credentials via web UI on port 80</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-amber" style="font-size:11px;">RTSP connection refused</span></td>
+            <td>RTSP disabled, wrong port, firewall blocking</td>
+            <td>Enable RTSP in camera Network → Advanced settings, verify port 554, check iptables</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-red" style="font-size:11px;">Low plate accuracy (<90%)</span></td>
+            <td>Wrong angle, motion blur, poor lighting</td>
+            <td>Adjust vertical angle to 15°–25°, increase shutter speed to 1/1000s, enable WDR</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-amber" style="font-size:11px;">Plates not detected at night</span></td>
+            <td>IR reflection, IR cut filter stuck, exposure too low</td>
+            <td>Check IR illuminator alignment, enable auto IR, increase exposure time, clean lens</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-purple" style="font-size:11px;">Duplicate plate reads</span></td>
+            <td>Dedup window too small, slow vehicle speed</td>
+            <td>Increase <code>deduplicationWindow</code> to 3000ms, check camera trigger zone width</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-blue" style="font-size:11px;">PoE switch port not powering</span></td>
+            <td>Insufficient PoE budget, cable too long</td>
+            <td>Check total PoE load vs budget, reduce cable length below 80m, use managed PoE switch</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-red" style="font-size:11px;">Camera reboots randomly</span></td>
+            <td>Insufficient PoE power, overheating, firmware bug</td>
+            <td>Verify PoE class 3 support, check operating temp, update firmware to latest version</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-amber" style="font-size:11px;">ANPR results delayed</span></td>
+            <td>Poll interval too long, network latency, ISAPI timeout</td>
+            <td>Reduce <code>captureInterval</code> to 500ms, check network latency, increase timeout to 15s</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-cyan" style="font-size:11px;">Backend returns empty plate</span></td>
+            <td>Camera not returning ANPR data, channel misconfigured</td>
+            <td>Verify ISAPI ANPR endpoint directly, check <code>channelId</code> matches camera channel number</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin:28px 0 12px;">Factory Reset Procedure</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">!</div>
+        <div class="step-content">
+          <h4>Hikvision Camera Factory Reset</h4>
+          <p>Hold the reset button on the camera body for 10 seconds while powered on. The camera LED will flash red, then reboot with default IP <code>192.168.1.64</code>. All ANPR settings and credentials will be lost — reconfigure via web UI.</p>
+          <pre><code><span class="comment"># Default credentials after reset:</span>
+Username: <span class="string">admin</span>
+Password: <span class="string">(sticker on camera body)</span>
+IP: <span class="highlight">192.168.1.64</span>
+HTTP: <span class="highlight">80</span>
+RTSP: <span class="highlight">554</span></code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 11: BILL OF MATERIALS                                     -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="bom">
+    <div class="section-header">
+      <div class="section-icon amber">💰</div>
+      <h2 class="section-title">Bill of Materials — Per Lane ANPR Setup</h2>
+    </div>
+    <p class="section-sub">Complete cost breakdown for a single-lane ANPR camera installation. Multiply by number of lanes for full plaza cost.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Category</th><th>Item</th><th>Qty</th><th>Unit Cost (MMK)</th><th>Total (MMK)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td rowspan="2">📷 Camera</td><td>Hikvision DS-2CD7A46G0-IZHS ANPR Camera</td><td>1</td><td>4,500,000</td><td>4,500,000</td></tr>
+          <tr><td>Replacement lens protector (spare)</td><td>1</td><td>50,000</td><td>50,000</td></tr>
+          <tr><td rowspan="2">🔌 Network</td><td>Cat6 Shielded Ethernet Cable (30m)</td><td>1</td><td>75,000</td><td>75,000</td></tr>
+          <tr><td>PoE Switch Port (shared 8-port)</td><td>0.25</td><td>300,000</td><td>75,000</td></tr>
+          <tr><td rowspan="4">🔧 Mounting</td><td>Stainless Steel Pole Mount Bracket</td><td>1</td><td>180,000</td><td>180,000</td></tr>
+          <tr><td>Pole Clamp (50–120mm adjustable)</td><td>1</td><td>60,000</td><td>60,000</td></tr>
+          <tr><td>Cable Glands (PG11 IP68)</td><td>2</td><td>15,000</td><td>30,000</td></tr>
+          <tr><td>Conduit + Junction Box</td><td>1 set</td><td>80,000</td><td>80,000</td></tr>
+          <tr><td>🔧 Installation</td><td>Mounting Hardware (bolts, ties, sealant)</td><td>1 set</td><td>40,000</td><td>40,000</td></tr>
+          <tr style="background:rgba(139,92,246,0.08);font-weight:700;"><td colspan="4">TOTAL PER LANE (ANPR SUBSYSTEM)</td><td style="color:#a78bfa;">5,010,000 MMK</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert alert-info" style="margin-top:16px;">
+      <strong>💡 Notes:</strong><br>
+      • Prices are estimates as of September 2026 for Yangon market<br>
+      • PoE switch cost is shared across 4 lanes (÷ 4 per lane)<br>
+      • Bulk orders (10+ cameras) typically receive 8–12% discount<br>
+      • Import duty for surveillance equipment: 5% + commercial tax 5%<br>
+      • For side-mount installations, add MMK 150,000 for extended pole + bracket
+    </div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin:24px 0 12px;">Total Plaza Cost (4 Lanes)</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Subsystem</th><th>Per Lane</th><th>× 4 Lanes</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>📡 RFID Reader</td><td>4,880,000</td><td>19,520,000</td><td>From RFID guide</td></tr>
+          <tr><td>📷 ANPR Camera</td><td>5,010,000</td><td>20,040,000</td><td>This guide</td></tr>
+          <tr><td>🔲 Barrier Gate</td><td>4,950,000</td><td>19,800,000</td><td>From barrier guide</td></tr>
+          <tr><td>🍓 Lane Controller</td><td>430,000</td><td>2,150,000</td><td>RPi + peripherals</td></tr>
+          <tr style="background:rgba(139,92,246,0.08);font-weight:700;"><td colspan="2">TOTAL PER PLAZA (4 LANES)</td><td style="color:#a78bfa;">61,510,000 MMK</td><td>≈ $29,000 USD</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</div>
+
+<footer class="footer">
+  <p>TollGate RFID Pass — Enterprise Highway OS v1.0</p>
+  <p style="margin-top:4px;">ANPR Camera Installation Guide • September 2026</p>
+</footer>
+
+</body>
+</html>

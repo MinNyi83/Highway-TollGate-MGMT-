@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HQ Server Installation Guide — TollGate RFID Pass</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f172a;--surface:#1e293b;--border:#334155;--accent:#3b82f6;--accent2:#8b5cf6;--green:#10b981;--amber:#f59e0b;--red:#ef4444;--text:#f1f5f9;--muted:#94a3b8;--dim:#64748b;--radius:16px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;}
+a{color:var(--accent);text-decoration:none;}
+a:hover{text-decoration:underline;}
+
+/* Header */
+.header{position:sticky;top:0;z-index:100;background:rgba(15,23,42,0.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;}
+.logo{display:flex;align-items:center;gap:12px;}
+.logo-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;}
+.logo-icon svg{width:22px;height:22px;fill:white;}
+.logo-text{font-size:18px;font-weight:700;}
+.logo-sub{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.nav{display:flex;gap:8px;}
+.nav a{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;color:var(--muted);transition:all 0.2s;}
+.nav a:hover,.nav a.active{background:rgba(59,130,246,0.1);color:var(--accent);text-decoration:none;}
+
+/* Hero */
+.hero{padding:80px 32px 60px;text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(59,130,246,0.12) 0%,transparent 60%);}
+.hero h1{font-size:3rem;font-weight:800;background:linear-gradient(135deg,#60a5fa,#a78bfa,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;}
+.hero p{font-size:1.1rem;color:var(--muted);max-width:600px;margin:0 auto 32px;}
+.hero-badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.badge{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid;}
+.badge-blue{background:rgba(59,130,246,0.1);border-color:rgba(59,130,246,0.3);color:#60a5fa;}
+.badge-green{background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.3);color:#34d399;}
+.badge-purple{background:rgba(139,92,246,0.1);border-color:rgba(139,92,246,0.3);color:#a78bfa;}
+.badge-amber{background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.3);color:#fbbf24;}
+
+/* Container */
+.container{max-width:1200px;margin:0 auto;padding:40px 32px;}
+.section-title{font-size:1.5rem;font-weight:700;margin-bottom:8px;}
+.section-sub{color:var(--muted);margin-bottom:24px;}
+.section-divider{height:1px;background:var(--border);margin:60px 0 40px;}
+
+/* Cards Grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;transition:all 0.3s;cursor:pointer;}
+.card:hover{border-color:rgba(59,130,246,0.5);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.3);}
+.card-header{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+.card-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.card-icon svg{width:26px;height:26px;}
+.card-icon.blue{background:rgba(59,130,246,0.15);}
+.card-icon.green{background:rgba(16,185,129,0.15);}
+.card-icon.purple{background:rgba(139,92,246,0.15);}
+.card-icon.amber{background:rgba(245,158,11,0.15);}
+.card-icon.red{background:rgba(239,68,68,0.15);}
+.card-icon.cyan{background:rgba(6,182,212,0.15);}
+.card-icon.pink{background:rgba(236,72,153,0.15);}
+.card h3{font-size:1.05rem;font-weight:600;}
+.card .model{font-size:12px;color:var(--dim);margin-top:2px;}
+.card p{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:12px;}
+.tags{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:500;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);color:#60a5fa;}
+.tag.green{background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.2);color:#34d399;}
+.tag.amber{background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.2);color:#fbbf24;}
+.tag.purple{background:rgba(139,92,246,0.08);border-color:rgba(139,92,246,0.2);color:#a78bfa;}
+.tag.red{background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.2);color:#f87171;}
+
+/* Flow */
+.flow{display:flex;align-items:flex-start;gap:0;overflow-x:auto;padding:20px 0;}
+.flow-step{flex:0 0 120px;text-align:center;position:relative;}
+.flow-num{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 16px rgba(59,130,246,0.3);}
+.flow-icon{font-size:28px;margin-bottom:6px;}
+.flow-text{font-size:12px;color:var(--muted);line-height:1.3;}
+.flow-arrow{position:absolute;right:-14px;top:18px;color:var(--dim);font-size:18px;}
+
+/* Table */
+.table-wrap{overflow-x:auto;margin:20px 0;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;padding:12px 16px;background:rgba(59,130,246,0.08);border-bottom:2px solid var(--border);font-weight:600;color:var(--accent);white-space:nowrap;}
+td{padding:10px 16px;border-bottom:1px solid var(--border);color:var(--muted);}
+tr:hover td{background:rgba(59,130,246,0.03);}
+
+/* Code */
+pre{background:#0c1222;border:1px solid var(--border);border-radius:12px;padding:20px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.7;color:#94a3b8;margin:16px 0;}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;background:rgba(59,130,246,0.1);padding:2px 6px;border-radius:4px;color:#60a5fa;}
+pre code{background:none;padding:0;color:inherit;}
+
+/* Diagram */
+.diagram{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:32px;margin:20px 0;text-align:center;}
+.diagram-title{font-size:14px;font-weight:600;color:var(--accent);margin-bottom:16px;}
+.diagram pre{text-align:left;display:inline-block;background:transparent;border:none;padding:0;font-size:12px;color:var(--muted);}
+
+/* Docker Container Diagram (CSS-only) */
+.docker-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0;}
+.docker-container{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;position:relative;transition:all 0.3s;}
+.docker-container:hover{border-color:rgba(59,130,246,0.5);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3);}
+.docker-container .icon{font-size:28px;margin-bottom:8px;}
+.docker-container .name{font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.docker-container .port{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green);background:rgba(16,185,129,0.1);padding:2px 8px;border-radius:8px;display:inline-block;margin-bottom:6px;}
+.docker-container .desc{font-size:11px;color:var(--dim);line-height:1.3;}
+.docker-container.db{border-top:3px solid #3b82f6;}
+.docker-container.app{border-top:3px solid #10b981;}
+.docker-container.web{border-top:3px solid #8b5cf6;}
+.docker-container.tool{border-top:3px solid #f59e0b;}
+.docker-grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:20px 0;}
+
+/* Step Cards */
+.step-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px;transition:all 0.3s;}
+.step-card:hover{border-color:rgba(59,130,246,0.5);}
+.step-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.step-num{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step-title{font-size:1rem;font-weight:600;}
+.step-subtitle{font-size:12px;color:var(--dim);}
+.step-card h4{font-size:14px;font-weight:600;margin:14px 0 8px;color:var(--text);}
+.step-card p{font-size:13px;color:var(--muted);line-height:1.5;}
+.step-card ul{margin:8px 0 8px 20px;font-size:13px;color:var(--muted);}
+.step-card ul li{margin-bottom:4px;}
+
+/* Info boxes */
+.info-box{background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.2);border-radius:12px;padding:16px 20px;margin:16px 0;font-size:13px;color:#94a3b8;line-height:1.6;}
+.info-box.warn{background:rgba(245,158,11,0.06);border-color:rgba(245,158,11,0.2);}
+.info-box.danger{background:rgba(239,68,68,0.06);border-color:rgba(239,68,68,0.2);}
+.info-box strong{color:var(--text);}
+
+/* Spec cards */
+.spec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:20px 0;}
+.spec-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;}
+.spec-card .spec-val{font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.spec-card .spec-label{font-size:12px;color:var(--dim);margin-top:4px;}
+
+/* BOM table highlight */
+.bom-total{background:rgba(59,130,246,0.08);font-weight:700;}
+.bom-total td{color:#60a5fa !important;font-weight:700;}
+
+/* Footer */
+.footer{text-align:center;padding:40px 32px;color:var(--dim);font-size:13px;border-top:1px solid var(--border);margin-top:40px;}
+
+/* Back link */
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;margin-bottom:24px;color:var(--accent);}
+.back-link:hover{text-decoration:none;opacity:0.8;}
+
+@media(max-width:768px){
+  .hero h1{font-size:2rem;}
+  .grid{grid-template-columns:1fr;}
+  .nav{display:none;}
+  .flow{flex-wrap:wrap;gap:12px;}
+  .flow-step{flex:0 0 100px;}
+  .docker-grid{grid-template-columns:repeat(2,1fr);}
+  .docker-grid-2{grid-template-columns:1fr;}
+  .spec-grid{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+    </div>
+    <div>
+      <div class="logo-text">TollGate RFID Pass</div>
+      <div class="logo-sub">HQ Server Guide</div>
+    </div>
+  </div>
+  <nav class="nav">
+    <a href="#architecture">Architecture</a>
+    <a href="#specs">Specs</a>
+    <a href="#install">Install</a>
+    <a href="#containers">Containers</a>
+    <a href="#health">Health</a>
+    <a href="#backup">Backup</a>
+    <a href="#troubleshoot">Troubleshoot</a>
+    <a href="#bom">BOM</a>
+  </nav>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <h1>HQ Server Installation</h1>
+  <p>Complete guide to deploying the central TollGate HQ server — 8 Docker containers, 3 PostgreSQL databases, and production-grade monitoring.</p>
+  <div class="hero-badges">
+    <span class="badge badge-blue">🏢 Central Server</span>
+    <span class="badge badge-green">🐳 8 Containers</span>
+    <span class="badge badge-purple">🗄️ 3 Databases</span>
+    <span class="badge badge-amber">📡 Sync Engine</span>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SECTION 1: System Architecture                -->
+<!-- ============================================ -->
+<div class="container" id="architecture">
+  <a href="index.html" class="back-link">← Back to Documentation Index</a>
+  <h2 class="section-title">🏢 System Architecture</h2>
+  <p class="section-sub">Docker container topology — 8 services orchestrated via Docker Compose</p>
+
+  <div class="diagram">
+    <div class="diagram-title">HQ SERVER — DOCKER CONTAINER ARCHITECTURE</div>
+    <pre>
+    ☁️  INTERNET / VPN / 4G LTE  (Plaza ↔ HQ Sync)
+                    │
+                    │  :3000 (API)  :80 (Admin)  :8080 (Customer)  :8081 (Financial)
+                    │
+    ╔═══════════════╧══════════════════════════════════════════════════════════╗
+    ║                     HQ SERVER — Docker Compose Stack                    ║
+    ║                                                                        ║
+    ║   ┌──────────────┐  ┌──────────────┐  ┌──────────────┐                ║
+    ║   │  frontend     │  │ customer-    │  │ financial-   │                ║
+    ║   │  :80          │  │ portal       │  │ portal       │                ║
+    ║   │  Admin Panel  │  │ :8080        │  │ :8081        │                ║
+    ║   │  Nginx+React  │  │ Driver PWA   │  │ Finance App  │                ║
+    ║   └──────┬───────┘  └──────┬───────┘  └──────┬───────┘                ║
+    ║          │                  │                  │                        ║
+    ║          └──────────┬───────┴──────────┬───────┘                        ║
+    ║                     │                  │                                ║
+    ║   ┌─────────────────┴──────────────────┴─────────────────┐              ║
+    ║   │                   backend   :3000                     │              ║
+    ║   │         Node.js / Express / TypeScript / Prisma       │              ║
+    ║   │    Sync Engine · Auth · Validation · Swagger API      │              ║
+    ║   └──────┬─────────────────┬─────────────────┬───────────┘              ║
+    ║          │                 │                 │                          ║
+    ║   ┌──────▼──────┐  ┌──────▼──────┐  ┌──────▼──────┐                   ║
+    ║   │    db        │  │ customer-db  │  │  plaza-db   │                   ║
+    ║   │   :5432      │  │   :5433      │  │   :5434     │                   ║
+    ║   │ PostgreSQL   │  │ PostgreSQL   │  │ PostgreSQL  │                   ║
+    ║   │ tollgate     │  │ tollgate_    │  │ tollgate_   │                   ║
+    ║   │              │  │ customer     │  │ plaza       │                   ║
+    ║   └─────────────┘  └─────────────┘  └─────────────┘                   ║
+    ║                                                                        ║
+    ║   ┌─────────────────────────────────────────────────────┐               ║
+    ║   │              simulator  (profile: tools)             │               ║
+    ║   │         Highway Canvas Simulator — optional          │               ║
+    ║   └─────────────────────────────────────────────────────┘               ║
+    ╚══════════════════════════════════════════════════════════════════════════╝
+    </pre>
+  </div>
+
+  <div class="docker-grid">
+    <!-- Row 1: Databases -->
+    <div class="docker-container db">
+      <div class="icon">🗄️</div>
+      <div class="name">db</div>
+      <div class="port">:5432</div>
+      <div class="desc">HQ Database<br>vehicles, toll_events,<br>violations, plazas</div>
+    </div>
+    <div class="docker-container db">
+      <div class="icon">🗄️</div>
+      <div class="name">customer-db</div>
+      <div class="port">:5433</div>
+      <div class="desc">Customer Database<br>users, accounts,<br>wallets, RFID tags</div>
+    </div>
+    <div class="docker-container db">
+      <div class="icon">🗄️</div>
+      <div class="name">plaza-db</div>
+      <div class="port">:5434</div>
+      <div class="desc">Plaza Database<br>sync_queue, config,<br>local_events</div>
+    </div>
+    <div class="docker-container tool">
+      <div class="icon">🚗</div>
+      <div class="name">simulator</div>
+      <div class="port">profile: tools</div>
+      <div class="desc">Highway Simulator<br>Canvas toll visualizer<br>(optional)</div>
+    </div>
+    <!-- Row 2: Applications -->
+    <div class="docker-container app">
+      <div class="icon">⚙️</div>
+      <div class="name">backend</div>
+      <div class="port">:3000</div>
+      <div class="desc">API Server<br>Express + Prisma<br>Sync · Auth · Reports</div>
+    </div>
+    <div class="docker-container web">
+      <div class="icon">📊</div>
+      <div class="name">frontend</div>
+      <div class="port">:80</div>
+      <div class="desc">Admin Dashboard<br>React + Vite + Nginx<br>Highway management</div>
+    </div>
+    <div class="docker-container web">
+      <div class="icon">👤</div>
+      <div class="name">customer-portal</div>
+      <div class="port">:8080</div>
+      <div class="desc">Driver Portal<br>React PWA + Nginx<br>Account & wallet</div>
+    </div>
+    <div class="docker-container web">
+      <div class="icon">💰</div>
+      <div class="name">financial-portal</div>
+      <div class="port">:8081</div>
+      <div class="desc">Financial Portal<br>React + Nginx<br>Revenue & settlement</div>
+    </div>
+  </div>
+
+  <div class="info-box">
+    <strong>Container Dependency Order:</strong> All 3 databases must be healthy before the backend starts. The backend must be healthy before any frontend portal starts. The simulator is optional (profile: <code>tools</code>) and requires manual activation.
+  </div>
+</div>
+
+<div class="container"><div class="section-divider"></div></div>
+
+<!-- ============================================ -->
+<!-- SECTION 2: Server Specifications             -->
+<!-- ============================================ -->
+<div class="container" id="specs">
+  <h2 class="section-title">🔧 Server Specifications</h2>
+  <p class="section-sub">Recommended hardware and software requirements for production deployment</p>
+
+  <div class="spec-grid">
+    <div class="spec-card">
+      <div class="spec-val">4 vCPU</div>
+      <div class="spec-label">Minimum CPU Cores</div>
+    </div>
+    <div class="spec-card">
+      <div class="spec-val">8 GB</div>
+      <div class="spec-label">Minimum RAM</div>
+    </div>
+    <div class="spec-card">
+      <div class="spec-val">80 GB</div>
+      <div class="spec-label">Disk Space (SSD)</div>
+    </div>
+    <div class="spec-card">
+      <div class="spec-val">1 Gbps</div>
+      <div class="spec-label">Network Bandwidth</div>
+    </div>
+    <div class="spec-card">
+      <div class="spec-val">Ubuntu 22.04</div>
+      <div class="spec-label">Recommended OS</div>
+    </div>
+    <div class="spec-card">
+      <div class="spec-val">Docker 24+</div>
+      <div class="spec-label">Container Runtime</div>
+    </div>
+    <div class="spec-card">
+      <div class="spec-val">PostgreSQL 16</div>
+      <div class="spec-label">Database Version</div>
+    </div>
+    <div class="spec-card">
+      <div class="spec-val">Node.js 20</div>
+      <div class="spec-label">Runtime Version</div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Resource</th><th>Minimum</th><th>Recommended</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>CPU</strong></td><td>4 vCPU</td><td>8 vCPU</td><td>Intel Xeon or AMD EPYC</td></tr>
+        <tr><td><strong>RAM</strong></td><td>8 GB</td><td>16 GB</td><td>Each Postgres uses ~256MB, backend ~512MB</td></tr>
+        <tr><td><strong>Storage</strong></td><td>80 GB SSD</td><td>250 GB NVMe</td><td>Vehicle photos consume ~2GB/month</td></tr>
+        <tr><td><strong>OS</strong></td><td>Ubuntu 20.04+</td><td>Ubuntu 22.04 LTS</td><td>Debian 11+ also supported</td></tr>
+        <tr><td><strong>Docker</strong></td><td>20.10+</td><td>24.0+</td><td>With Docker Compose V2</td></tr>
+        <tr><td><strong>Network</strong></td><td>10 Mbps</td><td>1 Gbps</td><td>Static IP required for plaza sync</td></tr>
+        <tr><td><strong>SSL</strong></td><td>Self-signed</td><td>Let's Encrypt</td><td>Required for HTTPS API</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="info-box">
+    <strong>Production Note:</strong> For production deployments, use a minimum of 8GB RAM and 8 vCPU with SSD storage. The 3 PostgreSQL instances each consume ~256MB at idle. Vehicle photo storage grows at approximately 2GB/month depending on traffic volume.
+  </div>
+</div>
+
+<div class="container"><div class="section-divider"></div></div>
+
+<!-- ============================================ -->
+<!-- SECTION 3: Installation Steps                -->
+<!-- ============================================ -->
+<div class="container" id="install">
+  <h2 class="section-title">🔧 Installation Steps</h2>
+  <p class="section-sub">Complete walkthrough from bare server to running system — estimated time: 45 minutes</p>
+
+  <div class="flow">
+    <div class="flow-step"><div class="flow-num">1</div><div class="flow-icon">🖥️</div><div class="flow-text">System<br>Prep</div><span class="flow-arrow">→</span></div>
+    <div class="flow-step"><div class="flow-num">2</div><div class="flow-icon">🐳</div><div class="flow-text">Docker<br>Install</div><span class="flow-arrow">→</span></div>
+    <div class="flow-step"><div class="flow-num">3</div><div class="flow-icon">📦</div><div class="flow-text">Deploy<br>Stack</div><span class="flow-arrow">→</span></div>
+    <div class="flow-step"><div class="flow-num">4</div><div class="flow-icon">🗄️</div><div class="flow-text">DB<br>Setup</div><span class="flow-arrow">→</span></div>
+    <div class="flow-step"><div class="flow-num">5</div><div class="flow-icon">🌐</div><div class="flow-text">Nginx<br>SSL</div><span class="flow-arrow">→</span></div>
+    <div class="flow-step"><div class="flow-num">6</div><div class="flow-icon">✅</div><div class="flow-text">Verify<br>Deploy</div></div>
+  </div>
+
+  <!-- Step 1 -->
+  <div class="step-card" id="step-1">
+    <div class="step-header">
+      <div class="step-num">1</div>
+      <div>
+        <div class="step-title">System Preparation</div>
+        <div class="step-subtitle">Update OS, create directories, configure firewall</div>
+      </div>
+    </div>
+    <h4>1.1 Update System Packages</h4>
+<pre><code># Ubuntu / Debian
+sudo apt update && sudo apt upgrade -y
+
+# Install essential packages
+sudo apt install -y curl wget git unzip ufw htop net-tools</code></pre>
+
+    <h4>1.2 Create Project Directory</h4>
+<pre><code># Clone the repository
+cd /opt
+sudo git clone https://github.com/your-org/TollGate-RFID.git
+cd TollGate-RFID</code></pre>
+
+    <h4>1.3 Configure Firewall</h4>
+<pre><code># Enable UFW
+sudo ufw enable
+
+# Allow required ports
+sudo ufw allow 22/tcp    # SSH
+sudo ufw allow 80/tcp    # HTTP (Admin Panel)
+sudo ufw allow 443/tcp   # HTTPS
+sudo ufw allow 8080/tcp  # Customer Portal
+sudo ufw allow 8081/tcp  # Financial Portal
+
+# Deny direct DB access from external
+sudo ufw deny 5432/tcp
+sudo ufw deny 5433/tcp
+sudo ufw deny 5434/tcp
+
+# Reload
+sudo ufw status</code></pre>
+
+    <div class="info-box warn">
+      <strong>⚠️ Security:</strong> Never expose PostgreSQL ports (5432, 5433, 5434) to the public internet. Only the API port (3000) and frontend ports (80, 8080, 8081) should be accessible.
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step-card" id="step-2">
+    <div class="step-header">
+      <div class="step-num">2</div>
+      <div>
+        <div class="step-title">Docker Installation</div>
+        <div class="step-subtitle">Install Docker Engine and Docker Compose</div>
+      </div>
+    </div>
+    <h4>2.1 Install Docker Engine</h4>
+<pre><code># Install Docker official GPG key
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# Add Docker repository
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Install Docker
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# Verify installation
+docker --version
+docker compose version</code></pre>
+
+    <h4>2.2 Add User to Docker Group</h4>
+<pre><code># Allow running docker without sudo
+sudo usermod -aG docker $USER
+
+# Apply group changes (or log out and back in)
+newgrp docker
+
+# Verify
+docker ps</code></pre>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step-card" id="step-3">
+    <div class="step-header">
+      <div class="step-num">3</div>
+      <div>
+        <div class="step-title">Deploy the Stack</div>
+        <div class="step-subtitle">Build and start all Docker containers</div>
+      </div>
+    </div>
+    <h4>3.1 Configure Environment Variables</h4>
+<pre><code># Create .env file from template
+cp .env.example .env
+
+# Edit with production values
+nano .env</code></pre>
+
+    <h4>3.2 Required Environment Variables</h4>
+<pre><code># Database credentials (change for production!)
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=your-secure-password-here
+
+# JWT secret (generate a strong random string)
+JWT_SECRET=your-random-64-char-secret-key-here
+JWT_EXPIRES_IN=24h
+
+# CORS origins (comma-separated, or leave empty for dev)
+CORS_ORIGINS=https://admin.yourdomain.com,https://portal.yourdomain.com
+
+# Payment gateway credentials (optional)
+KBZ_PAY_MERCHANT_ID=
+KBZ_PAY_APP_ID=
+KBZ_PAY_SECRET_KEY=
+WAVE_PAY_MERCHANT_ID=
+WAVE_PAY_SECRET_KEY=
+MMQR_MERCHANT_ID=
+MMQR_API_KEY=</code></pre>
+
+    <h4>3.3 Build and Launch</h4>
+<pre><code># Full stack build and launch (first run: ~10 min)
+cd /opt/TollGate-RFID
+docker compose up -d --build
+
+# Verify all 8 containers are running
+docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'</code></pre>
+
+    <div class="info-box">
+      <strong>Expected output:</strong> All 8 containers should show <code>Up</code> status. The backend takes ~20 seconds to become healthy due to database dependency ordering.
+    </div>
+
+    <h4>3.4 Optional: Launch Simulator</h4>
+<pre><code># Launch with the simulator profile
+docker compose --profile tools up -d --build simulator</code></pre>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step-card" id="step-4">
+    <div class="step-header">
+      <div class="step-num">4</div>
+      <div>
+        <div class="step-title">Database Setup</div>
+        <div class="step-subtitle">Run Prisma migrations for all 3 databases</div>
+      </div>
+    </div>
+    <h4>4.1 Run Migrations</h4>
+<pre><code># HQ Database (vehicles, toll events, violations)
+docker exec tollgate-rfid-backend-1 npx prisma migrate deploy
+
+# Customer Database (users, accounts, wallets)
+docker exec tollgate-rfid-backend-1 sh -c \
+  'DATABASE_URL=postgresql://postgres:postgres@db:5432/tollgate \
+   npx prisma migrate deploy --schema=prisma/schema.customer.prisma'
+
+# Plaza Database (sync queue, config)
+docker exec tollgate-rfid-backend-1 sh -c \
+  'DATABASE_URL=postgresql://postgres:postgres@db:5432/tollgate \
+   npx prisma migrate deploy --schema=prisma/schema.plaza.prisma'</code></pre>
+
+    <h4>4.2 Seed Default Data</h4>
+<pre><code># Create default admin user and initial plaza data
+docker exec tollgate-rfid-backend-1 npx prisma db seed
+
+# Default credentials (change after first login!)
+# Admin:     admin@tollgate.com / password123
+# Customer:  ko.min@personal.com / password123</code></pre>
+
+    <div class="info-box danger">
+      <strong>🔒 Critical:</strong> Change all default passwords immediately after first login. The admin account has full system access including database management and plaza configuration.
+    </div>
+
+    <h4>4.3 Verify Databases</h4>
+<pre><code># Check HQ database tables
+docker exec -it tollgate-rfid-db-1 psql -U postgres -d tollgate -c "\dt"
+
+# Check Customer database tables
+docker exec -it tollgate-rfid-customer-db-1 psql -U postgres -d tollgate_customer -c "\dt"
+
+# Check Plaza database tables
+docker exec -it tollgate-rfid-plaza-db-1 psql -U postgres -d tollgate_plaza -c "\dt"</code></pre>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="step-card" id="step-5">
+    <div class="step-header">
+      <div class="step-num">5</div>
+      <div>
+        <div class="step-title">Nginx & SSL Configuration</div>
+        <div class="step-subtitle">Configure reverse proxy and SSL certificates</div>
+      </div>
+    </div>
+    <h4>5.1 Install Nginx (External Reverse Proxy)</h4>
+<pre><code># Install Nginx on host (for SSL termination)
+sudo apt install -y nginx
+
+# Install Certbot for Let's Encrypt
+sudo apt install -y certbot python3-certbot-nginx</code></pre>
+
+    <h4>5.2 Nginx Configuration</h4>
+<pre><code># /etc/nginx/sites-available/tollgate
+server {
+    listen 80;
+    server_name admin.yourdomain.com;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name admin.yourdomain.com;
+
+    ssl_certificate /etc/letsencrypt/live/admin.yourdomain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/admin.yourdomain.com/privkey.pem;
+
+    location / {
+        proxy_pass http://127.0.0.1:80;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /api {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+server {
+    listen 443 ssl http2;
+    server_name portal.yourdomain.com;
+
+    ssl_certificate /etc/letsencrypt/live/portal.yourdomain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/portal.yourdomain.com/privkey.pem;
+
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+server {
+    listen 443 ssl http2;
+    server_name finance.yourdomain.com;
+
+    ssl_certificate /etc/letsencrypt/live/finance.yourdomain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/finance.yourdomain.com/privkey.pem;
+
+    location / {
+        proxy_pass http://127.0.0.1:8081;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}</code></pre>
+
+    <h4>5.3 Enable and Test</h4>
+<pre><code># Enable site
+sudo ln -s /etc/nginx/sites-available/tollgate /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+
+# Get SSL certificates
+sudo certbot --nginx -d admin.yourdomain.com -d portal.yourdomain.com -d finance.yourdomain.com
+
+# Auto-renewal is configured by certbot (verify with)
+sudo certbot renew --dry-run</code></pre>
+  </div>
+
+  <!-- Step 6 -->
+  <div class="step-card" id="step-6">
+    <div class="step-header">
+      <div class="step-num">6</div>
+      <div>
+        <div class="step-title">Verify Deployment</div>
+        <div class="step-subtitle">Run health checks and confirm all services</div>
+      </div>
+    </div>
+    <h4>6.1 Health Check Endpoints</h4>
+<pre><code># Full health check
+curl -s http://localhost:3000/api/health | python3 -m json.tool
+
+# Liveness probe
+curl -s http://localhost:3000/api/health/live
+
+# Readiness probe
+curl -s http://localhost:3000/api/health/ready
+
+# Detailed metrics (requires auth)
+curl -s -H "Authorization: Bearer YOUR_TOKEN" \
+  http://localhost:3000/api/health/metrics | python3 -m json.tool</code></pre>
+
+    <h4>6.2 Verify Frontend Portals</h4>
+<pre><code># Admin Dashboard
+curl -s -o /dev/null -w "%{http_code}" http://localhost:80
+# Expected: 200
+
+# Customer Portal
+curl -s -o /dev/null -w "%{http_code}" http://localhost:8080
+# Expected: 200
+
+# Financial Portal
+curl -s -o /dev/null -w "%{http_code}" http://localhost:8081
+# Expected: 200</code></pre>
+
+    <h4>6.3 Test Plaza Connectivity</h4>
+<pre><code># From a plaza server, test API connectivity
+curl -s http://HQ_SERVER_IP:3000/api/health/ready
+# Expected: {"status":"ready"}</code></pre>
+  </div>
+</div>
+
+<div class="container"><div class="section-divider"></div></div>
+
+<!-- ============================================ -->
+<!-- SECTION 4: Container Port Map                -->
+<!-- ============================================ -->
+<div class="container" id="containers">
+  <h2 class="section-title">📡 Container Port Map</h2>
+  <p class="section-sub">Network configuration for all 8 Docker containers</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Container</th><th>Image</th><th>Host Port</th><th>Container Port</th><th>Purpose</th><th>Depends On</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>db</strong></td>
+          <td><code>postgres:16-alpine</code></td>
+          <td><span class="tag">5432</span></td>
+          <td>5432</td>
+          <td>HQ Database — vehicles, toll_events, violations, plazas, daily_collections</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>customer-db</strong></td>
+          <td><code>postgres:16-alpine</code></td>
+          <td><span class="tag">5433</span></td>
+          <td>5432</td>
+          <td>Customer Database — users, accounts, rfid_tags, loyalty_points</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>plaza-db</strong></td>
+          <td><code>postgres:16-alpine</code></td>
+          <td><span class="tag">5434</span></td>
+          <td>5432</td>
+          <td>Plaza Database — sync_queue, plaza_config, device_config</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>backend</strong></td>
+          <td>Custom Build</td>
+          <td><span class="tag green">3000</span></td>
+          <td>3000</td>
+          <td>Express API Server — REST endpoints, sync engine, JWT auth</td>
+          <td>db, customer-db, plaza-db</td>
+        </tr>
+        <tr>
+          <td><strong>frontend</strong></td>
+          <td>Custom Build</td>
+          <td><span class="tag purple">80</span></td>
+          <td>80</td>
+          <td>Admin Dashboard — React + Nginx SPA</td>
+          <td>backend</td>
+        </tr>
+        <tr>
+          <td><strong>customer-portal</strong></td>
+          <td>Custom Build</td>
+          <td><span class="tag purple">8080</span></td>
+          <td>80</td>
+          <td>Driver Portal — React PWA for vehicle owners</td>
+          <td>backend</td>
+        </tr>
+        <tr>
+          <td><strong>financial-portal</strong></td>
+          <td>Custom Build</td>
+          <td><span class="tag purple">8081</span></td>
+          <td>80</td>
+          <td>Financial Portal — Revenue, settlement, reconciliation</td>
+          <td>backend</td>
+        </tr>
+        <tr>
+          <td><strong>simulator</strong></td>
+          <td>Custom Build</td>
+          <td><span class="tag amber">—</span></td>
+          <td>—</td>
+          <td>Highway Canvas Simulator (profile: tools, optional)</td>
+          <td>backend</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="diagram">
+    <div class="diagram-title">PORT EXPOSURE MAP</div>
+    <pre>
+    Host Machine Ports
+    ═══════════════════════════════════════════════════════
+    :80    ────────► frontend (Nginx :80)         Admin
+    :8080  ────────► customer-portal (Nginx :80)  Driver
+    :8081  ────────► financial-portal (Nginx :80) Finance
+    :3000  ────────► backend (Node.js :3000)      API
+    :5432  ────────► db (PostgreSQL :5432)        HQ DB
+    :5433  ────────► customer-db (PostgreSQL)     Cust DB
+    :5434  ────────► plaza-db (PostgreSQL)        Plaza DB
+    ═══════════════════════════════════════════════════════
+    Note: :5432-5434 are internal only — block via UFW
+    </pre>
+  </div>
+
+  <div class="info-box">
+    <strong>Docker Volumes:</strong> The stack uses 4 named volumes: <code>pgdata</code> (HQ DB), <code>customer_pgdata</code> (Customer DB), <code>plaza_pgdata</code> (Plaza DB), and <code>uploads</code> (vehicle photos, ANPR captures).
+  </div>
+</div>
+
+<div class="container"><div class="section-divider"></div></div>
+
+<!-- ============================================ -->
+<!-- SECTION 5: Health Monitoring                 -->
+<!-- ============================================ -->
+<div class="container" id="health">
+  <h2 class="section-title">📡 Health Monitoring</h2>
+  <p class="section-sub">Built-in health endpoints and monitoring configuration</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Endpoint</th><th>Method</th><th>Auth</th><th>Description</th><th>Use Case</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>/api/health</code></td>
+          <td><span class="tag green">GET</span></td>
+          <td>No</td>
+          <td>Full health: DB status, latency, memory, CPU, uptime</td>
+          <td>Monitoring dashboards</td>
+        </tr>
+        <tr>
+          <td><code>/api/health/live</code></td>
+          <td><span class="tag green">GET</span></td>
+          <td>No</td>
+          <td>Liveness probe — always 200 if process is alive</td>
+          <td>Kubernetes liveness / Docker healthcheck</td>
+        </tr>
+        <tr>
+          <td><code>/api/health/ready</code></td>
+          <td><span class="tag green">GET</span></td>
+          <td>No</td>
+          <td>Readiness probe — 200 if DB is connected</td>
+          <td>Kubernetes readiness / load balancer</td>
+        </tr>
+        <tr>
+          <td><code>/api/health/metrics</code></td>
+          <td><span class="tag green">GET</span></td>
+          <td>Yes</td>
+          <td>Detailed metrics: DB row counts, storage usage, uptime</td>
+          <td>Admin dashboard analytics</td>
+        </tr>
+        <tr>
+          <td><code>/api/health/detailed</code></td>
+          <td><span class="tag green">GET</span></td>
+          <td>Yes</td>
+          <td>Same as metrics (legacy alias)</td>
+          <td>Backward compatibility</td>
+        </tr>
+        <tr>
+          <td><code>/api/health/backup</code></td>
+          <td><span class="tag green">GET</span></td>
+          <td>Yes</td>
+          <td>Full database backup as JSON download</td>
+          <td>Manual backup / disaster recovery</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 style="margin:24px 0 12px;font-size:1.1rem;">Health Check Response Example</h3>
+<pre><code>{
+  "status": "healthy",
+  "timestamp": "2026-09-13T10:30:00.000Z",
+  "uptime": 86400.5,
+  "database": {
+    "status": "connected",
+    "latencyMs": 2
+  },
+  "memory": {
+    "total": 8589934592,
+    "free": 5368709120,
+    "used": 3221225472,
+    "usagePercent": "37.5"
+  },
+  "cpu": {
+    "model": "Intel Xeon E5-2680 v4",
+    "cores": 4,
+    "loadAvg": [1.25, 1.10, 0.95]
+  },
+  "platform": "linux",
+  "nodeVersion": "v20.20.2",
+  "version": "1.0.0"
+}</code></pre>
+
+  <h3 style="margin:24px 0 12px;font-size:1.1rem;">Docker Health Check Configuration</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Container</th><th>Check Command</th><th>Interval</th><th>Timeout</th><th>Retries</th><th>Start Period</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>db</strong></td><td><code>pg_isready -U postgres -d tollgate</code></td><td>5s</td><td>5s</td><td>5</td><td>—</td></tr>
+        <tr><td><strong>customer-db</strong></td><td><code>pg_isready -U postgres -d tollgate_customer</code></td><td>5s</td><td>5s</td><td>5</td><td>—</td></tr>
+        <tr><td><strong>plaza-db</strong></td><td><code>pg_isready -U postgres -d tollgate_plaza</code></td><td>5s</td><td>5s</td><td>5</td><td>—</td></tr>
+        <tr><td><strong>backend</strong></td><td><code>curl -f http://localhost:3000/api/health</code></td><td>15s</td><td>10s</td><td>3</td><td>20s</td></tr>
+        <tr><td><strong>frontend</strong></td><td><code>curl -f http://localhost:80/</code></td><td>15s</td><td>10s</td><td>3</td><td>15s</td></tr>
+        <tr><td><strong>customer-portal</strong></td><td><code>curl -f http://localhost:80/</code></td><td>15s</td><td>10s</td><td>3</td><td>15s</td></tr>
+        <tr><td><strong>financial-portal</strong></td><td><code>curl -f http://localhost:80/</code></td><td>15s</td><td>10s</td><td>3</td><td>15s</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="info-box">
+    <strong>Monitoring Script:</strong> Save the following as <code>/opt/TollGate-RFID/scripts/monitor.sh</code> and run via cron every 5 minutes for automated health checks.
+  </div>
+<pre><code>#!/bin/bash
+# TollGate HQ Server Health Monitor
+# Run: */5 * * * * /opt/TollGate-RFID/scripts/monitor.sh >> /var/log/tollgate-health.log 2>&1
+
+LOG="/var/log/tollgate-health.log"
+DATE=$(date '+%Y-%m-%d %H:%M:%S')
+
+# Check API health
+HEALTH=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/api/health/live)
+if [ "$HEALTH" != "200" ]; then
+    echo "[$DATE] CRITICAL: API health check failed (HTTP $HEALTH)" >> "$LOG"
+    # Restart backend container
+    docker restart tollgate-rfid-backend-1
+fi
+
+# Check each database
+for DB_PORT in 5432 5433 5434; do
+    if ! pg_isready -h localhost -p $DB_PORT -U postgres -q 2>/dev/null; then
+        echo "[$date] CRITICAL: Database on port $DB_PORT unreachable" >> "$LOG"
+    fi
+done
+
+# Check disk usage
+DISK_USAGE=$(df / | awk 'NR==2 {print $5}' | tr -d '%')
+if [ "$DISK_USAGE" -gt 85 ]; then
+    echo "[$DATE] WARNING: Disk usage at ${DISK_USAGE}%" >> "$LOG"
+fi</code></pre>
+</div>
+
+<div class="container"><div class="section-divider"></div></div>
+
+<!-- ============================================ -->
+<!-- SECTION 6: Backup & Recovery                 -->
+<!-- ============================================ -->
+<div class="container" id="backup">
+  <h2 class="section-title">💾 Backup & Recovery</h2>
+  <p class="section-sub">Automated backup scripts for all 3 PostgreSQL databases</p>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num" style="background:linear-gradient(135deg,#10b981,#06b6d4);">B</div>
+      <div>
+        <div class="step-title">Automated Backup Script</div>
+        <div class="step-subtitle">Save as <code>/opt/TollGate-RFID/scripts/backup.sh</code> — runs daily via cron</div>
+      </div>
+    </div>
+<pre><code>#!/bin/bash
+# ============================================
+# TollGate HQ Database Backup Script
+# Backs up all 3 PostgreSQL databases
+# ============================================
+
+set -euo pipefail
+
+# Configuration
+BACKUP_DIR="/opt/TollGate-RFID/backups"
+DATE=$(date '+%Y-%m-%d_%H-%M-%S')
+RETENTION_DAYS=30
+
+# Database configs
+declare -A DATABASES=(
+    ["hq"]="container=tollgate-rfid-db-1 db=tollgate"
+    ["customer"]="container=tollgate-rfid-customer-db-1 db=tollgate_customer"
+    ["plaza"]="container=tollgate-rfid-plaza-db-1 db=tollgate_plaza"
+)
+
+# Create backup directory
+mkdir -p "$BACKUP_DIR"
+
+# Backup each database
+for DB_NAME in "${!DATABASES[@]}"; do
+    IFS='=' read -r CONTAINER_VAR CONTAINER DB_VAR DB <<< "${DATABASES[$DB_NAME]}"
+    CONTAINER=$(echo "$CONTAINER" | tr -d ' "')
+    DB=$(echo "$DB" | tr -d ' "')
+
+    BACKUP_FILE="$BACKUP_DIR/${DB_NAME}_${DATE}.sql.gz"
+
+    echo "[$(date)] Backing up $DB from $CONTAINER..."
+    docker exec "$CONTAINER" pg_dump -U postgres "$DB" | gzip > "$BACKUP_FILE"
+
+    echo "[$(date)] Backup saved: $BACKUP_FILE ($(du -h "$BACKUP_FILE" | cut -f1))"
+done
+
+# Cleanup old backups (older than RETENTION_DAYS)
+echo "[$(date)] Cleaning backups older than $RETENTION_DAYS days..."
+find "$BACKUP_DIR" -name "*.sql.gz" -mtime +$RETENTION_DAYS -delete
+
+# Create backup manifest
+echo "[$(date)] Backup manifest:" > "$BACKUP_DIR/manifest.txt"
+ls -lh "$BACKUP_DIR"/*.sql.gz | tail -10 >> "$BACKUP_DIR/manifest.txt"
+
+echo "[$(date)] All backups completed successfully."</code></pre>
+
+    <h4>Setup Cron Job</h4>
+<pre><code># Make executable
+chmod +x /opt/TollGate-RFID/scripts/backup.sh
+
+# Run daily at 2:00 AM
+sudo crontab -e
+# Add: 0 2 * * * /opt/TollGate-RFID/scripts/backup.sh >> /var/log/tollgate-backup.log 2>&1</code></pre>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">R</div>
+      <div>
+        <div class="step-title">Disaster Recovery — Restore from Backup</div>
+        <div class="step-subtitle">Restore a database from a compressed backup file</div>
+      </div>
+    </div>
+<pre><code># Restore HQ database
+gunzip -c /opt/TollGate-RFID/backups/hq_2026-09-13_02-00-00.sql.gz | \
+  docker exec -i tollgate-rfid-db-1 psql -U postgres -d tollgate
+
+# Restore Customer database
+gunzip -c /opt/TollGate-RFID/backups/customer_2026-09-13_02-00-00.sql.gz | \
+  docker exec -i tollgate-rfid-customer-db-1 psql -U postgres -d tollgate_customer
+
+# Restore Plaza database
+gunzip -c /opt/TollGate-RFID/backups/plaza_2026-09-13_02-00-00.sql.gz | \
+  docker exec -i tollgate-rfid-plaza-db-1 psql -U postgres -d tollgate_plaza
+
+# Restart backend to refresh connections
+docker restart tollgate-rfid-backend-1</code></pre>
+
+    <div class="info-box warn">
+      <strong>⚠️ Warning:</strong> Always stop the backend container before restoring a database to prevent write conflicts. Use <code>docker stop tollgate-rfid-backend-1</code> before restoring, then restart after.
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6);">V</div>
+      <div>
+        <div class="step-title">API-Based Backup</div>
+        <div class="step-subtitle">Download a full database backup via the health endpoint</div>
+      </div>
+    </div>
+<pre><code># Download backup via API (requires JWT token)
+curl -H "Authorization: Bearer YOUR_ADMIN_TOKEN" \
+  http://localhost:3000/api/health/backup \
+  -o backup_$(date +%Y-%m-%d).json
+
+# The response is a JSON containing all HQ database tables</code></pre>
+  </div>
+</div>
+
+<div class="container"><div class="section-divider"></div></div>
+
+<!-- ============================================ -->
+<!-- SECTION 7: Troubleshooting                   -->
+<!-- ============================================ -->
+<div class="container" id="troubleshoot">
+  <h2 class="section-title">💡 Troubleshooting</h2>
+  <p class="section-sub">Common issues and their solutions</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Issue</th><th>Symptoms</th><th>Diagnosis</th><th>Fix</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>DB Connection Refused</strong></td>
+          <td>Backend logs show "connection refused"</td>
+          <td><code>docker ps</code> — check DB container status</td>
+          <td><code>docker compose up -d db customer-db plaza-db</code></td>
+        </tr>
+        <tr>
+          <td><strong>Backend 502 Bad Gateway</strong></td>
+          <td>Frontend shows 502 on API calls</td>
+          <td><code>docker logs tollgate-rfid-backend-1 --tail 50</code></td>
+          <td>Check DB health, then restart: <code>docker restart backend</code></td>
+        </tr>
+        <tr>
+          <td><strong>Migration Not Applied</strong></td>
+          <td>Missing tables, Prisma errors</td>
+          <td><code>docker exec backend npx prisma migrate status</code></td>
+          <td><code>docker exec backend npx prisma migrate deploy</code></td>
+        </tr>
+        <tr>
+          <td><strong>Prisma Client Outdated</strong></td>
+          <td>"Prisma Client is not generated" error</td>
+          <td><code>docker exec backend npx prisma generate</code></td>
+          <td>Regenerate: <code>npx prisma generate</code> in backend container</td>
+        </tr>
+        <tr>
+          <td><strong>Rate Limit 429 Error</strong></td>
+          <td>"Too Many Requests" response</td>
+          <td>In-memory rate limiter hit threshold</td>
+          <td>Wait for window reset or restart backend: <code>docker restart backend</code></td>
+        </tr>
+        <tr>
+          <td><strong>CORS Error</strong></td>
+          <td>Browser console shows CORS policy block</td>
+          <td>Check <code>CORS_ORIGINS</code> env var</td>
+          <td>Update <code>.env</code> with correct origins, restart backend</td>
+        </tr>
+        <tr>
+          <td><strong>Frontend 404 on Reload</strong></td>
+          <td>SPA routes return 404 after page refresh</td>
+          <td>Nginx SPA fallback not configured</td>
+          <td>Ensure <code>try_files $uri $uri/ /index.html</code> in nginx.conf</td>
+        </tr>
+        <tr>
+          <td><strong>Disk Space Full</strong></td>
+          <td>Containers crash, "no space left on device"</td>
+          <td><code>docker system df</code> — check volumes</td>
+          <td><code>docker system prune -f</code> + clean old backups</td>
+        </tr>
+        <tr>
+          <td><strong>Customer Portal Login Failed</strong></td>
+          <td>"Login failed" on valid credentials</td>
+          <td>API returns <code>{user, token}</code> directly</td>
+          <td>Use <code>res.data</code> not <code>res.data.data</code> in frontend</td>
+        </tr>
+        <tr>
+          <td><strong>Sync Queue Stuck</strong></td>
+          <td>Plaza events not reaching HQ</td>
+          <td><code>GET /api/sync/status</code> on plaza</td>
+          <td>Check network connectivity, restart plaza sync service</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 style="margin:24px 0 12px;font-size:1.1rem;">Useful Diagnostic Commands</h3>
+<pre><code># View all container logs
+docker compose logs -f --tail=100
+
+# View specific container logs
+docker logs tollgate-rfid-backend-1 --tail 50 -f
+
+# Check container resource usage
+docker stats --no-stream
+
+# Inspect container network
+docker network inspect tollgate-rfid_default
+
+# Check volume sizes
+docker system df -v
+
+# Restart entire stack
+docker compose down && docker compose up -d --build
+
+# Nuclear option — full rebuild
+docker compose down -v  # ⚠️ DELETES ALL DATA
+docker compose up -d --build</code></pre>
+
+  <div class="info-box danger">
+    <strong>⚠️ Data Loss Warning:</strong> Running <code>docker compose down -v</code> removes all named volumes including database data. Only use this as a last resort after taking a backup.
+  </div>
+</div>
+
+<div class="container"><div class="section-divider"></div></div>
+
+<!-- ============================================ -->
+<!-- SECTION 8: Bill of Materials                 -->
+<!-- ============================================ -->
+<div class="container" id="bom">
+  <h2 class="section-title">💰 Bill of Materials — HQ Server</h2>
+  <p class="section-sub">Hardware and service costs for a production HQ server</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Category</th><th>Item</th><th>Spec</th><th>Qty</th><th>Unit Cost (MMK)</th><th>Total (MMK)</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td rowspan="3">🖥️ Server Hardware</td>
+          <td>Dell PowerEdge T350 or equiv.</td>
+          <td>Xeon E-2336, 16GB ECC, 2x480GB SSD</td>
+          <td>1</td>
+          <td>8,500,000</td>
+          <td>8,500,000</td>
+        </tr>
+        <tr>
+          <td>UPS (1500VA Line-Interactive)</td>
+          <td>APC BX1500M or equiv.</td>
+          <td>1</td>
+          <td>650,000</td>
+          <td>650,000</td>
+        </tr>
+        <tr>
+          <td>External Backup Drive (4TB)</td>
+          <td>WD Red Plus NAS</td>
+          <td>1</td>
+          <td>450,000</td>
+          <td>450,000</td>
+        </tr>
+        <tr>
+          <td rowspan="2">🌐 Network</td>
+          <td>Static IP Internet (100Mbps+)</td>
+          <td>Business fiber plan</td>
+          <td>1/mo</td>
+          <td>250,000</td>
+          <td>250,000</td>
+        </tr>
+        <tr>
+          <td>4G LTE Backup Modem</td>
+          <td>华为 B818 or equiv.</td>
+          <td>1</td>
+          <td>350,000</td>
+          <td>350,000</td>
+        </tr>
+        <tr>
+          <td rowspan="3">☁️ Cloud Services</td>
+          <td>Domain Name (1 year)</td>
+          <td>.com or .mm TLD</td>
+          <td>1</td>
+          <td>50,000</td>
+          <td>50,000</td>
+        </tr>
+        <tr>
+          <td>SSL Certificate (Let's Encrypt)</td>
+          <td>Free / auto-renewed</td>
+          <td>3</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>Email Service (SMTP)</td>
+          <td>SendGrid / Mailgun 1K free tier</td>
+          <td>1/mo</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td rowspan="2">🔧 Software</td>
+          <td>Ubuntu Server 22.04 LTS</td>
+          <td>Free (open-source)</td>
+          <td>1</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>Docker Engine + Compose</td>
+          <td>Free (open-source)</td>
+          <td>1</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td rowspan="2">🗄️ Database</td>
+          <td>PostgreSQL 16</td>
+          <td>3 instances (Docker containers)</td>
+          <td>1</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>Prisma ORM</td>
+          <td>TypeScript, included in stack</td>
+          <td>1</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr class="bom-total">
+          <td colspan="5">ONE-TIME SETUP COST</td>
+          <td>10,000,000 MMK</td>
+        </tr>
+        <tr class="bom-total">
+          <td colspan="5">MONTHLY RECURRING (Internet + Maintenance)</td>
+          <td>250,000 MMK/month</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="info-box">
+    <strong>Scaling Note:</strong> A single HQ server supports up to 50 plazas and 500,000+ registered vehicles. For larger deployments, consider horizontal scaling with load balancers and read replicas.
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <p>TollGate RFID Pass — Enterprise Highway OS v1.0</p>
+  <p style="margin-top:4px;">HQ Server Installation Guide • September 2026</p>
+</footer>
+
+</body>
+</html>

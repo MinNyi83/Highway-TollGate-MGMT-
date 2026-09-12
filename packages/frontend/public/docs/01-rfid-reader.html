@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RFID Reader Installation Guide — TollGate RFID Pass</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f172a;--surface:#1e293b;--border:#334155;--accent:#3b82f6;--accent2:#8b5cf6;--green:#10b981;--amber:#f59e0b;--red:#ef4444;--cyan:#06b6d4;--pink:#ec4899;--text:#f1f5f9;--muted:#94a3b8;--dim:#64748b;--radius:16px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;}
+a{color:var(--accent);text-decoration:none;}
+a:hover{text-decoration:underline;}
+
+/* Header */
+.header{position:sticky;top:0;z-index:100;background:rgba(15,23,42,0.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;}
+.logo{display:flex;align-items:center;gap:12px;}
+.logo-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;}
+.logo-icon svg{width:22px;height:22px;fill:white;}
+.logo-text{font-size:18px;font-weight:700;}
+.logo-sub{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.nav{display:flex;gap:8px;align-items:center;}
+.nav a{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;color:var(--muted);transition:all 0.2s;}
+.nav a:hover,.nav a.active{background:rgba(59,130,246,0.1);color:var(--accent);text-decoration:none;}
+.back-link{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;color:var(--accent);background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);transition:all 0.2s;}
+.back-link:hover{background:rgba(59,130,246,0.15);text-decoration:none;}
+
+/* Hero */
+.hero{padding:60px 32px 40px;text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(59,130,246,0.12) 0%,transparent 60%);}
+.hero h1{font-size:2.6rem;font-weight:800;background:linear-gradient(135deg,#60a5fa,#a78bfa,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;}
+.hero p{font-size:1.05rem;color:var(--muted);max-width:680px;margin:0 auto 24px;}
+.hero-badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.badge{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid;}
+.badge-blue{background:rgba(59,130,246,0.1);border-color:rgba(59,130,246,0.3);color:#60a5fa;}
+.badge-green{background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.3);color:#34d399;}
+.badge-purple{background:rgba(139,92,246,0.1);border-color:rgba(139,92,246,0.3);color:#a78bfa;}
+.badge-amber{background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.3);color:#fbbf24;}
+.badge-red{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.3);color:#f87171;}
+.badge-cyan{background:rgba(6,182,212,0.1);border-color:rgba(6,182,212,0.3);color:#22d3ee;}
+
+/* Container */
+.container{max-width:1100px;margin:0 auto;padding:40px 32px;}
+
+/* Section Headers */
+.section-block{margin-bottom:56px;}
+.section-header{display:flex;align-items:center;gap:14px;margin-bottom:8px;}
+.section-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px;}
+.section-icon.blue{background:rgba(59,130,246,0.15);}
+.section-icon.green{background:rgba(16,185,129,0.15);}
+.section-icon.purple{background:rgba(139,92,246,0.15);}
+.section-icon.amber{background:rgba(245,158,11,0.15);}
+.section-icon.red{background:rgba(239,68,68,0.15);}
+.section-icon.cyan{background:rgba(6,182,212,0.15);}
+.section-icon.pink{background:rgba(236,72,153,0.15);}
+.section-title{font-size:1.5rem;font-weight:700;}
+.section-sub{color:var(--muted);margin-bottom:24px;max-width:700px;}
+
+/* Cards */
+.grid{display:grid;gap:20px;}
+.grid-2{grid-template-columns:repeat(2,1fr);}
+.grid-3{grid-template-columns:repeat(3,1fr);}
+.grid-4{grid-template-columns:repeat(4,1fr);}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;transition:all 0.3s;}
+.card:hover{border-color:rgba(59,130,246,0.5);transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,0.3);}
+.card-header{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+.card-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.card-icon svg{width:26px;height:26px;}
+.card-icon.blue{background:rgba(59,130,246,0.15);}
+.card-icon.green{background:rgba(16,185,129,0.15);}
+.card-icon.purple{background:rgba(139,92,246,0.15);}
+.card-icon.amber{background:rgba(245,158,11,0.15);}
+.card-icon.red{background:rgba(239,68,68,0.15);}
+.card-icon.cyan{background:rgba(6,182,212,0.15);}
+.card-icon.pink{background:rgba(236,72,153,0.15);}
+.card h3{font-size:1.05rem;font-weight:600;}
+.card .model{font-size:12px;color:var(--dim);margin-top:2px;}
+.card p{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:12px;}
+.tags{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:500;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);color:#60a5fa;}
+.tag.green{background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.2);color:#34d399;}
+.tag.amber{background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.2);color:#fbbf24;}
+.tag.red{background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.2);color:#f87171;}
+.tag.purple{background:rgba(139,92,246,0.08);border-color:rgba(139,92,246,0.2);color:#a78bfa;}
+.tag.cyan{background:rgba(6,182,212,0.08);border-color:rgba(6,182,212,0.2);color:#22d3ee;}
+
+/* Table */
+.table-wrap{overflow-x:auto;margin:20px 0;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;padding:12px 16px;background:rgba(59,130,246,0.08);border-bottom:2px solid var(--border);font-weight:600;color:var(--accent);white-space:nowrap;}
+td{padding:10px 16px;border-bottom:1px solid var(--border);color:var(--muted);}
+tr:hover td{background:rgba(59,130,246,0.03);}
+td code{font-family:'JetBrains Mono',monospace;font-size:12px;background:rgba(59,130,246,0.1);padding:2px 6px;border-radius:4px;color:#60a5fa;}
+
+/* Code */
+pre{background:#0c1222;border:1px solid var(--border);border-radius:12px;padding:20px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.7;color:#94a3b8;margin:16px 0;}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;background:rgba(59,130,246,0.1);padding:2px 6px;border-radius:4px;color:#60a5fa;}
+pre code{background:none;padding:0;color:inherit;}
+pre .comment{color:#475569;}
+pre .keyword{color:#a78bfa;}
+pre .string{color:#34d399;}
+pre .highlight{color:#60a5fa;}
+pre .warning{color:#fbbf24;}
+pre .error{color:#f87171;}
+
+/* Diagram */
+.diagram{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:32px;margin:20px 0;text-align:center;}
+.diagram-title{font-size:14px;font-weight:600;color:var(--accent);margin-bottom:16px;}
+.diagram pre{text-align:left;display:inline-block;background:transparent;border:none;padding:0;font-size:12px;color:var(--muted);line-height:1.5;}
+
+/* CSS-Only Topology Diagrams */
+.topo-css{position:relative;width:100%;min-height:320px;background:var(--bg);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:20px 0;}
+.topo-css .node{position:absolute;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;z-index:2;}
+.topo-css .node-reader{background:linear-gradient(135deg,rgba(59,130,246,0.3),rgba(59,130,246,0.15));border:1px solid rgba(59,130,246,0.4);color:#93c5fd;top:60px;left:30px;}
+.topo-css .node-rpi{background:linear-gradient(135deg,rgba(16,185,129,0.3),rgba(16,185,129,0.15));border:1px solid rgba(16,185,129,0.4);color:#6ee7b7;top:60px;left:50%;transform:translateX(-50%);}
+.topo-css .node-hq{background:linear-gradient(135deg,rgba(139,92,246,0.3),rgba(139,92,246,0.15));border:1px solid rgba(139,92,246,0.4);color:#c4b5fd;top:60px;right:30px;}
+.topo-css .node-label{position:absolute;font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;font-weight:700;z-index:2;}
+
+.topo-css .conn{position:absolute;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:1;top:84px;}
+.topo-css .conn-1{left:220px;width:calc(50% - 250px);}
+.topo-css .conn-2{left:calc(50% + 90px);width:calc(50% - 250px);}
+
+.topo-css .conn-label{position:absolute;font-size:10px;color:var(--muted);z-index:3;background:var(--surface);padding:2px 8px;border-radius:4px;border:1px solid var(--border);}
+.topo-css .conn-label-1{top:74px;left:calc(50% - 230px);}
+.topo-css .conn-label-2{top:74px;left:calc(50% + 110px);}
+
+/* Pulse animation */
+.pulse-ring{width:12px;height:12px;border-radius:50%;background:currentColor;position:relative;flex-shrink:0;}
+.pulse-ring::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid currentColor;animation:pulse 2s infinite;}
+@keyframes pulse{0%{transform:scale(1);opacity:1;}100%{transform:scale(2);opacity:0;}}
+
+/* Serial wiring diagram */
+.wiring-box{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:stretch;margin:20px 0;}
+.wire-panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;font-size:13px;}
+.wire-panel h4{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:12px;}
+.wire-panel .pin{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(51,65,85,0.5);font-family:'JetBrains Mono',monospace;font-size:11px;}
+.wire-panel .pin span:first-child{color:var(--dim);}
+.wire-panel .pin span:last-child{color:var(--text);font-weight:600;}
+.wire-conn{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 16px;gap:8px;}
+.wire-line{width:2px;height:16px;border-radius:1px;}
+.wire-line.red{background:#ef4444;}
+.wire-line.green{background:#10b981;}
+.wire-line.blue{background:#3b82f6;}
+.wire-line.yellow{background:#f59e0b;}
+.wire-line.black{background:#475569;}
+.wire-line.white{background:#e2e8f0;}
+.wire-line.purple{background:#a78bfa;}
+.wire-line.gray{background:#64748b;}
+.wire-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+/* Maintenance timeline */
+.timeline{position:relative;padding-left:32px;margin:20px 0;}
+.timeline::before{content:'';position:absolute;left:12px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--accent),var(--accent2),var(--green));}
+.timeline-item{position:relative;margin-bottom:24px;padding:16px 20px;background:var(--surface);border:1px solid var(--border);border-radius:12px;}
+.timeline-item::before{content:'';position:absolute;left:-26px;top:20px;width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);z-index:1;}
+.timeline-item.green::before{background:var(--green);}
+.timeline-item.amber::before{background:var(--amber);}
+.timeline-item.red::before{background:var(--red);}
+.timeline-item .tl-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.timeline-item .tl-freq{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;}
+.timeline-item .tl-freq.blue{color:#60a5fa;}
+.timeline-item .tl-freq.green{color:#34d399;}
+.timeline-item .tl-freq.amber{color:#fbbf24;}
+.timeline-item .tl-freq.red{color:#f87171;}
+.timeline-item p{font-size:13px;color:var(--muted);margin:0;}
+
+/* Step flow */
+.steps{display:flex;flex-direction:column;gap:12px;margin:20px 0;}
+.step{display:flex;gap:16px;align-items:flex-start;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:12px;}
+.step-num{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step-content h4{font-size:14px;font-weight:600;margin-bottom:4px;}
+.step-content p{font-size:13px;color:var(--muted);margin:0;}
+
+/* Alert boxes */
+.alert{padding:16px 20px;border-radius:12px;margin:16px 0;font-size:13px;line-height:1.6;}
+.alert-info{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);color:#93c5fd;}
+.alert-warn{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);color:#fde68a;}
+.alert-danger{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#fca5a5;}
+.alert-success{background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);color:#6ee7b7;}
+.alert strong{color:var(--text);}
+
+/* Tabs */
+.tabs{display:flex;gap:4px;margin-bottom:16px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:4px;}
+.tab{padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.2s;border:none;background:none;}
+.tab.active{background:var(--accent);color:white;}
+.tab:hover:not(.active){background:rgba(59,130,246,0.1);color:var(--accent);}
+
+/* Specs grid */
+.specs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:16px 0;}
+.spec-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.spec-item .label{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;}
+.spec-item .value{font-size:15px;font-weight:700;color:var(--text);margin-top:4px;}
+.spec-item .value.accent{color:#60a5fa;}
+
+/* Comparison highlight */
+.comparison-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border);border-radius:12px;overflow:hidden;margin:16px 0;}
+.comparison-cell{background:var(--surface);padding:16px;}
+.comparison-cell.recommended{background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.3);}
+.comparison-cell h4{font-size:13px;font-weight:700;margin-bottom:8px;}
+.comparison-cell ul{list-style:none;padding:0;}
+.comparison-cell li{font-size:12px;color:var(--muted);padding:4px 0;display:flex;align-items:center;gap:6px;}
+.comparison-cell li::before{content:'✓';color:var(--green);font-weight:bold;}
+.comparison-cell li.x::before{content:'✗';color:var(--red);}
+
+/* Footer */
+.footer{text-align:center;padding:40px 32px;color:var(--dim);font-size:13px;border-top:1px solid var(--border);margin-top:40px;}
+
+@media(max-width:768px){
+  .hero h1{font-size:1.8rem;}
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr;}
+  .nav{display:none;}
+  .wiring-box{grid-template-columns:1fr;gap:12px;}
+  .comparison-row{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+    </div>
+    <div>
+      <div class="logo-text">TollGate RFID Pass</div>
+      <div class="logo-sub">RFID Reader Installation Guide</div>
+    </div>
+  </div>
+  <nav class="nav">
+    <a href="index.html" class="back-link">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      Back to Docs
+    </a>
+    <a href="#overview">Overview</a>
+    <a href="#topology">Topology</a>
+    <a href="#connections">Connections</a>
+    <a href="#wiring">Wiring</a>
+    <a href="#network">Network</a>
+    <a href="#testing">Testing</a>
+    <a href="#maintenance">Maintenance</a>
+  </nav>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <h1>📡 UHF RFID Reader Installation</h1>
+  <p>Complete field installation guide covering TCP/IP, Serial, and ZKTeco configurations. Includes mounting, wiring, VLAN setup, and verification.</p>
+  <div class="hero-badges">
+    <span class="badge badge-blue">📡 860–960 MHz UHF</span>
+    <span class="badge badge-green">3–12m Read Range</span>
+    <span class="badge badge-purple">TCP/IP &amp; Serial</span>
+    <span class="badge badge-amber">⏱ 20 min install</span>
+  </div>
+</section>
+
+<div class="container">
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 1: OVERVIEW                                               -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="overview">
+    <div class="section-header">
+      <div class="section-icon blue">📡</div>
+      <h2 class="section-title">Overview — Supported RFID Reader Models</h2>
+    </div>
+    <p class="section-sub">TollGate supports three primary UHF RFID reader families. All models use EPC Gen2 (ISO 18000-6C) protocol operating in the 860–960 MHz band. Model selection depends on deployment environment, range requirements, and budget.</p>
+
+    <div class="grid grid-3" style="margin-bottom:24px;">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1"/></svg>
+          </div>
+          <div>
+            <h3>Impinj R420</h3>
+            <div class="model">Industrial Fixed Reader</div>
+          </div>
+        </div>
+        <p>Premium enterprise-grade reader with best-in-class sensitivity. Ideal for high-speed highway lanes requiring 12m read range at 60+ km/h.</p>
+        <div class="tags">
+          <span class="tag">TCP/IP</span>
+          <span class="tag">12 dBi</span>
+          <span class="tag green">Recommended</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1"/></svg>
+          </div>
+          <div>
+            <h3>ZKTeco UHF300</h3>
+            <div class="model">Mid-Range Fixed Reader</div>
+          </div>
+        </div>
+        <p>Cost-effective reader with TCP/IP and optional serial interface. Good balance of performance and price for standard 4-lane plazas.</p>
+        <div class="tags">
+          <span class="tag">TCP/IP</span>
+          <span class="tag">RS232</span>
+          <span class="tag amber">8 dBi</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon amber">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1"/></svg>
+          </div>
+          <div>
+            <h3>Custom Serial Reader</h3>
+            <div class="model">UART/RS232 Generic</div>
+          </div>
+        </div>
+        <p>Budget serial-only reader connected directly to Raspberry Pi GPIO UART. Lower range but simplest wiring for basic installations.</p>
+        <div class="tags">
+          <span class="tag red">RS232 Only</span>
+          <span class="tag">6 dBi</span>
+          <span class="tag">3–5m range</span>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:12px;">Model Specifications Comparison</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Specification</th>
+            <th>Impinj R420</th>
+            <th>ZKTeco UHF300</th>
+            <th>Generic Serial</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Frequency</strong></td>
+            <td>860–960 MHz</td>
+            <td>860–960 MHz</td>
+            <td>920–925 MHz</td>
+          </tr>
+          <tr>
+            <td><strong>Protocol</strong></td>
+            <td>EPC Gen2 (ISO 18000-6C)</td>
+            <td>EPC Gen2 (ISO 18000-6C)</td>
+            <td>EPC Gen2</td>
+          </tr>
+          <tr>
+            <td><strong>Read Range</strong></td>
+            <td>Up to 12m</td>
+            <td>Up to 9m</td>
+            <td>Up to 5m</td>
+          </tr>
+          <tr>
+            <td><strong>Read Speed</strong></td>
+            <td>700+ tags/sec</td>
+            <td>200+ tags/sec</td>
+            <td>50+ tags/sec</td>
+          </tr>
+          <tr>
+            <td><strong>Antenna</strong></td>
+            <td>External (RP-TNC)</td>
+            <td>Internal or External</td>
+            <td>Internal</td>
+          </tr>
+          <tr>
+            <td><strong>Interface</strong></td>
+            <td>ETH (PoE), USB</td>
+            <td>ETH, RS232</td>
+            <td>RS232 (UART)</td>
+          </tr>
+          <tr>
+            <td><strong>Power</strong></td>
+            <td>PoE (802.3af) or 12V DC</td>
+            <td>12V DC / PoE</td>
+            <td>5V USB / 3.3V GPIO</td>
+          </tr>
+          <tr>
+            <td><strong>IP Rating</strong></td>
+            <td>IP67</td>
+            <td>IP65</td>
+            <td>IP54</td>
+          </tr>
+          <tr>
+            <td><strong>Operating Temp</strong></td>
+            <td>-30°C to +55°C</td>
+            <td>-20°C to +50°C</td>
+            <td>-10°C to +45°C</td>
+          </tr>
+          <tr>
+            <td><strong>Default Port</strong></td>
+            <td>5000 (TCP)</td>
+            <td>5000 (TCP) / 9600 baud</td>
+            <td>9600 baud</td>
+          </tr>
+          <tr>
+            <td><strong>Approx Cost (MMK)</strong></td>
+            <td>2,500,000</td>
+            <td>1,800,000</td>
+            <td>800,000</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert alert-info">
+      <strong>💡 Recommendation:</strong> For highway toll plazas with speeds above 30 km/h, use the Impinj R420 with external 12 dBi circular-polarized antennas. For lower-speed or parking applications, the ZKTeco UHF300 offers excellent value.
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 2: NETWORK TOPOLOGY                                      -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="topology">
+    <div class="section-header">
+      <div class="section-icon purple">🌐</div>
+      <h2 class="section-title">Network Topology — Data Flow Architecture</h2>
+    </div>
+    <p class="section-sub">The RFID reader operates as the front-end sensor in the 5-tier toll architecture. Tag reads are forwarded through the Raspberry Pi edge gateway to the central HQ server for processing.</p>
+
+    <div class="diagram">
+      <div class="diagram-title">RFID READER → RPi EDGE → HQ SERVER TOPOLOGY</div>
+      <pre>
+ ┌──────────────────────────────────────────────────────────────────────────────┐
+ │                        🛣️  TOLL PLAZA LANE                                  │
+ │                                                                              │
+ │    ┌─────────────┐         ┌─────────────┐         ┌──────────────────┐     │
+ │    │  📡 RFID    │  TCP/IP │  🍓 RPi 4   │  HTTPS  │  🏢 HQ SERVER    │     │
+ │    │  READER     │────────▶│  EDGE       │────────▶│  (192.168.100.101)│     │
+ │    │  :5000      │  ETH0   │  GATEWAY    │  VPN    │  :3000/api       │     │
+ │    └─────────────┘         │  :4000      │         │                  │     │
+ │           │                └──────┬──────┘         │  ┌────────────┐ │     │
+ │     ┌─────┴─────┐               │                 │  │ PostgreSQL  │ │     │
+ │     │           │               │ GPIO            │  │ :5432       │ │     │
+ │   ┌─┴─┐     ┌──┴──┐        ┌───┴───┐            │  └────────────┘ │     │
+ │   │ANT│     │ANT  │        │SQLite │            └──────────────────┘     │
+ │   │ A │     │ B   │        │ Local │                                     │
+ │   └───┘     └─────┘        │ Cache │            ┌──────────────────┐     │
+ │                             └───────┘            │  🌐 Admin Hub    │     │
+ │                                                   │  :80             │     │
+ │    Vehicle Approach ◀══════════════════════════   └──────────────────┘     │
+ │    (Tag in windshield)                                                     │
+ └──────────────────────────────────────────────────────────────────────────────┘
+
+ ┌─────────────────────── DATA FLOW ───────────────────────┐
+ │                                                          │
+ │  1. Vehicle approaches lane → loop detector triggers     │
+ │  2. RFID reader polls at 920 MHz → reads EPC tag        │
+ │  3. Reader sends tag data via TCP:5000 → RPi            │
+ │  4. RPi matches tag → local SQLite → toll deduction      │
+ │  5. RPi syncs transaction → HQ API :3000 via VPN        │
+ │  6. HQ stores in PostgreSQL → dashboard updates          │
+ │                                                          │
+ └──────────────────────────────────────────────────────────┘
+      </pre>
+    </div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin:24px 0 12px;">Connection Protocol Summary</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Link</th><th>Protocol</th><th>Port</th><th>Direction</th><th>Bandwidth</th><th>Encryption</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>RFID → RPi</td><td>TCP/IP</td><td>5000</td><td>Reader → Edge</td><td>10 Mbps</td><td>VLAN isolation</td></tr>
+          <tr><td>RPi → HQ</td><td>HTTPS REST</td><td>3000</td><td>Bi-directional</td><td>1 Mbps min</td><td>VPN + TLS</td></tr>
+          <tr><td>RFID Serial → RPi</td><td>UART RS232</td><td>/dev/ttyAMA0</td><td>Reader → Edge</td><td>9600 baud</td><td>Physical wire</td></tr>
+          <tr><td>RPi → Barrier</td><td>GPIO</td><td>—</td><td>Edge → Actuator</td><td>N/A</td><td>Physical wire</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 3: CONNECTION TYPES                                       -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="connections">
+    <div class="section-header">
+      <div class="section-icon green">🔌</div>
+      <h2 class="section-title">Connection Types — TCP/IP vs Serial vs ZKTeco</h2>
+    </div>
+    <p class="section-sub">Choose the right connection method based on distance, speed, and existing infrastructure. TCP/IP is the recommended method for all new highway deployments.</p>
+
+    <div class="comparison-row">
+      <div class="comparison-cell recommended">
+        <h4 style="color:#34d399;">🔌 TCP/IP (Ethernet)</h4>
+        <ul>
+          <li>100m+ cable run distance</li>
+          <li>PoE power — single cable</li>
+          <li>High-speed data transfer</li>
+          <li>Remote firmware updates</li>
+          <li>Multiple readers per switch</li>
+          <li>Standard network monitoring</li>
+        </ul>
+        <div class="tags" style="margin-top:12px;">
+          <span class="tag green">Recommended</span>
+          <span class="tag">Port 5000</span>
+        </div>
+      </div>
+
+      <div class="comparison-cell">
+        <h4 style="color:#60a5fa;">🔌 Serial (RS232/UART)</h4>
+        <ul>
+          <li>Simple 3-wire connection</li>
+          <li>Direct RPi GPIO wiring</li>
+          <li>No network config needed</li>
+          <li>Lower latency (no TCP stack)</li>
+        </ul>
+        <ul style="margin-top:8px;">
+          <li class="x">Max 15m cable length</li>
+          <li class="x">No PoE — separate power</li>
+          <li class="x">Single reader per UART</li>
+        </ul>
+        <div class="tags" style="margin-top:12px;">
+          <span class="tag">9600 baud</span>
+          <span class="tag amber">Limited range</span>
+        </div>
+      </div>
+
+      <div class="comparison-cell">
+        <h4 style="color:#fbbf24;">🔌 ZKTeco Direct</h4>
+        <ul>
+          <li>TCP/IP + RS232 combo</li>
+          <li>Built-in antenna option</li>
+          <li>ZKTeco SDK available</li>
+          <li>Good price/performance</li>
+        </ul>
+        <ul style="margin-top:8px;">
+          <li class="x">Vendor-locked firmware</li>
+          <li class="x">Less community support</li>
+          <li class="x">Shorter range than Impinj</li>
+        </ul>
+        <div class="tags" style="margin-top:12px;">
+          <span class="tag amber">Hybrid</span>
+          <span class="tag">Dual mode</span>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin:24px 0 12px;">When to Use Each Connection</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Scenario</th><th>Best Connection</th><th>Why</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Highway toll plaza (4+ lanes)</td><td><code>TCP/IP</code></td><td>Long cable runs, PoE simplifies wiring, scalable</td></tr>
+          <tr><td>Single-lane rural checkpoint</td><td><code>Serial (UART)</code></td><td>Minimal infrastructure, direct RPi connection</td></tr>
+          <tr><td>Budget plaza with ZKTeco budget</td><td><code>ZKTeco UHF300</code></td><td>Best value for moderate performance needs</td></tr>
+          <tr><td>Multi-reader lane (4+ antennas)</td><td><code>TCP/IP</code></td><td>Each reader gets unique IP, switch-based scaling</td></tr>
+          <tr><td>Legacy system retrofit</td><td><code>Serial</code></td><td>No network switch needed, simple GPIO wiring</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 4: PHYSICAL INSTALLATION                                 -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="installation">
+    <div class="section-header">
+      <div class="section-icon amber">🔧</div>
+      <h2 class="section-title">Physical Installation — Mounting &amp; Antenna</h2>
+    </div>
+    <p class="section-sub">Correct mounting position is critical for reliable tag reads. Follow these specifications for optimal read rates at vehicle speeds up to 120 km/h.</p>
+
+    <div class="diagram">
+      <div class="diagram-title">LANE CROSS-SECTION — MOUNTING POSITION DIAGRAM</div>
+      <pre>
+    ←── LANE DIRECTION ──→
+
+    ┌─────────────────────────────────────────────────────────────────┐
+    │                                                                 │
+    │   ╔═══════════╗                                    ╔═══════════╗ │
+    │   ║ GANTRY    ║                                    ║ GANTRY    ║ │
+    │   ║ ARM       ║                                    ║ ARM       ║ │
+    │   ╠═══════════╣                                    ╠═══════════╣ │
+    │   ║ 📡 RFID   ║  ← 4.5m above road               ║ 📷 ANPR   ║ │
+    │   ║ READER    ║    (min 3.5m)                     ║ CAMERA    ║ │
+    │   ║ ANTENNA A ║    antenna angled 30°–45°         ║           ║ │
+    │   ╚═════╤═════╝    toward approaching lane        ╚═══════════╝ │
+    │         │                                                       │
+    │    ┌────┴────┐                                                  │
+    │    │COAX CABLE│  ← Low-loss RG-58 (max 5m per antenna)        │
+    │    │(≤ 5m)   │                                                  │
+    │    └────┬────┘                                                  │
+    │         │                                                       │
+    │    ┌────┴────┐                                                  │
+    │    │  📡 RFID │  ← Reader mounted on pole or in weatherproof   │
+    │    │  READER  │    enclosure at 1.5m–2m height                 │
+    │    └─────────┘                                                  │
+    │                                                                 │
+    │    ◀══════════════ 3.5m lane width ══════════════▶             │
+    │                                                                 │
+    │    ┌─────────────────────────────────────┐                     │
+    │    │     🚗 VEHICLE (approaching)         │                     │
+    │    │     Tag height: 0.8m–1.5m            │                     │
+    │    └─────────────────────────────────────┘                     │
+    │                                                                 │
+    │    ──────────────────────────────────────────── road surface    │
+    │    ┌──────┐                       ┌──────┐                     │
+    │    │ LOOP │                       │ LOOP │  ← Inductive loop   │
+    │    │DETECT│                       │DETECT│    detectors         │
+    │    └──────┘                       └──────┘                     │
+    └─────────────────────────────────────────────────────────────────┘
+      </pre>
+    </div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin:24px 0 12px;">Antenna Specifications</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Antenna Model</th><th>Gain</th><th>Polarization</th><th>Beamwidth</th><th>Mounting</th><th>Use Case</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Impinj A1001</strong></td>
+            <td>12 dBi</td>
+            <td>Circular (RHCP)</td>
+            <td>65° × 65°</td>
+            <td>Gantry pole mount</td>
+            <td>Highway (recommended)</td>
+          </tr>
+          <tr>
+            <td><strong>ZKTeco ANT-8</strong></td>
+            <td>8 dBi</td>
+            <td>Linear</td>
+            <td>70° × 70°</td>
+            <td>Wall / pole</td>
+            <td>Parking / low-speed</td>
+          </tr>
+          <tr>
+            <td><strong>Generic 9dBi</strong></td>
+            <td>9 dBi</td>
+            <td>Circular (RHCP)</td>
+            <td>75° × 75°</td>
+            <td>Pole mount</td>
+            <td>Budget highway</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="specs-grid">
+      <div class="spec-item">
+        <div class="label">Mounting Height</div>
+        <div class="value accent">3.5m – 5.0m</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Antenna Tilt Angle</div>
+        <div class="value accent">30° – 45°</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Max Coax Length</div>
+        <div class="value accent">5 meters</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Cable Type</div>
+        <div class="value accent">RG-58 / LMR-240</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Connector Type</div>
+        <div class="value accent">RP-TNC / SMA</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Read Zone Width</div>
+        <div class="value accent">3.0m – 3.5m</div>
+      </div>
+    </div>
+
+    <div class="alert alert-warn">
+      <strong>⚠️ Warning:</strong> Never mount the antenna facing directly downward. The 30°–45° forward tilt ensures tags are read as the vehicle approaches, giving the system 200–400ms of processing time before the barrier zone.
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 5: WIRING DIAGRAMS                                       -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="wiring">
+    <div class="section-header">
+      <div class="section-icon red">⚡</div>
+      <h2 class="section-title">Wiring Diagrams — Serial &amp; TCP Connections</h2>
+    </div>
+    <p class="section-sub">Follow the exact pinouts below. Incorrect wiring is the #1 cause of reader initialization failure. Double-check power polarity before connecting data lines.</p>
+
+    <!-- Serial Wiring -->
+    <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:4px;">Serial Connection (RS232 to Raspberry Pi)</h3>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Direct 3-wire connection between RFID reader serial port and RPi GPIO UART pins.</p>
+
+    <div class="wiring-box">
+      <div class="wire-panel">
+        <h4>📡 RFID Reader (DB9 Male)</h4>
+        <div class="pin"><span>Pin 2 — RXD</span><span>← Read Data In</span></div>
+        <div class="pin"><span>Pin 3 — TXD</span><span>→ Write Data Out</span></div>
+        <div class="pin"><span>Pin 5 — GND</span><span>⏚ Ground</span></div>
+        <div class="pin" style="border-bottom:none;color:var(--dim);font-size:10px;margin-top:8px;">Power: 12V DC 2A barrel jack</div>
+      </div>
+      <div class="wire-conn">
+        <div style="display:flex;align-items:center;gap:4px;"><div class="wire-dot" style="background:#ef4444;"></div><div class="wire-line red"></div><div class="wire-dot" style="background:#ef4444;"></div></div>
+        <div style="display:flex;align-items:center;gap:4px;"><div class="wire-dot" style="background:#3b82f6;"></div><div class="wire-line blue"></div><div class="wire-dot" style="background:#3b82f6;"></div></div>
+        <div style="display:flex;align-items:center;gap:4px;"><div class="wire-dot" style="background:#475569;"></div><div class="wire-line black"></div><div class="wire-dot" style="background:#475569;"></div></div>
+      </div>
+      <div class="wire-panel">
+        <h4>🍓 Raspberry Pi 4 GPIO</h4>
+        <div class="pin"><span>GPIO 10 (TXD)</span><span>→ TX Out</span></div>
+        <div class="pin"><span>GPIO 15 (RXD)</span><span>← RX In</span></div>
+        <div class="pin"><span>GPIO 14 (GND)</span><span>⏚ Ground</span></div>
+        <div class="pin" style="border-bottom:none;color:var(--dim);font-size:10px;margin-top:8px;">UART via /dev/ttyAMA0 @ 9600 baud</div>
+      </div>
+    </div>
+
+    <div class="alert alert-danger">
+      <strong>⚡ CRITICAL:</strong> Cross TX/RX lines — Reader TXD connects to RPi RXD, and vice versa. Never connect 12V power to GPIO pins. Use a level shifter if the reader outputs 5V TTL instead of 3.3V.
+    </div>
+
+    <!-- TCP/IP Wiring -->
+    <h3 style="font-size:1.1rem;font-weight:700;margin:28px 0 4px;">TCP/IP Connection (Ethernet with PoE)</h3>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Recommended for highway deployments. Single cable carries data and power via IEEE 802.3af PoE.</p>
+
+    <div class="diagram">
+      <div class="diagram-title">TCP/IP WIRING DIAGRAM — POE SETUP</div>
+      <pre>
+    ┌─────────────────────┐       Cat6 Shielded        ┌──────────────────┐
+    │   📡 RFID READER    │       (max 100m)            │   🍓 RPi 4       │
+    │   ┌───────────────┐ │    ╔═════════════════╗      │   ┌────────────┐ │
+    │   │  PoE Module   │ │════║  802.3af PoE    ║══════│   │  USB-Ether │ │
+    │   │  (IEEE 802.3af)│ │    ║  Splitter      ║      │   │  Adapter   │ │
+    │   └───────────────┘ │    ╚═════════════════╝      │   └──────┬─────┘ │
+    │   ┌───────────────┐ │            │                │          │       │
+    │   │  RJ-45 Port   │ │            │                │   ┌──────┴─────┐ │
+    │   │  10/100 Mbps  │ │            │                │   │  ETH0 Port │ │
+    │   └───────────────┘ │            │                │   └────────────┘ │
+    │                      │            │                │                  │
+    │   IP: 192.168.10.50  │            │                │   IP: 192.168.10.1│
+    │   Subnet: 255.255.255.0           │                │                  │
+    └─────────────────────┘            │                └──────────────────┘
+                                       │
+                              ┌────────┴────────┐
+                              │  🌐 NETWORK     │
+                              │    SWITCH       │
+                              │  PoE Capable    │
+                              │  (8+ ports)     │
+                              └────────┬────────┘
+                                       │
+                              ┌────────┴────────┐
+                              │  TO PLaza LAN   │
+                              │  192.168.10.0/24│
+                              └─────────────────┘
+    </pre>
+    </div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin:24px 0 12px;">ZKTeco Hybrid Connection</h3>
+    <div class="wiring-box">
+      <div class="wire-panel">
+        <h4>📡 ZKTeco UHF300</h4>
+        <div class="pin"><span>RJ-45 Ethernet</span><span>TCP/IP Primary</span></div>
+        <div class="pin"><span>DB9 Serial (RS232)</span><span>Backup Fallback</span></div>
+        <div class="pin"><span>DC 12V Power</span><span>Barrel Jack 2.1mm</span></div>
+        <div class="pin"><span>Wiegand OUT</span><span>Optional relay</span></div>
+      </div>
+      <div class="wire-conn">
+        <div style="display:flex;align-items:center;gap:4px;"><div class="wire-dot" style="background:#3b82f6;"></div><div class="wire-line blue"></div><div class="wire-dot" style="background:#3b82f6;"></div></div>
+        <div style="display:flex;align-items:center;gap:4px;"><div class="wire-dot" style="background:#a78bfa;"></div><div class="wire-line purple"></div><div class="wire-dot" style="background:#a78bfa;"></div></div>
+        <div style="display:flex;align-items:center;gap:4px;"><div class="wire-dot" style="background:#f59e0b;"></div><div class="wire-line yellow"></div><div class="wire-dot" style="background:#f59e0b;"></div></div>
+      </div>
+      <div class="wire-panel">
+        <h4>🍓 Raspberry Pi 4</h4>
+        <div class="pin"><span>USB-Ether Adapter</span><span>ETH0 (primary)</span></div>
+        <div class="pin"><span>GPIO 10/15 UART</span><span>Serial (backup)</span></div>
+        <div class="pin"><span>GPIO 17</span><span>Wiegand Input</span></div>
+        <div class="pin"><span>GPIO 27</span><span>Read LED status</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 6: NETWORK CONFIGURATION                                 -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="network">
+    <div class="section-header">
+      <div class="section-icon cyan">🛡️</div>
+      <h2 class="section-title">Network Configuration — VLAN &amp; Firewall</h2>
+    </div>
+    <p class="section-sub">Isolate RFID readers on a dedicated VLAN to prevent unauthorized access and reduce broadcast traffic. This is a security requirement for all production deployments.</p>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+          </div>
+          <h3>VLAN Setup</h3>
+        </div>
+        <p>Create a dedicated VLAN (e.g., VLAN 10) for all IoT/sensor devices. Tag the port connecting to each RFID reader as an access port on VLAN 10.</p>
+        <pre style="font-size:12px;margin-top:8px;"><code><span class="comment"># Switch port config (Cisco IOS example)</span>
+interface GigabitEthernet0/1
+ description <span class="string">RFID Reader Lane 1</span>
+ switchport mode access
+ switchport access vlan <span class="highlight">10</span>
+ spanning-tree portfast
+ no shutdown
+
+<span class="comment"># VLAN definition</span>
+vlan <span class="highlight">10</span>
+ name <span class="string">RFID_SENSOR_NET</span></code></pre>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon red">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3>Firewall Rules</h3>
+        </div>
+        <p>Restrict traffic to only necessary ports. RFID readers should only communicate with the RPi edge server, never directly to the internet.</p>
+        <pre style="font-size:12px;margin-top:8px;"><code><span class="comment"># iptables rules for RPi edge gateway</span>
+<span class="comment"># Allow RFID reader on port 5000</span>
+iptables -A INPUT -s <span class="highlight">192.168.10.50</span> -p tcp \
+  --dport <span class="highlight">5000</span> -j ACCEPT
+
+<span class="comment"># Allow outbound to HQ server only</span>
+iptables -A OUTPUT -d <span class="highlight">192.168.100.101</span> -p tcp \
+  --dport <span class="highlight">3000</span> -j ACCEPT
+
+<span class="comment"># Block all other external traffic</span>
+iptables -A INPUT -j <span class="error">DROP</span></code></pre>
+      </div>
+    </div>
+
+    <div class="grid grid-2" style="margin-top:20px;">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <h3>Static IP Assignment</h3>
+        </div>
+        <p>Assign static IPs to all RFID readers and RPi gateways. DHCP is not recommended for production IoT infrastructure.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Device</th><th>IP Address</th><th>VLAN</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>RFID Reader Lane 1</td><td><code>192.168.10.50</code></td><td>10</td></tr>
+              <tr><td>RFID Reader Lane 2</td><td><code>192.168.10.51</code></td><td>10</td></tr>
+              <tr><td>RFID Reader Lane 3</td><td><code>192.168.10.52</code></td><td>10</td></tr>
+              <tr><td>RFID Reader Lane 4</td><td><code>192.168.10.53</code></td><td>10</td></tr>
+              <tr><td>RPi Edge Gateway</td><td><code>192.168.10.1</code></td><td>10 + 1</td></tr>
+              <tr><td>HQ Server</td><td><code>192.168.100.101</code></td><td>1</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon amber">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <h3>SNMP Monitoring</h3>
+        </div>
+        <p>Enable SNMP v2c on readers for uptime monitoring via the HQ server. Set community string to a non-default value.</p>
+        <pre style="font-size:12px;margin-top:8px;"><code><span class="comment"># On RPi — monitor reader port</span>
+snmpwalk -v2c -c <span class="string">"tollgate_ro"</span> \
+  <span class="highlight">192.168.10.50</span>:161 system
+
+<span class="comment"># Cron job: check every 5 min */5 * * * *</span>
+ping -c 3 <span class="highlight">192.168.10.50</span> || \
+  logger <span class="error">"ALERT: RFID reader offline"</span></code></pre>
+        <div class="alert alert-warn" style="margin-top:12px;margin-bottom:0;">
+          <strong>⚠️ SNMP:</strong> Use SNMPv3 in production for authentication and encryption.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 7: TESTING & VERIFICATION                                -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="testing">
+    <div class="section-header">
+      <div class="section-icon green">✅</div>
+      <h2 class="section-title">Testing &amp; Verification</h2>
+    </div>
+    <p class="section-sub">Verify each component before going live. Run these tests in order — skipping any step may cause silent failures during peak traffic.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Ping Test — Network Reachability</h4>
+          <p>Confirm the RFID reader responds on the network before configuring any software.</p>
+          <pre><code><span class="comment"># From RPi edge gateway</span>
+ping -c 5 <span class="highlight">192.168.10.50</span>
+
+<span class="comment"># Expected output:</span>
+<span class="string">64 bytes from 192.168.10.50: icmp_seq=1 ttl=64 time=0.89 ms</span></code></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>TCP Port Check — Service Availability</h4>
+          <p>Verify the reader's TCP service is listening on port 5000.</p>
+          <pre><code><span class="comment"># Check port 5000 is open</span>
+nc -zv <span class="highlight">192.168.10.50</span> <span class="highlight">5000</span>
+
+<span class="comment"># Expected output:</span>
+<span class="string">Connection to 192.168.10.50 5000 port [tcp/*] succeeded!</span>
+
+<span class="comment"># Or use curl for HTTP-based readers</span>
+curl -s <span class="highlight">http://192.168.10.50:5000</span>/status | head -20</code></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Tag Read Test — Functional Verification</h4>
+          <p>Place a known RFID tag in front of the antenna and verify it is read correctly.</p>
+          <pre><code><span class="comment"># Python quick test script</span>
+python3 -c "
+import socket
+s = socket.socket()
+s.connect(('192.168.10.50', <span class="highlight">5000</span>))
+s.send(b'<span class="string">READ</span>\r\n')
+resp = s.recv(1024)
+print('Tag ID:', resp.decode().strip())
+s.close()
+"
+
+<span class="comment"># Expected: Tag ID like E200 3411 B802 0160 2260 1254</span></code></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h4>Integration Test — Full Pipeline</h4>
+          <p>Walk a vehicle through the lane (or simulate) and verify the complete read → process → log flow.</p>
+          <pre><code><span class="comment"># Check backend API received the event</span>
+curl -s http://localhost:3000/api/toll-events?limit=5 \
+  -H <span class="string">"Authorization: Bearer $TOKEN"</span> | python3 -m json.tool
+
+<span class="comment"># Check RPi local sync queue</span>
+curl -s http://localhost:4000/api/sync/status | \
+  python3 -m json.tool
+
+<span class="comment"># Expected: recent event with matching tag ID</span></code></pre>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin:28px 0 12px;">Troubleshooting Table</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Symptom</th><th>Likely Cause</th><th>Fix</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-red" style="font-size:11px;">No ping response</span></td>
+            <td>Wrong IP, cable disconnected, VLAN mismatch</td>
+            <td>Check cable, verify IP via LCD display on reader, confirm switch VLAN</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-amber" style="font-size:11px;">Port 5000 closed</span></td>
+            <td>Reader not initialized, firewall blocking</td>
+            <td>Power cycle reader, check iptables rules, verify reader web UI on port 80</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-amber" style="font-size:11px;">No tags read</span></td>
+            <td>Antenna disconnected, wrong frequency, tag type mismatch</td>
+            <td>Check coax cable continuity, verify frequency region (MY=920-925), test with known tag</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-red" style="font-size:11px;">Intermittent reads</span></td>
+            <td>Noisy RF environment, loose connector, low power</td>
+            <td>Check SMA/TNC connector torque, add ferrite beads, verify 12V/2A power supply</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-blue" style="font-size:11px;">Reads only close range</span></td>
+            <td>Antenna tilted wrong, gain too low, obstruction</td>
+            <td>Adjust tilt to 30°-45°, verify 12 dBi antenna, clear metal obstructions near antenna</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-amber" style="font-size:11px;">Duplicate reads</span></td>
+            <td>Tag lingering in read zone, antenna too wide</td>
+            <td>Adjust antenna angle, implement dedup in software (500ms cooldown window)</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-purple" style="font-size:11px;">Serial garbled output</span></td>
+            <td>Baud rate mismatch, TX/RX crossed</td>
+            <td>Set reader to 9600 baud, swap TX/RX wires, check 3.3V logic level compatibility</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-red" style="font-size:11px;">Reader firmware crash</span></td>
+            <td>Power instability, firmware bug</td>
+            <td>Add UPS, update firmware via web UI, factory reset if needed</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 8: MAINTENANCE SCHEDULE                                  -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="maintenance">
+    <div class="section-header">
+      <div class="section-icon pink">🔄</div>
+      <h2 class="section-title">Maintenance Schedule</h2>
+    </div>
+    <p class="section-sub">Regular maintenance prevents 90% of field failures. Follow this schedule for maximum uptime and reader longevity.</p>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="tl-freq blue">DAILY</div>
+        <div class="tl-title">Automated Health Check</div>
+        <p>RPi ping monitor verifies reader is online. Alert sent if unreachable for >2 minutes. No manual intervention needed.</p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-freq green">WEEKLY</div>
+        <div class="tl-title">Visual Inspection</div>
+        <p>Check antenna cable connections for corrosion or looseness. Inspect weatherproof enclosures for moisture ingress. Verify LED status indicators.</p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-freq green">MONTHLY</div>
+        <div class="tl-title">Read Rate Performance Test</div>
+        <p>Walk-test with 20 known tags across the full lane width. Record read rate percentage. Expected: >99% within 2 passes. If below 95%, check antenna alignment.</p>
+      </div>
+
+      <div class="timeline-item amber">
+        <div class="tl-freq amber">QUARTERLY</div>
+        <div class="tl-title">Firmware Update &amp; Deep Clean</div>
+        <p>Update reader firmware to latest stable version. Clean antenna face with isopropyl alcohol. Check coax cable for moisture in connectors. Recalibrate if needed.</p>
+      </div>
+
+      <div class="timeline-item red">
+        <div class="tl-freq red">ANNUALLY</div>
+        <div class="tl-title">Full System Overhaul</div>
+        <p>Replace weatherproof gaskets and cable seals. Run full antenna gain test. Replace any corroded connectors. Update SSH keys and SNMP community strings. Full backup of reader config.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 9: BILL OF MATERIALS                                     -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section-block" id="bom">
+    <div class="section-header">
+      <div class="section-icon amber">💰</div>
+      <h2 class="section-title">Bill of Materials — Per Lane RFID Setup</h2>
+    </div>
+    <p class="section-sub">Complete cost breakdown for a single-lane RFID reader installation. Multiply by number of lanes for full plaza cost.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Category</th><th>Item</th><th>Qty</th><th>Unit Cost (MMK)</th><th>Total (MMK)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td rowspan="3">📡 Reader Hardware</td><td>UHF RFID Reader (Impinj R420 or ZKTeco UHF300)</td><td>1</td><td>2,000,000 – 2,500,000</td><td>2,500,000</td></tr>
+          <tr><td>External Antenna (12 dBi Circular)</td><td>2</td><td>500,000</td><td>1,000,000</td></tr>
+          <tr><td>Coaxial Cable (RG-58, 5m) + RP-TNC Connectors</td><td>2</td><td>175,000</td><td>350,000</td></tr>
+          <tr><td rowspan="2">🔌 Network</td><td>Cat6 Shielded Ethernet Cable (20m)</td><td>1</td><td>50,000</td><td>50,000</td></tr>
+          <tr><td>PoE Injector (802.3af, 15.4W)</td><td>1</td><td>120,000</td><td>120,000</td></tr>
+          <tr><td>🔌 Serial (if applicable)</td><td>USB-to-RS232 Adapter (CP2102 chipset)</td><td>1</td><td>30,000</td><td>30,000</td></tr>
+          <tr><td rowspan="3">🔧 Mounting</td><td>Weatherproof IP67 Enclosure</td><td>1</td><td>200,000</td><td>200,000</td></tr>
+          <tr><td>Pole Mount Bracket (stainless steel)</td><td>2</td><td>80,000</td><td>160,000</td></tr>
+          <tr><td>Cable Glands &amp; UV-resistant ties</td><td>1 set</td><td>40,000</td><td>40,000</td></tr>
+          <tr><td>🍓 Edge Gateway</td><td>Raspberry Pi 4 (4GB) + microSD 64GB A2</td><td>1</td><td>430,000</td><td>430,000</td></tr>
+          <tr style="background:rgba(59,130,246,0.08);font-weight:700;"><td colspan="4">TOTAL PER LANE (RFID SUBSYSTEM)</td><td style="color:#60a5fa;">4,880,000 MMK</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert alert-info" style="margin-top:16px;">
+      <strong>💡 Notes:</strong><br>
+      • Prices are estimates as of September 2026 for Yangon market<br>
+      • Serial-only setups save ~MMK 500,000 per lane (no PoE, internal antenna)<br>
+      • Bulk orders (10+ readers) typically receive 10–15% discount<br>
+      • Import duty for RFID equipment: 5% + commercial tax 5%
+    </div>
+  </section>
+
+</div>
+
+<footer class="footer">
+  <p>TollGate RFID Pass — Enterprise Highway OS v1.0</p>
+  <p style="margin-top:4px;">RFID Reader Installation Guide • September 2026</p>
+</footer>
+
+</body>
+</html>

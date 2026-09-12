@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TollGate RFID Pass — Hardware Documentation</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f172a;--surface:#1e293b;--border:#334155;--accent:#3b82f6;--accent2:#8b5cf6;--green:#10b981;--amber:#f59e0b;--red:#ef4444;--text:#f1f5f9;--muted:#94a3b8;--dim:#64748b;--radius:16px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;}
+a{color:var(--accent);text-decoration:none;}
+a:hover{text-decoration:underline;}
+
+/* Header */
+.header{position:sticky;top:0;z-index:100;background:rgba(15,23,42,0.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;}
+.logo{display:flex;align-items:center;gap:12px;}
+.logo-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;}
+.logo-icon svg{width:22px;height:22px;fill:white;}
+.logo-text{font-size:18px;font-weight:700;}
+.logo-sub{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.nav{display:flex;gap:8px;}
+.nav a{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;color:var(--muted);transition:all 0.2s;}
+.nav a:hover,.nav a.active{background:rgba(59,130,246,0.1);color:var(--accent);text-decoration:none;}
+
+/* Hero */
+.hero{padding:80px 32px 60px;text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(59,130,246,0.12) 0%,transparent 60%);}
+.hero h1{font-size:3rem;font-weight:800;background:linear-gradient(135deg,#60a5fa,#a78bfa,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;}
+.hero p{font-size:1.1rem;color:var(--muted);max-width:600px;margin:0 auto 32px;}
+.hero-badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.badge{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid;}
+.badge-blue{background:rgba(59,130,246,0.1);border-color:rgba(59,130,246,0.3);color:#60a5fa;}
+.badge-green{background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.3);color:#34d399;}
+.badge-purple{background:rgba(139,92,246,0.1);border-color:rgba(139,92,246,0.3);color:#a78bfa;}
+.badge-amber{background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.3);color:#fbbf24;}
+
+/* Cards Grid */
+.container{max-width:1200px;margin:0 auto;padding:40px 32px;}
+.section-title{font-size:1.5rem;font-weight:700;margin-bottom:8px;}
+.section-sub{color:var(--muted);margin-bottom:24px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;transition:all 0.3s;cursor:pointer;}
+.card:hover{border-color:rgba(59,130,246,0.5);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.3);}
+.card-header{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+.card-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.card-icon svg{width:26px;height:26px;}
+.card-icon.blue{background:rgba(59,130,246,0.15);}
+.card-icon.green{background:rgba(16,185,129,0.15);}
+.card-icon.purple{background:rgba(139,92,246,0.15);}
+.card-icon.amber{background:rgba(245,158,11,0.15);}
+.card-icon.red{background:rgba(239,68,68,0.15);}
+.card-icon.cyan{background:rgba(6,182,212,0.15);}
+.card-icon.pink{background:rgba(236,72,153,0.15);}
+.card h3{font-size:1.05rem;font-weight:600;}
+.card .model{font-size:12px;color:var(--dim);margin-top:2px;}
+.card p{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:12px;}
+.tags{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:500;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);color:#60a5fa;}
+.tag.green{background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.2);color:#34d399;}
+.tag.amber{background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.2);color:#fbbf24;}
+
+/* Flow */
+.flow{display:flex;align-items:flex-start;gap:0;overflow-x:auto;padding:20px 0;}
+.flow-step{flex:0 0 120px;text-align:center;position:relative;}
+.flow-num{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 16px rgba(59,130,246,0.3);}
+.flow-icon{font-size:28px;margin-bottom:6px;}
+.flow-text{font-size:12px;color:var(--muted);line-height:1.3;}
+.flow-arrow{position:absolute;right:-14px;top:18px;color:var(--dim);font-size:18px;}
+
+/* Table */
+.table-wrap{overflow-x:auto;margin:20px 0;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;padding:12px 16px;background:rgba(59,130,246,0.08);border-bottom:2px solid var(--border);font-weight:600;color:var(--accent);white-space:nowrap;}
+td{padding:10px 16px;border-bottom:1px solid var(--border);color:var(--muted);}
+tr:hover td{background:rgba(59,130,246,0.03);}
+
+/* Code */
+pre{background:#0c1222;border:1px solid var(--border);border-radius:12px;padding:20px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.7;color:#94a3b8;margin:16px 0;}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;background:rgba(59,130,246,0.1);padding:2px 6px;border-radius:4px;color:#60a5fa;}
+pre code{background:none;padding:0;color:inherit;}
+
+/* Diagram */
+.diagram{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:32px;margin:20px 0;text-align:center;}
+.diagram-title{font-size:14px;font-weight:600;color:var(--accent);margin-bottom:16px;}
+.diagram pre{text-align:left;display:inline-block;background:transparent;border:none;padding:0;font-size:12px;color:var(--muted);}
+
+/* Footer */
+.footer{text-align:center;padding:40px 32px;color:var(--dim);font-size:13px;border-top:1px solid var(--border);margin-top:40px;}
+
+@media(max-width:768px){
+  .hero h1{font-size:2rem;}
+  .grid{grid-template-columns:1fr;}
+  .nav{display:none;}
+  .flow{flex-wrap:wrap;gap:12px;}
+  .flow-step{flex:0 0 100px;}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+    </div>
+    <div>
+      <div class="logo-text">TollGate RFID Pass</div>
+      <div class="logo-sub">Hardware Documentation</div>
+    </div>
+  </div>
+  <nav class="nav">
+    <a href="#overview" class="active">Overview</a>
+    <a href="#devices">Devices</a>
+    <a href="#flow">Flow</a>
+    <a href="#network">Network</a>
+    <a href="#guides">Guides</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h1>Hardware Architecture</h1>
+  <p>Complete hardware installation documentation with network topology, wiring diagrams, and step-by-step guides for every component.</p>
+  <div class="hero-badges">
+    <span class="badge badge-blue">📡 9 Device Types</span>
+    <span class="badge badge-green">🍓 Raspberry Pi 4</span>
+    <span class="badge badge-purple">🔧 8 Guides</span>
+    <span class="badge badge-amber">📊 Network Topology</span>
+  </div>
+</section>
+
+<!-- Vehicle Passage Flow -->
+<div class="container" id="flow">
+  <h2 class="section-title">🚗 Vehicle Passage Flow</h2>
+  <p class="section-sub">Complete toll processing sequence — 9 steps, less than 3 seconds</p>
+  <div class="flow">
+    <div class="flow-step"><div class="flow-num">1</div><div class="flow-icon">🔲</div><div class="flow-text">Vehicle<br>Detected</div><span class="flow-arrow">→</span></div>
+    <div class="flow-step"><div class="flow-num">2</div><div class="flow-icon">📡</div><div class="flow-text">RFID Tag<br>Read</div><span class="flow-arrow">→</span></div>
+    <div class="flow-step"><div class="flow-num">3</div><div class="flow-icon">📷</div><div class="flow-text">ANPR Plate<br>Capture</div><span class="flow-arrow">→</span></div>
+    <div class="flow-step"><div class="flow-num">4</div><div class="flow-icon">⚙️</div><div class="flow-text">Toll<br>Processing</div><span class="flow-arrow">→</span></div>
+    <div class="flow-step"><div class="flow-num">5</div><div class="flow-icon">💰</div><div class="flow-text">Debit<br>Account</div><span class="flow-arrow">→</span></div>
+    <div class="flow-step"><div class="flow-num">6</div><div class="flow-icon">🔲</div><div class="flow-text">Barrier<br>Opens</div><span class="flow-arrow">→</span></div>
+    <div class="flow-step"><div class="flow-num">7</div><div class="flow-icon">🟢</div><div class="flow-text">LED<br>Green</div><span class="flow-arrow">→</span></div>
+    <div class="flow-step"><div class="flow-num">8</div><div class="flow-icon">🚗</div><div class="flow-text">Vehicle<br>Passes</div><span class="flow-arrow">→</span></div>
+    <div class="flow-step"><div class="flow-num">9</div><div class="flow-icon">📡</div><div class="flow-text">Sync<br>to HQ</div></div>
+  </div>
+</div>
+
+<!-- Hardware Devices -->
+<div class="container" id="devices">
+  <h2 class="section-title">🔧 Hardware Components</h2>
+  <p class="section-sub">Every device in the toll lane system — click to view installation guide</p>
+  <div class="grid">
+
+    <a href="01-rfid-reader.html" class="card">
+      <div class="card-header">
+        <div class="card-icon blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1"/></svg>
+        </div>
+        <div><h3>UHF RFID Reader</h3><div class="model">ZKTeco UHF300 / Impinj R420</div></div>
+      </div>
+      <p>Long-range passive UHF tag reader for vehicle identification. Reads tags at 3–12m distance with >200 reads/second.</p>
+      <div class="tags">
+        <span class="tag">TCP/IP</span>
+        <span class="tag">920–925 MHz</span>
+        <span class="tag">Port 5000</span>
+        <span class="tag">3–12m range</span>
+      </div>
+    </a>
+
+    <a href="02-anpr-camera.html" class="card">
+      <div class="card-header">
+        <div class="card-icon purple">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </div>
+        <div><h3>ANPR Camera</h3><div class="model">Hikvision DS-2CD7A46G0-IZHS</div></div>
+      </div>
+      <p>AI-powered Automatic Number Plate Recognition camera with >99% accuracy. Captures plates in all lighting conditions.</p>
+      <div class="tags">
+        <span class="tag">ISAPI</span>
+        <span class="tag">4MP Resolution</span>
+        <span class="tag">RTSP :554</span>
+        <span class="tag">PoE</span>
+      </div>
+    </a>
+
+    <a href="03-barrier-gate.html" class="card">
+      <div class="card-header">
+        <div class="card-icon red">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div><h3>Barrier Gate</h3><div class="model">FAAC 640 Electromechanical</div></div>
+      </div>
+      <p>Boom barrier with auto-reverse safety, battery backup, and serial/TCP control. Opens in 1.5–4 seconds.</p>
+      <div class="tags">
+        <span class="tag">RS232/TCP</span>
+        <span class="tag">1.5–4s open</span>
+        <span class="tag">3–8m lane</span>
+        <span class="tag">IP55</span>
+      </div>
+    </a>
+
+    <a href="04-lane-controller.html" class="card">
+      <div class="card-header">
+        <div class="card-icon green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <div><h3>Lane Controller</h3><div class="model">Raspberry Pi 4 (4GB)</div></div>
+      </div>
+      <p>Edge computing device running Docker containers for local toll processing. Controls all lane peripherals via GPIO.</p>
+      <div class="tags">
+        <span class="tag">GPIO 40-pin</span>
+        <span class="tag">Gigabit ETH</span>
+        <span class="tag">Docker</span>
+        <span class="tag">SQLite</span>
+      </div>
+    </a>
+
+    <a href="04-lane-controller.html#led" class="card">
+      <div class="card-header">
+        <div class="card-icon amber">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </div>
+        <div><h3>LED Traffic Signal</h3><div class="model">3-Aspect (Red / Yellow / Green)</div></div>
+      </div>
+      <p>Overhead traffic signal controlling vehicle flow. 150W LED with 200m+ visibility distance.</p>
+      <div class="tags">
+        <span class="tag">GPIO Control</span>
+        <span class="tag">150W LED</span>
+        <span class="tag">200m visibility</span>
+      </div>
+    </a>
+
+    <a href="04-lane-controller.html#loop" class="card">
+      <div class="card-header">
+        <div class="card-icon cyan">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2"><rect x="1" y="6" width="22" height="12" rx="2" ry="2"/><line x1="1" y1="12" x2="23" y2="12"/></svg>
+        </div>
+        <div><h3>Vehicle Loop Detector</h3><div class="model">Inductive Loop Sensor</div></div>
+      </div>
+      <p>Detects vehicle presence via inductive loop embedded in road surface. Triggers toll processing sequence.</p>
+      <div class="tags">
+        <span class="tag">GPIO Input</span>
+        <span class="tag">100kHz</span>
+        <span class="tag">In-ground</span>
+      </div>
+    </a>
+
+    <a href="04-lane-controller.html#intercom" class="card">
+      <div class="card-header">
+        <div class="card-icon pink">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <div><h3>Intercom System</h3><div class="model">Master-Slave Audio Station</div></div>
+      </div>
+      <p>Two-way audio communication between toll booth operator and driver for assistance.</p>
+      <div class="tags">
+        <span class="tag">GPIO PTT</span>
+        <span class="tag">2-wire audio</span>
+        <span class="tag">Weather-proof</span>
+      </div>
+    </a>
+
+    <a href="04-lane-controller.html#ticket" class="card">
+      <div class="card-header">
+        <div class="card-icon amber">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <div><h3>Ticket Dispenser</h3><div class="model">Serial Thermal Printer</div></div>
+      </div>
+      <p>Dispenses paper toll tickets with vehicle class, entry time, and QR code for manual toll collection.</p>
+      <div class="tags">
+        <span class="tag">UART Serial</span>
+        <span class="tag">Thermal</span>
+        <span class="tag">Auto-feed</span>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<!-- Network Topology -->
+<div class="container" id="network">
+  <h2 class="section-title">🌐 Network Topology</h2>
+  <p class="section-sub">Plaza-to-HQ communication architecture</p>
+
+  <div class="diagram">
+    <div class="diagram-title">COMPLETE SYSTEM NETWORK TOPOLOGY</div>
+    <pre>
+                    ☁️  INTERNET / VPN / 4G LTE
+                              │
+              ┌───────────────┼───────────────┐
+              │               │               │
+    ╔═════════╩═══════════════╧═══════════════╩═════════╗
+    ║           HQ SERVER (192.168.100.101)              ║
+    ║  ┌────────┐ ┌────────┐ ┌────────┐ ┌────────────┐ ║
+    ║  │ :80    │ │ :8080  │ │ :8081  │ │ :3000      │ ║
+    ║  │ Admin  │ │Customer│ │Finance │ │ API        │ ║
+    ║  └────────┘ └────────┘ └────────┘ └─────┬──────┘ ║
+    ║  ┌───────────┐ ┌──────────┐ ┌───────────┴──────┐ ║
+    ║  │ :5432     │ │ :5433    │ │ :5434            │ ║
+    ║  │ HQ DB     │ │ Cust DB  │ │ Plaza DB         │ ║
+    ║  └───────────┘ └──────────┘ └──────────────────┘ ║
+    ╚═════════════════════╤═════════════════════════════╝
+                          │
+         ┌────────────────┼────────────────┐
+         │                │                │
+   ╔═════╩══════╗  ╔═════╩══════╗  ╔═════╩══════╗
+   ║ Plaza 01   ║  ║ Plaza 02   ║  ║ Plaza N    ║
+   ║ RPi :4000  ║  ║ RPi :4000  ║  ║ RPi :4000  ║
+   ╚═════╦══════╝  ╚═════╦══════╝  ╚═════╦══════╝
+         │                │                │
+   ┌─────┼─────┐    ┌─────┼─────┐    ┌─────┼─────┐
+   │     │     │    │     │     │    │     │     │
+  📡    📷    🔲  📡    📷    🔲  📡    📷    🔲
+ RFID  ANPR  Bar  RFID  ANPR  Bar  RFID  ANPR  Bar
+    </pre>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Connection</th><th>Protocol</th><th>Port</th><th>Bandwidth</th><th>Encryption</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Plaza → HQ (Push)</td><td>HTTPS REST</td><td>3000</td><td>1 Mbps min</td><td>VPN + TLS</td></tr>
+        <tr><td>Plaza ← HQ (Pull)</td><td>HTTPS REST</td><td>3000</td><td>1 Mbps min</td><td>VPN + TLS</td></tr>
+        <tr><td>RFID Reader</td><td>TCP/IP</td><td>5000</td><td>10 Mbps</td><td>VLAN隔离</td></tr>
+        <tr><td>ANPR Camera</td><td>HTTP (ISAPI)</td><td>80</td><td>100 Mbps</td><td>Basic Auth</td></tr>
+        <tr><td>ANPR Stream</td><td>RTSP</td><td>554</td><td>8 Mbps</td><td>Digest Auth</td></tr>
+        <tr><td>Barrier Gate</td><td>Serial/TCP</td><td>5000</td><td>9600 baud</td><td>Local only</td></tr>
+        <tr><td>Lane Controller</td><td>GPIO</td><td>-</td><td>N/A</td><td>Physical</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Installation Guides -->
+<div class="container" id="guides">
+  <h2 class="section-title">📚 Installation Guides</h2>
+  <p class="section-sub">Step-by-step hardware and server installation</p>
+  <div class="grid">
+
+    <a href="01-rfid-reader.html" class="card">
+      <div class="card-header">
+        <div class="card-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1"/></svg></div>
+        <div><h3>RFID Reader Setup</h3><div class="model">TCP, Serial, ZKTeco integration</div></div>
+      </div>
+      <p>Complete guide: mounting, wiring, VLAN config, firmware, testing with 6 diagrams.</p>
+      <div class="tags"><span class="tag">20 min read</span><span class="tag">6 diagrams</span></div>
+    </a>
+
+    <a href="02-anpr-camera.html" class="card">
+      <div class="card-header">
+        <div class="card-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+        <div><h3>ANPR Camera Setup</h3><div class="model">Hikvision ISAPI, RTSP, PoE</div></div>
+      </div>
+      <p>Camera mounting, angle optimization, API config, RTSP streaming, ANPR tuning.</p>
+      <div class="tags"><span class="tag green">25 min read</span><span class="tag green">8 diagrams</span></div>
+    </a>
+
+    <a href="03-barrier-gate.html" class="card">
+      <div class="card-header">
+        <div class="card-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <div><h3>Barrier Gate Setup</h3><div class="model">FAAC 640, serial/TCP/Modbus</div></div>
+      </div>
+      <p>Foundation, wiring, protocol config, safety features, testing, maintenance schedule.</p>
+      <div class="tags"><span class="tag amber">15 min read</span><span class="tag amber">5 diagrams</span></div>
+    </a>
+
+    <a href="04-lane-controller.html" class="card">
+      <div class="card-header">
+        <div class="card-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+        <div><h3>Lane Controller Setup</h3><div class="model">RPi 4 GPIO, peripherals</div></div>
+      </div>
+      <p>GPIO mapping, wiring diagram, loop detector, LED, intercom, ticket dispenser.</p>
+      <div class="tags"><span class="tag">30 min read</span><span class="tag">10 diagrams</span></div>
+    </a>
+
+    <a href="05-plaza-server.html" class="card">
+      <div class="card-header">
+        <div class="card-icon cyan"><svg viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg></div>
+        <div><h3>Plaza Server Setup</h3><div class="model">RPi edge server, Docker, sync</div></div>
+      </div>
+      <p>Docker install, sync protocol, offline mode, monitoring, admin panel.</p>
+      <div class="tags"><span class="tag green">20 min read</span><span class="tag green">4 diagrams</span></div>
+    </a>
+
+    <a href="06-hq-server.html" class="card">
+      <div class="card-header">
+        <div class="card-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg></div>
+        <div><h3>HQ Server Setup</h3><div class="model">Central server, Docker, backup</div></div>
+      </div>
+      <p>Server install, Docker compose, Nginx, database setup, backup scripts, monitoring.</p>
+      <div class="tags"><span class="tag amber">25 min read</span><span class="tag amber">3 diagrams</span></div>
+    </a>
+
+  </div>
+</div>
+
+<!-- Bill of Materials -->
+<div class="container">
+  <h2 class="section-title">💰 Bill of Materials (per Plaza)</h2>
+  <p class="section-sub">Complete cost breakdown for a 4-lane toll plaza</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Category</th><th>Item</th><th>Qty</th><th>Unit Cost (MMK)</th><th>Total (MMK)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td rowspan="3">📡 RFID</td><td>UHF RFID Reader</td><td>4</td><td>2,500,000</td><td>10,000,000</td></tr>
+        <tr><td>Antenna (8dBi)</td><td>8</td><td>500,000</td><td>4,000,000</td></tr>
+        <tr><td>Coaxial Cable + Connectors</td><td>8</td><td>175,000</td><td>1,400,000</td></tr>
+        <tr><td rowspan="2">📷 ANPR</td><td>Hikvision ANPR Camera</td><td>4</td><td>4,500,000</td><td>18,000,000</td></tr>
+        <tr><td>PoE Switch (8-port)</td><td>1</td><td>300,000</td><td>300,000</td></tr>
+        <tr><td rowspan="4">🔲 Barrier</td><td>FAAC 640 Barrier Gate</td><td>4</td><td>3,500,000</td><td>14,000,000</td></tr>
+        <tr><td>Safety Photo-Eye</td><td>4</td><td>250,000</td><td>1,000,000</td></tr>
+        <tr><td>Battery Backup</td><td>4</td><td>400,000</td><td>1,600,000</td></tr>
+        <tr><td>Boom Arm (3m)</td><td>4</td><td>300,000</td><td>1,200,000</td></tr>
+        <tr><td rowspan="7">🍓 Lane</td><td>Raspberry Pi 4 (4GB)</td><td>5</td><td>350,000</td><td>1,750,000</td></tr>
+        <tr><td>microSD 64GB A2</td><td>5</td><td>80,000</td><td>400,000</td></tr>
+        <tr><td>GPIO Relay Module</td><td>4</td><td>120,000</td><td>480,000</td></tr>
+        <tr><td>Vehicle Loop Detector</td><td>4</td><td>200,000</td><td>800,000</td></tr>
+        <tr><td>LED Traffic Light</td><td>4</td><td>400,000</td><td>1,600,000</td></tr>
+        <tr><td>Intercom System</td><td>4</td><td>300,000</td><td>1,200,000</td></tr>
+        <tr><td>Ticket Dispenser</td><td>4</td><td>500,000</td><td>2,000,000</td></tr>
+        <tr><td rowspan="3">🏗️ Infra</td><td>Gantry Structure</td><td>1</td><td>5,000,000</td><td>5,000,000</td></tr>
+        <tr><td>Network Switch + Cabling</td><td>1</td><td>700,000</td><td>700,000</td></tr>
+        <tr><td>UPS (1500VA)</td><td>1</td><td>800,000</td><td>800,000</td></tr>
+        <tr style="background:rgba(59,130,246,0.08);font-weight:700;"><td colspan="4">TOTAL PER PLAZA (4 LANES)</td><td style="color:#60a5fa;">66,230,000 MMK</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<footer class="footer">
+  <p>TollGate RFID Pass — Enterprise Highway OS v1.0</p>
+  <p style="margin-top:4px;">Hardware Documentation • September 2026</p>
+</footer>
+
+</body>
+</html>
