@@ -121,6 +121,7 @@ router.post('/employees', requireRole('ADMIN', 'SUPER_ADMIN', 'HR_ADMIN'), async
     const employee = await createEmployee(req.body);
     res.status(201).json(employee);
   } catch (error: any) {
+    console.error('Create employee error:', error);
     if (error?.code === 'P2002') {
       res.status(409).json({ error: 'Employee with this email already exists' });
       return;
