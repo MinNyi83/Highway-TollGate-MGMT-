@@ -20,13 +20,15 @@
    - [Prepaid Wallet & Dynamic Top-Up](#prepaid-wallet--dynamic-top-up)
    - [One-Click Vehicle Registration via RTAD Card](#one-click-via-registration-via-rtad-card)
    - [Low Balance Alerts](#low-balance-alerts)
-4. [Toll Simulator (Canvas Multi-Lane Highway)](#toll-simulator-canvas-multi-lane-highway)
-5. [Plaza Edge Server (Offline-First Raspberry Pi)](#plaza-edge-server-offline-first-raspberry-pi)
-6. [Hardware Installation](#6-hardware-installation)
-7. [API Reference](#api-reference)
-8. [Health & Monitoring](#health--monitoring)
-9. [Troubleshooting & FAQ](#troubleshooting--faq)
-10. [UI/UX Features](#uiux-features)
+4. [Financial Portal (Port 8081)](#4-financial-portal-port-8081-)
+5. [HR Management System (Separate Database)](#4b-hr-management-system-separate-database-)
+6. [Toll Simulator (Canvas Multi-Lane Highway)](#toll-simulator-canvas-multi-lane-highway)
+7. [Plaza Edge Server (Offline-First Raspberry Pi)](#plaza-edge-server-offline-first-raspberry-pi)
+8. [Hardware Installation](#6-hardware-installation)
+9. [API Reference](#api-reference)
+10. [Health & Monitoring](#health--monitoring)
+11. [Troubleshooting & FAQ](#troubleshooting--faq)
+12. [UI/UX Features](#uiux-features)
 
 ---
 
@@ -39,6 +41,7 @@ The system is deployed as a distributed stack with cloud HQ coordination and edg
 | **HQ Admin Command Hub** | `80` | `http://<SERVER_IP>` | Central telemetry, operator ribbon, highway map, reports |
 | **Customer Portal (PWA)** | `8080` | `http://<SERVER_IP>:8080` | Driver digital wallet, virtual RFID pass, trip history |
 | **Financial Portal** 🆕 | `8081` | `http://<SERVER_IP>:8081` | Ministry reporting, revenue tracking, reconciliation |
+| **HR Portal** 🆕 | `8082` | `http://<SERVER_IP>:8082` | Employee management, attendance, payroll, shifts |
 | **Central Backend API** | `3000` | `http://<SERVER_IP>:3000` | REST API, WebSocket streams, OCR engine, payment webhooks |
 | **API Documentation** | `3000` | `http://<SERVER_IP>:3000/api-docs` | Swagger UI for API exploration |
 | **Storage Server** | `5000` | `http://<SERVER_IP>:5000` | ANPR captures, license plate snapshots, receipts |
@@ -129,6 +132,10 @@ Booth operators and administrative staff can register customer vehicles in secon
 ### Default Customer Logins
 - **Enterprise Fleet**: `fleet@transportco.com` / `password123`
 - **Individual Driver**: `ko.min@personal.com` / `password123`
+
+### Default HR Logins
+- **HR Admin**: `hr.admin@tollgate.com` / `password123`
+- **HR Manager**: `hr.manager@tollgate.com` / `password123`
 
 ### Dark & Light Theme Switching
 - Drivers can toggle between dark and light themes at any time by clicking the **Sun / Moon** icon.
@@ -359,6 +366,161 @@ If a driver's physical windshield RFID sticker is damaged or not yet delivered:
 
 ---
 
+## 4B. HR Management System (Separate Database) 🆕
+
+### Overview
+The HR Management System is a **separate system** with its own PostgreSQL database (`tollgate_hr` on port 5435), connected to TollGate via shared JWT login. TollGate users are synced to the HR system via the `/api/hr/auth/sync` endpoint.
+
+### HR Database Architecture
+- **Database**: `tollgate_hr` on port 5435 (separate PostgreSQL container)
+- **Schema**: `packages/backend/prisma/schema.hr.prisma` (independent)
+- **Prisma Client**: Generated to `packages/backend/src/generated/hr-client/` (separate output)
+- **Docker Container**: `hr-db` with volume `hr_pgdata`
+
+### HR Models (12)
+| Model | Purpose |
+|---|---|
+| HrUser | Synced TollGate users with HR roles |
+| Department | Organizational departments |
+| Position | Job positions within departments |
+| Employee | Employee records linked to TollGate users |
+| Attendance | Daily clock-in/clock-out tracking |
+| Shift | Shift definitions |
+| ShiftAssignment | Employee-to-shift assignments |
+| LeaveRequest | Leave requests with approval workflow |
+| Payroll | Monthly payroll processing |
+| PerformanceReview | Employee performance evaluations |
+| Training | Training programs and courses |
+| TrainingEnrollment | Employee enrollment in training |
+
+### HR Frontend Pages (10)
+| Page | Description |
+|---|---|
+| **HrDashboard** | HR overview stats - total employees, attendance summary, pending leave, payroll status |
+| **Employees** | Employee list with search, filter, and CRUD operations |
+| **EmployeeDetail** | Individual employee profile with attendance, leave, performance history |
+| **Departments** | Department management with employee counts |
+| **Attendance** | Daily attendance tracking with clock-in/clock-out buttons |
+| **Shifts** | Shift management and assignment to employees |
+| **LeaveRequests** | Leave request submission, approval, and rejection workflow |
+| **Payroll** | Monthly payroll generation, processing, and payment tracking |
+| **Performance** | Performance review creation and tracking |
+| **Training** | Training program management and enrollment |
+
+### HR API Endpoints
+```bash
+# HR Dashboard
+GET /api/hr/dashboard
+
+# Employee Management
+GET /api/hr/employees
+POST /api/hr/employees
+PUT /api/hr/employees/:id
+DELETE /api/hr/employees/:id
+
+# Department Management
+GET /api/hr/departments
+POST /api/hr/departments
+PUT /api/hr/departments/:id
+DELETE /api/hr/departments/:id
+
+# Position Management
+GET /api/hr/positions
+POST /api/hr/positions
+PUT /api/hr/positions/:id
+DELETE /api/hr/positions/:id
+
+# Attendance Tracking
+GET /api/hr/attendance
+POST /api/hr/attendance/clock-in
+POST /api/hr/attendance/clock-out
+
+# Shift Management
+GET /api/hr/shifts
+POST /api/hr/shifts
+PUT /api/hr/shifts/:id
+DELETE /api/hr/shifts/:id
+
+# Leave Management
+GET /api/hr/leave
+POST /api/hr/leave
+PATCH /api/hr/leave/:id/approve
+PATCH /api/hr/leave/:id/reject
+
+# Payroll
+GET /api/hr/payroll
+POST /api/hr/payroll/generate
+POST /api/hr/payroll/:id/process
+POST /api/hr/payroll/:id/pay
+
+# Performance Reviews
+GET /api/hr/performance
+POST /api/hr/performance
+PUT /api/hr/performance/:id
+
+# Training
+GET /api/hr/training
+POST /api/hr/training
+POST /api/hr/training/:id/enroll
+
+# HR Auth (Shared Login)
+POST /api/hr/auth/sync
+GET /api/hr/auth/me
+```
+
+### HR Usage Guide
+
+#### HR Dashboard
+- View total employees, active employees, attendance rate
+- See pending leave requests and upcoming shifts
+- Monitor payroll status and recent performance reviews
+
+#### Employee Management
+1. Navigate to **Employees** in the HR sidebar
+2. Click **"Add Employee"** to create a new employee record
+3. Fill in personal details, assign department and position
+4. Link to an existing TollGate user account
+
+#### Department Management
+1. Navigate to **Departments** in the HR sidebar
+2. Create departments with names and descriptions
+3. View employee counts per department
+
+#### Attendance Tracking
+1. Navigate to **Attendance** in the HR sidebar
+2. Employees can **Clock In** at start of shift
+3. Employees can **Clock Out** at end of shift
+4. View daily attendance summary and history
+
+#### Shift Scheduling
+1. Navigate to **Shifts** in the HR sidebar
+2. Create shifts with start/end times
+3. Assign employees to shifts
+
+#### Leave Management
+1. Navigate to **Leave Requests** in the HR sidebar
+2. Employees submit leave requests with date range and reason
+3. Managers approve or reject requests
+4. View leave balance and history
+
+#### Payroll Processing
+1. Navigate to **Payroll** in the HR sidebar
+2. Generate monthly payroll for all employees
+3. Process individual payroll records
+4. Mark payroll as paid
+
+#### Performance Reviews
+1. Navigate to **Performance** in the HR sidebar
+2. Create performance reviews for employees
+3. Rate on multiple criteria with comments
+4. Track review history
+
+#### Training Management
+1. Navigate to **Training** in the HR sidebar
+2. Create training programs with schedule
+3. Enroll employees in training
+4. Track enrollment status
+
 ## 5. Toll Simulator (Canvas Multi-Lane Highway)
 
 Access the live simulation at `http://<SERVER_IP>/simulator`:
@@ -556,6 +718,7 @@ tollgate-rfid-customer-portal-1   Up (healthy)              0.0.0.0:8080->80/tcp
 tollgate-rfid-frontend-1          Up (healthy)              0.0.0.0:80->80/tcp
 tollgate-rfid-backend-1           Up (healthy)              0.0.0.0:3000->3000/tcp
 tollgate-rfid-db-1                Up (healthy)              0.0.0.0:5432->5432/tcp
+tollgate-rfid-hr-db-1          Up (healthy)              0.0.0.0:5435->5432/tcp
 ```
 
 ### Health Endpoint Details
@@ -631,6 +794,15 @@ docker exec tollgate-rfid-db-1 pg_isready -U postgres
 
 ### Q: Financial portal shows "Login failed" but credentials are correct?
 > **A**: The backend may be rate-limited from too many login attempts. Restart the backend: `docker restart tollgate-rfid-backend-1`. The rate limiter resets on restart. Alternatively, use the admin reset endpoint: `POST /api/auth/reset-rate-limiters` with a SUPER_ADMIN token.
+
+### Q: How do I access the HR Portal?
+> **A**: Visit `http://<SERVER_IP>:8082` and login with your TollGate credentials. The HR system uses shared JWT authentication - your TollGate user must first be synced via `/api/hr/auth/sync`.
+
+### Q: HR login fails with "User not found"?
+> **A**: Your TollGate user hasn't been synced to the HR database yet. Call `POST /api/hr/auth/sync` with your TollGate token, or ask an admin to trigger a full user sync.
+
+### Q: HR database connection errors?
+> **A**: Ensure the `hr-db` container is running: `docker ps | grep hr-db`. If not, start it: `docker compose up -d hr-db`. Check logs: `docker logs hr-db`.
 
 ---
 

@@ -25,18 +25,18 @@ A distributed, enterprise-grade highway toll management system with **RFID + ANP
     ║                         HQ SERVER (192.168.100.101)                        ║
     ║                                                                            ║
     ║  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐          ║
-    ║  │ 🌐 Admin   │  │ 👤 Customer│  │ 💰 Financial│ │ 📊 API     │          ║
-    ║  │ Hub :80    │  │ Portal:8080│  │ Portal:8081│  │ Server:3000│          ║
-    ║  └────────────┘  └────────────┘  └────────────┘  └─────┬──────┘          ║
+    ║  │ 🌐 Admin   │  │ 👤 Customer│  │ 💰 Financial│ │ 👥 HR      │  │ 📊 API     │          ║
+    ║  │ Hub :80    │  │ Portal:8080│  │ Portal:8081│  │ Portal:8082│  │ Server:3000│          ║
+    ║  └────────────┘  └────────────┘  └────────────┘  └────────────┘  └─────┬──────┘          ║
     ║                                                         │                 ║
     ║  ┌──────────────────────────────────────────────────────┴──────────────┐  ║
     ║  │                     Docker Containers                               │  ║
     ║  │                                                                     │  ║
-    ║  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────────────┐   │  ║
-    ║  │  │ HQ DB    │  │ Cust DB  │  │ Plaza DB │  │ Backend API      │   │  ║
-    ║  │  │ :5432    │  │ :5433    │  │ :5434    │  │ Express+Prisma   │   │  ║
-    ║  │  │ 27+ tbl  │  │ 9 tables │  │ sync     │  │ Zod+Socket.IO    │   │  ║
-    ║  │  └──────────┘  └──────────┘  └──────────┘  └──────────────────┘   │  ║
+    ║  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────────────┐   │  ║
+    ║  │  │ HQ DB    │  │ Cust DB  │  │ Plaza DB │  │ HR DB    │  │ Backend API      │   │  ║
+    ║  │  │ :5432    │  │ :5433    │  │ :5434    │  │ :5435    │  │ Express+Prisma   │   │  ║
+    ║  │  │ 27+ tbl  │  │ 9 tables │  │ sync     │  │ 12 tables│  │ Zod+Socket.IO    │   │  ║
+    ║  │  └──────────┘  └──────────┘  └──────────┘  └──────────┘  └──────────────────┘   │  ║
     ║  └─────────────────────────────────────────────────────────────────────┘  ║
     ╚═══════════════════════════════╤═══════════════════════════════════════════╝
                                     │
@@ -95,6 +95,7 @@ A distributed, enterprise-grade highway toll management system with **RFID + ANP
 | **HQ Database** | `5432` | `postgresql://<HOST>:5432/tollgate` | Core: vehicles, events, violations, financial |
 | **Customer Database** | `5433` | `postgresql://<HOST>:5433/tollgate_customer` | Accounts, wallets, notifications |
 | **Plaza Database** | `5434` | `postgresql://<HOST>:5434/tollgate_plaza` | Sync queue, local events, device config |
+| **HR Database** | `5435` | `postgresql://<HOST>:5435/tollgate_hr` | Employees, attendance, payroll, shifts |
 
 ---
 
@@ -157,12 +158,19 @@ Vehicle → Loop Detect → RFID Read → ANPR Capture → Match & Validate
 - **34 Backend Endpoints**: `/api/financial/*` with hqPrisma
 - **API Integration Layer**: SAP, Oracle, QuickBooks, KBZ, CB, IRD
 
-### 5. Myanmar RTAD Wheel Tax AI OCR
+### 5. HR Management System (Separate Database)
+- **12 Prisma Models**: HrUser, Department, Position, Employee, Attendance, Shift, ShiftAssignment, LeaveRequest, Payroll, PerformanceReview, Training, TrainingEnrollment
+- **Separate Database**: `tollgate_hr` on port 5435 with its own Prisma schema (`schema.hr.prisma`)
+- **Shared JWT Auth**: TollGate users synced to HR via `/api/hr/auth/sync`
+- **HR Frontend Pages**: Dashboard, Employees, Employee Detail, Departments, Attendance, Shifts, Leave Requests, Payroll, Performance, Training
+- **12+ Backend Endpoints**: `/api/hr/*` using `hrPrisma` client
+
+### 6. Myanmar RTAD Wheel Tax AI OCR
 - **Dual-Side Recognition**: Front and back of RTAD registration cards
 - **Auto-Extract**: License Plate, Year, Make, Model, Color, Engine/Chassis No, Owner
 - **1-Click Auto-Fill**: Customer Portal + Admin Hub vehicle forms
 
-### 6. Security & Performance
+### 7. Security & Performance
 - **Rate Limiting**: Auth 10/15min, Global 100/min, Strict 5/hr
 - **CORS + Helmet.js + CSP**: Production-grade security headers
 - **JWT Auth**: Bearer token with Zod validation
@@ -178,7 +186,7 @@ Vehicle → Loop Detect → RFID Read → ANPR Capture → Match & Validate
 git clone https://github.com/MinNyi83/Highway-TollGate-MGMT-.git
 cd Highway-TollGate-MGMT-
 
-# 2. Launch complete stack (8 containers)
+# 2. Launch complete stack (9 containers)
 docker compose up -d --build
 
 # 3. Access applications
@@ -187,6 +195,7 @@ docker compose up -d --build
 # Presentation:         http://localhost/presentation
 # Customer Portal:      http://localhost:8080
 # Financial Portal:     http://localhost:8081
+# HR Portal:            http://localhost:8082
 # Central API:          http://localhost:3000/api/health
 # API Documentation:    http://localhost:3000/api-docs
 # Simulator:            http://localhost/simulator
@@ -207,6 +216,8 @@ docker compose up -d --build
 | **Financial Admin** | `fin.admin@tollgate.com` | `password123` |
 | **Financial Manager** | `fin.manager@tollgate.com` | `password123` |
 | **Financial Viewer** | `fin.viewer@tollgate.com` | `password123` |
+| **HR Admin** | `hr.admin@tollgate.com` | `password123` |
+| **HR Manager** | `hr.manager@tollgate.com` | `password123` |
 
 ---
 
@@ -219,6 +230,7 @@ Highway-TollGate-MGMT-/
 │   ├── frontend/          # React + Vite (Admin Command Hub)
 │   ├── customer-portal/   # React + Vite (Driver PWA)
 │   ├── financial-portal/  # React + Vite (Financial System)
+│   ├── hr-portal/         # React + Vite (HR Management) 🆕
 │   ├── shared/            # Shared TypeScript types
 │   ├── simulator/         # Canvas toll highway simulator
 │   └── plaza-server/      # Raspberry Pi edge server (SQLite)
@@ -226,7 +238,7 @@ Highway-TollGate-MGMT-/
 │   ├── hardware/          # Hardware installation guides (5 files + 3D HTML)
 │   └── server/            # Server installation guides (2 files)
 ├── scripts/               # Deployment scripts
-├── docker-compose.yml     # Full stack (8 containers)
+├── docker-compose.yml     # Full stack (9 containers)
 ├── PRESENTATION.html      # 20-slide executive deck
 ├── USER_GUIDE.md          # Comprehensive user guide
 └── ARCHITECTURE.md        # System architecture docs

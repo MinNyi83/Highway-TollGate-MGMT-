@@ -1,0 +1,211 @@
+schema_version: 1
+tasks:
+  - id: T001
+    objective: Design HR Database Schema (schema.hr.prisma)
+    status: completed
+    depends_on: []
+    acceptance_criteria:
+      - 12 models defined: HrUser, Department, Position, Employee, Attendance, Shift, ShiftAssignment, LeaveRequest, Payroll, PerformanceReview, Training, TrainingEnrollment
+      - Separate output directory to avoid Prisma client conflicts
+      - Proper relations and indexes defined
+    relevant_files:
+      - packages/backend/prisma/schema.hr.prisma
+    verification:
+      strategy: command
+      detail: npx prisma format --schema=packages/backend/prisma/schema.hr.prisma
+    result:
+      summary: HR schema created with 12 models, separate output dir src/generated/hr-client/
+      evidence: Schema covers employees, departments, positions, attendance, shifts, leave, payroll, performance reviews, training.
+    attempts: 1
+    usage:
+      total_tokens: 0
+  - id: T002
+    objective: Create HR Database Docker Container
+    status: completed
+    depends_on:
+      - T001
+    acceptance_criteria:
+      - hr-db container running PostgreSQL 16
+      - Port 5435 exposed
+      - hr_pgdata volume for persistence
+      - HR_DATABASE_URL env var configured
+    relevant_files:
+      - docker-compose.yml
+    verification:
+      strategy: command
+      detail: docker ps --format '{{.Names}}' | grep hr-db
+    result:
+      summary: hr-db container running on port 5435 with hr_pgdata volume
+      evidence: Container healthy, PostgreSQL 16, database tollgate_hr accessible.
+    attempts: 1
+    usage:
+      total_tokens: 0
+  - id: T003
+    objective: Configure HR Prisma Client with Separate Output
+    status: completed
+    depends_on:
+      - T001
+    acceptance_criteria:
+      - hrPrisma client generated to src/generated/hr-client/
+      - database.ts imports HrPrismaClient from generated path
+      - No conflicts with HQ/Customer/Plaza Prisma clients
+    relevant_files:
+      - packages/backend/src/config/database.ts
+    verification:
+      strategy: command
+      detail: grep -rq hrPrisma packages/backend/src/config/database.ts
+    result:
+      summary: hrPrisma client configured with custom output directory
+      evidence: HrPrismaClient imported from src/generated/hr-client/. Used throughout HR service and routes.
+    attempts: 1
+    usage:
+      total_tokens: 0
+  - id: T004
+    objective: Build HR Backend Service Layer
+    status: completed
+    depends_on:
+      - T003
+    acceptance_criteria:
+      - hr.service.ts with full CRUD for all entities
+      - Dashboard stats endpoint
+      - Clock in/out attendance logic
+      - Leave approval workflow
+      - Payroll generation logic
+    relevant_files:
+      - packages/backend/src/modules/hr/hr.service.ts
+    verification:
+      strategy: command
+      detail: grep -c "export" packages/backend/src/modules/hr/hr.service.ts
+    result:
+      summary: HR service with 502 lines, all CRUD operations, attendance clock-in/out, leave approve/reject, payroll generate/process/pay
+      evidence: Service covers dashboard, employees, departments, positions, attendance, shifts, leave, payroll, performance, training.
+    attempts: 1
+    usage:
+      total_tokens: 0
+  - id: T005
+    objective: Build HR Routes Layer
+    status: completed
+    depends_on:
+      - T004
+    acceptance_criteria:
+      - All HR endpoints registered at /api/hr/*
+      - Auth middleware applied
+      - Auth sync endpoint for TollGate JWT
+      - All CRUD routes functional
+    relevant_files:
+      - packages/backend/src/modules/hr/hr.routes.ts
+      - packages/backend/src/app.ts
+    verification:
+      strategy: command
+      detail: curl -s -o /dev/null -w '%{http_code}' http://localhost:3000/api/hr/dashboard
+    result:
+      summary: HR routes with 544 lines, 12+ endpoints, all registered at /api/hr/* in app.ts
+      evidence: Auth sync, dashboard, employees, departments, positions, attendance, shifts, leave, payroll, performance, training endpoints all working.
+    attempts: 1
+    usage:
+      total_tokens: 0
+  - id: T006
+    objective: Build HR Frontend Pages (10 pages)
+    status: completed
+    depends_on:
+      - T005
+    acceptance_criteria:
+      - HrDashboard with stats cards and charts
+      - Employees list with search, filters, pagination
+      - EmployeeDetail with tabs (Overview, Attendance, Leave, Payroll, Performance, Training)
+      - Departments grid view
+      - Attendance with clock in/out
+      - Shifts management
+      - LeaveRequests with approve/reject
+      - Payroll with generate/process/pay
+      - Performance reviews
+      - Training management
+    relevant_files:
+      - packages/frontend/src/pages/HrDashboard.tsx
+      - packages/frontend/src/pages/Employees.tsx
+      - packages/frontend/src/pages/EmployeeDetail.tsx
+      - packages/frontend/src/pages/Departments.tsx
+      - packages/frontend/src/pages/Attendance.tsx
+      - packages/frontend/src/pages/Shifts.tsx
+      - packages/frontend/src/pages/LeaveRequests.tsx
+      - packages/frontend/src/pages/Payroll.tsx
+      - packages/frontend/src/pages/Performance.tsx
+      - packages/frontend/src/pages/Training.tsx
+    verification:
+      strategy: command
+      detail: ls packages/frontend/src/pages/Hr*.tsx packages/frontend/src/pages/Employee*.tsx packages/frontend/src/pages/Attendance.tsx packages/frontend/src/pages/Shifts.tsx packages/frontend/src/pages/Leave*.tsx packages/frontend/src/pages/Payroll.tsx packages/frontend/src/pages/Performance.tsx packages/frontend/src/pages/Training.tsx
+    result:
+      summary: 10 HR frontend pages created with full CRUD, search, filters, dark mode support
+      evidence: All pages functional, using useQuery/useMutation, error handling, skeleton loading.
+    attempts: 1
+    usage:
+      total_tokens: 0
+  - id: T007
+    objective: Register HR Routes in App.tsx and Navigation in Sidebar
+    status: completed
+    depends_on:
+      - T006
+    acceptance_criteria:
+      - HR routes registered under /hr/* in App.tsx
+      - 9 HR nav items in admin sidebar Layout.tsx
+      - SUPER_ADMIN role can access all HR pages
+    relevant_files:
+      - packages/frontend/src/App.tsx
+      - packages/frontend/src/components/Layout.tsx
+    verification:
+      strategy: command
+      detail: grep -c "hr" packages/frontend/src/App.tsx
+    result:
+      summary: HR routes registered, 9 nav items in sidebar with HR category
+      evidence: Routes: /hr, /hr/employees, /hr/employees/:id, /hr/departments, /hr/attendance, /hr/shifts, /hr/leave, /hr/payroll, /hr/performance, /hr/training.
+    attempts: 1
+    usage:
+      total_tokens: 0
+  - id: T008
+    objective: Deploy and Test HR Module
+    status: completed
+    depends_on:
+      - T007
+    acceptance_criteria:
+      - HR database schema pushed
+      - HR Prisma client generated in Docker build
+      - All HR endpoints returning 200
+      - HR CRUD operations verified (create, read, update, delete)
+      - Shared login works (TollGate JWT → HR auth sync)
+    relevant_files:
+      - packages/backend/Dockerfile
+    verification:
+      strategy: command
+      detail: curl -s -o /dev/null -w '%{http_code}' http://localhost:3000/api/hr/dashboard
+    result:
+      summary: HR module fully deployed. 12 tables in HR DB. All endpoints 200. CRUD verified. Shared login working.
+      evidence: "Test results: Employee create 201, Clock in 200, Leave create 201, Leave approve 200, Payroll generate 200, Performance review 201. All 10 HR pages accessible."
+    attempts: 1
+    usage:
+      total_tokens: 0
+  - id: T009
+    objective: Update Documentation and Presentation
+    status: completed
+    depends_on:
+      - T008
+    acceptance_criteria:
+      - SKILL.md updated with HR module
+      - README.md updated with HR system
+      - USER_GUIDE.md updated with HR section
+      - PRESENTATION.html updated with HR slides
+      - PitWay milestone M009 created
+    relevant_files:
+      - .agents/skills/tollgate-operations/SKILL.md
+      - README.md
+      - USER_GUIDE.md
+      - PRESENTATION.html
+      - .pitway/milestones/M009-hr-module/tasks.yaml
+    verification:
+      strategy: command
+      detail: grep -c "HR" .agents/skills/tollgate-operations/SKILL.md README.md USER_GUIDE.md
+    result:
+      summary: All documentation updated with HR module. Presentation now has 22 slides including HR overview and architecture.
+      evidence: Skill, README, USER_GUIDE all updated. Presentation slides 21-22 cover HR System and HR Architecture.
+    attempts: 1
+    usage:
+      total_tokens: 0

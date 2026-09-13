@@ -19,12 +19,14 @@ Highway-TollGate-MGMT-/
 │   ├── backend/          # Express + TypeScript + Prisma (multi-DB)
 │   ├── frontend/         # React + Vite (Admin Command Hub)
 │   ├── customer-portal/  # React + Vite (Driver PWA)
-│   ├── financial-portal/ # React + Vite (Financial System) 🆕
+│   ├── financial-portal/ # React + Vite (Financial System)
+│   ├── hr-portal/        # React + Vite (HR Management) 🆕
+│   ├── plaza-portal/     # React + Vite + PWA (Plaza Operations) 🆕
 │   ├── shared/           # Shared TypeScript types
 │   ├── simulator/        # Canvas toll highway simulator
 │   └── plaza-server/     # Raspberry Pi edge server (PostgreSQL)
 ├── scripts/              # Deployment scripts
-├── docker-compose.yml    # Full stack (3 databases + 4 frontends)
+├── docker-compose.yml    # Full stack (4 databases + 6 frontends)
 ├── docker-compose.hq.yml # HQ + Storage stack
 └── ARCHITECTURE.md       # System architecture docs
 ```

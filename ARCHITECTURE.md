@@ -46,7 +46,11 @@
 - **Backend API**: Central management, analytics, user management
 - **Admin Portal**: React dashboard for highway administrators
 - **Customer Portal**: React app for vehicle owners
+- **Financial Portal**: Ministry reporting, revenue tracking, reconciliation
+- **HR Portal**: Employee management, attendance, payroll, shifts
 - **Main Database**: PostgreSQL with all data
+- **Customer Database**: Separate PostgreSQL for accounts/wallets (port 5433)
+- **HR Database**: Separate PostgreSQL for HR system (port 5435)
 - **Storage Server**: Vehicle photos, ANPR captures, documents
 
 ### 2. Plaza Server (Raspberry Pi)
@@ -262,6 +266,7 @@ docker compose -f docker-compose.hq.yml up -d --build
 | Variable | Default | Description |
 |---|---|---|
 | `DATABASE_URL` | postgresql://... | PostgreSQL connection string |
+| `HR_DATABASE_URL` | postgresql://... | HR PostgreSQL connection string (port 5435) |
 | `JWT_SECRET` | - | Secret key for JWT signing |
 | `JWT_EXPIRES_IN` | 24h | Token expiry time |
 | `CORS_ORIGINS` | - | Comma-separated allowed origins |
@@ -326,6 +331,11 @@ RFID_BAUD_RATE=9600
 - `GET /api/vehicles` - List vehicles with search/filter
 - `POST /api/vehicles` - Create vehicle
 - `GET /api/reports/revenue` - Revenue report
+- `GET /api/hr/dashboard` - HR dashboard stats
+- `GET /api/hr/employees` - List employees
+- `POST /api/hr/attendance/clock-in` - Clock in
+- `POST /api/hr/attendance/clock-out` - Clock out
+- `POST /api/hr/auth/sync` - Sync TollGate users to HR
 - Swagger UI: `/api-docs`
 
 ### Plaza Server (port 4000)

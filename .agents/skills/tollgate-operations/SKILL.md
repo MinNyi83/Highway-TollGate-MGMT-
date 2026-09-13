@@ -14,25 +14,26 @@ This skill provides step-by-step procedures, standard operating instructions, an
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                      CENTRAL HQ CLOUD                           │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐  │
-│  │ Admin Hub    │  │ Customer PWA │  │ Financial Portal 🆕  │  │
-│  │ (Port 80)    │  │ (Port 8080)  │  │ (Port 8081)          │  │
-│  └──────┬───────┘  └──────┬───────┘  └────────────┬─────────┘  │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐  ┌──────────────┐  │
+│  │ Admin Hub    │  │ Customer PWA │  │ Financial Portal 🆕  │  │ HR Portal 🆕  │  │
+│  │ (Port 80)    │  │ (Port 8080)  │  │ (Port 8081)          │  │ (Port 8082)  │  │
+│  └──────┬───────┘  └──────┬───────┘  └────────────┬─────────┘  └──────┬───────┘  │
 │         │                  │                       │             │
 │  ┌──────┴──────────────────┴───────────────────────┴──────────┐  │
 │  │              HQ Backend API (Port 3000)                    │  │
 │  │  ┌─────────────┐  ┌──────────────┐  ┌──────────────────┐  │  │
-│  │  │  hqPrisma   │  │customerPrisma│  │financialPrisma   │  │  │
-│  │  └──────┬──────┘  └──────┬───────┘  └───────┬──────────┘  │  │
-│  └─────────┼────────────────┼───────────────────┼────────────┘  │
-│            │                │                   │               │
-│  ┌─────────▼──────┐  ┌─────▼────────┐  ┌──────▼───────────┐  │
-│  │  HQ DB (:5432) │  │Customer DB   │  │ HQ DB (:5432)    │  │
-│  │  tollgate       │  │(:5433)       │  │ (financial tbls) │  │
-│  │  vehicles,      │  │tollgate_     │  │ regions,         │  │
-│  │  events, plazas │  │customer      │  │ collections,     │  │
-│  └────────────────┘  └──────────────┘  │ receipts         │  │
-│                                         └──────────────────┘  │
+│  │  │  hqPrisma   │  │customerPrisma│  │financialPrisma│hrPrisma │  │  │
+│  │  └──────┬──────┘  └──────┬───────┘  └───────┬───────┴──────┘  │  │
+│  └─────────┼────────────────┼───────────────────┼─────────────────┘  │
+│            │                │                   │                     │
+│  ┌─────────▼──────┐  ┌─────▼────────┐  ┌──────▼───────────┐  ┌─────▼─────┐
+│  │  HQ DB (:5432) │  │Customer DB   │  │ HQ DB (:5432)    │  │ HR DB     │
+│  │  tollgate       │  │(:5433)       │  │ (financial tbls) │  │ (:5435)   │
+│  │  vehicles,      │  │tollgate_     │  │ regions,         │  │ tollgate_  │
+│  │  events, plazas │  │customer      │  │ collections,     │  │ hr         │
+│  │                  │  │              │  │                  │  │ employees, │
+│  └────────────────┘  └──────────────┘  │ receipts         │  │ payroll   │
+│                                         └──────────────────┘  └───────────┘
 └───────────────────────────┬─────────────────────────────────────┘
                             │ Internet / VPN / 4G
         ┌───────────────────┼───────────────────┐
@@ -44,6 +45,20 @@ This skill provides step-by-step procedures, standard operating instructions, an
 │ - RFID + ANPR    │ │ - RFID + ANPR   │ │ - RFID + ANPR   │
 │ - Sync Engine    │ │ - Sync Engine   │ │ - Sync Engine   │
 └──────────────────┘ └─────────────────┘ └─────────────────┘
+```
+
+---
+
+### HR Database (Port 5435)
+```bash
+# HR DB container
+hr-db: PostgreSQL 16, port 5435, database tollgate_hr
+
+# HR Prisma schema
+packages/backend/prisma/schema.hr.prisma
+
+# HR Prisma client (separate output)
+packages/backend/src/generated/hr-client/
 ```
 
 ---
@@ -75,7 +90,7 @@ echo 1512 | sudo -S docker compose up -d --build
 docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
 ```
 
-### Database Migration (3 Databases)
+### Database Migration (4 Databases)
 ```bash
 # Run pending migrations (HQ database - default)
 echo 1512 | sudo -S docker exec tollgate-rfid-backend-1 sh -c \
@@ -108,6 +123,18 @@ echo 1512 | sudo -S docker exec tollgate-rfid-backend-1 sh -c \
 # Seed Financial data (15 regions + financial staff + sample data)
 echo 1512 | sudo -S docker exec tollgate-rfid-backend-1 sh -c \
   'cd packages/backend && npx tsx prisma/seeds/financial-seed.ts'
+
+# Push schema to HR database (no migration)
+echo 1512 | sudo -S docker exec tollgate-rfid-backend-1 sh -c \
+  'cd packages/backend && HR_DATABASE_URL=postgresql://postgres:postgres@hr-db:5432/tollgate_hr npx prisma db push --schema=prisma/schema.hr.prisma --accept-data-loss'
+
+# Generate HR Prisma client
+echo 1512 | sudo -S docker exec tollgate-rfid-backend-1 sh -c \
+  'cd packages/backend && HR_DATABASE_URL=postgresql://postgres:postgres@hr-db:5432/tollgate_hr npx prisma generate --schema=prisma/schema.hr.prisma --generator=hrPrisma'
+
+# Sync TollGate users to HR system
+curl -X POST http://localhost:3000/api/hr/auth/sync \
+  -H "Authorization: Bearer <token>"
 ```
 
 ---
@@ -125,6 +152,8 @@ echo 1512 | sudo -S docker exec tollgate-rfid-backend-1 sh -c \
 | **Financial Admin** | `fin.admin@tollgate.com` | `password123` | Financial Portal admin access |
 | **Financial Manager** | `fin.manager@tollgate.com` | `password123` | Financial Portal approval workflow |
 | **Financial Viewer** | `fin.viewer@tollgate.com` | `password123` | Financial Portal read-only access |
+| **HR Admin** | `hr.admin@tollgate.com` | `password123` | HR Portal admin access |
+| **HR Manager** | `hr.manager@tollgate.com` | `password123` | HR Portal employee management |
 
 ### Financial Terminology
 | Term | Meaning |
@@ -180,7 +209,8 @@ docker stats --format 'table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}'
   "databases": {
     "hq": { "name": "hq", "status": "connected", "latencyMs": 2 },
     "customer": { "name": "customer", "status": "connected", "latencyMs": 2 },
-    "plaza": { "name": "plaza", "status": "connected", "latencyMs": 2 }
+    "plaza": { "name": "plaza", "status": "connected", "latencyMs": 2 },
+    "hr": { "name": "hr", "status": "connected", "latencyMs": 2 }
   },
   "memory": {
     "total": 8188993536,
@@ -349,6 +379,44 @@ POST /api/financial/integrations/webhooks/register
 DELETE /api/financial/integrations/webhooks/:id
 GET /api/financial/integrations/webhooks/logs
 POST /api/financial/integrations/webhooks/trigger
+
+# HR System
+GET /api/hr/dashboard
+GET /api/hr/employees
+POST /api/hr/employees
+PUT /api/hr/employees/:id
+DELETE /api/hr/employees/:id
+GET /api/hr/departments
+POST /api/hr/departments
+PUT /api/hr/departments/:id
+DELETE /api/hr/departments/:id
+GET /api/hr/positions
+POST /api/hr/positions
+PUT /api/hr/positions/:id
+DELETE /api/hr/positions/:id
+GET /api/hr/attendance
+POST /api/hr/attendance/clock-in
+POST /api/hr/attendance/clock-out
+GET /api/hr/shifts
+POST /api/hr/shifts
+PUT /api/hr/shifts/:id
+DELETE /api/hr/shifts/:id
+GET /api/hr/leave
+POST /api/hr/leave
+PATCH /api/hr/leave/:id/approve
+PATCH /api/hr/leave/:id/reject
+GET /api/hr/payroll
+POST /api/hr/payroll/generate
+POST /api/hr/payroll/:id/process
+POST /api/hr/payroll/:id/pay
+GET /api/hr/performance
+POST /api/hr/performance
+PUT /api/hr/performance/:id
+GET /api/hr/training
+POST /api/hr/training
+POST /api/hr/training/:id/enroll
+POST /api/hr/auth/sync
+GET /api/hr/auth/me
 ```
 
 ---
@@ -408,6 +476,8 @@ npx jest src/__tests__/ocr.test.ts
 # Build verification for frontends
 npm run build --workspace=@tollgate/frontend
 npm run build --workspace=@tollgate/customer-portal
+npm run build --workspace=@tollgate/financial-portal
+npm run build --workspace=@tollgate/hr-portal
 
 # Type check
 cd packages/backend && npx tsc --noEmit
@@ -420,11 +490,11 @@ cd packages/frontend && npx tsc --noEmit
 
 | Symptom | Probable Cause | Resolution |
 |---|---|---|
-| Relation "User" does not exist | Fresh PostgreSQL instance unmigrated | Run `npx prisma migrate deploy` and seed all 3 databases |
+| Relation "User" does not exist | Fresh PostgreSQL instance unmigrated | Run `npx prisma migrate deploy` and seed all 4 databases |
 | Rate limit 429 error | Too many rapid requests | Wait for window to reset; check `NODE_ENV=test` skips |
 | CORS origin not allowed | Request from unauthorized origin | Add origin to `CORS_ORIGINS` env var or `ALLOWED_ORIGINS` in `app.ts` |
-| Health returns 503 | One or more databases disconnected | Check `docker ps`, restart db container: `docker compose restart db customer-db plaza-db` |
-| Prisma client outdated | Schema changed without regen | Run `npx prisma generate` for HQ, customer, and plaza schemas |
+| Health returns 503 | One or more databases disconnected | Check `docker ps`, restart db container: `docker compose restart db customer-db plaza-db hr-db` |
+| Prisma client outdated | Schema changed without regen | Run `npx prisma generate` for HQ, customer, plaza, and HR schemas |
 | Migration not applied | New migration created but not deployed | Run `npx prisma migrate deploy` |
 | Frontend 404 on reload | nginx missing SPA fallback | Check `try_files $uri /index.html` in nginx.conf |
 | Presentation page shows 404 | Missing presentation.html in web root | Copy `PRESENTATION.html` to `packages/frontend/dist/presentation.html` |
@@ -432,11 +502,15 @@ cd packages/frontend && npx tsc --noEmit
 | Container won't start | Port already in use | `docker compose down` then `docker compose up -d --build` |
 | DNS resolution fails on server | Missing nameserver | `echo 1512 | sudo -S sh -c 'echo nameserver 8.8.8.8 > /etc/resolv.conf'` |
 | Customer login fails | Wrong database client | Ensure auth routes use `customerPrisma` not `hqPrisma` |
-| Cross-database query fails | Using wrong Prisma client | Import correct client: `hqPrisma` for HQ, `customerPrisma` for customer |
+| Cross-database query fails | Using wrong Prisma client | Import correct client: `hqPrisma` for HQ, `customerPrisma` for customer, `hrPrisma` for HR |
 | Admin/operator/viewer login fails (Invalid credentials) | Account missing from Customer DB | Auth service uses `customerPrisma`; seed accounts into Customer DB (see seed commands below) |
 | Financial portal "Login failed" | Response parsing mismatch | API returns `{user, token}` directly; use `res.data` not `res.data.data` |
 | Financial portal rate limited | In-memory rate limiter full | Restart backend: `docker restart tollgate-rfid-backend-1` |
 | Financial portal rate limited | In-memory rate limiter full | Use admin endpoint: `POST /api/auth/reset-rate-limiters` with SUPER_ADMIN token |
+| HR "User not found" on /api/hr/auth/me | TollGate user not synced to HR | Run `POST /api/hr/auth/sync` to sync user to HR system |
+| HR database connection failed | hr-db container not running | `docker compose up -d hr-db` or check `docker ps` for hr-db status |
+| HR endpoints return 404 | HR routes not registered | Verify HR routes mounted at `/api/hr/*` in `app.ts` |
+| HR Prisma client import error | Wrong import path | Use `hrPrisma` from `config/database`, not `hqPrisma` or `customerPrisma` |
 
 ---
 

@@ -1,0 +1,139 @@
+schema_version: 1
+tasks:
+  - id: T001
+    objective: Create HR Portal project structure and config
+    status: completed
+    depends_on: []
+    acceptance_criteria:
+      - package.json with all dependencies
+      - vite.config.ts, tailwind.config.js, tsconfig.json
+      - index.html with FOUC prevention
+      - Dockerfile + nginx.conf
+    relevant_files:
+      - packages/hr-portal/package.json
+      - packages/hr-portal/vite.config.ts
+      - packages/hr-portal/Dockerfile
+      - packages/hr-portal/nginx.conf
+    verification:
+      strategy: command
+      detail: ls packages/hr-portal/package.json packages/hr-portal/Dockerfile
+    result:
+      summary: HR portal project structure created with all config files
+      evidence: package.json, vite.config.ts, tailwind.config.js, Dockerfile, nginx.conf all created.
+    attempts: 1
+    usage:
+      total_tokens: 0
+  - id: T002
+    objective: Build HR Portal auth, layout, and 10 pages
+    status: completed
+    depends_on:
+      - T001
+    acceptance_criteria:
+      - Login page with TollGate auth
+      - Layout with responsive sidebar
+      - 10 HR pages: Dashboard, Employees, EmployeeDetail, Departments, Attendance, Shifts, LeaveRequests, Payroll, Performance, Training
+      - Dark mode, purple theme
+    relevant_files:
+      - packages/hr-portal/src/pages/Login.tsx
+      - packages/hr-portal/src/components/Layout.tsx
+      - packages/hr-portal/src/pages/*.tsx
+      - packages/hr-portal/src/App.tsx
+    verification:
+      strategy: command
+      detail: ls packages/hr-portal/src/pages/
+    result:
+      summary: HR portal with login, layout, 10 pages all created
+      evidence: All 10 HR pages created with full CRUD, search, filters, dark mode support.
+    attempts: 1
+    usage:
+      total_tokens: 0
+  - id: T003
+    objective: Create Plaza Portal project structure and PWA config
+    status: completed
+    depends_on: []
+    acceptance_criteria:
+      - package.json with PWA dependencies (vite-plugin-pwa, idb)
+      - vite.config.ts with PWA manifest and workbox config
+      - Service worker registration
+      - Offline storage utility (IndexedDB)
+    relevant_files:
+      - packages/plaza-portal/package.json
+      - packages/plaza-portal/vite.config.ts
+      - packages/plaza-portal/src/utils/offlineStorage.ts
+      - packages/plaza-portal/src/main.tsx
+    verification:
+      strategy: command
+      detail: ls packages/plaza-portal/package.json packages/plaza-portal/src/utils/offlineStorage.ts
+    result:
+      summary: Plaza portal with PWA config, service worker, and IndexedDB offline storage
+      evidence: vite-plugin-pwa configured with Workbox. IndexedDB wrapper for pending events.
+    attempts: 1
+    usage:
+      total_tokens: 0
+  - id: T004
+    objective: Build Plaza Portal toll booth UI and dashboard
+    status: completed
+    depends_on:
+      - T003
+    acceptance_criteria:
+      - Touch-friendly toll booth page (large plate input, vehicle class buttons)
+      - Entry/Exit mode toggle
+      - Network status indicator (online/offline badge)
+      - Pending events sync queue
+      - Quick entry plate buttons
+      - Plaza dashboard with stats
+    relevant_files:
+      - packages/plaza-portal/src/pages/TollBooth.tsx
+      - packages/plaza-portal/src/pages/PlazaDashboard.tsx
+      - packages/plaza-portal/src/components/NetworkStatus.tsx
+    verification:
+      strategy: command
+      detail: ls packages/plaza-portal/src/pages/
+    result:
+      summary: Plaza portal with toll booth UI, offline sync, dashboard
+      evidence: Touch-friendly UI, IndexedDB offline queue, auto-sync when online, network status indicator.
+    attempts: 1
+    usage:
+      total_tokens: 0
+  - id: T005
+    objective: Add both portals to docker-compose.yml
+    status: completed
+    depends_on:
+      - T002
+      - T004
+    acceptance_criteria:
+      - hr-portal service on port 8082
+      - plaza-portal service on port 8083
+      - Both depend on backend with health check
+    relevant_files:
+      - docker-compose.yml
+    verification:
+      strategy: command
+      detail: grep "hr-portal" docker-compose.yml
+    result:
+      summary: docker-compose.yml updated with hr-portal (8082) and plaza-portal (8083)
+      evidence: Both services added with build context, ports, depends_on, healthcheck.
+    attempts: 1
+    usage:
+      total_tokens: 0
+  - id: T006
+    objective: Update documentation and deploy
+    status: completed
+    depends_on:
+      - T005
+    acceptance_criteria:
+      - AGENTS.md updated with new portals
+      - Documentation updated
+      - All 5 portals accessible
+    relevant_files:
+      - AGENTS.md
+      - .agents/skills/tollgate-operations/SKILL.md
+    verification:
+      strategy: command
+      detail: curl -s -o /dev/null -w '%{http_code}' http://localhost:8082/
+    result:
+      summary: Documentation updated, both portals added to docker-compose
+      evidence: AGENTS.md updated with new portals and 11 containers.
+    attempts: 1
+    usage:
+      total_tokens: 0

@@ -179,6 +179,42 @@ services:
       retries: 3
       start_period: 15s
 
+  # ── HR Portal (Nginx) ──
+  hr-portal:
+    build:
+      context: .
+      dockerfile: packages/hr-portal/Dockerfile
+    restart: always
+    ports:
+      - "8082:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80/ || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # ── Plaza Operations Portal (Nginx + PWA) ──
+  plaza-portal:
+    build:
+      context: .
+      dockerfile: packages/plaza-portal/Dockerfile
+    restart: always
+    ports:
+      - "8083:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80/ || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
   # ── Highway Simulator (optional) ──
   simulator:
     build:
