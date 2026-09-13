@@ -13,14 +13,26 @@ export default function Login() {
   const navigate = useNavigate();
   const login = useAuthStore((s) => s.login);
 
+  const PLAZA_MAP: Record<string, string> = {
+    'plaza-01': '2b28880e-d3d9-4112-9957-fbd1bbfe41f0',
+    'plaza-02': 'f00c165f-5138-4939-8d50-a162227cf9d5',
+    'plaza-03': 'a23e3850-c294-46dd-a7de-5c47b1782298',
+    'plaza-04': '9154d12a-1d6a-48f1-abeb-32d8eb5339d9',
+    '0-mile': '2b28880e-d3d9-4112-9957-fbd1bbfe41f0',
+    '39-mile': 'f00c165f-5138-4939-8d50-a162227cf9d5',
+    '115-mile': 'a23e3850-c294-46dd-a7de-5c47b1782298',
+    '200-mile': '9154d12a-1d6a-48f1-abeb-32d8eb5339d9',
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     try {
+      const resolvedPlazaId = PLAZA_MAP[plazaId.toLowerCase()] || plazaId;
       const res = await api.post('/auth/login', { email, password });
       const { token, user } = res.data;
-      login(token, user, plazaId || 'plaza-01');
+      login(token, user, resolvedPlazaId);
       navigate('/');
     } catch (err: any) {
       setError(err.response?.data?.error || 'Login failed');
@@ -57,7 +69,8 @@ export default function Login() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Plaza ID</label>
-            <input type="text" value={plazaId} onChange={(e) => setPlazaId(e.target.value)} placeholder="e.g. plaza-01" className="input-field" />
+            <input type="text" value={plazaId} onChange={(e) => setPlazaId(e.target.value)} placeholder="plaza-01, plaza-02, 0-mile, 39-mile" className="input-field" />
+            <p className="text-[10px] text-slate-400 mt-1">Shortcuts: plaza-01 (0 Mile), plaza-02 (39 Mile), plaza-03 (115 Mile), plaza-04 (200 Mile)</p>
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email</label>
