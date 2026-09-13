@@ -43,11 +43,17 @@ const ALLOWED_ORIGINS = process.env.CORS_ORIGINS
       'http://localhost:3000',
       'http://localhost:8080',
       'http://localhost:8081',
+      'http://localhost:8082',
+      'http://localhost:8083',
       'http://localhost:5173',
       'http://localhost:5175',
+      'http://localhost:5176',
+      'http://localhost:5177',
       'http://192.168.100.101',
       'http://192.168.100.101:8080',
       'http://192.168.100.101:8081',
+      'http://192.168.100.101:8082',
+      'http://192.168.100.101:8083',
     ];
 
 app.use(logger);
