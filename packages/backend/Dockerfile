@@ -20,7 +20,7 @@ FROM base AS runtime
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/packages/backend/dist ./packages/backend/dist
 COPY --from=build /app/packages/backend/prisma ./packages/backend/prisma
-COPY --from=build /app/packages/backend/src/generated ./packages/backend/src/generated
+COPY --from=build /app/packages/backend/src/generated ./packages/backend/dist/generated
 COPY --from=build /app/packages/backend/package.json ./packages/backend/
 RUN mkdir -p uploads
 EXPOSE 3000
