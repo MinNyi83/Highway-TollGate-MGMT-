@@ -344,7 +344,7 @@ export async function createLeaveRequest(data: any) {
   const days = Math.ceil((end.getTime() - start.getTime()) / 86400000) + 1;
 
   return prisma.leaveRequest.create({
-    data: { ...data, days },
+    data: { ...data, startDate: start, endDate: end, days },
     include: { employee: { select: { firstName: true, lastName: true, employeeNumber: true } } },
   });
 }
