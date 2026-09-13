@@ -13,12 +13,14 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN cd packages/shared && npm run build
 RUN cd packages/backend && npx prisma generate
+RUN cd packages/backend && npx prisma generate --schema=prisma/schema.hr.prisma
 RUN cd packages/backend && npm run build
 
 FROM base AS runtime
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/packages/backend/dist ./packages/backend/dist
 COPY --from=build /app/packages/backend/prisma ./packages/backend/prisma
+COPY --from=build /app/packages/backend/src/generated ./packages/backend/src/generated
 COPY --from=build /app/packages/backend/package.json ./packages/backend/
 RUN mkdir -p uploads
 EXPOSE 3000
