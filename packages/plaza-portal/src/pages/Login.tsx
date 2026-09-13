@@ -68,9 +68,14 @@ export default function Login() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Plaza ID</label>
-            <input type="text" value={plazaId} onChange={(e) => setPlazaId(e.target.value)} placeholder="plaza-01, plaza-02, 0-mile, 39-mile" className="input-field" />
-            <p className="text-[10px] text-slate-400 mt-1">Shortcuts: plaza-01 (0 Mile), plaza-02 (39 Mile), plaza-03 (115 Mile), plaza-04 (200 Mile)</p>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Select Plaza</label>
+            <select value={plazaId} onChange={(e) => setPlazaId(e.target.value)} className="input-field">
+              <option value="">-- Select Plaza --</option>
+              <option value="2b28880e-d3d9-4112-9957-fbd1bbfe41f0">0 Mile Plaza (plaza-01)</option>
+              <option value="f00c165f-5138-4939-8d50-a162227cf9d5">39 Mile Plaza (plaza-02)</option>
+              <option value="a23e3850-c294-46dd-a7de-5c47b1782298">115 Mile Plaza (plaza-03)</option>
+              <option value="9154d12a-1d6a-48f1-abeb-32d8eb5339d9">200 Mile Plaza (plaza-04)</option>
+            </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email</label>
