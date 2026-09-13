@@ -9,10 +9,17 @@
 
 @layer components {
   .glass-card {
-    @apply bg-white/90 dark:bg-[var(--surface)]/90 backdrop-blur-xl border border-slate-200/60 dark:border-slate-700/40 rounded-2xl shadow-lg;
+    @apply bg-white/90 backdrop-blur-xl border border-slate-200/60 rounded-2xl shadow-lg;
+  }
+  .dark .glass-card {
+    background-color: rgba(26, 26, 46, 0.9);
+    @apply border-slate-700/40;
   }
   .input-field {
-    @apply w-full px-4 py-3 bg-white dark:bg-navy-800 border border-slate-200 dark:border-slate-700 rounded-xl text-base text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500 transition-all;
+    @apply w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500 transition-all;
+  }
+  .dark .input-field {
+    @apply bg-navy-800 border-slate-700 text-slate-100;
   }
   .btn-primary {
     @apply px-6 py-3 bg-gradient-to-r from-gold-500 to-gold-600 text-navy-900 font-bold rounded-xl hover:shadow-lg hover:shadow-gold-500/20 transition-all text-base active:scale-95;
