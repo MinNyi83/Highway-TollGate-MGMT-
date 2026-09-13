@@ -24,4 +24,4 @@ COPY --from=build /app/packages/backend/src/generated ./packages/backend/dist/ge
 COPY --from=build /app/packages/backend/package.json ./packages/backend/
 RUN mkdir -p uploads
 EXPOSE 3000
-CMD ["sh", "-c", "cd packages/backend && npx prisma migrate deploy && cd /app && node packages/backend/dist/server.js"]
+CMD ["sh", "-c", "cd packages/backend && npx prisma db push --schema=prisma/schema.prisma --skip-generate && cd /app && node packages/backend/dist/server.js"]
