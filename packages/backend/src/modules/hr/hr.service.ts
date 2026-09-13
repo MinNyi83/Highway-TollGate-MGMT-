@@ -109,8 +109,12 @@ export async function getEmployeeById(id: string) {
 export async function createEmployee(data: any) {
   const count = await prisma.employee.count();
   const employeeNumber = `EMP-${String(count + 1).padStart(5, '0')}`;
+  const processed = { ...data, employeeNumber };
+  if (processed.hireDate) processed.hireDate = new Date(processed.hireDate);
+  if (processed.dateOfBirth) processed.dateOfBirth = new Date(processed.dateOfBirth);
+  if (processed.terminationDate) processed.terminationDate = new Date(processed.terminationDate);
   return prisma.employee.create({
-    data: { ...data, employeeNumber },
+    data: processed,
     include: { department: true, position: true },
   });
 }
