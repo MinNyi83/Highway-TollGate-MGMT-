@@ -11,6 +11,7 @@ import {
   LayoutDashboard, DollarSign, Car, MapPin, Activity, CreditCard,
   AlertTriangle, BarChart3, Users, Cpu, Settings, PlayCircle,
   Presentation, Shield, HeartPulse, Sun, Moon, Command, Radio, Menu, X,
+  UserCheck, Building2, Clock, FileText, Wallet, Award, BookOpen,
 } from 'lucide-react';
 
 const allNavItems = [
@@ -29,6 +30,15 @@ const allNavItems = [
   { to: '/simulator', icon: PlayCircle, label: 'Simulator', category: 'Navigation', roles: ['ADMIN'] },
   { to: '/audit-log', icon: Shield, label: 'Audit Log', category: 'Navigation', roles: ['ADMIN'] },
   { to: '/system-health', icon: HeartPulse, label: 'System Health', category: 'Navigation', roles: ['ADMIN'] },
+  { to: '/hr', icon: Users, label: 'HR Dashboard', category: 'HR', roles: ['ADMIN', 'HR_ADMIN'] },
+  { to: '/hr/employees', icon: UserCheck, label: 'Employees', category: 'HR', roles: ['ADMIN', 'HR_ADMIN'] },
+  { to: '/hr/departments', icon: Building2, label: 'Departments', category: 'HR', roles: ['ADMIN', 'HR_ADMIN'] },
+  { to: '/hr/attendance', icon: Clock, label: 'Attendance', category: 'HR', roles: ['ADMIN', 'HR_ADMIN'] },
+  { to: '/hr/shifts', icon: Clock, label: 'Shifts', category: 'HR', roles: ['ADMIN', 'HR_ADMIN'] },
+  { to: '/hr/leave', icon: FileText, label: 'Leave Requests', category: 'HR', roles: ['ADMIN', 'HR_ADMIN'] },
+  { to: '/hr/payroll', icon: Wallet, label: 'Payroll', category: 'HR', roles: ['ADMIN', 'HR_ADMIN', 'FINANCIAL_ADMIN'] },
+  { to: '/hr/performance', icon: Award, label: 'Performance', category: 'HR', roles: ['ADMIN', 'HR_ADMIN'] },
+  { to: '/hr/training', icon: BookOpen, label: 'Training', category: 'HR', roles: ['ADMIN', 'HR_ADMIN'] },
 ];
 
 const mobileTabItems = [

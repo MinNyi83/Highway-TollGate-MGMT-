@@ -21,6 +21,16 @@ import Customers from './pages/Customers';
 import Devices from './pages/Devices';
 import Presentation from './pages/Presentation';
 import RevenueTransfers from './pages/RevenueTransfers';
+import HrDashboard from './pages/HrDashboard';
+import Employees from './pages/Employees';
+import EmployeeDetail from './pages/EmployeeDetail';
+import Departments from './pages/Departments';
+import Attendance from './pages/Attendance';
+import Shifts from './pages/Shifts';
+import LeaveRequests from './pages/LeaveRequests';
+import Payroll from './pages/Payroll';
+import Performance from './pages/Performance';
+import Training from './pages/Training';
 import Layout from './components/Layout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
@@ -54,6 +64,16 @@ function App() {
                   <Route path="/presentation" element={<Presentation />} />
                   <Route path="/audit-log" element={<AuditLog />} />
                   <Route path="/system-health" element={<SystemHealth />} />
+                  <Route path="/hr" element={<HrDashboard />} />
+                  <Route path="/hr/employees" element={<Employees />} />
+                  <Route path="/hr/employees/:id" element={<EmployeeDetail />} />
+                  <Route path="/hr/departments" element={<Departments />} />
+                  <Route path="/hr/attendance" element={<Attendance />} />
+                  <Route path="/hr/shifts" element={<Shifts />} />
+                  <Route path="/hr/leave" element={<LeaveRequests />} />
+                  <Route path="/hr/payroll" element={<Payroll />} />
+                  <Route path="/hr/performance" element={<Performance />} />
+                  <Route path="/hr/training" element={<Training />} />
                 </Route>
               </Route>
               <Route path="*" element={<Navigate to="/" replace />} />

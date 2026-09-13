@@ -12,6 +12,10 @@ const customerDbUrl = process.env.CUSTOMER_DATABASE_URL;
 // SyncQueue, PlazaConfig, LocalTollEvents, DeviceStatus
 const plazaDbUrl = process.env.PLAZA_DATABASE_URL;
 
+// ── HR Database ──
+// Employees, Departments, Attendance, Leave, Payroll, Performance, Training
+const hrDbUrl = process.env.HR_DATABASE_URL;
+
 // HQ Prisma Client (default - vehicles, toll plazas, events, violations)
 export const hqPrisma = new PrismaClient({
   datasources: {
@@ -39,6 +43,15 @@ export const plazaPrisma = new PrismaClient({
   },
 });
 
+// HR Prisma Client (employees, departments, attendance, leave, payroll)
+export const hrPrisma = new PrismaClient({
+  datasources: {
+    db: {
+      url: hrDbUrl,
+    },
+  },
+});
+
 // Default export for backward compatibility (uses HQ database)
 const prisma = hqPrisma;
 export default prisma;
@@ -58,6 +71,11 @@ export async function connectDatabases() {
       await plazaPrisma.$connect();
       console.log('✅ Plaza database connected');
     }
+
+    if (hrDbUrl) {
+      await hrPrisma.$connect();
+      console.log('✅ HR database connected');
+    }
   } catch (error) {
     console.error('❌ Database connection failed:', error);
     process.exit(1);
@@ -69,4 +87,5 @@ export async function disconnectDatabases() {
   await hqPrisma.$disconnect();
   await customerPrisma.$disconnect();
   await plazaPrisma.$disconnect();
+  await hrPrisma.$disconnect();
 }

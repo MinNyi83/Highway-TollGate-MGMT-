@@ -53,6 +53,24 @@ services:
       timeout: 5s
       retries: 5
 
+  # ── HR System Database (employees, departments, attendance, payroll) ──
+  hr-db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: tollgate_hr
+    ports:
+      - "5435:5432"
+    volumes:
+      - hr_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d tollgate_hr"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   # ── Backend API Server ──
   backend:
     build:
@@ -68,6 +86,8 @@ services:
       CUSTOMER_DATABASE_URL: postgresql://postgres:postgres@customer-db:5432/tollgate_customer
       # Plaza Database
       PLAZA_DATABASE_URL: postgresql://postgres:postgres@plaza-db:5432/tollgate_plaza
+      # HR Database
+      HR_DATABASE_URL: postgresql://postgres:postgres@hr-db:5432/tollgate_hr
       # Auth
       JWT_SECRET: docker-dev-secret-key
       JWT_EXPIRES_IN: 24h
@@ -93,6 +113,8 @@ services:
       customer-db:
         condition: service_healthy
       plaza-db:
+        condition: service_healthy
+      hr-db:
         condition: service_healthy
     volumes:
       - uploads:/app/uploads
@@ -174,4 +196,5 @@ volumes:
   pgdata:
   customer_pgdata:
   plaza_pgdata:
+  hr_pgdata:
   uploads:

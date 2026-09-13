@@ -26,6 +26,7 @@ import featuresRoutes from './modules/features/features.routes';
 import adminCustomerRoutes from './modules/admin/admin-customers.routes';
 import ocrRoutes from './modules/ocr/ocr.routes';
 import financialRoutes from './modules/financial/financial.routes';
+import hrRoutes from './modules/hr/hr.routes';
 import { setupSwagger } from './config/swagger';
 import { logger } from './middleware/logger';
 import { errorHandler } from './middleware/errorHandler';
@@ -94,6 +95,7 @@ app.use('/api/features', featuresRoutes);
 app.use('/api/admin/customers', adminCustomerRoutes);
 app.use('/api/ocr', ocrRoutes);
 app.use('/api/financial', financialRoutes);
+app.use('/api/hr', hrRoutes);
 
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use(errorHandler);
