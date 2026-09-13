@@ -26,7 +26,7 @@ export default function Employees() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['hr-employees'] }),
   });
 
-  const employees = data?.employees || data || [];
+  const employees = Array.isArray(data?.employees) ? data.employees : Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : [];
 
   return (
     <div className="space-y-6 animate-fade-in">

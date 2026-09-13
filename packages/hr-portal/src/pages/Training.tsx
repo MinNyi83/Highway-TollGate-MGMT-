@@ -23,7 +23,7 @@ export default function Training() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['hr-training'] }),
   });
 
-  const trainings = data?.trainings || data || [];
+  const trainings = Array.isArray(data?.trainings) ? data.trainings : Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : [];
 
   return (
     <div className="space-y-6 animate-fade-in">

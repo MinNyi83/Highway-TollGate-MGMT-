@@ -29,7 +29,7 @@ export default function Departments() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['hr-departments'] }),
   });
 
-  const departments = data?.departments || data || [];
+  const departments = Array.isArray(data?.departments) ? data.departments : Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : [];
 
   const openEdit = (dept: any) => { setEditDept(dept); setForm({ name: dept.name, code: dept.code, description: dept.description || '' }); };
 

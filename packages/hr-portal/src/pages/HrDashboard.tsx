@@ -11,8 +11,8 @@ export default function HrDashboard() {
   if (isLoading) return <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500" /></div>;
   if (isError) return <div className="flex items-center gap-2 text-red-500 p-4"><AlertCircle /> Failed to load dashboard</div>;
 
-  const stats = data?.stats || {};
-  const recentHires = data?.recentHires || [];
+  const stats = data?.stats || data || {};
+  const recentHires = Array.isArray(data?.recentHires) ? data.recentHires : Array.isArray(data?.recent_hires) ? data.recent_hires : [];
 
   const cards = [
     { label: 'Total Employees', value: stats.totalEmployees || 0, icon: Users, color: 'from-purple-500 to-violet-600' },

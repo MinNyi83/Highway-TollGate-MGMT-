@@ -22,7 +22,7 @@ export default function Attendance() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['hr-attendance'] }),
   });
 
-  const records = data?.records || data || [];
+  const records = Array.isArray(data?.records) ? data.records : Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : [];
 
   const statusColor = (s: string) => {
     switch (s) {

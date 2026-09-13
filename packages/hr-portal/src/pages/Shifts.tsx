@@ -23,7 +23,7 @@ export default function Shifts() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['hr-shifts'] }),
   });
 
-  const shifts = data?.shifts || data || [];
+  const shifts = Array.isArray(data?.shifts) ? data.shifts : Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : [];
 
   return (
     <div className="space-y-6 animate-fade-in">

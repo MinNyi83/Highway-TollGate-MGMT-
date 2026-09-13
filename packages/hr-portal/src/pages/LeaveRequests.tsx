@@ -28,7 +28,7 @@ export default function LeaveRequests() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['hr-leave'] }),
   });
 
-  const requests = data?.leaves || data || [];
+  const requests = Array.isArray(data?.leaves) ? data.leaves : Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : [];
 
   const statusColor = (s: string) => {
     switch (s) {

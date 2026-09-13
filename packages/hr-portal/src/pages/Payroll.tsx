@@ -27,7 +27,7 @@ export default function Payroll() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['hr-payroll'] }),
   });
 
-  const payrolls = data?.payrolls || data || [];
+  const payrolls = Array.isArray(data?.payrolls) ? data.payrolls : Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : [];
 
   const statusColor = (s: string) => {
     switch (s) {

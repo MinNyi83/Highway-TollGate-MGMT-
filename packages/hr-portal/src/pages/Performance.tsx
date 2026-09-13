@@ -18,7 +18,7 @@ export default function Performance() {
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['hr-performance'] }); setShowAdd(false); },
   });
 
-  const reviews = data?.reviews || data || [];
+  const reviews = Array.isArray(data?.reviews) ? data.reviews : Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : [];
 
   const ratingColor = (r: string) => {
     switch (r) {
