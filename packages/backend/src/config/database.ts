@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { PrismaClient as HrPrismaClient } from '../generated/hr-client';
 
 // ── HQ Database (default) ──
 // Vehicles, TollEvents, TollPlazas, Violations, Devices, AuditLogs
@@ -44,7 +45,7 @@ export const plazaPrisma = new PrismaClient({
 });
 
 // HR Prisma Client (employees, departments, attendance, leave, payroll)
-export const hrPrisma = new PrismaClient({
+export const hrPrisma = new HrPrismaClient({
   datasources: {
     db: {
       url: hrDbUrl,
