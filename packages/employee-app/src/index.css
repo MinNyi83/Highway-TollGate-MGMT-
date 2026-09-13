@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root { --accent: #8b5cf6; }
+  body { @apply bg-slate-100 text-slate-900 font-sans antialiased; }
+  .dark body { @apply bg-navy-950 text-slate-100; }
+}
+
+@layer components {
+  .card { @apply bg-white dark:bg-navy-900 rounded-2xl border border-slate-200/60 dark:border-slate-700/40 shadow-sm; }
+  .card-dark { @apply bg-navy-900 border-slate-700/40; }
+  .btn { @apply w-full py-3.5 rounded-xl font-bold text-sm transition-all active:scale-[0.97]; }
+  .btn-primary { @apply btn bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-lg shadow-violet-500/20; }
+  .btn-success { @apply btn bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-500/20; }
+  .btn-danger { @apply btn bg-gradient-to-r from-red-500 to-rose-600 text-white shadow-lg shadow-red-500/20; }
+  .btn-outline { @apply btn bg-transparent border-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300; }
+  .input { @apply w-full px-4 py-3 bg-slate-50 dark:bg-navy-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-500 transition-all; }
+  .stat-card { @apply card p-4 flex items-center gap-3; }
+  .bottom-nav { @apply fixed bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-navy-900/90 backdrop-blur-xl border-t border-slate-200 dark:border-slate-700 safe-area-bottom; }
+}
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.animate-in { animation: fadeIn 0.3s ease-out; }
+.safe-area-bottom { padding-bottom: env(safe-area-inset-bottom); }

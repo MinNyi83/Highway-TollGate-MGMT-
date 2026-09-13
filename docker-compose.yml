@@ -215,6 +215,24 @@ services:
       retries: 3
       start_period: 15s
 
+  # ── Employee Mobile App (Nginx + PWA) ──
+  employee-app:
+    build:
+      context: .
+      dockerfile: packages/employee-app/Dockerfile
+    restart: always
+    ports:
+      - "8084:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80/ || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
   # ── Highway Simulator (optional) ──
   simulator:
     build:
