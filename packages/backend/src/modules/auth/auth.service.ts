@@ -36,6 +36,20 @@ export interface AuthResponse {
 }
 
 export async function register(input: RegisterInput): Promise<AuthResponse> {
+  // Password complexity validation
+  if (input.password.length < 8) {
+    throw new Error('Password must be at least 8 characters');
+  }
+  if (!/[A-Z]/.test(input.password)) {
+    throw new Error('Password must contain at least one uppercase letter');
+  }
+  if (!/[a-z]/.test(input.password)) {
+    throw new Error('Password must contain at least one lowercase letter');
+  }
+  if (!/[0-9]/.test(input.password)) {
+    throw new Error('Password must contain at least one number');
+  }
+
   const existingUser = await prisma.user.findUnique({
     where: { email: input.email },
   });

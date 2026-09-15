@@ -79,6 +79,11 @@ services:
     restart: always
     ports:
       - "3000:3000"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
     environment:
       # HQ Database
       DATABASE_URL: postgresql://postgres:postgres@db:5432/tollgate
@@ -133,6 +138,13 @@ services:
     restart: always
     ports:
       - "80:80"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/cache/nginx
+      - /var/run
     depends_on:
       backend:
         condition: service_healthy
@@ -151,6 +163,13 @@ services:
     restart: always
     ports:
       - "8080:80"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/cache/nginx
+      - /var/run
     depends_on:
       backend:
         condition: service_healthy
@@ -169,6 +188,13 @@ services:
     restart: always
     ports:
       - "8081:80"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/cache/nginx
+      - /var/run
     depends_on:
       backend:
         condition: service_healthy
@@ -187,6 +213,13 @@ services:
     restart: always
     ports:
       - "8082:80"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/cache/nginx
+      - /var/run
     depends_on:
       backend:
         condition: service_healthy
@@ -205,6 +238,13 @@ services:
     restart: always
     ports:
       - "8083:80"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/cache/nginx
+      - /var/run
     depends_on:
       backend:
         condition: service_healthy
@@ -223,6 +263,13 @@ services:
     restart: always
     ports:
       - "8084:80"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/cache/nginx
+      - /var/run
     depends_on:
       backend:
         condition: service_healthy

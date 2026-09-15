@@ -39,6 +39,7 @@ const app = express();
 const ALLOWED_ORIGINS = process.env.CORS_ORIGINS
   ? process.env.CORS_ORIGINS.split(',')
   : [
+      'http://localhost',
       'http://localhost:80',
       'http://localhost:3000',
       'http://localhost:8080',
@@ -46,10 +47,6 @@ const ALLOWED_ORIGINS = process.env.CORS_ORIGINS
       'http://localhost:8082',
       'http://localhost:8083',
       'http://localhost:8084',
-      'http://localhost:5173',
-      'http://localhost:5175',
-      'http://localhost:5176',
-      'http://localhost:5177',
       'http://192.168.100.101',
       'http://192.168.100.101:8080',
       'http://192.168.100.101:8081',
