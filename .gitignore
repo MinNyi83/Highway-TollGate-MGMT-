@@ -8,3 +8,5 @@ coverage/
 .turbo/
 packages/backend/uploads/
 packages/frontend/dist.tar.gz
+.agents/skills/diagram-design/repo/
+.agents/skills/anthropic-cybersecurity-skills/repo/
