@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TollGate RFID — HQ Database ER Diagram</title>
+<style>
+  body { margin: 0; background: #0a0e17; font-family: 'Inter', system-ui, sans-serif; display: flex; justify-content: center; padding: 40px 20px; overflow-x: auto; }
+  svg text { font-family: 'Inter', system-ui, sans-serif; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 1400 900" width="1400" height="900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0f151c"/>
+      <stop offset="100%" stop-color="#1a1f2e"/>
+    </linearGradient>
+    <linearGradient id="hdr" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#b8924e"/>
+      <stop offset="100%" stop-color="#d4a85a"/>
+    </linearGradient>
+    <filter id="sh" x="-5%" y="-5%" width="110%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <rect width="1400" height="900" fill="url(#bg)" rx="12"/>
+  <text x="700" y="40" text-anchor="middle" fill="#e2e8f0" font-size="20" font-weight="700">HQ Database — Entity Relationship Diagram</text>
+  <text x="700" y="60" text-anchor="middle" fill="#64748b" font-size="11">tollgate PostgreSQL · 20+ tables · Prisma Schema</text>
+
+  <!-- ====== CORE ENTITIES ====== -->
+
+  <!-- Region -->
+  <g filter="url(#sh)">
+    <rect x="580" y="80" width="180" height="110" rx="8" fill="#1e293b" stroke="#b8924e" stroke-width="1.5"/>
+    <rect x="580" y="80" width="180" height="26" rx="8" fill="#b8924e"/>
+    <text x="670" y="98" text-anchor="middle" fill="#0f151c" font-size="11" font-weight="700">Region</text>
+    <text x="590" y="120" fill="#e2e8f0" font-size="9">id: UUID PK</text>
+    <text x="590" y="134" fill="#94a3b8" font-size="9">name: String</text>
+    <text x="590" y="148" fill="#94a3b8" font-size="9">name_myanmar: String?</text>
+    <text x="590" y="162" fill="#94a3b8" font-size="9">code: String</text>
+    <text x="590" y="176" fill="#94a3b8" font-size="9">type: REGION | STATE | UT</text>
+  </g>
+
+  <!-- User -->
+  <g filter="url(#sh)">
+    <rect x="30" y="80" width="200" height="150" rx="8" fill="#1e293b" stroke="#60a5fa" stroke-width="1.5"/>
+    <rect x="30" y="80" width="200" height="26" rx="8" fill="#3b82f6"/>
+    <text x="130" y="98" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">User</text>
+    <text x="40" y="120" fill="#e2e8f0" font-size="9">id: UUID PK</text>
+    <text x="40" y="134" fill="#94a3b8" font-size="9">email: String UNIQUE</text>
+    <text x="40" y="148" fill="#94a3b8" font-size="9">password_hash: String</text>
+    <text x="40" y="162" fill="#94a3b8" font-size="9">name: String</text>
+    <text x="40" y="176" fill="#94a3b8" font-size="9">role: SUPER_ADMIN|ADMIN|...</text>
+    <text x="40" y="190" fill="#94a3b8" font-size="9">customer_type: INDIVIDUAL|ENT</text>
+    <text x="40" y="204" fill="#94a3b8" font-size="9">phone: String?</text>
+    <text x="40" y="218" fill="#94a3b8" font-size="9">2fa_enabled: Boolean</text>
+  </g>
+
+  <!-- Account -->
+  <g filter="url(#sh)">
+    <rect x="30" y="270" width="200" height="130" rx="8" fill="#1e293b" stroke="#60a5fa" stroke-width="1.5"/>
+    <rect x="30" y="270" width="200" height="26" rx="8" fill="#3b82f6"/>
+    <text x="130" y="288" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">Account</text>
+    <text x="40" y="310" fill="#e2e8f0" font-size="9">id: UUID PK</text>
+    <text x="40" y="324" fill="#94a3b8" font-size="9">user_id: UUID FK → User</text>
+    <text x="40" y="338" fill="#94a3b8" font-size="9">account_number: String?</text>
+    <text x="40" y="352" fill="#94a3b8" font-size="9">balance: Decimal(10,2)</text>
+    <text x="40" y="366" fill="#94a3b8" font-size="9">credit_limit: Decimal(10,2)</text>
+    <text x="40" y="380" fill="#94a3b8" font-size="9">status: ACTIVE|SUSPENDED|CLOSED</text>
+  </g>
+
+  <!-- Vehicle -->
+  <g filter="url(#sh)">
+    <rect x="310" y="80" width="200" height="150" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5"/>
+    <rect x="310" y="80" width="200" height="26" rx="8" fill="#f59e0b"/>
+    <text x="410" y="98" text-anchor="middle" fill="#0f151c" font-size="11" font-weight="700">Vehicle</text>
+    <text x="320" y="120" fill="#e2e8f0" font-size="9">id: UUID PK</text>
+    <text x="320" y="134" fill="#94a3b8" font-size="9">plate_number: String UNIQUE</text>
+    <text x="320" y="148" fill="#94a3b8" font-size="9">make: String</text>
+    <text x="320" y="162" fill="#94a3b8" font-size="9">model: String</text>
+    <text x="320" y="176" fill="#94a3b8" font-size="9">year: Int</text>
+    <text x="320" y="190" fill="#94a3b8" font-size="9">vehicle_class: MOTORCYCLE|SEDAN|...</text>
+    <text x="320" y="204" fill="#94a3b8" font-size="9">status: ACTIVE|INACTIVE|STOLEN</text>
+    <text x="320" y="218" fill="#94a3b8" font-size="9">region_id: UUID FK → Region</text>
+  </g>
+
+  <!-- RFID Tag -->
+  <g filter="url(#sh)">
+    <rect x="310" y="270" width="200" height="100" rx="8" fill="#1e293b" stroke="#22c55e" stroke-width="1.5"/>
+    <rect x="310" y="270" width="200" height="26" rx="8" fill="#22c55e"/>
+    <text x="410" y="288" text-anchor="middle" fill="#0f151c" font-size="11" font-weight="700">RFID Tag</text>
+    <text x="320" y="310" fill="#e2e8f0" font-size="9">id: UUID PK</text>
+    <text x="320" y="324" fill="#94a3b8" font-size="9">tag_uid: String UNIQUE</text>
+    <text x="320" y="338" fill="#94a3b8" font-size="9">vehicle_id: UUID FK → Vehicle</text>
+    <text x="320" y="352" fill="#94a3b8" font-size="9">account_id: UUID FK → Account</text>
+  </g>
+
+  <!-- Toll Plaza -->
+  <g filter="url(#sh)">
+    <rect x="580" y="240" width="200" height="120" rx="8" fill="#1e293b" stroke="#a855f7" stroke-width="1.5"/>
+    <rect x="580" y="240" width="200" height="26" rx="8" fill="#a855f7"/>
+    <text x="680" y="258" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">Toll Plaza</text>
+    <text x="590" y="280" fill="#e2e8f0" font-size="9">id: UUID PK</text>
+    <text x="590" y="294" fill="#94a3b8" font-size="9">name: String</text>
+    <text x="590" y="308" fill="#94a3b8" font-size="9">gate_code: String?</text>
+    <text x="590" y="322" fill="#94a3b8" font-size="9">location_lat/lng: Decimal</text>
+    <text x="590" y="336" fill="#94a3b8" font-size="9">mile_marker: Int?</text>
+    <text x="590" y="350" fill="#94a3b8" font-size="9">region_id: UUID FK → Region</text>
+  </g>
+
+  <!-- Toll Event -->
+  <g filter="url(#sh)">
+    <rect x="580" y="400" width="200" height="130" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="1.5"/>
+    <rect x="580" y="400" width="200" height="26" rx="8" fill="#ef4444"/>
+    <text x="680" y="418" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">Toll Event</text>
+    <text x="590" y="440" fill="#e2e8f0" font-size="9">id: UUID PK</text>
+    <text x="590" y="454" fill="#94a3b8" font-size="9">vehicle_id: UUID FK → Vehicle</text>
+    <text x="590" y="468" fill="#94a3b8" font-size="9">plaza_id: UUID FK → TollPlaza</text>
+    <text x="590" y="482" fill="#94a3b8" font-size="9">rfid_tag_id: UUID? FK → RFIDTag</text>
+    <text x="590" y="496" fill="#94a3b8" font-size="9">anpr_plate: String?</text>
+    <text x="590" y="510" fill="#94a3b8" font-size="9">entry_time: DateTime</text>
+    <text x="590" y="524" fill="#94a3b8" font-size="9">status: ENTRY|EXIT|COMPLETED|FAIL</text>
+  </g>
+
+  <!-- Transaction -->
+  <g filter="url(#sh)">
+    <rect x="850" y="240" width="200" height="120" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5"/>
+    <rect x="850" y="240" width="200" height="26" rx="8" fill="#f59e0b"/>
+    <text x="950" y="258" text-anchor="middle" fill="#0f151c" font-size="11" font-weight="700">Transaction</text>
+    <text x="860" y="280" fill="#e2e8f0" font-size="9">id: UUID PK</text>
+    <text x="860" y="294" fill="#94a3b8" font-size="9">account_id: UUID FK → Account</text>
+    <text x="860" y="308" fill="#94a3b8" font-size="9">event_id: UUID? FK → TollEvent</text>
+    <text x="860" y="322" fill="#94a3b8" font-size="9">amount: Decimal(10,2)</text>
+    <text x="860" y="336" fill="#94a3b8" font-size="9">type: DEBIT|TOPUP|REFUND</text>
+    <text x="860" y="350" fill="#94a3b8" font-size="9">status: PENDING|COMPLETED|...</text>
+  </g>
+
+  <!-- Violation -->
+  <g filter="url(#sh)">
+    <rect x="850" y="400" width="200" height="120" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="1.5"/>
+    <rect x="850" y="400" width="200" height="26" rx="8" fill="#ef4444"/>
+    <text x="950" y="418" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">Violation</text>
+    <text x="860" y="440" fill="#e2e8f0" font-size="9">id: UUID PK</text>
+    <text x="860" y="454" fill="#94a3b8" font-size="9">vehicle_id: UUID FK → Vehicle</text>
+    <text x="860" y="468" fill="#94a3b8" font-size="9">event_id: UUID FK → TollEvent</text>
+    <text x="860" y="482" fill="#94a3b8" font-size="9">violation_type: NO_RFID|...</text>
+    <text x="860" y="496" fill="#94a3b8" font-size="9">fine_amount: Decimal(10,2)</text>
+    <text x="860" y="510" fill="#94a3b8" font-size="9">status: PENDING|PAID|...</text>
+  </g>
+
+  <!-- Daily Collection -->
+  <g filter="url(#sh)">
+    <rect x="1120" y="80" width="200" height="110" rx="8" fill="#1e293b" stroke="#22c55e" stroke-width="1.5"/>
+    <rect x="1120" y="80" width="200" height="26" rx="8" fill="#22c55e"/>
+    <text x="1220" y="98" text-anchor="middle" fill="#0f151c" font-size="11" font-weight="700">Daily Collection</text>
+    <text x="1130" y="120" fill="#e2e8f0" font-size="9">id: UUID PK</text>
+    <text x="1130" y="134" fill="#94a3b8" font-size="9">collection_date: DateTime</text>
+    <text x="1130" y="148" fill="#94a3b8" font-size="9">plaza_id: UUID FK → TollPlaza</text>
+    <text x="1130" y="162" fill="#94a3b8" font-size="9">region_id: UUID FK → Region</text>
+    <text x="1130" y="176" fill="#94a3b8" font-size="9">total_revenue: Decimal(12,2)</text>
+  </g>
+
+  <!-- Revenue Transfer -->
+  <g filter="url(#sh)">
+    <rect x="1120" y="240" width="200" height="110" rx="8" fill="#1e293b" stroke="#22c55e" stroke-width="1.5"/>
+    <rect x="1120" y="240" width="200" height="26" rx="8" fill="#22c55e"/>
+    <text x="1220" y="258" text-anchor="middle" fill="#0f151c" font-size="11" font-weight="700">Revenue Transfer</text>
+    <text x="1130" y="280" fill="#e2e8f0" font-size="9">id: UUID PK</text>
+    <text x="1130" y="294" fill="#94a3b8" font-size="9">transfer_date: DateTime</text>
+    <text x="1130" y="308" fill="#94a3b8" font-size="9">plaza_id: UUID FK → TollPlaza</text>
+    <text x="1130" y="322" fill="#94a3b8" font-size="9">amount: Decimal(12,2)</text>
+    <text x="1130" y="336" fill="#94a3b8" font-size="9">status: PENDING|TRANSFERRED|...</text>
+  </g>
+
+  <!-- Official Receipt -->
+  <g filter="url(#sh)">
+    <rect x="1120" y="400" width="200" height="110" rx="8" fill="#1e293b" stroke="#22c55e" stroke-width="1.5"/>
+    <rect x="1120" y="400" width="200" height="26" rx="8" fill="#22c55e"/>
+    <text x="1220" y="418" text-anchor="middle" fill="#0f151c" font-size="11" font-weight="700">Official Receipt</text>
+    <text x="1130" y="440" fill="#e2e8f0" font-size="9">id: UUID PK</text>
+    <text x="1130" y="454" fill="#94a3b8" font-size="9">receipt_number: String UNIQUE</text>
+    <text x="1130" y="468" fill="#94a3b8" font-size="9">transaction_id: UUID FK</text>
+    <text x="1130" y="482" fill="#94a3b8" font-size="9">account_id: UUID FK</text>
+    <text x="1130" y="496" fill="#94a3b8" font-size="9">amount: Decimal(10,2)</text>
+  </g>
+
+  <!-- ====== RELATIONSHIP LINES ====== -->
+  <g stroke="#475569" stroke-width="1.2" fill="none">
+    <!-- User → Account (1:N) -->
+    <line x1="130" y1="230" x2="130" y2="270"/>
+    <text x="140" y="255" fill="#64748b" font-size="8">1:N</text>
+
+    <!-- User → Vehicle (via Account + RFIDTag) -->
+    <!-- Account → RFIDTag (1:N) -->
+    <line x1="230" y1="335" x2="310" y2="315"/>
+    <text x="260" y="318" fill="#64748b" font-size="8">1:N</text>
+
+    <!-- Vehicle → RFIDTag (1:N) -->
+    <line x1="410" y1="230" x2="410" y2="270"/>
+    <text x="420" y="255" fill="#64748b" font-size="8">1:N</text>
+
+    <!-- Vehicle → TollEvent (1:N) -->
+    <line x1="510" y1="160" x2="580" y2="440"/>
+    <text x="530" y="300" fill="#64748b" font-size="8">1:N</text>
+
+    <!-- TollPlaza → TollEvent (1:N) -->
+    <line x1="680" y1="360" x2="680" y2="400"/>
+    <text x="690" y="385" fill="#64748b" font-size="8">1:N</text>
+
+    <!-- TollEvent → Transaction (1:1) -->
+    <line x1="780" y1="440" x2="850" y2="300"/>
+    <text x="800" y="370" fill="#64748b" font-size="8">1:1</text>
+
+    <!-- TollEvent → Violation (1:1) -->
+    <line x1="780" y1="470" x2="850" y2="460"/>
+    <text x="805" y="460" fill="#64748b" font-size="8">1:1</text>
+
+    <!-- Account → Transaction (1:N) -->
+    <line x1="230" y1="340" x2="850" y2="290"/>
+    <text x="500" y="295" fill="#64748b" font-size="8">1:N</text>
+
+    <!-- TollPlaza → DailyCollection (1:N) -->
+    <line x1="780" y1="290" x2="1120" y2="130"/>
+    <text x="920" y="195" fill="#64748b" font-size="8">1:N</text>
+
+    <!-- TollPlaza → RevenueTransfer (1:N) -->
+    <line x1="780" y1="310" x2="1120" y2="290"/>
+    <text x="920" y="290" fill="#64748b" font-size="8">1:N</text>
+
+    <!-- Region → TollPlaza (1:N) -->
+    <line x1="670" y1="190" x2="670" y2="240"/>
+    <text x="680" y="220" fill="#64748b" font-size="8">1:N</text>
+
+    <!-- Region → Vehicle (1:N) -->
+    <line x1="580" y1="130" x2="510" y2="130"/>
+    <text x="540" y="125" fill="#64748b" font-size="8">1:N</text>
+
+    <!-- Transaction → OfficialReceipt (1:1) -->
+    <line x1="950" y1="360" x2="1120" y2="450"/>
+    <text x="1020" y="395" fill="#64748b" font-size="8">1:1</text>
+  </g>
+
+  <!-- ====== LEGEND ====== -->
+  <rect x="30" y="780" width="350" height="90" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="50" y="805" fill="#e2e8f0" font-size="11" font-weight="600">Legend</text>
+  <line x1="50" y1="820" x2="80" y2="820" stroke="#b8924e" stroke-width="2"/>
+  <text x="90" y="824" fill="#94a3b8" font-size="9">Core entities (User, Account, Vehicle, Plaza)</text>
+  <line x1="50" y1="840" x2="80" y2="840" stroke="#ef4444" stroke-width="2"/>
+  <text x="90" y="844" fill="#94a3b8" font-size="9">Event entities (TollEvent, Violation)</text>
+  <line x1="50" y1="860" x2="80" y2="860" stroke="#22c55e" stroke-width="2"/>
+  <text x="90" y="864" fill="#94a3b8" font-size="9">Financial entities (Collection, Transfer, Receipt)</text>
+</svg>
+</body>
+</html>

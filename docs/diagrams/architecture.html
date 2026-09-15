@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TollGate RFID — System Architecture</title>
+<style>
+  body { margin: 0; background: #0a0e17; font-family: 'Inter', system-ui, sans-serif; display: flex; justify-content: center; padding: 40px 20px; }
+  svg text { font-family: 'Inter', system-ui, sans-serif; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 1200 800" width="1200" height="800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0f151c"/>
+      <stop offset="100%" stop-color="#1a1f2e"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#b8924e"/>
+      <stop offset="100%" stop-color="#d4a85a"/>
+    </linearGradient>
+    <linearGradient id="violet" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#a78bfa"/>
+    </linearGradient>
+    <linearGradient id="emerald" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#34d399"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="800" fill="url(#bg)" rx="12"/>
+
+  <!-- Title -->
+  <text x="600" y="45" text-anchor="middle" fill="#e2e8f0" font-size="22" font-weight="700">TollGate RFID — System Architecture</text>
+  <text x="600" y="68" text-anchor="middle" fill="#64748b" font-size="12">6 Portals · 1 Backend · 4 Databases · 4 Plaza Sites</text>
+
+  <!-- ============= PORTALS (Top Row) ============= -->
+  <g filter="url(#shadow)">
+    <!-- Admin Hub -->
+    <rect x="30" y="100" width="160" height="80" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+    <rect x="30" y="100" width="160" height="6" rx="3" fill="url(#gold)"/>
+    <text x="110" y="135" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="600">Admin Hub</text>
+    <text x="110" y="155" text-anchor="middle" fill="#94a3b8" font-size="10">:80 · React</text>
+    <text x="110" y="170" text-anchor="middle" fill="#64748b" font-size="9">SUPER_ADMIN / OPERATOR</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <!-- Customer PWA -->
+    <rect x="210" y="100" width="160" height="80" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+    <rect x="210" y="100" width="160" height="6" rx="3" fill="#3b82f6"/>
+    <text x="290" y="135" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="600">Customer PWA</text>
+    <text x="290" y="155" text-anchor="middle" fill="#94a3b8" font-size="10">:8080 · React</text>
+    <text x="290" y="170" text-anchor="middle" fill="#64748b" font-size="9">Driver / Fleet</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <!-- Financial Portal -->
+    <rect x="390" y="100" width="160" height="80" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+    <rect x="390" y="100" width="160" height="6" rx="3" fill="#f59e0b"/>
+    <text x="470" y="135" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="600">Financial Portal</text>
+    <text x="470" y="155" text-anchor="middle" fill="#94a3b8" font-size="10">:8081 · React</text>
+    <text x="470" y="170" text-anchor="middle" fill="#64748b" font-size="9">FINANCIAL_ADMIN</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <!-- HR Portal -->
+    <rect x="570" y="100" width="160" height="80" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+    <rect x="570" y="100" width="160" height="6" rx="3" fill="url(#violet)"/>
+    <text x="650" y="135" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="600">HR Portal</text>
+    <text x="650" y="155" text-anchor="middle" fill="#94a3b8" font-size="10">:8082 · React</text>
+    <text x="650" y="170" text-anchor="middle" fill="#64748b" font-size="9">HR Admin</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <!-- Plaza PWA -->
+    <rect x="750" y="100" width="160" height="80" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+    <rect x="750" y="100" width="160" height="6" rx="3" fill="url(#emerald)"/>
+    <text x="830" y="135" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="600">Plaza PWA</text>
+    <text x="830" y="155" text-anchor="middle" fill="#94a3b8" font-size="10">:8083 · React PWA</text>
+    <text x="830" y="170" text-anchor="middle" fill="#64748b" font-size="9">Raspberry Pi Operator</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <!-- Employee App -->
+    <rect x="930" y="100" width="160" height="80" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+    <rect x="930" y="100" width="160" height="6" rx="3" fill="#ec4899"/>
+    <text x="1010" y="135" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="600">Employee App</text>
+    <text x="1010" y="155" text-anchor="middle" fill="#94a3b8" font-size="10">:8084 · React PWA</text>
+    <text x="1010" y="170" text-anchor="middle" fill="#64748b" font-size="9">Mobile Clock In/Out</text>
+  </g>
+
+  <!-- ============= NGINX LAYER ============= -->
+  <rect x="30" y="210" width="1060" height="50" rx="8" fill="#1e1b4b" stroke="#4338ca" stroke-width="1" opacity="0.6"/>
+  <text x="560" y="240" text-anchor="middle" fill="#a5b4fc" font-size="12" font-weight="600">Nginx Reverse Proxy Layer (SPA Fallback · Security Headers · TLS Termination)</text>
+
+  <!-- ============= BACKEND ============= -->
+  <g filter="url(#shadow)">
+    <rect x="350" y="290" width="500" height="100" rx="12" fill="#1e293b" stroke="#b8924e" stroke-width="2"/>
+    <rect x="350" y="290" width="500" height="8" rx="4" fill="url(#gold)"/>
+    <text x="600" y="330" text-anchor="middle" fill="#e2e8f0" font-size="16" font-weight="700">Backend API Server</text>
+    <text x="600" y="350" text-anchor="middle" fill="#b8924e" font-size="11">Express + TypeScript + Prisma ORM · Port 3000</text>
+    <text x="600" y="370" text-anchor="middle" fill="#94a3b8" font-size="10">Auth · JWT · Rate Limiting · Zod Validation · Helmet · CORS</text>
+  </g>
+
+  <!-- Backend modules -->
+  <g fill="#1e293b" stroke="#475569" stroke-width="1" rx="6">
+    <rect x="370" y="395" width="100" height="30" rx="6"/>
+    <text x="420" y="415" text-anchor="middle" fill="#94a3b8" font-size="9">Auth Module</text>
+
+    <rect x="480" y="395" width="100" height="30" rx="6"/>
+    <text x="530" y="415" text-anchor="middle" fill="#94a3b8" font-size="9">Toll Events</text>
+
+    <rect x="590" y="395" width="100" height="30" rx="6"/>
+    <text x="640" y="415" text-anchor="middle" fill="#94a3b8" font-size="9">Financial</text>
+
+    <rect x="700" y="395" width="100" height="30" rx="6"/>
+    <text x="750" y="415" text-anchor="middle" fill="#94a3b8" font-size="9">HR Module</text>
+  </g>
+
+  <!-- ============= DATABASES ============= -->
+  <!-- HQ DB -->
+  <g filter="url(#shadow)">
+    <rect x="80" y="480" width="220" height="90" rx="10" fill="#0c4a6e" stroke="#0ea5e9" stroke-width="1.5"/>
+    <text x="190" y="510" text-anchor="middle" fill="#e0f2fe" font-size="13" font-weight="600">HQ Database</text>
+    <text x="190" y="528" text-anchor="middle" fill="#7dd3fc" font-size="10">tollgate · :5432</text>
+    <text x="190" y="548" text-anchor="middle" fill="#94a3b8" font-size="9">vehicles · toll_events · violations</text>
+    <text x="190" y="562" text-anchor="middle" fill="#94a3b8" font-size="9">regions · financial · audit_logs</text>
+  </g>
+
+  <!-- Customer DB -->
+  <g filter="url(#shadow)">
+    <rect x="330" y="480" width="220" height="90" rx="10" fill="#1e3a5f" stroke="#60a5fa" stroke-width="1.5"/>
+    <text x="440" y="510" text-anchor="middle" fill="#e0f2fe" font-size="13" font-weight="600">Customer Database</text>
+    <text x="440" y="528" text-anchor="middle" fill="#93c5fd" font-size="10">tollgate_customer · :5433</text>
+    <text x="440" y="548" text-anchor="middle" fill="#94a3b8" font-size="9">users · accounts · rfid_tags</text>
+    <text x="440" y="562" text-anchor="middle" fill="#94a3b8" font-size="9">notifications · webhooks</text>
+  </g>
+
+  <!-- Plaza DB -->
+  <g filter="url(#shadow)">
+    <rect x="580" y="480" width="220" height="90" rx="10" fill="#14532d" stroke="#22c55e" stroke-width="1.5"/>
+    <text x="690" y="510" text-anchor="middle" fill="#dcfce7" font-size="13" font-weight="600">Plaza Database</text>
+    <text x="690" y="528" text-anchor="middle" fill="#86efac" font-size="10">tollgate_plaza · :5434</text>
+    <text x="690" y="548" text-anchor="middle" fill="#94a3b8" font-size="9">plaza_config · sync_queue</text>
+    <text x="690" y="562" text-anchor="middle" fill="#94a3b8" font-size="9">local_toll_events · device_config</text>
+  </g>
+
+  <!-- HR DB -->
+  <g filter="url(#shadow)">
+    <rect x="830" y="480" width="220" height="90" rx="10" fill="#3b0764" stroke="#a855f7" stroke-width="1.5"/>
+    <text x="940" y="510" text-anchor="middle" fill="#f3e8ff" font-size="13" font-weight="600">HR Database</text>
+    <text x="940" y="528" text-anchor="middle" fill="#c084fc" font-size="10">tollgate_hr · :5435</text>
+    <text x="940" y="548" text-anchor="middle" fill="#94a3b8" font-size="9">employees · departments · attendance</text>
+    <text x="940" y="562" text-anchor="middle" fill="#94a3b8" font-size="9">leave · payroll · performance</text>
+  </g>
+
+  <!-- ============= HARDWARE LAYER ============= -->
+  <rect x="30" y="610" width="1060" height="170" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1" opacity="0.5"/>
+  <text x="600" y="635" text-anchor="middle" fill="#64748b" font-size="12" font-weight="600">Highway Plaza Hardware (4 Sites)</text>
+
+  <!-- Plaza sites -->
+  <g fill="#0f151c" stroke="#475569" stroke-width="1" rx="8">
+    <rect x="60" y="650" width="230" height="110" rx="8"/>
+    <text x="175" y="675" text-anchor="middle" fill="#b8924e" font-size="12" font-weight="600">0 Mile Plaza</text>
+    <text x="175" y="695" text-anchor="middle" fill="#94a3b8" font-size="9">RFID Reader · ANPR Camera</text>
+    <text x="175" y="710" text-anchor="middle" fill="#94a3b8" font-size="9">Barrier Gate · LED Sign</text>
+    <text x="175" y="725" text-anchor="middle" fill="#94a3b8" font-size="9">Raspberry Pi Edge Server</text>
+    <text x="175" y="745" text-anchor="middle" fill="#64748b" font-size="8">Offline → Sync Queue → Backend</text>
+  </g>
+
+  <g fill="#0f151c" stroke="#475569" stroke-width="1" rx="8">
+    <rect x="320" y="650" width="230" height="110" rx="8"/>
+    <text x="435" y="675" text-anchor="middle" fill="#b8924e" font-size="12" font-weight="600">39 Mile Plaza</text>
+    <text x="435" y="695" text-anchor="middle" fill="#94a3b8" font-size="9">RFID Reader · ANPR Camera</text>
+    <text x="435" y="710" text-anchor="middle" fill="#94a3b8" font-size="9">Barrier Gate · LED Sign</text>
+    <text x="435" y="725" text-anchor="middle" fill="#94a3b8" font-size="9">Raspberry Pi Edge Server</text>
+    <text x="435" y="745" text-anchor="middle" fill="#64748b" font-size="8">Offline → Sync Queue → Backend</text>
+  </g>
+
+  <g fill="#0f151c" stroke="#475569" stroke-width="1" rx="8">
+    <rect x="580" y="650" width="230" height="110" rx="8"/>
+    <text x="695" y="675" text-anchor="middle" fill="#b8924e" font-size="12" font-weight="600">115 Mile Plaza</text>
+    <text x="695" y="695" text-anchor="middle" fill="#94a3b8" font-size="9">RFID Reader · ANPR Camera</text>
+    <text x="695" y="710" text-anchor="middle" fill="#94a3b8" font-size="9">Barrier Gate · LED Sign</text>
+    <text x="695" y="725" text-anchor="middle" fill="#94a3b8" font-size="9">Raspberry Pi Edge Server</text>
+    <text x="695" y="745" text-anchor="middle" fill="#64748b" font-size="8">Offline → Sync Queue → Backend</text>
+  </g>
+
+  <g fill="#0f151c" stroke="#475569" stroke-width="1" rx="8">
+    <rect x="840" y="650" width="230" height="110" rx="8"/>
+    <text x="955" y="675" text-anchor="middle" fill="#b8924e" font-size="12" font-weight="600">200 Mile Plaza</text>
+    <text x="955" y="695" text-anchor="middle" fill="#94a3b8" font-size="9">RFID Reader · ANPR Camera</text>
+    <text x="955" y="710" text-anchor="middle" fill="#94a3b8" font-size="9">Barrier Gate · LED Sign</text>
+    <text x="955" y="725" text-anchor="middle" fill="#94a3b8" font-size="9">Raspberry Pi Edge Server</text>
+    <text x="955" y="745" text-anchor="middle" fill="#64748b" font-size="8">Offline → Sync Queue → Backend</text>
+  </g>
+
+  <!-- ============= CONNECTION LINES ============= -->
+  <!-- Portals to Nginx -->
+  <g stroke="#475569" stroke-width="1" fill="none" stroke-dasharray="4,3">
+    <line x1="110" y1="180" x2="110" y2="210"/>
+    <line x1="290" y1="180" x2="290" y2="210"/>
+    <line x1="470" y1="180" x2="470" y2="210"/>
+    <line x1="650" y1="180" x2="650" y2="210"/>
+    <line x1="830" y1="180" x2="830" y2="210"/>
+    <line x1="1010" y1="180" x2="1010" y2="210"/>
+  </g>
+
+  <!-- Nginx to Backend -->
+  <g stroke="#b8924e" stroke-width="1.5" fill="none" marker-end="url(#arrow)">
+    <line x1="600" y1="260" x2="600" y2="290"/>
+  </g>
+
+  <!-- Backend to DBs -->
+  <g stroke="#64748b" stroke-width="1" fill="none" marker-end="url(#arrow)">
+    <line x1="500" y1="390" x2="190" y2="480"/>
+    <line x1="550" y1="390" x2="440" y2="480"/>
+    <line x1="650" y1="390" x2="690" y2="480"/>
+    <line x1="700" y1="390" x2="940" y2="480"/>
+  </g>
+
+  <!-- Backend to Plazas -->
+  <g stroke="#22c55e" stroke-width="1" fill="none" stroke-dasharray="6,3">
+    <line x1="450" y1="425" x2="175" y2="650"/>
+    <line x1="520" y1="425" x2="435" y2="650"/>
+    <line x1="680" y1="425" x2="695" y2="650"/>
+    <line x1="750" y1="425" x2="955" y2="650"/>
+  </g>
+
+  <!-- Arrow marker -->
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <!-- ============= LABELS ============= -->
+  <text x="600" y="280" text-anchor="middle" fill="#b8924e" font-size="9" font-weight="600">HTTPS / HTTP</text>
+  <text x="350" y="460" fill="#64748b" font-size="9">Prisma Client</text>
+  <text x="550" y="460" fill="#22c55e" font-size="9">Sync API</text>
+</svg>
+</body>
+</html>
